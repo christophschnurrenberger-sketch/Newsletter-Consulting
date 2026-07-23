@@ -29,18 +29,18 @@
 <style>
         :root {
             /* Überarbeitete Farbpalette für maximale Professionalität und Vertrauen */
-            --color-primary-dark-blue: #1A2B42; /* Tiefes Marineblau - Vertrauen, Stabilität */
+            --color-primary-dark-blue: #14243A; /* Tiefes Marineblau - Vertrauen, Stabilität */
             --color-secondary-blue: #4A6FA5; /* Gedämpftes Mittelblau - Professionalität, Klarheit (für Gradienten) */
-            --color-accent-red: #C04040; /* Gedämpfteres, seriöseres Rot für Akzent und CTA */
-            --color-accent-red-dark: #A03030; /* Dunkleres Rot für Hover */
+            --color-accent-red: #C8102E; /* Klares, selbstbewusstes Rot (Bain-Stil) für Akzent und CTA */
+            --color-accent-red-dark: #A20B24; /* Dunkleres Rot für Hover */
             --color-light-bg: #FFFFFF; /* Reines Weiß für klare Abgrenzung */
-            --color-medium-bg: #F8F8F8; /* Deutlicheres, sehr helles Grau */
-            --color-text-heading: #222222; /* Sehr dunkles Grau für Überschriften */
-            --color-text-body: #555555; /* Mittleres Grau für Fließtext */
+            --color-medium-bg: #F6F8FA; /* Sehr helles, leicht kühles Grau */
+            --color-text-heading: #14243A; /* Navy für Überschriften - ein Anker statt Grau */
+            --color-text-body: #4A5568; /* Ausgewogenes Grau für Fließtext */
             --color-text-light: #FDFDFD; /* Für Text auf dunklem Hintergrund */
             --color-icon-bg: #E0EBF5; /* Sehr helles Blau für Icon-Hintergrund (Feature-Blöcke) */
-            --color-icon-stroke: #1A2B42; /* Dunkelblau für Icon-Strichfarbe (Feature-Blöcke) */
-            --color-icon-accent: #C04040; /* Akzentfarbe Rot für Icons im neuen Feature-Bereich */
+            --color-icon-stroke: #14243A; /* Dunkelblau für Icon-Strichfarbe (Feature-Blöcke) */
+            --color-icon-accent: #C8102E; /* Akzentfarbe Rot für Icons im neuen Feature-Bereich */
 
             /* Standardfarben für Feedback */
             --color-error-red: #D62828;
@@ -176,7 +176,7 @@
         .shadow-xl { box-shadow: 0 20px 25px rgba(15, 23, 42, 0.10), 0 8px 10px rgba(15, 23, 42, 0.06); }
         .appearance-none { appearance: none; }
         .focus\:outline-none:focus { outline: 2px solid transparent; outline-offset: 2px; }
-        .focus\:ring-2:focus { box-shadow: 0 0 0 2px rgba(192, 64, 64, 0.25); }
+        .focus\:ring-2:focus { box-shadow: 0 0 0 2px rgba(200, 16, 46, 0.25); }
         .focus\:ring-color-accent-red:focus { border-color: var(--color-accent-red); }
         .transition-all { transition-property: all; }
         .transition-colors { transition-property: color, background-color, border-color; }
@@ -387,33 +387,30 @@
             }
         }
 
-        /* Scroll-Down Arrow */
+        /* Scroll-Down Arrow (dezent, statisch) */
         .scroll-down-arrow {
             display: inline-block;
-            animation: bounce 2s infinite;
-            transition: transform 0.3s ease;
+            opacity: 0.8;
+            transition: opacity 0.25s ease;
         }
-
+        .scroll-down-arrow:hover {
+            opacity: 1;
+        }
+        .arrow-icon {
+            transition: transform 0.25s ease;
+        }
         .scroll-down-arrow:hover .arrow-icon {
-            transform: scale(1.4); /* beim Hover größer */
-            filter: drop-shadow(0 0 8px rgba(255,255,255,0.8)); /* Glow Effekt */
-            transition: transform 0.3s ease, filter 0.3s ease;
+            transform: translateY(3px);
         }
 
-        @keyframes bounce {
-            0%, 20%, 50%, 80%, 100% {
-                transform: translate(-50%, 0);
-            }
-            40% {
-                transform: translate(-50%, 12px);
-            }
-            60% {
-                transform: translate(-50%, 6px);
-            }
+        /* Premium Hero Overlay (Navy-Verlauf statt flachem Schwarz) */
+        .hero-overlay {
+            background:
+                linear-gradient(180deg, rgba(20, 36, 58, 0.55) 0%, rgba(20, 36, 58, 0.62) 55%, rgba(20, 36, 58, 0.82) 100%);
         }
 
         .hero-accent {
-            color: #FF8A7A;
+            color: #FF5A5F;
         }
 
         /* Hero Trust Bar */
@@ -440,7 +437,7 @@
             width: 1.05rem;
             height: 1.05rem;
             flex: 0 0 auto;
-            color: #FF8A7A;
+            color: #FF5A5F;
         }
         @media (max-width: 640px) {
             .hero-trust-bar {
@@ -571,67 +568,6 @@
             }
         }
 
-        /* Benefits Section Styling */
-        .benefits-section-custom {
-            background-color: var(--color-primary-dark-blue);
-            color: var(--color-text-light);
-            padding-top: 5rem;
-            padding-bottom: 5rem;
-            text-align: center;
-        }
-        .benefits-section-custom h2 {
-            color: var(--color-text-light);
-        }
-        .benefits-section-custom p {
-            color: var(--color-text-light);
-        }
-        .benefits-grid {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 2rem;
-            margin-top: 3rem;
-        }
-        /* Circle Progress Items (Benefits Section) */
-        .circle-progress-item {
-            position: relative;
-            width: 180px;
-            height: 180px;
-            border-radius: 50%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            font-size: 2.5rem;
-            font-weight: 700;
-            color: var(--color-text-light);
-            box-sizing: border-box;
-            /* Subtiler Gradient für kreativeren Look, aber passend zur Palette */
-            background: linear-gradient(135deg, var(--color-primary-dark-blue) 0%, var(--color-secondary-blue) 100%);
-            border: 4px solid rgba(255, 255, 255, 0.4);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
-            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
-            margin-bottom: 1rem;
-            overflow: hidden;
-        }
-        .circle-progress-item:hover {
-            transform: scale(1.05);
-            box-shadow: 0 0 30px rgba(0, 0, 0, 0.3);
-        }
-        .circle-progress-item span {
-            display: block;
-            margin-bottom: 0.5rem;
-            z-index: 1;
-        }
-        .circle-progress-item .title {
-            font-size: 1.125rem;
-            font-weight: 600;
-            color: var(--color-text-light);
-            text-align: center;
-            line-height: 1.3;
-            z-index: 1;
-        }
-
         /* Buttons */
         .btn-primary-custom {
             display: inline-flex;
@@ -642,28 +578,27 @@
             font-weight: 700;
             padding: 0.75rem 2rem;
             border-radius: 0.5rem; /* Weniger stark abgerundet */
-            box-shadow: 0 5px 15px rgba(192, 64, 64, 0.22);
+            box-shadow: 0 5px 15px rgba(200, 16, 46, 0.22);
             transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
         }
         .btn-primary-custom:hover {
             background-color: var(--color-accent-red-dark); /* Dunkleres Rot für Hover */
             transform: translateY(-2px);
-            box-shadow: 0 10px 24px rgba(192, 64, 64, 0.3);
+            box-shadow: 0 10px 24px rgba(200, 16, 46, 0.3);
         }
         .btn-primary-custom:active {
             transform: translateY(0);
-            box-shadow: 0 5px 15px rgba(192, 64, 64, 0.22);
+            box-shadow: 0 5px 15px rgba(200, 16, 46, 0.22);
         }
         a:focus-visible,
-        button:focus-visible,
-        .capability-flip-card:focus-visible {
+        button:focus-visible {
             outline: 2px solid var(--color-accent-red);
             outline-offset: 2px;
         }
         .btn-primary-custom:focus-visible {
             outline: 2px solid #ffffff;
             outline-offset: 2px;
-            box-shadow: 0 0 0 4px rgba(192, 64, 64, 0.45);
+            box-shadow: 0 0 0 4px rgba(200, 16, 46, 0.45);
         }
 
         /* Form Styling */
@@ -681,7 +616,7 @@
         #contact-form textarea:focus {
             outline: none;
             border-color: var(--color-accent-red); /* Akzentfarbe für Fokus */
-            box-shadow: 0 0 0 3px rgba(192, 64, 64, 0.2); /* Ring-Effekt mit Rot-Ton */
+            box-shadow: 0 0 0 3px rgba(200, 16, 46, 0.2); /* Ring-Effekt mit Rot-Ton */
         }
         #contact-form .text-red-500 { color: var(--color-error-red); }
         #contact-form .border-red-500 { border-color: var(--color-error-red); }
@@ -763,7 +698,7 @@
         }
         .faq-item:hover {
             transform: translateY(-2px);
-            border-color: rgba(192, 64, 64, 0.28);
+            border-color: rgba(200, 16, 46, 0.28);
             box-shadow: 0 16px 36px rgba(26, 43, 66, 0.1);
         }
         .faq-question {
@@ -787,7 +722,7 @@
             width: 2.3rem;
             height: 2.3rem;
             color: var(--color-accent-red);
-            background-color: rgba(192, 64, 64, 0.08);
+            background-color: rgba(200, 16, 46, 0.08);
             border-radius: 0.5rem;
             font-size: 0.78rem;
             font-weight: 800;
@@ -922,163 +857,96 @@
             grid-template-columns: repeat(2, minmax(0, 1fr));
             gap: 1rem;
         }
-        .capability-flip-card {
+        .capability-card {
             position: relative;
-            display: block;
-            min-height: 18rem;
-            padding: 0;
-            border: 0;
-            color: inherit;
-            background: transparent;
-            text-align: left;
-            perspective: 1200px;
-            cursor: pointer;
-        }
-        .capability-flip-card:hover .capability-card-front,
-        .capability-flip-card:focus-visible .capability-card-front {
-            border-color: rgba(192, 64, 64, 0.32);
-            box-shadow: 0 18px 42px rgba(26, 43, 66, 0.11);
-        }
-        .capability-flip-card:focus-visible {
-            outline: 3px solid rgba(192, 64, 64, 0.32);
-            outline-offset: 4px;
-            border-radius: 0.6rem;
-        }
-        .capability-flip-inner {
-            position: relative;
-            width: 100%;
-            min-height: inherit;
-            transform-style: preserve-3d;
-            transition: transform 0.46s ease;
-        }
-        .capability-flip-card.is-flipped .capability-flip-inner {
-            transform: rotateY(180deg);
-        }
-        .capability-card-face {
-            position: absolute;
-            inset: 0;
             display: flex;
             flex-direction: column;
-            padding: 1.35rem;
+            padding: 1.6rem;
+            background-color: #ffffff;
             border: 1px solid #E0E6ED;
             border-radius: 0.5rem;
-            background-color: #ffffff;
-            box-shadow: 0 14px 34px rgba(26, 43, 66, 0.07);
-            backface-visibility: hidden;
+            box-shadow: 0 14px 34px rgba(20, 36, 58, 0.07);
             overflow: hidden;
+            transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
         }
-        .capability-card-front::after {
+        .capability-card::before {
             content: '';
             position: absolute;
             top: 0;
-            right: 0;
-            width: 4.25rem;
-            height: 0.22rem;
+            left: 0;
+            width: 3rem;
+            height: 0.2rem;
             background-color: var(--color-accent-red);
-            border-radius: 0 0 0 0.35rem;
+            border-radius: 0 0 0.3rem 0;
         }
-        .capability-card-back::after {
-            content: '×';
-            position: absolute;
-            top: 1rem;
-            right: 1rem;
-            display: grid;
-            place-items: center;
-            width: 1.9rem;
-            height: 1.9rem;
-            border-radius: 0.35rem;
-            color: #ffffff;
-            background-color: rgba(255, 255, 255, 0.14);
-            font-size: 1.1rem;
-            line-height: 1;
-            font-weight: 700;
-        }
-        .capability-card-back {
-            color: #ffffff;
-            background-color: var(--color-primary-dark-blue);
-            border-color: var(--color-primary-dark-blue);
-            transform: rotateY(180deg);
+        .capability-card:hover {
+            transform: translateY(-3px);
+            border-color: rgba(200, 16, 46, 0.28);
+            box-shadow: 0 20px 44px rgba(20, 36, 58, 0.12);
         }
         .capability-card-index {
             color: var(--color-accent-red);
-            font-size: 0.78rem;
+            font-size: 0.76rem;
             font-weight: 800;
             letter-spacing: 0.06em;
             text-transform: uppercase;
-            margin-bottom: 0.9rem;
+            margin-bottom: 0.75rem;
         }
-        .capability-card-face h3 {
+        .capability-card h3 {
             color: var(--color-text-heading);
-            font-size: 1.28rem;
-            line-height: 1.22;
-            margin-bottom: 0.65rem;
-        }
-        .capability-card-face p {
-            color: var(--color-text-body);
-            line-height: 1.62;
-            margin: 0;
-        }
-        .capability-card-brief {
-            display: block;
-            margin-top: 1rem;
-            padding-top: 0.85rem;
-            border-top: 1px solid #E7EBF0;
-            color: var(--color-text-heading);
-            font-size: 0.92rem;
-            line-height: 1.45;
-            font-weight: 700;
-        }
-        .capability-card-action {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 1rem;
-            margin-top: auto;
-            padding-top: 1rem;
-            border-top: 1px solid #E7EBF0;
-            color: var(--color-accent-red);
-            font-size: 0.88rem;
-            font-weight: 700;
+            font-size: 1.3rem;
             line-height: 1.2;
+            font-weight: 800;
+            margin-bottom: 0.55rem;
         }
-        .capability-card-action .lucide {
+        .capability-card > p {
+            color: var(--color-text-body);
+            line-height: 1.6;
+            margin: 0 0 1.1rem;
+        }
+        .capability-card-list {
+            display: grid;
+            gap: 0.6rem;
+            margin: 0 0 1.2rem;
+            padding: 0;
+            list-style: none;
+        }
+        .capability-card-list li {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.6rem;
+            color: var(--color-text-body);
+            line-height: 1.5;
+            font-size: 0.96rem;
+        }
+        .capability-card-list .lucide {
+            flex: 0 0 1rem;
             width: 1rem;
             height: 1rem;
-            flex: 0 0 auto;
-            transition: transform 0.2s ease;
-        }
-        .capability-flip-card:hover .capability-card-action .lucide,
-        .capability-flip-card:focus-visible .capability-card-action .lucide {
-            transform: translateX(0.2rem);
-        }
-        .capability-card-back h3,
-        .capability-card-back p {
-            color: #ffffff;
-        }
-        .capability-card-back ul {
-            display: grid;
-            gap: 0.45rem;
-            margin: 0.8rem 0 0;
-            padding-left: 1.1rem;
-            list-style: disc;
-            color: rgba(255, 255, 255, 0.82);
-            line-height: 1.5;
-            font-size: 0.94rem;
+            margin-top: 0.22rem;
+            color: var(--color-accent-red);
         }
         .capability-card-result {
             margin-top: auto;
-            padding-top: 0.9rem;
-            color: rgba(255, 255, 255, 0.9);
+            padding-top: 0.95rem;
+            border-top: 1px solid #E7EBF0;
+            color: var(--color-text-heading);
             font-weight: 700;
+            font-size: 0.95rem;
+            line-height: 1.4;
+        }
+        .capability-card-result span {
+            display: block;
+            color: var(--color-secondary-blue);
+            font-size: 0.72rem;
+            font-weight: 800;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            margin-bottom: 0.2rem;
         }
         @media (max-width: 900px) {
             .capability-card-grid {
                 grid-template-columns: 1fr;
-            }
-        }
-        @media (prefers-reduced-motion: reduce) {
-            .capability-flip-inner {
-                transition: none;
             }
         }
         .capability-system-note {
@@ -1113,11 +981,8 @@
             .capability-strategy-panel {
                 padding: 1.5rem;
             }
-            .capability-flip-card {
-                min-height: 20rem;
-            }
-            .capability-card-face {
-                padding: 1.15rem;
+            .capability-card {
+                padding: 1.25rem;
             }
         }
 
@@ -1193,7 +1058,7 @@
             background-color: #DDE3EA;
         }
         .engagement-card.is-featured {
-            border-color: rgba(192, 64, 64, 0.36);
+            border-color: rgba(200, 16, 46, 0.36);
             box-shadow: 0 20px 48px rgba(26, 43, 66, 0.10);
         }
         .engagement-card.is-featured::before {
@@ -1590,7 +1455,7 @@
         }
         .process-phase:hover {
             transform: translateY(-4px);
-            border-color: rgba(192, 64, 64, 0.35);
+            border-color: rgba(200, 16, 46, 0.35);
             box-shadow: 0 22px 52px rgba(26, 43, 66, 0.13);
         }
         .phase-top {
@@ -1957,7 +1822,7 @@
     </video>
 
     <!-- Overlay -->
-    <div class="absolute inset-0 bg-black bg-opacity-50 z-10"></div>
+    <div class="absolute inset-0 hero-overlay z-10"></div>
 
     <!-- Inhalt -->
     <div class="relative z-20 max-w-3xl px-4 text-white">
@@ -2035,89 +1900,53 @@
                 </aside>
 
                 <div class="capability-card-grid" aria-label="Kernkompetenzen von AcumenMail">
-                    <div role="button" tabindex="0" class="capability-flip-card animate-on-scroll" aria-pressed="false" aria-label="Details zu Strategie und Potenzial anzeigen" style="animation-delay: 0.00s;">
-                        <div class="capability-flip-inner">
-                            <div class="capability-card-face capability-card-front">
-                                <span class="capability-card-index">01 Strategie & Potenzial</span>
-                                <h3>Hebel finden</h3>
-                                <p>Wir klären Status quo, Zielgruppen und den ersten wirksamen Schritt.</p>
-                                <span class="capability-card-brief">Damit aus vielen Ideen klare Priorität wird.</span>
-                                <div class="capability-card-action"><span>Details ansehen</span><i data-lucide="arrow-right" class="lucide" aria-hidden="true"></i></div>
-                            </div>
-                            <div class="capability-card-face capability-card-back">
-                                <h3>Was dahinter steckt</h3>
-                                <ul>
-                                    <li>Ziele, Zielgruppen und Angebot logisch verbinden</li>
-                                    <li>Liste, Kampagnen, Tool und Kennzahlen bewerten</li>
-                                    <li>Prioritäten nach Wirkung, Aufwand und Risiko setzen</li>
-                                </ul>
-                                <span class="capability-card-result">Ergebnis: Chancenkarte statt Aktionismus.</span>
-                            </div>
-                        </div>
-                    </div>
+                    <article class="capability-card animate-on-scroll" style="animation-delay: 0.00s;">
+                        <span class="capability-card-index">01 · Strategie & Potenzial</span>
+                        <h3>Hebel finden</h3>
+                        <p>Wir klären Status quo, Zielgruppen und den ersten wirksamen Schritt, damit aus vielen Ideen klare Priorität wird.</p>
+                        <ul class="capability-card-list">
+                            <li><i data-lucide="check" class="lucide" aria-hidden="true"></i><span>Ziele, Zielgruppen und Angebot logisch verbinden</span></li>
+                            <li><i data-lucide="check" class="lucide" aria-hidden="true"></i><span>Liste, Kampagnen, Tool und Kennzahlen bewerten</span></li>
+                            <li><i data-lucide="check" class="lucide" aria-hidden="true"></i><span>Prioritäten nach Wirkung, Aufwand und Risiko setzen</span></li>
+                        </ul>
+                        <p class="capability-card-result"><span>Ergebnis</span>Chancenkarte statt Aktionismus.</p>
+                    </article>
 
-                    <div role="button" tabindex="0" class="capability-flip-card animate-on-scroll" aria-pressed="false" aria-label="Details zu Segmentierung und Content anzeigen" style="animation-delay: 0.05s;">
-                        <div class="capability-flip-inner">
-                            <div class="capability-card-face capability-card-front">
-                                <span class="capability-card-index">02 Segmentierung & Content</span>
-                                <h3>Relevanz erhöhen</h3>
-                                <p>Kontakte erhalten Inhalte, die zu Interesse, Bedarf und Kaufphase passen.</p>
-                                <span class="capability-card-brief">Damit weniger Versand mehr Resonanz pro Kontakt erzeugt.</span>
-                                <div class="capability-card-action"><span>Details ansehen</span><i data-lucide="arrow-right" class="lucide" aria-hidden="true"></i></div>
-                            </div>
-                            <div class="capability-card-face capability-card-back">
-                                <h3>Was dahinter steckt</h3>
-                                <ul>
-                                    <li>Zielgruppen- und Datenlogik sauber ordnen</li>
-                                    <li>Themen, Angebote und CTAs nach Segmenten strukturieren</li>
-                                    <li>Listenqualität und Zustellbarkeit im Blick behalten</li>
-                                </ul>
-                                <span class="capability-card-result">Ergebnis: präzisere Kommunikation.</span>
-                            </div>
-                        </div>
-                    </div>
+                    <article class="capability-card animate-on-scroll" style="animation-delay: 0.05s;">
+                        <span class="capability-card-index">02 · Segmentierung & Content</span>
+                        <h3>Relevanz erhöhen</h3>
+                        <p>Kontakte erhalten Inhalte, die zu Interesse, Bedarf und Kaufphase passen, damit weniger Versand mehr Resonanz pro Kontakt erzeugt.</p>
+                        <ul class="capability-card-list">
+                            <li><i data-lucide="check" class="lucide" aria-hidden="true"></i><span>Zielgruppen- und Datenlogik sauber ordnen</span></li>
+                            <li><i data-lucide="check" class="lucide" aria-hidden="true"></i><span>Themen, Angebote und CTAs nach Segmenten strukturieren</span></li>
+                            <li><i data-lucide="check" class="lucide" aria-hidden="true"></i><span>Listenqualität und Zustellbarkeit im Blick behalten</span></li>
+                        </ul>
+                        <p class="capability-card-result"><span>Ergebnis</span>Präzisere Kommunikation je Kontakt.</p>
+                    </article>
 
-                    <div role="button" tabindex="0" class="capability-flip-card animate-on-scroll" aria-pressed="false" aria-label="Details zu Automationen und Journeys anzeigen" style="animation-delay: 0.10s;">
-                        <div class="capability-flip-inner">
-                            <div class="capability-card-face capability-card-front">
-                                <span class="capability-card-index">03 Automationen & Journeys</span>
-                                <h3>Beziehungen entwickeln</h3>
-                                <p>Welcome, Nurturing und Reaktivierung laufen dauerhaft im Hintergrund.</p>
-                                <span class="capability-card-brief">Damit Interesse Schritt für Schritt zu Kundenbindung wird.</span>
-                                <div class="capability-card-action"><span>Details ansehen</span><i data-lucide="arrow-right" class="lucide" aria-hidden="true"></i></div>
-                            </div>
-                            <div class="capability-card-face capability-card-back">
-                                <h3>Was dahinter steckt</h3>
-                                <ul>
-                                    <li>Willkommens- und Lead-Nurturing-Strecken planen</li>
-                                    <li>Reaktivierung und Nachfasslogik einrichten</li>
-                                    <li>Übergaben an Vertrieb oder Beratung vorbereiten</li>
-                                </ul>
-                                <span class="capability-card-result">Ergebnis: verlässliche Kommunikation.</span>
-                            </div>
-                        </div>
-                    </div>
+                    <article class="capability-card animate-on-scroll" style="animation-delay: 0.10s;">
+                        <span class="capability-card-index">03 · Automationen & Journeys</span>
+                        <h3>Beziehungen entwickeln</h3>
+                        <p>Welcome, Nurturing und Reaktivierung laufen dauerhaft im Hintergrund, damit Interesse Schritt für Schritt zu Kundenbindung wird.</p>
+                        <ul class="capability-card-list">
+                            <li><i data-lucide="check" class="lucide" aria-hidden="true"></i><span>Willkommens- und Lead-Nurturing-Strecken planen</span></li>
+                            <li><i data-lucide="check" class="lucide" aria-hidden="true"></i><span>Reaktivierung und Nachfasslogik einrichten</span></li>
+                            <li><i data-lucide="check" class="lucide" aria-hidden="true"></i><span>Übergaben an Vertrieb oder Beratung vorbereiten</span></li>
+                        </ul>
+                        <p class="capability-card-result"><span>Ergebnis</span>Verlässliche Kommunikation, die skaliert.</p>
+                    </article>
 
-                    <div role="button" tabindex="0" class="capability-flip-card animate-on-scroll" aria-pressed="false" aria-label="Details zu Testing und Reporting anzeigen" style="animation-delay: 0.15s;">
-                        <div class="capability-flip-inner">
-                            <div class="capability-card-face capability-card-front">
-                                <span class="capability-card-index">04 Testing & Reporting</span>
-                                <h3>Wirkung messen</h3>
-                                <p>Tests, Conversion und Umsatzbeitrag zeigen, was wirklich Fortschritt bringt.</p>
-                                <span class="capability-card-brief">Damit Optimierung sichtbar, vergleichbar und wiederholbar wird.</span>
-                                <div class="capability-card-action"><span>Details ansehen</span><i data-lucide="arrow-right" class="lucide" aria-hidden="true"></i></div>
-                            </div>
-                            <div class="capability-card-face capability-card-back">
-                                <h3>Was dahinter steckt</h3>
-                                <ul>
-                                    <li>Betreff, Inhalt, Segment und Angebot gezielt testen</li>
-                                    <li>Conversion, Listenqualität und Umsatzbeitrag einordnen</li>
-                                    <li>Reporting in konkrete nächste Maßnahmen übersetzen</li>
-                                </ul>
-                                <span class="capability-card-result">Ergebnis: ein Kanal, der messbar lernt.</span>
-                            </div>
-                        </div>
-                    </div>
+                    <article class="capability-card animate-on-scroll" style="animation-delay: 0.15s;">
+                        <span class="capability-card-index">04 · Testing & Reporting</span>
+                        <h3>Wirkung messen</h3>
+                        <p>Tests, Conversion und Umsatzbeitrag zeigen, was wirklich Fortschritt bringt, damit Optimierung sichtbar und wiederholbar wird.</p>
+                        <ul class="capability-card-list">
+                            <li><i data-lucide="check" class="lucide" aria-hidden="true"></i><span>Betreff, Inhalt, Segment und Angebot gezielt testen</span></li>
+                            <li><i data-lucide="check" class="lucide" aria-hidden="true"></i><span>Conversion, Listenqualität und Umsatzbeitrag einordnen</span></li>
+                            <li><i data-lucide="check" class="lucide" aria-hidden="true"></i><span>Reporting in konkrete nächste Maßnahmen übersetzen</span></li>
+                        </ul>
+                        <p class="capability-card-result"><span>Ergebnis</span>Ein Kanal, der messbar lernt.</p>
+                    </article>
                 </div>
             </div>
         </div>
@@ -2133,8 +1962,8 @@
                     <p class="engagement-lead">Nicht jedes Unternehmen braucht sofort die große Betreuung. Entscheidend ist, ob Sie zuerst Klarheit, Umsetzung oder kontinuierliche Optimierung brauchen.</p>
                 </div>
                 <div class="engagement-note">
-                    <strong>Launch-Konditionen.</strong>
-                    Die Preise gelten für die ersten 5 Projekte und sind bewusst schlank kalkuliert. Alle Beträge verstehen sich netto zzgl. MwSt. und externer Toolkosten.
+                    <strong>Transparente Pakete.</strong>
+                    Jedes Paket ist ein klar umrissener Schritt mit definiertem Ergebnis, Sie wissen vorab, was Sie bekommen. Alle Beträge verstehen sich netto zzgl. MwSt. und externer Toolkosten.
                 </div>
             </div>
 
@@ -2189,7 +2018,7 @@
             </div>
 
             <div class="engagement-bottom animate-on-scroll">
-                <p><strong>Unsicher, welcher Einstieg passt?</strong> In der Potenzialanalyse klären wir, welcher Launch-Einstieg wirtschaftlich sinnvoll ist. Die Konditionen gelten für die ersten 5 Projekte, jeweils zzgl. gesetzlicher MwSt. und externer Toolkosten.</p>
+                <p><strong>Unsicher, welcher Einstieg passt?</strong> In der Potenzialanalyse klären wir gemeinsam, welcher Schritt für Ihr Unternehmen wirtschaftlich am sinnvollsten ist, jeweils zzgl. gesetzlicher MwSt. und externer Toolkosten.</p>
                 <a href="#contact" class="btn-primary-custom">Potenzialanalyse anfragen</a>
             </div>
         </div>
@@ -2689,22 +2518,6 @@ window.addEventListener('scroll', function () {
             generalObserver.observe(element);
         });
 
-
-        document.querySelectorAll('.capability-flip-card').forEach(card => {
-            const toggleCapabilityCard = () => {
-                const isFlipped = card.classList.toggle('is-flipped');
-                card.setAttribute('aria-pressed', String(isFlipped));
-            };
-
-            card.addEventListener('click', toggleCapabilityCard);
-            card.addEventListener('keydown', (event) => {
-                if (event.key === 'Enter' || event.key === ' ') {
-                    event.preventDefault();
-                    toggleCapabilityCard();
-                }
-            });
-        });
-
         // Kontaktformular Validierung und Modal
         const contactForm = document.getElementById('contact-form');
         const successModal = document.getElementById('success-modal');
@@ -2900,17 +2713,6 @@ window.addEventListener('scroll', function () {
                 renderLocalIcons();
             });
         });
-        // Parallax Effekt für Video
-window.addEventListener('scroll', function() {
-    const video = document.getElementById('parallaxVideo');
-    if (!video) {
-        return;
-    }
-    const scrolled = window.pageYOffset;
-    // Video bewegt sich langsamer als der Rest
-    video.style.transform = `translate(-50%, ${scrolled * 0.4}px)`; 
-});
-
     </script>
 </body>
 </html>

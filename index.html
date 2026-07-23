@@ -855,6 +855,7 @@
         .capability-card-grid {
             display: grid;
             grid-template-columns: repeat(2, minmax(0, 1fr));
+            grid-auto-rows: 1fr;
             gap: 1rem;
         }
         .capability-card {
@@ -902,47 +903,7 @@
         .capability-card > p {
             color: var(--color-text-body);
             line-height: 1.6;
-            margin: 0 0 1.1rem;
-        }
-        .capability-card-list {
-            display: grid;
-            gap: 0.6rem;
-            margin: 0 0 1.2rem;
-            padding: 0;
-            list-style: none;
-        }
-        .capability-card-list li {
-            display: flex;
-            align-items: flex-start;
-            gap: 0.6rem;
-            color: var(--color-text-body);
-            line-height: 1.5;
-            font-size: 0.96rem;
-        }
-        .capability-card-list .lucide {
-            flex: 0 0 1rem;
-            width: 1rem;
-            height: 1rem;
-            margin-top: 0.22rem;
-            color: var(--color-accent-red);
-        }
-        .capability-card-result {
-            margin-top: auto;
-            padding-top: 0.95rem;
-            border-top: 1px solid #E7EBF0;
-            color: var(--color-text-heading);
-            font-weight: 700;
-            font-size: 0.95rem;
-            line-height: 1.4;
-        }
-        .capability-card-result span {
-            display: block;
-            color: var(--color-secondary-blue);
-            font-size: 0.72rem;
-            font-weight: 800;
-            letter-spacing: 0.04em;
-            text-transform: uppercase;
-            margin-bottom: 0.2rem;
+            margin: 0;
         }
         @media (max-width: 900px) {
             .capability-card-grid {
@@ -1903,49 +1864,25 @@
                     <article class="capability-card animate-on-scroll" style="animation-delay: 0.00s;">
                         <span class="capability-card-index">01 · Strategie & Potenzial</span>
                         <h3>Hebel finden</h3>
-                        <p>Wir klären Status quo, Zielgruppen und den ersten wirksamen Schritt, damit aus vielen Ideen klare Priorität wird.</p>
-                        <ul class="capability-card-list">
-                            <li><i data-lucide="check" class="lucide" aria-hidden="true"></i><span>Ziele, Zielgruppen und Angebot logisch verbinden</span></li>
-                            <li><i data-lucide="check" class="lucide" aria-hidden="true"></i><span>Liste, Kampagnen, Tool und Kennzahlen bewerten</span></li>
-                            <li><i data-lucide="check" class="lucide" aria-hidden="true"></i><span>Prioritäten nach Wirkung, Aufwand und Risiko setzen</span></li>
-                        </ul>
-                        <p class="capability-card-result"><span>Ergebnis</span>Chancenkarte statt Aktionismus.</p>
+                        <p>Status quo, Zielgruppen und der erste wirksame Schritt – klar priorisiert statt Aktionismus.</p>
                     </article>
 
                     <article class="capability-card animate-on-scroll" style="animation-delay: 0.05s;">
                         <span class="capability-card-index">02 · Segmentierung & Content</span>
                         <h3>Relevanz erhöhen</h3>
-                        <p>Kontakte erhalten Inhalte, die zu Interesse, Bedarf und Kaufphase passen, damit weniger Versand mehr Resonanz pro Kontakt erzeugt.</p>
-                        <ul class="capability-card-list">
-                            <li><i data-lucide="check" class="lucide" aria-hidden="true"></i><span>Zielgruppen- und Datenlogik sauber ordnen</span></li>
-                            <li><i data-lucide="check" class="lucide" aria-hidden="true"></i><span>Themen, Angebote und CTAs nach Segmenten strukturieren</span></li>
-                            <li><i data-lucide="check" class="lucide" aria-hidden="true"></i><span>Listenqualität und Zustellbarkeit im Blick behalten</span></li>
-                        </ul>
-                        <p class="capability-card-result"><span>Ergebnis</span>Präzisere Kommunikation je Kontakt.</p>
+                        <p>Inhalte, die zu Interesse, Bedarf und Kaufphase passen – mehr Resonanz pro Kontakt.</p>
                     </article>
 
                     <article class="capability-card animate-on-scroll" style="animation-delay: 0.10s;">
                         <span class="capability-card-index">03 · Automationen & Journeys</span>
                         <h3>Beziehungen entwickeln</h3>
-                        <p>Welcome, Nurturing und Reaktivierung laufen dauerhaft im Hintergrund, damit Interesse Schritt für Schritt zu Kundenbindung wird.</p>
-                        <ul class="capability-card-list">
-                            <li><i data-lucide="check" class="lucide" aria-hidden="true"></i><span>Willkommens- und Lead-Nurturing-Strecken planen</span></li>
-                            <li><i data-lucide="check" class="lucide" aria-hidden="true"></i><span>Reaktivierung und Nachfasslogik einrichten</span></li>
-                            <li><i data-lucide="check" class="lucide" aria-hidden="true"></i><span>Übergaben an Vertrieb oder Beratung vorbereiten</span></li>
-                        </ul>
-                        <p class="capability-card-result"><span>Ergebnis</span>Verlässliche Kommunikation, die skaliert.</p>
+                        <p>Welcome, Nurturing und Reaktivierung – dauerhaft im Hintergrund, damit aus Interesse Kundenbindung wird.</p>
                     </article>
 
                     <article class="capability-card animate-on-scroll" style="animation-delay: 0.15s;">
                         <span class="capability-card-index">04 · Testing & Reporting</span>
                         <h3>Wirkung messen</h3>
-                        <p>Tests, Conversion und Umsatzbeitrag zeigen, was wirklich Fortschritt bringt, damit Optimierung sichtbar und wiederholbar wird.</p>
-                        <ul class="capability-card-list">
-                            <li><i data-lucide="check" class="lucide" aria-hidden="true"></i><span>Betreff, Inhalt, Segment und Angebot gezielt testen</span></li>
-                            <li><i data-lucide="check" class="lucide" aria-hidden="true"></i><span>Conversion, Listenqualität und Umsatzbeitrag einordnen</span></li>
-                            <li><i data-lucide="check" class="lucide" aria-hidden="true"></i><span>Reporting in konkrete nächste Maßnahmen übersetzen</span></li>
-                        </ul>
-                        <p class="capability-card-result"><span>Ergebnis</span>Ein Kanal, der messbar lernt.</p>
+                        <p>Tests, Conversion und Umsatzbeitrag zeigen, was wirklich wirkt – sichtbar und wiederholbar.</p>
                     </article>
                 </div>
             </div>
@@ -2030,7 +1967,7 @@
             <div class="process-header animate-on-scroll">
                 <span class="section-kicker">Unser Vorgehen</span>
                 <h2 class="process-title">Wie wir arbeiten: Vom Newsletter zum Wachstumssystem</h2>
-                <p class="process-lead">Wir bauen kein einzelnes Mailing. Wir verbinden Strategie, Daten und Umsetzung zu einem E-Mail-Marketing-System, das Kundenbindung, Leads und Umsatzbeitrag messbar verbessert.</p>
+                <p class="process-lead">Kein einzelnes Mailing, sondern ein System aus Strategie, Daten und Umsetzung, das messbar auf Kundenbindung, Leads und Umsatzbeitrag einzahlt.</p>
             </div>
 
             <div class="process-framework" aria-label="AcumenMail Beratungsprozess">

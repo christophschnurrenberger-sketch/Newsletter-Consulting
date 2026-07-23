@@ -17,8 +17,6 @@
     <!-- Google Search Console: fügen Sie hier Ihren Verifizierungs-Code ein und entfernen Sie die Kommentarzeichen
     <meta name="google-site-verification" content="IHR_VERIFIZIERUNGS_CODE"> -->
 
-    <link rel="preconnect" href="https://formspree.io" crossorigin>
-
     <meta property="og:locale" content="de_DE">
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="AcumenMail">
@@ -2190,12 +2188,15 @@
                 </aside>
 
                 <div class="contact-card animate-on-scroll">
-                    <form id="contact-form" action="https://formspree.io/f/xykqpbjn" method="POST" accept-charset="UTF-8" class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <input type="hidden" name="_subject" value="Neue Potenzialanalyse-Anfrage ueber AcumenMail">
+                    <form id="contact-form" action="kontakt.php" method="POST" accept-charset="UTF-8" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Spam-Schutz: Honeypot + serverseitig geprüftes Captcha + Zeit-Check -->
                     <div class="sr-only-field" aria-hidden="true">
                         <label for="website">Website</label>
                         <input type="text" id="website" name="_gotcha" tabindex="-1" autocomplete="off">
                     </div>
+                    <input type="hidden" name="captcha_a" id="captcha_a">
+                    <input type="hidden" name="captcha_b" id="captcha_b">
+                    <input type="hidden" name="form_time" id="form_time">
                     <div class="md:col-span-1">
                         <label for="name" class="block text-color-text-body text-sm font-bold mb-2">Name:</label>
                         <input type="text" id="name" name="name" placeholder="Ihr Name" autocomplete="name" required
@@ -2236,7 +2237,7 @@
                                data-constraints="@Required @Captcha">
                         <p class="text-red-500 text-xs italic mt-1 hidden" data-error-for="captcha"></p>
                     </div>
-                    <p class="md:col-span-2 text-xs text-color-text-body leading-tight">Mit dem Absenden verarbeiten wir Ihre Angaben zur Bearbeitung Ihrer Anfrage. Die Übermittlung erfolgt über Formspree. Details stehen in der <a href="Datenschutz.html" class="hover:text-color-accent-red transition-colors duration-300">Datenschutzerklärung</a>.</p>
+                    <p class="md:col-span-2 text-xs text-color-text-body leading-tight">Mit dem Absenden verarbeiten wir Ihre Angaben ausschließlich zur Bearbeitung Ihrer Anfrage. Der Versand erfolgt direkt über unseren eigenen Server – es werden keine Daten an Dritte weitergegeben. Details stehen in der <a href="Datenschutz.html" class="hover:text-color-accent-red transition-colors duration-300">Datenschutzerklärung</a>.</p>
                     <p id="form-status" class="md:col-span-2 text-sm text-red-500 hidden" role="alert" aria-live="polite"></p>
                     <div class="md:col-span-2 text-right">
                         <button type="submit" id="contact-submit-button"
@@ -2500,9 +2501,21 @@ window.addEventListener('scroll', function () {
                 captchaQuestion.textContent = `${firstNumber} + ${secondNumber}`;
             }
 
+            // Werte für die serverseitige Prüfung (kontakt.php) bereitstellen
+            const aField = document.getElementById('captcha_a');
+            const bField = document.getElementById('captcha_b');
+            if (aField) { aField.value = firstNumber; }
+            if (bField) { bField.value = secondNumber; }
+
             if (captchaInput) {
                 captchaInput.value = '';
             }
+        }
+
+        // Zeitstempel für den serverseitigen Spam-/Zeit-Check setzen
+        const formTimeField = document.getElementById('form_time');
+        if (formTimeField) {
+            formTimeField.value = Date.now();
         }
 
         function validateField(field) {
@@ -2611,7 +2624,7 @@ window.addEventListener('scroll', function () {
                         errorMessage = data.errors.map(error => error.message).join(' ');
                     }
                 } catch (error) {
-                    // Formspree hat keine lesbare Fehlermeldung geliefert.
+                    // Server hat keine lesbare Fehlermeldung geliefert.
                 }
 
                 showFormStatus(errorMessage);

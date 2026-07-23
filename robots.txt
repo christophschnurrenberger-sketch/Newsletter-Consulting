@@ -1,0 +1,6 @@
+# robots.txt für AcumenMail
+# Domain www.acumenmail.de ggf. durch Ihre echte Domain ersetzen
+User-agent: *
+Allow: /
+
+Sitemap: https://www.acumenmail.de/sitemap.xml

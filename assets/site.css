@@ -1705,3 +1705,61 @@
         @media (max-width: 640px) {
             .legal-toc ol { columns: 1; }
         }
+
+        /* =========================================================
+           Telefon-Spoiler (Klick zum Anzeigen) + Kopierschutz
+           ========================================================= */
+        .phone-spoiler {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            padding: 0.15rem 0.6rem;
+            font: inherit;
+            font-size: 0.92rem;
+            font-weight: 600;
+            color: var(--color-accent-red);
+            background-color: rgba(200, 16, 46, 0.08);
+            border: 1px solid rgba(200, 16, 46, 0.3);
+            border-radius: 0.35rem;
+            cursor: pointer;
+            transition: background-color 0.2s ease, border-color 0.2s ease;
+        }
+        .phone-spoiler:hover,
+        .phone-spoiler:focus-visible {
+            background-color: rgba(200, 16, 46, 0.14);
+            border-color: rgba(200, 16, 46, 0.5);
+        }
+        .phone-spoiler::before {
+            content: '\1F441';   /* Auge */
+            font-size: 0.9em;
+            line-height: 1;
+        }
+        .phone-spoiler.is-revealed {
+            cursor: default;
+        }
+        .phone-spoiler.is-revealed::before {
+            content: '\1F4DE';   /* Telefonhörer */
+        }
+        .phone-spoiler.is-revealed a {
+            color: var(--color-accent-red);
+            text-decoration: none;
+        }
+
+        /* Kopierschutz für Rechtsseiten (nur Deterrent gegen Gelegenheits-Kopieren) */
+        body.no-copy,
+        body.no-copy .legal-content {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+        /* Interaktive Elemente bleiben nutzbar */
+        body.no-copy a,
+        body.no-copy button,
+        body.no-copy input,
+        body.no-copy textarea {
+            -webkit-user-select: auto;
+            -moz-user-select: auto;
+            -ms-user-select: auto;
+            user-select: auto;
+        }

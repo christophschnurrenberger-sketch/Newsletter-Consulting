@@ -50,4 +50,34 @@
     if (yearEl) {
         yearEl.textContent = new Date().getFullYear();
     }
+
+    // Telefon-Spoiler: Nummer erst auf Klick anzeigen (steht nicht im Klartext im HTML)
+    document.querySelectorAll('.phone-spoiler').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            if (btn.classList.contains('is-revealed')) { return; }
+            var tel, disp;
+            try {
+                tel = atob(btn.getAttribute('data-tel') || '');
+                disp = atob(btn.getAttribute('data-display') || '');
+            } catch (e) { return; }
+            if (!tel || !disp) { return; }
+            var link = document.createElement('a');
+            link.href = 'tel:' + tel;
+            link.textContent = disp;
+            btn.textContent = '';
+            btn.appendChild(link);
+            btn.classList.add('is-revealed');
+        });
+    });
+
+    // Kopierschutz auf Rechtsseiten (nur Deterrent): Kopieren/Ausschneiden/Kontextmenü unterbinden
+    if (document.body.classList.contains('no-copy')) {
+        ['copy', 'cut', 'contextmenu', 'dragstart'].forEach(function (evt) {
+            document.addEventListener(evt, function (e) {
+                // Interaktive Elemente (Links, Buttons, Formularfelder) nicht blockieren
+                if (e.target.closest('a, button, input, textarea')) { return; }
+                e.preventDefault();
+            });
+        });
+    }
 })();

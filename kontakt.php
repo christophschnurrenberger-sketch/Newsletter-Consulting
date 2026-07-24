@@ -16,11 +16,11 @@
 
 $CONFIG = [
     // Wohin sollen die Anfragen gehen?
-    'recipient'    => 'anfragen@ihre-domain.de',      // <-- IHRE Empfänger-Adresse
-    // Absenderadresse auf IHRER Domain (für SPF/DKIM), NICHT die des Besuchers
-    'from_address' => 'website@ihre-domain.de',       // <-- Adresse auf Ihrer Domain
-    'from_name'    => 'AcumenMail Website',
-    'subject'      => 'Neue Potenzialanalyse-Anfrage über AcumenMail',
+    'recipient'    => 'info@newsletter-consulting.de',   // Empfänger der Anfragen
+    // Absenderadresse auf der eigenen Domain (für SPF/DKIM), NICHT die des Besuchers
+    'from_address' => 'info@newsletter-consulting.de',   // muss ein echtes Postfach bei IONOS sein
+    'from_name'    => 'Newsletter-Consulting Website',
+    'subject'      => 'Neue Potenzialanalyse-Anfrage über newsletter-consulting.de',
     // Mindestsekunden zwischen Seitenaufruf und Absenden (Spam-Schutz)
     'min_seconds'  => 3,
 ];

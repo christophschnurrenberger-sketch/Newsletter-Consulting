@@ -1744,22 +1744,3 @@
             color: var(--color-accent-red);
             text-decoration: none;
         }
-
-        /* Kopierschutz für Rechtsseiten (nur Deterrent gegen Gelegenheits-Kopieren) */
-        body.no-copy,
-        body.no-copy .legal-content {
-            -webkit-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
-            user-select: none;
-        }
-        /* Interaktive Elemente bleiben nutzbar */
-        body.no-copy a,
-        body.no-copy button,
-        body.no-copy input,
-        body.no-copy textarea {
-            -webkit-user-select: auto;
-            -moz-user-select: auto;
-            -ms-user-select: auto;
-            user-select: auto;
-        }

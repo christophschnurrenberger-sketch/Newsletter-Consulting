@@ -69,15 +69,4 @@
             btn.classList.add('is-revealed');
         });
     });
-
-    // Kopierschutz auf Rechtsseiten (nur Deterrent): Kopieren/Ausschneiden/Kontextmenü unterbinden
-    if (document.body.classList.contains('no-copy')) {
-        ['copy', 'cut', 'contextmenu', 'dragstart'].forEach(function (evt) {
-            document.addEventListener(evt, function (e) {
-                // Interaktive Elemente (Links, Buttons, Formularfelder) nicht blockieren
-                if (e.target.closest('a, button, input, textarea')) { return; }
-                e.preventDefault();
-            });
-        });
-    }
 })();

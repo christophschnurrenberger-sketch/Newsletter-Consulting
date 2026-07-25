@@ -23,6 +23,17 @@ $CONFIG = [
     'subject'      => 'Neue Potenzialanalyse-Anfrage über newsletter-consulting.de',
     // Mindestsekunden zwischen Seitenaufruf und Absenden (Spam-Schutz)
     'min_seconds'  => 3,
+
+    // --- Automatische Bestätigungs-/Willkommensmail an den Interessenten ---
+    'send_confirmation' => true,   // auf false setzen, um die Bestätigungsmail abzuschalten
+    'confirm_subject'   => 'Vielen Dank für Ihre Anfrage – so geht es weiter',
+    'brand_name'        => 'AcumenMail',
+    'owner_name'        => 'Christoph Schnurrenberger',
+    'contact_phone'     => '0175 2778902',
+    'contact_email'     => 'info@newsletter-consulting.de',
+    'website'           => 'www.newsletter-consulting.de',
+    // Impressum-Kurzangaben für den E-Mail-Footer (geschäftliche Pflichtangaben)
+    'imprint'           => 'Christoph Schnurrenberger · Birkenstr. 10 · 87734 Benningen · Deutschland',
 ];
 
 header('Content-Type: application/json; charset=utf-8');
@@ -52,6 +63,119 @@ function silent_ok(): void {
     http_response_code(200);
     echo json_encode(['ok' => true]);
     exit;
+}
+
+/**
+ * Sendet eine gestaltete Bestätigungs-/Willkommensmail (HTML + Text) an den
+ * Interessenten. Reine Service-Mail (keine Werbung) – DSGVO/UWG-konform.
+ * Best effort: ein Fehler hier beeinflusst die Formular-Antwort nicht.
+ */
+function send_confirmation(string $toEmail, string $name, array $CONFIG): void {
+    $brand   = htmlspecialchars($CONFIG['brand_name'], ENT_QUOTES, 'UTF-8');
+    $owner   = htmlspecialchars($CONFIG['owner_name'], ENT_QUOTES, 'UTF-8');
+    $phone   = htmlspecialchars($CONFIG['contact_phone'], ENT_QUOTES, 'UTF-8');
+    $mail    = htmlspecialchars($CONFIG['contact_email'], ENT_QUOTES, 'UTF-8');
+    $web     = htmlspecialchars($CONFIG['website'], ENT_QUOTES, 'UTF-8');
+    $imprint = htmlspecialchars($CONFIG['imprint'], ENT_QUOTES, 'UTF-8');
+    $vorname = $name !== '' ? preg_split('/\s+/', trim($name))[0] : '';
+    $anrede  = $vorname !== '' ? 'Hallo ' . htmlspecialchars($vorname, ENT_QUOTES, 'UTF-8') : 'Hallo';
+
+    $navy = '#14243A';
+    $red  = '#C8102E';
+
+    // --- HTML-Teil (tabellenbasiert für gute Client-Kompatibilität) ---
+    $html = '<!DOCTYPE html><html lang="de"><head><meta charset="utf-8">'
+        . '<meta name="viewport" content="width=device-width,initial-scale=1"></head>'
+        . '<body style="margin:0;padding:0;background-color:#F6F8FA;">'
+        . '<span style="display:none!important;opacity:0;color:#F6F8FA;font-size:1px;line-height:1px;max-height:0;max-width:0;overflow:hidden;">Ihre Anfrage ist bei uns eingegangen – wir melden uns innerhalb von 24 Stunden (werktags).</span>'
+        . '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#F6F8FA;padding:24px 12px;">'
+        . '<tr><td align="center">'
+        . '<table role="presentation" width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;background-color:#ffffff;border-radius:10px;overflow:hidden;border:1px solid #E0E6ED;">'
+        // Header
+        . '<tr><td style="background-color:' . $navy . ';padding:24px 32px;">'
+        . '<table role="presentation" cellpadding="0" cellspacing="0"><tr>'
+        . '<td style="background-color:#ffffff;color:' . $navy . ';width:36px;height:36px;border-radius:7px;font-family:Arial,Helvetica,sans-serif;font-weight:bold;font-size:18px;text-align:center;line-height:36px;">A</td>'
+        . '<td style="padding-left:12px;color:#ffffff;font-family:Arial,Helvetica,sans-serif;font-weight:bold;font-size:18px;">' . $brand . '</td>'
+        . '</tr></table></td></tr>'
+        // Body
+        . '<tr><td style="padding:32px;font-family:Arial,Helvetica,sans-serif;color:#4A5568;font-size:15px;line-height:1.6;">'
+        . '<p style="margin:0 0 16px;font-size:20px;font-weight:bold;color:' . $navy . ';">Vielen Dank für Ihre Anfrage!</p>'
+        . '<p style="margin:0 0 16px;">' . $anrede . ',</p>'
+        . '<p style="margin:0 0 16px;">vielen Dank für Ihre Nachricht an ' . $brand . '. Ihre Anfrage ist bei uns eingegangen – ich melde mich in der Regel <strong style="color:' . $navy . ';">innerhalb von 24 Stunden</strong> (werktags) persönlich bei Ihnen.</p>'
+        . '<p style="margin:24px 0 12px;font-weight:bold;color:' . $navy . ';">So geht es weiter:</p>'
+        . '<table role="presentation" width="100%" cellpadding="0" cellspacing="0">'
+        . confirmation_step('1', 'Prüfung', 'Ich sehe mir Ihre Anfrage und Ihre Ausgangslage in Ruhe an.', $navy, $red)
+        . confirmation_step('2', 'Kennenlernen', 'In einem kurzen, unverbindlichen Gespräch klären wir Ziele und Potenziale.', $navy, $red)
+        . confirmation_step('3', 'Klare Empfehlung', 'Sie erhalten eine konkrete Einschätzung der sinnvollen nächsten Schritte.', $navy, $red)
+        . '</table>'
+        . '<p style="margin:24px 0 4px;">Wenn es dringend ist, erreichen Sie mich direkt:</p>'
+        . '<p style="margin:0 0 24px;">Telefon: <a href="tel:' . preg_replace('/[^0-9+]/', '', $CONFIG['contact_phone']) . '" style="color:' . $red . ';text-decoration:none;">' . $phone . '</a><br>'
+        . 'E-Mail: <a href="mailto:' . $mail . '" style="color:' . $red . ';text-decoration:none;">' . $mail . '</a></p>'
+        . '<p style="margin:0;">Herzliche Grüße<br><strong style="color:' . $navy . ';">' . $owner . '</strong><br>' . $brand . '</p>'
+        . '</td></tr>'
+        // Footer
+        . '<tr><td style="background-color:#F6F8FA;padding:20px 32px;border-top:1px solid #E0E6ED;font-family:Arial,Helvetica,sans-serif;color:#8A95A5;font-size:12px;line-height:1.6;">'
+        . 'Diese E-Mail bestätigt den Eingang Ihrer Anfrage über ' . $web . '. Sie haben diese Nachricht erhalten, weil Sie uns über das Kontaktformular geschrieben haben.<br><br>'
+        . $imprint . '<br>' . $mail . ' · ' . $web
+        . '</td></tr>'
+        . '</table></td></tr></table></body></html>';
+
+    // --- Text-Teil (Fallback) ---
+    $text = "$anrede,\r\n\r\n"
+        . "vielen Dank für Ihre Nachricht an {$CONFIG['brand_name']}. Ihre Anfrage ist bei uns eingegangen – "
+        . "ich melde mich in der Regel innerhalb von 24 Stunden (werktags) persönlich bei Ihnen.\r\n\r\n"
+        . "So geht es weiter:\r\n"
+        . "1. Prüfung – Ich sehe mir Ihre Anfrage und Ausgangslage an.\r\n"
+        . "2. Kennenlernen – Kurzes, unverbindliches Gespräch zu Zielen und Potenzialen.\r\n"
+        . "3. Klare Empfehlung – Konkrete Einschätzung der nächsten Schritte.\r\n\r\n"
+        . "Wenn es dringend ist, erreichen Sie mich direkt:\r\n"
+        . "Telefon: {$CONFIG['contact_phone']}\r\n"
+        . "E-Mail: {$CONFIG['contact_email']}\r\n\r\n"
+        . "Herzliche Grüße\r\n{$CONFIG['owner_name']}\r\n{$CONFIG['brand_name']}\r\n\r\n"
+        . "-- \r\n"
+        . "Diese E-Mail bestätigt den Eingang Ihrer Anfrage über {$CONFIG['website']}.\r\n"
+        . "{$CONFIG['imprint']}\r\n{$CONFIG['contact_email']} · {$CONFIG['website']}\r\n";
+
+    $fromAddr = clean_header($CONFIG['from_address']);
+    $fromName = clean_header($CONFIG['brand_name']);
+    $subject  = clean_header($CONFIG['confirm_subject']);
+    $boundary = '=_acm_' . md5(uniqid('', true));
+
+    $headers   = [];
+    $headers[] = 'From: ' . $fromName . ' <' . $fromAddr . '>';
+    $headers[] = 'Reply-To: ' . $fromName . ' <' . $fromAddr . '>';
+    $headers[] = 'MIME-Version: 1.0';
+    $headers[] = 'Content-Type: multipart/alternative; boundary="' . $boundary . '"';
+    $headers[] = 'X-Mailer: AcumenMail-Form';
+    $headers[] = 'Auto-Submitted: auto-replied';
+
+    $mimeBody =
+        "--$boundary\r\n"
+        . "Content-Type: text/plain; charset=UTF-8\r\n"
+        . "Content-Transfer-Encoding: base64\r\n\r\n"
+        . chunk_split(base64_encode($text)) . "\r\n"
+        . "--$boundary\r\n"
+        . "Content-Type: text/html; charset=UTF-8\r\n"
+        . "Content-Transfer-Encoding: base64\r\n\r\n"
+        . chunk_split(base64_encode($html)) . "\r\n"
+        . "--$boundary--";
+
+    $encSubject = '=?UTF-8?B?' . base64_encode($subject) . '?=';
+
+    @mail($toEmail, $encSubject, $mimeBody, implode("\r\n", $headers), '-f' . $fromAddr);
+}
+
+// Ein Schritt-Block für die Bestätigungsmail (Nummer + Titel + Text)
+function confirmation_step(string $num, string $title, string $text, string $navy, string $red): string {
+    return '<tr><td style="padding:0 0 14px;">'
+        . '<table role="presentation" cellpadding="0" cellspacing="0" width="100%"><tr>'
+        . '<td width="36" valign="top"><table role="presentation" cellpadding="0" cellspacing="0"><tr>'
+        . '<td style="background-color:' . $red . ';color:#ffffff;width:28px;height:28px;border-radius:6px;font-family:Arial,Helvetica,sans-serif;font-weight:bold;font-size:13px;text-align:center;line-height:28px;">' . $num . '</td>'
+        . '</tr></table></td>'
+        . '<td valign="top" style="padding-left:12px;font-family:Arial,Helvetica,sans-serif;">'
+        . '<span style="font-weight:bold;color:' . $navy . ';font-size:15px;">' . htmlspecialchars($title, ENT_QUOTES, 'UTF-8') . '</span><br>'
+        . '<span style="color:#4A5568;font-size:14px;line-height:1.5;">' . htmlspecialchars($text, ENT_QUOTES, 'UTF-8') . '</span>'
+        . '</td></tr></table></td></tr>';
 }
 
 /* 1) Honeypot: verstecktes Feld – von echten Nutzern nie ausgefüllt */
@@ -150,6 +274,10 @@ $sent = @mail(
 );
 
 if ($sent) {
+    // Bestätigungs-/Willkommensmail an den Interessenten (best effort, reine Service-Mail)
+    if (!empty($CONFIG['send_confirmation'])) {
+        send_confirmation($email, $name, $CONFIG);
+    }
     http_response_code(200);
     echo json_encode(['ok' => true]);
 } else {

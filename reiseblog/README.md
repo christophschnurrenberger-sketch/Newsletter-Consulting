@@ -36,15 +36,25 @@ Einfach `index.html` im Browser öffnen – es ist kein Server nötig.
 5. **Newsletter/Kontakt aktivieren:** Die Formulare sind aktuell Demos. Binde deinen Dienst ein (z. B. Brevo, Mailchimp) oder ein Formular-Backend (z. B. Formspree).
 6. **Domain & Canonical:** `https://www.deine-domain.de/` in allen Dateien durch deine echte Domain ersetzen.
 
-## Neue Reiseziele hinzufügen
-Die 14 Reiseberichte werden aus einer zentralen Datenstruktur erzeugt. Willst du
-ein Ziel ergänzen oder Texte ändern:
-1. `tools/generate.py` öffnen und im Block `D = [ ... ]` einen neuen Eintrag
-   ergänzen (Name, Highlights, Tipps, Empfehlungen usw. – einfach einen
-   bestehenden Eintrag kopieren und anpassen).
+## Neue Reiseziele hinzufügen / Texte ändern
+Die Reiseberichte werden aus einer zentralen Datenstruktur erzeugt – so bleiben
+alle Seiten konsistent. Die Aufteilung:
+- `tools/ziele.py` – **die Inhalte** aller Ziele (Einleitung, Route, Highlights,
+  Kosten, Unterkunft, Fortbewegung, Kulinarik, Reisezeit, Tipps, Packliste, FAQ,
+  Fazit sowie die Amazon-Empfehlungen). Hier änderst du Texte.
+- `tools/generate.py` – **das Layout** (HTML-Vorlage) und die Buchungs-/Affiliate-
+  Boxen (Flug, Hotel, Mietwagen, Touren …) im `BOOK`-Block.
+
+So gehst du vor:
+1. In `tools/ziele.py` einen bestehenden `ZIELE.append({ ... })`-Block kopieren,
+   anpassen und (für die Buchungs-Boxen) in `tools/generate.py` einen `BOOK`-Eintrag
+   mit gleichem `slug` ergänzen.
 2. `python3 tools/generate.py` ausführen. Das erzeugt/aktualisiert alle
-   `reise-*.html`, die Übersicht `reiseziele.html` und `blog.html` automatisch
-   und konsistent.
+   `reise-*.html`, die Übersicht `reiseziele.html` und `blog.html` automatisch.
+
+Jeder Reisebericht enthält: Steckbrief, Route, Highlights, Kostentabelle,
+Unterkunft, Fortbewegung, Kulinarik, Reisezeit, Tipps, Packliste, Buchungs-/
+Affiliate-Boxen, FAQ und Fazit.
 
 ## Affiliate-Hinweis (wichtig)
 Affiliate-Links müssen als Werbung gekennzeichnet sein. Umgesetzt ist bereits:

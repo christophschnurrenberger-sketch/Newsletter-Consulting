@@ -98,6 +98,77 @@ def recbox(tag, title, text):
             f'<h4>{title}</h4><p>{text}</p>'
             f'<a class="btn btn--primary" href="#" rel="sponsored nofollow noopener" target="_blank">Auf Amazon ansehen&nbsp;*</a></div>')
 
+# --- Icons für die Buchungs-Boxen ---
+BICON = {
+ "flug":'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M10 15l-6 2 1-3-4-3 7-1 4-7 2 1-1 6 6 4-1 2-6-3-3 6-2-1z" stroke-linejoin="round"/></svg>',
+ "hotel":'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M3 18V8m0 10h18M3 8h13a5 5 0 015 5v5M3 12h18M7 9.5h3"/></svg>',
+ "auto":'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M5 16l1.5-5A2 2 0 018.4 9.5h7.2a2 2 0 011.9 1.5L19 16M4 16h16v3h-2v-1H6v1H4zM7 13h10"/><circle cx="7.5" cy="16.5" r="1"/><circle cx="16.5" cy="16.5" r="1"/></svg>',
+ "boot":'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 16h16l-2 4H6l-2-4zM6 16V8l6-3 6 3v8M12 5V3"/></svg>',
+ "tour":'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 8l16-4-2 16-5-4-3 3-1-4-5-2 3-3z" stroke-linejoin="round"/></svg>',
+ "schild":'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6l8-3z"/><path d="M9 12l2 2 4-4"/></svg>',
+ "sim":'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M5 3h9l5 5v13a1 1 0 01-1 1H5a1 1 0 01-1-1V4a1 1 0 011-1z"/><rect x="8" y="12" width="8" height="6" rx="1"/></svg>',
+ "zug":'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="6" y="4" width="12" height="13" rx="2"/><path d="M6 11h12M9 21l-2-2m8 2l2-2"/><circle cx="9" cy="14" r="1"/><circle cx="15" cy="14" r="1"/></svg>',
+}
+
+def bcard(icon, title, text, label):
+    return (f'<div class="book-card"><div class="book-ico">{BICON[icon]}</div>'
+            f'<h4>{title}</h4><p>{text}</p>'
+            f'<a class="btn btn--ocean" href="#" rel="sponsored nofollow noopener" target="_blank">{label}&nbsp;*</a></div>')
+
+def booking_section(d):
+    b = BOOK[d["slug"]]
+    cards = []
+    cards.append(bcard("flug","Flüge finden",
+        f'Beste Verbindungen nach {b["apt"]}. Preise vergleichen, Preiswecker setzen und flexibel buchen.',
+        "Flüge vergleichen"))
+    cards.append(bcard("hotel","Hotels &amp; Unterkünfte",
+        f'{b["stay"]} Von günstig bis gehoben – hier findest du die passende Bleibe.',
+        "Unterkünfte finden"))
+    if b["car"]:
+        cards.append(bcard("auto","Mietwagen",
+            f'{b["move"]} Früh buchen und die Anbieter vergleichen lohnt sich.',
+            "Mietwagen vergleichen"))
+    else:
+        cards.append(bcard("boot","Transfer &amp; Fortbewegung", b["move"], "Transfers ansehen"))
+    cards.append(bcard("tour","Touren &amp; Aktivitäten",
+        f'{b["tour"]} Vorab buchen spart Wartezeit und sichert die besten Slots.',
+        "Touren ansehen"))
+    cards.append(bcard("schild","Reiseversicherung",
+        "Auslandskranken- und Reiserücktrittsversicherung – gerade auf Fernreisen unverzichtbar und schon ab wenigen Euro pro Reise.",
+        "Versicherung vergleichen"))
+    if b.get("eu"):
+        cards.append(bcard("zug","Bahn, Fähre &amp; Nahverkehr",
+            "Fähren, Regionalbusse und Bahn vorab buchen – so kommst du entspannt und günstig von A nach B.",
+            "Tickets ansehen"))
+    else:
+        cards.append(bcard("sim","eSIM &amp; mobiles Internet",
+            "Ab der Landung online ohne teures Roaming: eSIM vorab kaufen und sofort startklar sein.",
+            "eSIM sichern"))
+    grid = "\n    ".join(cards)
+    return (f'<div class="book-section">\n'
+            f'  <h2>Reise nach {d["name"]} buchen: meine Empfehlungen</h2>\n'
+            f'  <p class="book-note">Diese Dienste nutze ich selbst für Planung und Buchung. Die mit <strong>*</strong> markierten Links sind Affiliate-Links – buchst du darüber, unterstützt du den Blog ohne Mehrkosten für dich.</p>\n'
+            f'  <div class="book-grid">\n    {grid}\n  </div>\n'
+            f'</div>')
+
+# Buchungs-/Affiliate-Daten pro Ziel
+BOOK = {
+ "seychellen": {"apt":"Mahé (SEZ), meist via Dubai, Abu Dhabi oder Doha","stay":"Guesthouses („Self-Catering“) auf La Digue und Praslin, Resorts auf Mahé.","car":False,"move":"Auf den Inseln bewegst du dich per Fähre (Cat Cocos), Fahrrad auf La Digue und Taxi – ein Mietwagen lohnt nur auf Mahé.","tour":"Inselhopping per Fähre, Schnorcheltrip nach Curieuse und Bootstour zu den Marine-Parks."},
+ "malediven": {"apt":"Malé (MLE)","stay":"Local-Island-Guesthouse (z. B. Maafushi) für kleines Budget oder Resortinsel mit Wasservilla.","car":False,"move":"Der Transfer zur Insel läuft per Speedboot oder Wasserflugzeug – unbedingt vorab mit der Unterkunft buchen.","tour":"Schnorcheltrips zu Mantarochen und Walhaien, Sandbank-Ausflug und Delfin-Tour bei Sonnenuntergang."},
+ "namibia": {"apt":"Windhoek (WDH), oft via Johannesburg oder als Direktflug ab Frankfurt","stay":"Lodges und Campsites entlang der Route – von einfach bis luxuriös.","car":True,"move":"Ein 4x4 (gern mit Dachzelt) ist in Namibia praktisch Pflicht – plane zwei Reserveräder ein.","tour":"Geführte Pirschfahrt im Etosha, Sossusvlei bei Sonnenaufgang und optional eine Ballonfahrt über den Dünen."},
+ "suedafrika": {"apt":"Kapstadt (CPT) oder Johannesburg (JNB)","stay":"Boutique-Hotels und Guesthouses in Kapstadt, Lodges rund um den Krüger.","car":True,"move":"Ein Mietwagen ist ideal für die Garden Route und die Selbstfahrer-Safari – die Straßen sind gut ausgebaut.","tour":"Kap-Halbinsel-Tour, Weintour durch Stellenbosch und geführte Safari im Krüger-Nationalpark."},
+ "dubai": {"apt":"Dubai (DXB)","stay":"Hotels an Marina, Downtown oder Jumeirah Beach – enorme Auswahl in jeder Preisklasse.","car":False,"move":"Metro und Taxi bringen dich günstig überallhin – ein Mietwagen ist für einen Städtetrip meist unnötig.","tour":"Wüstensafari mit Dune Bashing, Burj Khalifa „At the Top“ und Dhow-Dinner-Cruise am Creek."},
+ "thailand": {"apt":"Bangkok (BKK)","stay":"Hostels und Boutique-Hotels in den Städten, Bungalows und Resorts auf den Inseln.","car":False,"move":"Zwischen den Regionen fliegst du günstig inländisch oder fährst mit Nachtzug und Fähre; vor Ort Roller oder Grab-Taxi.","tour":"Kochkurs in Chiang Mai, ethisches Elefanten-Sanctuary und Inselhopping-Bootstour im Süden."},
+ "usa-westkueste": {"apt":"San Francisco (SFO) oder Los Angeles (LAX)","stay":"Motels und Hotels entlang der Route – für Nationalpark-Lodges früh buchen.","car":True,"move":"Der Mietwagen (mit unbegrenzten Meilen) ist das Herzstück dieses Roadtrips – ohne geht hier nichts.","tour":"Alcatraz-Tour, Yosemite-Ausflug und ein Trip an den Grand Canyon ab Las Vegas."},
+ "costa-rica": {"apt":"San José (SJO) oder Liberia (LIR)","stay":"Eco-Lodges im Regenwald und Boutique-Hotels an der Küste.","car":True,"move":"Ein Allrad-Mietwagen bringt dich sicher über die oft holprigen Pisten zu den schönsten Orten.","tour":"Hängebrücken am Arenal, geführte Nachtwanderung und Wildlife-Bootstour in Tortuguero."},
+ "mexiko-yucatan": {"apt":"Cancún (CUN)","stay":"Boutique-Hotels in Mérida und Tulum, Strandhotels an der Riviera Maya.","car":True,"move":"Mit dem Mietwagen erreichst du auch abgelegene, ruhige Cenoten und Ruinen ganz flexibel.","tour":"Chichén Itzá früh am Morgen, Cenoten-Tour und Walhai-Schnorcheln ab Isla Holbox (im Sommer)."},
+ "kreta": {"apt":"Heraklion (HER) oder Chania (CHQ)","stay":"Studios, Boutique-Hotels und Apartments in Chania oder Rethymno.","car":True,"move":"Ein Mietwagen ist auf Kreta fast Pflicht – nur so erreichst du Traumstrände und Bergdörfer entspannt.","tour":"Wanderung durch die Samaria-Schlucht, Bootstour zur Lagune von Balos und Knossos-Führung.","eu":True},
+ "mallorca": {"apt":"Palma (PMI)","stay":"Fincas im Inselinneren, Boutique-Hotels in Palma und Strandhotels an den Buchten.","car":True,"move":"Mit dem Mietwagen erreichst du die versteckten Calas und die Panoramastraßen der Tramuntana.","tour":"Wanderung in der Serra de Tramuntana und Bootstour zu den schönsten Buchten.","eu":True},
+ "sardinien": {"apt":"Olbia (OLB), Cagliari (CAG) oder Alghero (AHO)","stay":"Hotels, Agriturismi und B&Bs entlang der Küste.","car":True,"move":"Die schönsten Buchten liegen am Ende kleiner Küstenstraßen – ein Mietwagen ist Gold wert.","tour":"Bootstour zu den Traumbuchten am Golfo di Orosei und geführtes Schnorcheln.","eu":True},
+ "portugal": {"apt":"Lissabon (LIS), Porto (OPO) oder Faro (FAO)","stay":"Boutique-Hotels in Lissabon und Porto, Strandhotels und Guesthouses an der Algarve.","car":True,"move":"Für die Algarve und das Douro-Tal ist ein Mietwagen ideal; Lissabon und Porto erkundest du zu Fuß und per Tram.","tour":"Kajaktour zur Benagil-Höhle, Bootsfahrt durchs Douro-Tal, Sintra-Ausflug und ein Fado-Abend.","eu":True},
+ "sizilien": {"apt":"Catania (CTA) oder Palermo (PMO)","stay":"B&Bs und Boutique-Hotels in Taormina, Palermo, Cefalù und Ortigia.","car":True,"move":"Für die Inselrundfahrt ist ein Mietwagen ideal – fahre in Palermo aber defensiv.","tour":"Ätna-Wanderung mit Guide, Streetfood-Tour durch Palermo und Führung durchs Tal der Tempel.","eu":True},
+}
+
 def page(d, others):
     hl = "\n".join(f'    <li><strong>{h[0]}</strong> – {h[1]}</li>' for h in d["highlights"])
     tips = "\n".join(f'    <li>{t}</li>' for t in d["tips"])
@@ -206,6 +277,8 @@ def page(d, others):
 
   <h2>Beste Reisezeit &amp; Anreise</h2>
   <p>{d["reisezeit"]}</p>
+
+  {booking_section(d)}
 
   <h2>Fazit</h2>
   <p>{d["fazit"]}</p>

@@ -53,6 +53,32 @@
   </div>
 </section>
 
+<!-- ================= INTERAKTIVE WELTKARTE ================= -->
+<section class="map-section bg-cream">
+  <div class="wrap">
+    <div class="section-head center">
+      <span class="eyebrow">Unsere Reisekarte</span>
+      <h2>Wo wir überall waren</h2>
+      <p>Klick auf ein Land, um hineinzuzoomen – die Pins führen dich direkt zum passenden Reisebericht.</p>
+    </div>
+    <div class="worldmap" id="worldmap">
+      <div class="map-stage" id="map-stage">
+        <div class="map-hint">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 18l6-6-6-6"/></svg>
+          Land antippen zum Zoomen
+        </div>
+        <button class="map-back" id="map-back" type="button">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M15 6l-6 6 6 6"/></svg>
+          Zur Weltkarte
+        </button>
+        <div class="map-pins" id="map-pins"></div>
+      </div>
+      <p class="map-counter">14 Länder &amp; Inseln · 4 Kontinente – <a href="reiseziele.html">alle Reiseziele als Liste</a></p>
+      <noscript><p class="map-noscript">Für die interaktive Karte bitte JavaScript aktivieren. Alle Ziele findest du auch in der <a href="reiseziele.html">Reiseziele-Übersicht</a>.</p></noscript>
+    </div>
+  </div>
+</section>
+
 <!-- ================= WOFÜR STEHT DER BLOG ================= -->
 <section>
   <div class="wrap">
@@ -309,5 +335,7 @@
 </footer>
 
 <script src="assets/main.js"></script>
+<script src="assets/map-data.js"></script>
+<script src="assets/map.js"></script>
 </body>
 </html>

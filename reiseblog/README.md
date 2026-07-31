@@ -37,24 +37,38 @@ Einfach `index.html` im Browser öffnen – es ist kein Server nötig.
 6. **Domain & Canonical:** `https://www.deine-domain.de/` in allen Dateien durch deine echte Domain ersetzen.
 
 ## Neue Reiseziele hinzufügen / Texte ändern
-Die Reiseberichte werden aus einer zentralen Datenstruktur erzeugt – so bleiben
-alle Seiten konsistent. Die Aufteilung:
-- `tools/ziele.py` – **die Inhalte** aller Ziele (Einleitung, Route, Highlights,
-  Kosten, Unterkunft, Fortbewegung, Kulinarik, Reisezeit, Tipps, Packliste, FAQ,
-  Fazit sowie die Amazon-Empfehlungen). Hier änderst du Texte.
-- `tools/generate.py` – **das Layout** (HTML-Vorlage) und die Buchungs-/Affiliate-
-  Boxen (Flug, Hotel, Mietwagen, Touren …) im `BOOK`-Block.
+Blog, Reiseziele-Übersicht und Weltkarte werden aus **einer** Datenbasis erzeugt –
+so bleiben alle Seiten automatisch synchron.
 
-So gehst du vor:
-1. In `tools/ziele.py` einen bestehenden `ZIELE.append({ ... })`-Block kopieren,
-   anpassen und (für die Buchungs-Boxen) in `tools/generate.py` einen `BOOK`-Eintrag
-   mit gleichem `slug` ergänzen.
-2. `python3 tools/generate.py` ausführen. Das erzeugt/aktualisiert alle
-   `reise-*.html`, die Übersicht `reiseziele.html` und `blog.html` automatisch.
+| Datei | Inhalt |
+|-------|--------|
+| `tools/ziele.py` | **Texte** der Reiseberichte (Route, Highlights, Kosten, FAQ …) |
+| `tools/karte.py` | **Geo-Daten** für die Weltkarte (Marker, Zoom-Ausschnitt, Regions-Pins) |
+| `tools/stories.py` | **Erlebnisberichte** (persönliche Tagebuch-Artikel wie `dubai-3-tage.html`) |
+| `tools/generate.py` | Layout/HTML-Vorlage + Buchungs-Boxen (`BOOK`) |
 
-Jeder Reisebericht enthält: Steckbrief, Route, Highlights, Kostentabelle,
-Unterkunft, Fortbewegung, Kulinarik, Reisezeit, Tipps, Packliste, Buchungs-/
-Affiliate-Boxen, FAQ und Fazit.
+### Neues Reiseziel anlegen
+1. In `tools/ziele.py` einen `ZIELE.append({ ... })`-Block kopieren und anpassen.
+2. In `tools/generate.py` im `BOOK`-Block einen Eintrag mit gleichem `slug` ergänzen
+   (Flug-/Hotel-/Mietwagen-Texte für die Affiliate-Boxen).
+3. In `tools/karte.py` einen Eintrag mit gleichem `slug` ergänzen (Marker + Regionen).
+4. `python3 tools/generate.py` ausführen.
+
+Danach erscheint das Ziel automatisch in **`reise-<slug>.html`**, in der Übersicht
+**`reiseziele.html`**, im **`blog.html`** und auf der **Weltkarte**. Fehlt der
+Karten-Eintrag, meldet das Skript das beim Generieren; Ziele ohne Regionszuordnung
+landen in der Übersicht unter „Weitere Reiseziele".
+
+### Neuen Erlebnisbericht anlegen
+1. HTML-Seite anlegen (am einfachsten `dubai-3-tage.html` kopieren und umschreiben).
+2. In `tools/stories.py` einen Eintrag ergänzen (Datei, Titel, Ziel-Slug, Teaser …).
+3. Optional in `tools/karte.py` einzelne Regions-Pins des Ziels auf die neue Seite
+   zeigen lassen (4. Wert im `regions`-Tupel).
+4. `python3 tools/generate.py` – der Bericht erscheint dann in `blog.html` und als
+   Hinweis bei seinem Ziel in `reiseziele.html`.
+
+> `assets/map-trips.js` wird automatisch erzeugt und sollte nicht von Hand
+> bearbeitet werden.
 
 ## Affiliate-Hinweis (wichtig)
 Affiliate-Links müssen als Werbung gekennzeichnet sein. Umgesetzt ist bereits:

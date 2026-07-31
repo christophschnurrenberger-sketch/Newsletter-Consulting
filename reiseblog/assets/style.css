@@ -461,86 +461,58 @@ ol.route-list li strong { color: var(--heading); }
 
 /* ---------- Interaktive Weltkarte ---------- */
 .map-section { padding: clamp(48px, 7vw, 84px) 0; }
-.worldmap { position: relative; max-width: 1060px; margin: 0 auto; }
+.worldmap { position: relative; max-width: 1080px; margin: 0 auto; }
 .map-stage {
     position: relative; width: 100%; padding-bottom: 52%;
     background:
-        radial-gradient(120% 120% at 30% 15%, #eaf5f3 0%, #d3e8e6 45%, #b9dcda 100%);
+        radial-gradient(90% 140% at 20% 0%, rgba(255,255,255,.55), transparent 55%),
+        linear-gradient(180deg, #cde7e4 0%, #b4dbd7 55%, #9fd0cc 100%);
     border-radius: var(--radius); overflow: hidden;
     border: 1px solid var(--line);
-    box-shadow: var(--shadow), inset 0 0 60px rgba(20,82,78,.10);
-    cursor: grab; touch-action: none;
+    box-shadow: var(--shadow-lg), inset 0 0 80px rgba(16,60,56,.14);
+    cursor: grab; touch-action: none; user-select: none;
 }
 .map-stage.dragging { cursor: grabbing; }
-.map-stage svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
-.map-viewport { will-change: transform; }
+.map-stage > svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
 
-/* Gitternetz */
-.map-grid { fill: none; stroke: rgba(20,82,78,.10); stroke-width: .6; vector-effect: non-scaling-stroke; }
-/* Reise-Route */
-.map-route { fill: none; stroke: var(--terracotta); stroke-width: 1.4; stroke-dasharray: 4 5;
-    stroke-linecap: round; opacity: .55; vector-effect: non-scaling-stroke; }
+/* Gitternetz & Route */
+.map-grid { fill: none; stroke: rgba(20,82,78,.09); stroke-width: .5; vector-effect: non-scaling-stroke; }
+.map-route { fill: none; stroke: #c96a43; stroke-width: 1.6; stroke-dasharray: 1 7;
+    stroke-linecap: round; opacity: .8; vector-effect: non-scaling-stroke; transition: opacity .4s; }
+.worldmap.zoomed .map-route { opacity: 0; }
 
 /* Länder */
-.map-land path { fill: #ece2cf; stroke: #dccfb8; stroke-width: .3; vector-effect: non-scaling-stroke; }
-.map-land path.visited { fill: #a9d8cf; cursor: pointer; }
-.map-land path.visited:hover { fill: #8fccc0; }
+.map-lands { filter: drop-shadow(0 2px 1.5px rgba(84,60,20,.28)); }
+.map-lands path { fill: #efe4cb; stroke: rgba(255,255,255,.65); stroke-width: .45; }
+.map-lands path.visited { fill: url(#gvisit); cursor: pointer; transition: filter .2s; }
+.map-lands path.visited:hover { filter: brightness(1.07); }
 
-.map-pins { position: absolute; inset: 0; pointer-events: none; }
-.worldmap.zoomed .map-route { opacity: 0; transition: opacity .4s; }
-.worldmap.zoomed .map-grid { stroke: rgba(20,82,78,.06); }
-.map-pin { position: absolute; pointer-events: auto; border: none; background: none; padding: 0; }
+/* Länder-Marker (im SVG) */
+.mpin-c { cursor: pointer; }
+.mpin-c .cdot { fill: url(#gdot); stroke: #fff; stroke-width: 2.4; }
+.mpin-c .pulse { fill: rgba(217,116,79,.45); pointer-events: none; }
+.mlabel { opacity: 0; transition: opacity .18s; pointer-events: none; }
+.mpin-c:hover .mlabel, .mpin-c:focus .mlabel { opacity: 1; }
+.mlabel rect { fill: #142F2C; }
+.mlabel text { fill: #fff; font: 600 11.5px var(--sans); }
+.worldmap.zoomed .mpin-c { opacity: 0; pointer-events: none; transition: opacity .3s; }
 
-/* Länder-Marker */
-.map-pin--country { transform: translate(-50%, -50%); cursor: pointer; transition: opacity .3s; }
-.map-pin--country .dot {
-    display: block; width: 15px; height: 15px; border-radius: 50%;
-    background: radial-gradient(circle at 35% 30%, #ef9576, var(--terracotta) 60%, var(--terracotta-d));
-    border: 3px solid #fff; box-shadow: 0 2px 7px rgba(20,47,44,.4); position: relative; z-index: 2;
-}
-.map-pin--country::before {
-    content: ""; position: absolute; left: 50%; top: 50%; width: 15px; height: 15px;
-    transform: translate(-50%,-50%); border-radius: 50%; background: rgba(217,116,79,.45);
-    animation: mapPulse 2.4s ease-out infinite; z-index: 1;
-}
-@keyframes mapPulse { 0% { transform: translate(-50%,-50%) scale(1); opacity:.55; } 100% { transform: translate(-50%,-50%) scale(3.4); opacity:0; } }
-.map-pin--country .label {
-    position: absolute; left: 50%; bottom: 165%; transform: translateX(-50%);
-    background: var(--heading); color: #fff; font-size: .74rem; font-weight: 600;
-    padding: 3px 10px; border-radius: 7px; white-space: nowrap; opacity: 0; transition: opacity .18s; pointer-events: none;
-}
-.map-pin--country .label::after {
-    content: ""; position: absolute; left: 50%; top: 100%; transform: translateX(-50%);
-    border: 5px solid transparent; border-top-color: var(--heading);
-}
-.map-pin--country:hover { z-index: 6; }
-.map-pin--country:hover .label, .map-pin--country:focus-visible .label { opacity: 1; }
-.map-pin--country:hover .dot { animation: none; }
-.worldmap.zoomed .map-pin--country { opacity: 0; pointer-events: none; }
-
-/* Regions-Pins */
-.map-pin--region { transform: translate(-50%, -100%); display: flex; flex-direction: column; align-items: center; text-decoration: none; opacity: 0; transition: opacity .3s; }
-.map-pin--region.show { opacity: 1; }
-.map-pin--region .drop {
-    display: block; width: 19px; height: 19px; background: var(--ocean); border: 3px solid #fff;
-    border-radius: 50% 50% 50% 0; transform: rotate(-45deg); box-shadow: 0 3px 8px rgba(20,47,44,.4);
-    transition: transform .15s, background .15s;
-}
-.map-pin--region:hover { z-index: 7; }
-.map-pin--region:hover .drop { background: var(--terracotta); transform: rotate(-45deg) scale(1.18); }
-.map-pin--region .rlabel {
-    margin-top: 6px; background: rgba(255,255,255,.96); color: var(--heading);
-    font-size: .72rem; font-weight: 700; padding: 3px 10px; border-radius: 999px;
-    white-space: nowrap; box-shadow: 0 2px 6px rgba(20,47,44,.18); border: 1px solid var(--line);
-}
-.map-pin--region:hover .rlabel { color: var(--terracotta-d); border-color: var(--terracotta); }
+/* Regions-Pins (im SVG, verlinkt) */
+.mpin-r { opacity: 0; transition: opacity .35s; }
+.mpin-r.show { opacity: 1; }
+.mpin-r .rdrop { fill: var(--ocean); stroke: #fff; stroke-width: 2; transition: fill .15s; }
+.mpin-r:hover .rdrop { fill: var(--terracotta); }
+.mpin-r .rbg { fill: rgba(255,255,255,.97); stroke: #e6ddcd; stroke-width: .8; }
+.mpin-r text { fill: #142F2C; font: 700 11px var(--sans); }
+.mpin-r:hover .rbg { stroke: var(--terracotta); }
+.mpin-r:hover text { fill: var(--terracotta-d); }
 
 /* Hinweis + Titel-Chip */
 .map-hint {
     position: absolute; top: 14px; left: 14px; z-index: 5;
     background: rgba(255,255,255,.92); border: 1px solid var(--line); border-radius: 999px;
     padding: 7px 15px; font-size: .82rem; font-weight: 600; color: var(--heading); box-shadow: var(--shadow);
-    display: flex; align-items: center; gap: 7px; transition: opacity .3s;
+    display: flex; align-items: center; gap: 7px; transition: opacity .3s; pointer-events: none;
 }
 .map-hint svg { width: 15px; height: 15px; color: var(--terracotta); }
 .map-title-chip {
@@ -549,9 +521,9 @@ ol.route-list li strong { color: var(--heading); }
     font-family: var(--serif); font-weight: 700; font-size: .95rem; box-shadow: var(--shadow);
 }
 .worldmap.zoomed .map-title-chip { display: block; }
-.worldmap.zoomed .map-hint { opacity: 0; pointer-events: none; }
+.worldmap.zoomed .map-hint { opacity: 0; }
 
-/* Steuerung: Zoom + Zurück */
+/* Steuerung */
 .map-controls { position: absolute; right: 14px; bottom: 14px; z-index: 5; display: flex; flex-direction: column; gap: 8px; }
 .map-ctrl {
     width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--line);
@@ -572,10 +544,7 @@ ol.route-list li strong { color: var(--heading); }
 
 .map-counter { text-align: center; margin-top: 18px; color: var(--muted); font-size: .92rem; }
 @media (max-width: 620px) {
-    .map-stage { padding-bottom: 62%; }
-    .map-pin--country .dot { width: 13px; height: 13px; border-width: 2px; }
-    .map-pin--region .drop { width: 16px; height: 16px; border-width: 2px; }
-    .map-pin--region .rlabel { font-size: .66rem; padding: 2px 8px; }
+    .map-stage { padding-bottom: 64%; }
     .map-hint { font-size: .72rem; padding: 6px 11px; }
     .map-ctrl { width: 36px; height: 36px; }
 }

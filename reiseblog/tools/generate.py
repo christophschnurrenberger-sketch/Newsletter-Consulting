@@ -337,12 +337,15 @@ BOOK = {
 
 # Ziel-Daten kommen aus dem separaten Datenmodul ziele.py
 from ziele import ZIELE
+from karte import KARTE
+from stories import STORIES
 D = list(ZIELE)
 
 # ===========================================================================
 #  Ausgabe erzeugen
 # ===========================================================================
 def build():
+    # ---------- Reiseberichte ----------
     for i, d in enumerate(D):
         others = [D[(i+1) % len(D)], D[(i+2) % len(D)], D[(i+3) % len(D)]]
         with open(os.path.join(OUT, f"reise-{d['slug']}.html"), "w", encoding="utf-8") as f:
@@ -350,25 +353,49 @@ def build():
         print("geschrieben:", f"reise-{d['slug']}.html")
 
     by_slug = {d["slug"]: d for d in D}
-    REGIONS = [
-      ("Indischer Ozean &amp; Afrika","indischer-ozean-afrika","Trauminseln, Wüste und die große Safari.",["seychellen","malediven","namibia","suedafrika"]),
-      ("Asien &amp; Orient","asien-orient","Tempel, Streetfood und Superlative.",["thailand","dubai"]),
-      ("Amerika","amerika","Roadtrips, Regenwald und Maya-Kultur.",["usa-westkueste","costa-rica","mexiko-yucatan"]),
-      ("Europa &amp; Mittelmeer","europa-mittelmeer","Inseln, Küsten und Genuss vor der Haustür.",["portugal","mallorca","sardinien","sizilien","kreta"]),
+
+    # ---------- Regionen: feste Reihenfolge, Rest wandert automatisch in "Weitere" ----------
+    GRUPPEN = [
+      ("Indischer Ozean &amp; Afrika","indischer-ozean-afrika","Trauminseln, Wüste und die große Safari.",
+       ["seychellen","malediven","namibia","suedafrika"]),
+      ("Asien &amp; Orient","asien-orient","Tempel, Streetfood und Superlative.",
+       ["thailand","dubai"]),
+      ("Amerika","amerika","Roadtrips, Regenwald und Maya-Kultur.",
+       ["usa-westkueste","costa-rica","mexiko-yucatan"]),
+      ("Europa &amp; Mittelmeer","europa-mittelmeer","Inseln, Küsten und Genuss vor der Haustür.",
+       ["portugal","mallorca","sardinien","sizilien","kreta"]),
     ]
+    zugeordnet = {s for _, _, _, slugs in GRUPPEN for s in slugs}
+    rest_slugs = [d["slug"] for d in D if d["slug"] not in zugeordnet]
+    if rest_slugs:
+        GRUPPEN.append(("Weitere Reiseziele","weitere","Frisch dazugekommen.", rest_slugs))
+    # nur real vorhandene Ziele behalten
+    GRUPPEN = [(t, a, s, [x for x in sl if x in by_slug]) for t, a, s, sl in GRUPPEN]
+    GRUPPEN = [g for g in GRUPPEN if g[3]]
+
+    # Erlebnisberichte je Ziel
+    stories_by_ziel = {}
+    for st in STORIES:
+        stories_by_ziel.setdefault(st["ziel"], []).append(st)
+
     def ziel_card(d):
+        extra = ""
+        for st in stories_by_ziel.get(d["slug"], []):
+            extra += (f'\n          <p style="margin:.5em 0 0;font-size:.9rem;">'
+                      f'<a href="{st["datei"]}">📖 Erlebnisbericht: {st["titel"]}</a></p>')
         return f'''      <article class="card">
         <div class="ph {d["ph"]}" data-label="Foto: {d["name"]}"></div>
         <div class="card-body">
           <span class="tag">{d["region"]}</span>
           <h3><a href="reise-{d["slug"]}.html">{d["name"]}</a></h3>
-          <p>{d["teaser"]}</p>
+          <p>{d["teaser"]}</p>{extra}
           <div class="card-meta"><span>{d["best"]}</span><span>· {d["dauer"]}</span></div>
         </div>
       </article>'''
-    nav_pills = "\n".join(f'      <a class="pill" href="#{a}">{t}</a>' for t,a,_,_ in REGIONS)
+
+    nav_pills = "\n".join(f'      <a class="pill" href="#{a}">{t}</a>' for t, a, _, _ in GRUPPEN)
     region_blocks = ""
-    for title,anchor,sub,slugs in REGIONS:
+    for title, anchor, sub, slugs in GRUPPEN:
         cards = "\n".join(ziel_card(by_slug[s]) for s in slugs)
         region_blocks += f'''
     <div class="section-head" id="{anchor}" style="margin-top:16px;scroll-margin-top:90px;">
@@ -379,6 +406,8 @@ def build():
 {cards}
     </div>
 '''
+
+    anzahl = len(D)
     reiseziele = f'''<!DOCTYPE html>
 <html lang="de">
 <head>
@@ -399,7 +428,7 @@ def build():
   <div class="wrap hero-inner">
     <span class="eyebrow">Reiseziele</span>
     <h1>Orte, an denen wir wirklich waren</h1>
-    <p class="lead">14 Länder und Inseln von der Karibik bis zur afrikanischen Wüste – jedes mit ausführlichem Reiseguide: Route, Highlights, Kosten, beste Reisezeit und ehrlichen Empfehlungen.</p>
+    <p class="lead">{anzahl} Länder und Inseln von der Karibik bis zur afrikanischen Wüste – jedes mit ausführlichem Reiseguide: Route, Highlights, Kosten, beste Reisezeit und ehrlichen Empfehlungen.</p>
   </div>
 </section>
 
@@ -432,11 +461,11 @@ def build():
 </body>
 </html>
 '''
-    with open(os.path.join(OUT,"reiseziele.html"),"w",encoding="utf-8") as f:
+    with open(os.path.join(OUT, "reiseziele.html"), "w", encoding="utf-8") as f:
         f.write(reiseziele)
     print("geschrieben: reiseziele.html")
 
-    # Blog-Übersicht
+    # ---------- Blog-Übersicht (Reiseberichte + Erlebnisberichte) ----------
     def blog_card(d):
         return f'''      <article class="card">
         <div class="ph {d["ph"]}" data-label="Foto: {d["name"]}"></div>
@@ -447,9 +476,23 @@ def build():
           <div class="card-meta"><span>{d["best"]}</span><span>· {d["readmin"]} Min.</span></div>
         </div>
       </article>'''
+
+    def story_card(st):
+        return f'''      <article class="card">
+        <div class="ph {st["ph"]}" data-label="Foto: {st["titel"]}"></div>
+        <div class="card-body">
+          <span class="tag tag--terra">Erlebnisbericht</span>
+          <h3><a href="{st["datei"]}">{st["titel"]}</a></h3>
+          <p>{st["teaser"]}</p>
+          <div class="card-meta"><span>{st["region"]}</span><span>· {st["minuten"]} Min.</span></div>
+        </div>
+      </article>'''
+
     feat = by_slug["seychellen"]
-    rest = [d for d in D if d["slug"] != "seychellen"]
-    blog_cards = "\n".join(blog_card(d) for d in rest)
+    karten = [story_card(st) for st in STORIES]
+    karten += [blog_card(d) for d in D if d["slug"] != "seychellen"]
+    blog_cards = "\n".join(karten)
+
     blog = f'''<!DOCTYPE html>
 <html lang="de">
 <head>
@@ -470,7 +513,7 @@ def build():
   <div class="wrap hero-inner">
     <span class="eyebrow">Blog</span>
     <h1>Geschichten von unterwegs</h1>
-    <p class="lead">Ausführliche Reiseberichte aus 14 Ländern und Inseln – Route, Kosten, Highlights und die Tipps, die ich mir vorher selbst gewünscht hätte.</p>
+    <p class="lead">Ausführliche Reiseberichte aus {anzahl} Ländern und Inseln – Route, Kosten, Highlights und die Tipps, die ich mir vorher selbst gewünscht hätte.</p>
   </div>
 </section>
 
@@ -507,10 +550,36 @@ def build():
 </body>
 </html>
 '''
-    with open(os.path.join(OUT,"blog.html"),"w",encoding="utf-8") as f:
+    with open(os.path.join(OUT, "blog.html"), "w", encoding="utf-8") as f:
         f.write(blog)
     print("geschrieben: blog.html")
-    print("FERTIG –", len(D), "Ziele.")
+
+    # ---------- Kartendaten ----------
+    eintraege = []
+    fehlend = []
+    for d in D:
+        km = KARTE.get(d["slug"])
+        if not km:
+            fehlend.append(d["slug"])
+            continue
+        regs = []
+        for name, lon, lat, url in km["regions"]:
+            regs.append('{n:"%s",at:[%s,%s],url:"%s"}' % (
+                name, lon, lat, url or f'reise-{d["slug"]}.html'))
+        eintraege.append(
+            '{iso:"%s",name:"%s",at:[%s,%s],box:[%s,%s,%s,%s],url:"reise-%s.html",regions:[%s]}' % (
+                km["iso"], d["name"], km["at"][0], km["at"][1],
+                km["box"][0], km["box"][1], km["box"][2], km["box"][3],
+                d["slug"], ",".join(regs)))
+    with open(os.path.join(OUT, "assets", "map-trips.js"), "w", encoding="utf-8") as f:
+        f.write("/* Automatisch erzeugt von tools/generate.py – nicht von Hand bearbeiten.\n")
+        f.write("   Quelle: tools/ziele.py + tools/karte.py */\n")
+        f.write("window.MAP_TRIPS=[\n  " + ",\n  ".join(eintraege) + "\n];\n")
+    print("geschrieben: assets/map-trips.js")
+    if fehlend:
+        print("HINWEIS: keine Kartendaten in tools/karte.py für:", ", ".join(fehlend))
+
+    print("FERTIG –", len(D), "Ziele,", len(STORIES), "Erlebnisberichte.")
 
 
 if __name__ == "__main__":

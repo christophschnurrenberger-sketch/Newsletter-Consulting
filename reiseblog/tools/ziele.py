@@ -403,7 +403,8 @@ ZIELE.append({
    ["Wann ist die beste Reisezeit?","November bis März mit angenehmen Temperaturen. Der Sommer (Juni–September) ist mit über 40 Grad extrem heiß und eignet sich fast nur für klimatisierte Indoor-Aktivitäten."]],
  "fazit":[
    "Dubai polarisiert – die einen lieben die Superlative, die anderen finden sie überzogen. Als Städtetrip oder Stopover aber ist die Stadt ein faszinierendes Erlebnis, das moderne Extravaganz und altes Arabien auf engem Raum vereint.",
-   "Unser Tipp: Genieße die Superlative ruhig, aber verpasse nicht das alte Dubai am Creek und den Abend in der Wüste. Erst dieser Kontrast macht die Stadt wirklich rund – und aus einem bloßen Zwischenstopp ein echtes Reiseerlebnis."]})
+   "Unser Tipp: Genieße die Superlative ruhig, aber verpasse nicht das alte Dubai am Creek und den Abend in der Wüste. Erst dieser Kontrast macht die Stadt wirklich rund – und aus einem bloßen Zwischenstopp ein echtes Reiseerlebnis.",
+   "Wie unsere drei Tage in Dubai konkret aussahen, liest du in unserem persönlichen <a href=\"dubai-3-tage.html\">Dubai-Erlebnisbericht</a> – mit allen Stationen, Info-Boxen und ehrlichen Eindrücken."]})
 
 # --------------------------------------------------------------------------- Thailand
 ZIELE.append({

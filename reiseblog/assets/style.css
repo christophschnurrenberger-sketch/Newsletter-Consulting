@@ -434,3 +434,27 @@ ol.route-list li strong { color: var(--heading); }
 .faq details[open] summary { border-bottom: 1px solid var(--line); }
 .faq .faq-body { padding: 14px 18px; }
 .faq .faq-body p:last-child { margin-bottom: 0; }
+
+/* ---------- Inhaltsverzeichnis (Erlebnisberichte) ---------- */
+.toc { background: var(--cream); border: 1px solid var(--line); border-radius: var(--radius-sm); padding: 20px 24px; margin: 28px 0; }
+.toc .toc-title { font-family: var(--serif); font-weight: 700; color: var(--heading); font-size: 1.05rem; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+.toc .toc-title svg { width: 18px; height: 18px; color: var(--terracotta); }
+.toc ol { margin: 0; padding-left: 1.3em; columns: 2; column-gap: 30px; }
+.toc ol li { margin-bottom: 8px; break-inside: avoid; }
+.toc a { color: var(--ocean); }
+.toc a:hover { color: var(--terracotta); }
+@media (max-width: 620px) { .toc ol { columns: 1; } }
+
+/* ---------- Info-Box (praktische Infos pro Highlight) ---------- */
+.infobox { background: var(--cream); border: 1px solid var(--line); border-left: 4px solid var(--ocean); border-radius: var(--radius-sm); padding: 16px 20px; margin: 22px 0; }
+.infobox .ib-title { font-family: var(--serif); font-weight: 700; color: var(--heading); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; font-size: 1.02rem; }
+.infobox .ib-title svg { width: 18px; height: 18px; color: var(--ocean); }
+.infobox dl { display: grid; grid-template-columns: max-content 1fr; gap: 8px 18px; margin: 0; }
+.infobox dt { font-weight: 600; color: var(--heading); font-size: .9rem; }
+.infobox dd { margin: 0; color: var(--ink); font-size: .94rem; }
+@media (max-width: 520px) { .infobox dl { grid-template-columns: 1fr; gap: 2px 0; } .infobox dd { margin-bottom: 8px; } }
+
+/* ---------- Tipp-Kasten ---------- */
+.tipp { background: rgba(217,116,79,.1); border: 1px solid rgba(217,116,79,.3); border-radius: var(--radius-sm); padding: 14px 18px 14px 46px; margin: 20px 0; font-size: .96rem; position: relative; }
+.tipp::before { content: "\1F4A1"; position: absolute; left: 16px; top: 12px; font-size: 1.1rem; }
+.tipp strong { color: var(--terracotta-d); }

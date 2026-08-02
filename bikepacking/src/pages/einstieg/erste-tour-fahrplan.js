@@ -83,7 +83,7 @@ ${steps([
     text:
       'Plane die Strecke mit einem Routenplaner, prüfe die Höhenmeter und lade die Karte offline aufs Handy. Notiere dir zwei Einkaufsmöglichkeiten und einen Bahnhof als Ausstiegsmöglichkeit.',
     list: [
-      'Höhenmeter checken: 100 Hm kosten dich ungefähr so viel Kraft wie 9 flache Kilometer',
+      'Höhenmeter checken: 100 Hm kosten dich rund 12 Minuten zusätzliche Fahrzeit',
       'Offline-Karte herunterladen – Empfang ist im Wald keine Selbstverständlichkeit',
       'Route zusätzlich als Screenshot speichern, falls die App streikt',
     ],

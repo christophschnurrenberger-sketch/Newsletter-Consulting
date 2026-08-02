@@ -1,0 +1,77 @@
+# ============================================================
+# Sattelfest – Apache-Konfiguration
+# Automatisch erzeugt von build.js. Aenderungen bitte dort vornehmen.
+# ============================================================
+
+# Zeichensatz und Startseite
+AddDefaultCharset UTF-8
+DirectoryIndex index.html
+
+# Verzeichnisinhalte nicht auflisten
+Options -Indexes
+
+# Eigene Fehlerseite
+ErrorDocument 404 /404.html
+
+# ------------------------------------------------------------
+# HTTPS erzwingen
+# Erst aktivieren, wenn das SSL-Zertifikat eingerichtet ist und
+# https://deine-domain.de im Browser funktioniert – sonst ist die
+# Seite nicht mehr erreichbar.
+# ------------------------------------------------------------
+# <IfModule mod_rewrite.c>
+#   RewriteEngine On
+#   RewriteCond %{HTTPS} !=on
+#   RewriteCond %{HTTP:X-Forwarded-Proto} !https
+#   RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
+# </IfModule>
+
+# ------------------------------------------------------------
+# Komprimierung
+# ------------------------------------------------------------
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/css text/plain text/xml
+  AddOutputFilterByType DEFLATE application/javascript application/json
+  AddOutputFilterByType DEFLATE application/xml image/svg+xml
+</IfModule>
+
+# ------------------------------------------------------------
+# Browser-Caching
+# HTML bewusst kurz, damit Aenderungen schnell sichtbar werden.
+# ------------------------------------------------------------
+<IfModule mod_expires.c>
+  ExpiresActive On
+  ExpiresByType text/html                 "access plus 1 hour"
+  ExpiresByType text/css                  "access plus 1 month"
+  ExpiresByType application/javascript    "access plus 1 month"
+  ExpiresByType image/svg+xml             "access plus 1 month"
+  ExpiresByType image/jpeg                "access plus 1 month"
+  ExpiresByType image/png                 "access plus 1 month"
+  ExpiresByType image/webp                "access plus 1 month"
+  ExpiresByType font/woff2                "access plus 1 year"
+</IfModule>
+
+# ------------------------------------------------------------
+# Sicherheits-Header
+# ------------------------------------------------------------
+<IfModule mod_headers.c>
+  Header set X-Content-Type-Options "nosniff"
+  Header set Referrer-Policy "strict-origin-when-cross-origin"
+  Header set X-Frame-Options "SAMEORIGIN"
+  Header set Permissions-Policy "geolocation=(), microphone=(), camera=(), interest-cohort=()"
+  # HSTS erst zusammen mit der HTTPS-Weiterleitung oben aktivieren:
+  # Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains"
+</IfModule>
+
+# ------------------------------------------------------------
+# MIME-Typen, die nicht bei jedem Anbieter gesetzt sind
+# ------------------------------------------------------------
+<IfModule mod_mime.c>
+  AddType image/svg+xml .svg
+  AddType application/manifest+json .webmanifest
+</IfModule>
+
+# Zugriff auf Punktdateien unterbinden
+<FilesMatch "^\.">
+  Require all denied
+</FilesMatch>

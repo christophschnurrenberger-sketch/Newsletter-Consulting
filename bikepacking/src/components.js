@@ -396,8 +396,11 @@ function weightList({ title, items, totalLabel = 'Summe' }) {
     .map((i) => {
       const tag = i.tag || 'pflicht';
       const tagLabel = { pflicht: 'Pflicht', sinnvoll: 'Sinnvoll', ballast: 'Ballast' }[tag] || tag;
+      // Der Name steht in einem eigenen Element, damit der Durchstreich-Effekt
+      // bei "Ballast" nicht auf die Begruendung durchschlaegt – text-decoration
+      // vererbt sich auf Nachfahren und laesst sich dort nicht abschalten.
       return `<li class="wl-item wl-item--${tag}">
-      <span class="wl-name">${i.name}${i.note ? `<span class="wl-note">${i.note}</span>` : ''}</span>
+      <span class="wl-name"><span class="wl-label">${i.name}</span>${i.note ? `<span class="wl-note">${i.note}</span>` : ''}</span>
       <span class="wl-tag">${tagLabel}</span>
       <span class="wl-g">${i.g ? `${num(i.g)}&thinsp;g` : '–'}</span>
     </li>`;

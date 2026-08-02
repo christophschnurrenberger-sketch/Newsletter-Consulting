@@ -1,7 +1,7 @@
 # Sattelfest – Bikepacking-Einstiegsguide
 
 Statische Website für Bikepacking-Einsteiger. Aufgebaut wie ein Ratgeber-Portal:
-sechs Rubriken mit Dropdown-Navigation, ausführliche Artikel, Newsletter-Anbindung,
+sechs Rubriken mit Dropdown-Navigation, 40 ausführliche Artikel, Newsletter-Anbindung,
 zwei interaktive Werkzeuge und Affiliate-Integration.
 
 **Kein Framework, keine npm-Abhängigkeiten, keine CDN-Aufrufe.** Ein Node-Skript rendert
@@ -12,76 +12,38 @@ Gleiche Architektur wie das Schwesterprojekt Fairway54 (Golf-Einstiegsguide).
 
 ---
 
-## ⚠️ Aktueller Stand: unfertig
-
-**Der Build läuft noch nicht durch.** 41 von 53 Quelldateien sind fertig,
-zwölf Seiten fehlen noch. `node build.js` bricht deshalb mit
-`Cannot find module` ab. Das ist erwartet – siehe „Was noch fehlt".
-
-### Fertig (29 Inhaltsseiten + komplette Infrastruktur)
-
-| Bereich | Status |
-|---|---|
-| `build.js` | ✅ Generator inkl. Linkprüfung, Sitemap, robots.txt, .htaccess |
-| `src/config.js` | ✅ Domain, Newsletter-Endpunkt, Affiliate-Partner (Platzhalter) |
-| `src/nav.js` | ✅ Navigationsbaum, 6 Rubriken, 40 Inhaltsseiten definiert |
-| `src/layout.js` | ✅ Header mit Mega-Dropdowns, Footer, SEO-Meta, JSON-LD |
-| `src/components.js` | ✅ Bausteine inkl. `weightList`, `routeCard`, `timeline` |
-| `src/assets/site.css` | ✅ Vollständiges Stylesheet (Schiefer-Blau/Teal-Palette) |
-| `src/assets/site.js` | ✅ Navigation, Newsletter-Formular, **beide Werkzeuge** |
-| `src/data/shops.js` | ✅ Kategorie-URLs für Produktempfehlungen |
-| **Einstieg** | ✅ 6 von 6 Seiten |
-| **Taschen** | ✅ 8 von 8 Seiten |
-| **Ausrüstung** | ✅ 8 von 8 Seiten |
-| **Routen & Planung** | ✅ 7 von 7 Seiten |
-| **Unterwegs** | 🟡 4 von 6 Seiten |
-| **Service / Recht** | ❌ 0 von 8 Seiten |
-
-### Was noch fehlt
-
-Diese zwölf Dateien sind in `build.js` bereits eingetragen, aber noch nicht geschrieben:
-
-```
-src/pages/index.js                        Startseite
-src/pages/404.js                          Fehlerseite
-src/pages/unterwegs/allein-oder-gruppe.js
-src/pages/unterwegs/sicherheit-notfall.js
-src/pages/tools/packlisten-generator.js   Markup für #packer (Logik in site.js fertig)
-src/pages/tools/etappen-rechner.js        Markup für #planner (Logik in site.js fertig)
-src/pages/newsletter.js
-src/pages/faq.js
-src/pages/ueber-uns.js
-src/pages/impressum.js
-src/pages/datenschutz.js
-src/pages/affiliate-hinweis.js
-```
-
-**Wichtig für die Werkzeuge:** Die komplette JavaScript-Logik beider Rechner steht
-bereits in `src/assets/site.js`. Es fehlt nur das HTML-Gerüst auf den Seiten:
-
-- **Packlisten-Generator** (`initPacker`) braucht ein Element `id="packer"` mit
-  `.quiz-progress`, acht `.quiz-step`-Blöcken (`data-key`: `nights`, `sleep`,
-  `season`, `cook`, `bike`, `terrain`, `level`, `crew`) mit `.quiz-option`-Buttons
-  (`data-value`) und einem `[data-result]`-Container.
-- **Etappen-Rechner** (`initPlanner`) braucht ein Element `id="planner"` mit
-  Eingabefeldern `data-ref`, `data-hm`, `data-days`, `data-load`, `data-bike`,
-  `data-body`, Selects `data-surface` / `data-level` und `[data-planner-result]`.
-
----
-
-## Schnellstart (sobald die fehlenden Seiten existieren)
+## Schnellstart
 
 ```bash
 node build.js     # baut alles nach dist/
 ```
 
 Danach **`dist/index.html` doppelklicken** – die Seite öffnet sich im Browser und
-funktioniert vollständig, inklusive Navigation und beider Werkzeuge. Ein lokaler Server
-ist nicht nötig, weil intern relativ verlinkt wird.
+funktioniert vollständig, inklusive Navigation und beider Werkzeuge. Ein lokaler Server ist
+nicht nötig, weil intern relativ verlinkt wird.
+
+Wer trotzdem einen Server möchte (etwa um die `.htaccess` zu testen):
 
 ```bash
-python3 -m http.server 8080 --directory dist   # optional, um .htaccess zu testen
+python3 -m http.server 8080 --directory dist   # dann localhost:8080 aufrufen
 ```
+
+> **Ausnahme `dist/404.html`:** Diese eine Seite wird bewusst mit **absoluten** Pfaden
+> gebaut, weil Apache sie unter beliebigen URLs ausliefert und die Verzeichnistiefe
+> deshalb nicht vorhersehbar ist. Auf dem Webspace ist das richtig – nur in der lokalen
+> `file://`-Vorschau lädt sie kein CSS. Kein Fehler.
+
+---
+
+## Umfang
+
+| | |
+|---|---|
+| Seiten gesamt | 51 (40 Inhaltsseiten, 6 Rubrikseiten, 2 Werkzeuge, Recht, 404) |
+| Rubriken | Einstieg · Taschen · Ausrüstung · Routen & Planung · Unterwegs · Service |
+| Glossar | 76 Begriffe |
+| Werkzeuge | Packlisten-Generator (8 Fragen), Etappen- & Gewichts-Rechner |
+| Erzeugtes HTML | ca. 2,9 MB |
 
 ---
 
@@ -94,7 +56,9 @@ src/
   nav.js                 🧭  Navigationsbaum – Quelle für Menü, Footer, Sitemap
   layout.js              HTML-Gerüst: Header mit Mega-Dropdowns, Footer, SEO-Meta
   components.js          Bausteine: Tabellen, Callouts, Packlisten, Routenkarten, FAQ …
-  data/shops.js          🛒  Ziel-URLs der Produktempfehlungen
+  data/
+    shops.js             🛒  Ziel-URLs der Produktempfehlungen
+    glossar.js           📖  Die 76 Glossarbegriffe (Startseite nennt die Anzahl)
   assets/
     site.css             Vollständiges Stylesheet
     site.js              Navigation, Newsletter, Packlisten-Generator, Etappen-Rechner
@@ -106,6 +70,58 @@ src/
     einstieg/ taschen/ ausruestung/ routen/ unterwegs/ tools/
 ```
 
+### Eigene Bausteine dieses Projekts
+
+Zusätzlich zu den Standard-Bausteinen (Tabellen, Callouts, Karten, FAQ …):
+
+- **`weightList()`** – Packliste mit Gramm-Spalte, Einordnung als Pflicht / sinnvoll /
+  Ballast und **automatisch berechneter Summe** (Ballast zählt nicht mit). Die Summen in
+  den Fließtexten stammen aus derselben Quelle wie die Listen und können nicht auseinanderlaufen.
+- **`routeCard()` / `routeGrid()`** – Routenkarte mit Distanz, Höhenmetern, Dauer,
+  Untergrund, Schwierigkeitsbadge und Bahnanreise.
+- **`timeline()`** – Zeitschiene für Tagesabläufe.
+
+---
+
+## Die beiden Werkzeuge
+
+Beide rechnen vollständig im Browser. Keine Datenübertragung, keine Speicherung, keine Cookies.
+
+### Packlisten-Generator (`#packer`, `initPacker` in site.js)
+
+Acht Fragen → vollständige Packliste mit Gramm-Angaben, Taschenempfehlung und Gesamtgewicht.
+Die `data-key`-Werte der Schritte sind die Schnittstelle zur Logik:
+
+| `data-key` | Werte |
+|---|---|
+| `nights` | `kurz`, `mittel`, `lang`, `woche` |
+| `sleep` | `zelt`, `tarp`, `unterkunft` |
+| `season` | `sommer`, `uebergang`, `kalt` |
+| `cook` | `ja`, `nein` |
+| `bike` | `gravel`, `mtb`, `trekking`, `rennrad` |
+| `terrain` | `asphalt`, `gemischt`, `offroad` |
+| `level` | `erste`, `einige`, `viele` |
+| `crew` | `allein`, `zweit`, `gruppe` |
+
+### Etappen- & Gewichts-Rechner (`#planner`, `initPlanner` in site.js)
+
+Rechnet über ein **Zeitbudget**, nicht über Kilometer-Abzüge:
+
+```
+Tagesdistanz = (Zeitbudget − Zeit für die Anstiege) × Reisegeschwindigkeit
+
+Zeitbudget   = Referenzstrecke ÷ 20 km/h × 1,2 × Erfahrung × Mehrtagesfaktor
+Tempo        = 19 / 16 / 12,5 km/h je Untergrund, −1,8 % je kg über 6 kg (max. −20 %)
+Anstiege     = Höhenmeter ÷ 500 (Stunden)
+```
+
+Das ist bewusst so gebaut: Ein früherer Ansatz zog Höhenmeter pauschal als Kilometer ab
+(„9 km je 100 hm“) und landete bei jeder realistischen Eingabe auf dem Minimalwert. Begrenzend
+ist auf Tour die Zeit, nicht die Strecke.
+
+Eingabefelder: `data-ref`, `data-hm`, `data-days`, `data-load`, `data-bike`, `data-body`,
+Selects `data-surface` und `data-level`, Ausgabe in `[data-planner-result]`.
+
 ---
 
 ## Vor dem Livegang anpassen
@@ -115,7 +131,11 @@ Alles, was mit `BITTE_` oder `DEIN_` beginnt, ist ein Platzhalter:
 - `src/config.js` → `site.origin`, `site.publisher`, `site.contactEmail`
 - `src/config.js` → `newsletter.action` (Double-Opt-in-fähiger Dienst)
 - `src/config.js` → `affiliates.partners[*].tag` bzw. `.template`
-- `src/pages/impressum.js` und `datenschutz.js` → Betreiberdaten (noch zu erstellen)
+- `src/pages/impressum.js` und `datenschutz.js` → alle `<span class="ph">`-Stellen
+- `src/pages/affiliate-hinweis.js` → tatsächlich freigeschaltete Partnerprogramme
+
+Die Rechtstexte sind Vorlagen und **ersetzen keine Rechtsberatung**. Vor dem Livegang
+fachkundig prüfen lassen.
 
 ---
 
@@ -128,4 +148,15 @@ Zu jeder Seite gehört ein Bild unter demselben Pfad:
 ```
 
 Fehlt die Datei, erscheint ein beschrifteter Platzhalter, der den erwarteten Dateinamen
-nennt. `node build.js` listet am Ende alle noch offenen Bildslots auf.
+nennt. `node build.js` listet am Ende alle noch offenen Bildslots auf – aktuell sind es
+alle 45.
+
+---
+
+## Qualitätssicherung
+
+`build.js` bricht ab, wenn ein interner Link ins Leere zeigt, eine in `nav.js` verlinkte
+Seite fehlt oder ein Pfad doppelt vergeben ist. Zusätzlich wurde die gebaute Seite mit
+Chromium geprüft: Navigation (Maus und Tastatur), beide Werkzeuge inklusive Plausibilität
+der Rechenergebnisse, Newsletter-Validierung, Darstellung bei 390 px Breite und
+JavaScript-Fehlerfreiheit.

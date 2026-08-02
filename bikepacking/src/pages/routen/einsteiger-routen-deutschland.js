@@ -247,7 +247,7 @@ ${table({
 ${h2('So wählst du deine erste Route aus', 'auswahl')}
 ${checklist([
   '<strong>Fang in deiner Nähe an.</strong> Anreise kostet Zeit, Geld und Nerven. Eine Route vor der Haustür ist die, die du wirklich fährst.',
-  '<strong>Rechne die Höhenmeter durch:</strong> 100 Höhenmeter entsprechen etwa 9 flachen Kilometern an Anstrengung.',
+  '<strong>Rechne die Höhenmeter in Zeit um:</strong> Beladen schaffst du rund 500 Höhenmeter pro Stunde – diese Zeit fehlt dir für Kilometer.',
   '<strong>Prüfe, wo die Bahnhöfe liegen.</strong> Ein Bahnhof auf halber Strecke ist deine Versicherung.',
   '<strong>Buche den Schlafplatz vorher</strong> – zumindest für die erste Tour. Suchen bei Dunkelheit ist kein Vergnügen.',
   '<strong>Plane einen Tag weniger als du könntest.</strong> Zeit ist auf Tour das knappste Gut.',
@@ -282,7 +282,7 @@ module.exports = article({
     },
     {
       q: 'Wie viele Höhenmeter pro Tag sind für Einsteiger machbar?',
-      a: '<p>Unter 500 Höhenmeter pro Tag sind für die erste Tour ein guter Wert. 100 Höhenmeter entsprechen etwa 9 flachen Kilometern an Anstrengung – ein Tag mit 800 Höhenmetern kostet dich also rund 72 Kilometer zusätzlich. Der Schwarzwald-Panorama-Radweg mit rund 1.000 Höhenmetern täglich ist der Schritt für die zweite oder dritte Saison.</p>',
+      a: '<p>Unter 500 Höhenmeter pro Tag sind für die erste Tour ein guter Wert. Beladen schaffst du rund 500 Höhenmeter pro Stunde – ein Tag mit 800 Höhenmetern frisst also gut anderthalb Stunden deines Zeitbudgets, die dir für Kilometer fehlen. Der Schwarzwald-Panorama-Radweg mit rund 1.000 Höhenmetern täglich ist der Schritt für die zweite oder dritte Saison.</p>',
     },
     {
       q: 'Kann ich mein Fahrrad in der Bahn mitnehmen?',

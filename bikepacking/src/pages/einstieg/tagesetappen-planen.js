@@ -14,36 +14,71 @@ const content = `
 </p>
 
 ${stats([
-  { value: '60 %', label: 'deiner besten Tagestour', note: 'Der Ausgangswert für eine entspannte Bikepacking-Etappe.' },
-  { value: '9 km', label: 'je 100 Höhenmeter', note: 'So viel flache Strecke kostet dich ein Anstieg an Kraft.' },
+  { value: '≈ 60 %', label: 'deiner besten Tagestour', note: 'So viel bleibt beim Bikepacking typischerweise übrig.' },
+  { value: '12 Min.', label: 'je 100 Höhenmeter', note: 'Zusätzliche Fahrzeit – Anstiege kosten Zeit, nicht Kilometer.' },
   { value: '2 Std.', label: 'gehen jeden Tag weg', note: 'Für Pausen, Einkauf, Zeltaufbau und Orientierung.' },
 ])}
 
 ${h2('Die Formel', 'formel')}
 <p>
-  Nimm die Strecke, die du an einem <strong>guten Tag ohne Gepäck</strong> schaffst, und rechne von
-  dort aus:
+  Begrenzend ist auf Tour nicht die Strecke, sondern die <strong>Zeit</strong>. Deshalb rechnest du
+  nicht mit Kilometern, sondern in zwei Schritten: erst dein Zeitbudget im Sattel, dann deine
+  Reisegeschwindigkeit.
+</p>
+
+<blockquote>Tagesdistanz = (Zeitbudget − Zeit für die Anstiege) × Reisegeschwindigkeit</blockquote>
+
+${h3('Schritt 1: Dein Zeitbudget', 'formel-zeit')}
+<p>
+  Der Ausgangspunkt ist die Strecke, die du an einem guten Tag <strong>ohne Gepäck</strong> schaffst.
+  Bei einem typischen Schnitt von 20 km/h sagt sie dir, wie viele Stunden du im Sattel aushältst.
+  Auf Tour sitzt du etwas länger – aber ruhiger.
 </p>
 ${table({
-  head: ['Faktor', 'Multiplikator', 'Warum'],
+  head: ['Faktor', 'Wert', 'Warum'],
   rows: [
-    ['Grundwert Bikepacking', '× 0,6', 'Gepäck, Organisation, Auf- und Abbau, weniger Tempo'],
-    ['Untergrund Asphalt', '× 1,0', 'Referenz'],
-    ['Untergrund gemischt', '× 0,85', 'Waldwege, Schotterpisten, kurze unbefestigte Stücke'],
-    ['Untergrund Schotter/Trail', '× 0,7', 'Loser Untergrund kostet Tempo und Konzentration'],
+    ['Referenztour ÷ 20 km/h', '= Stunden', '100 km an einem guten Tag entsprechen 5 Stunden im Sattel'],
+    ['Tourfaktor', '× 1,2', 'Auf Mehrtagestouren sitzt man länger, aber langsamer'],
     ['Erste Tour', '× 0,85', 'Alles dauert länger, weil noch nichts Routine ist'],
-    ['Ab Tag 5', '× 0,9', 'Ermüdung – der berühmte dritte bis fünfte Tag'],
-    ['Gepäck über 6 kg', '− 1,8 % je kg', 'Bis maximal minus 20 Prozent'],
-    ['Höhenmeter', '− 9 km je 100 Hm', 'Ein 800-Hm-Tag kostet dich rund 72 flache Kilometer'],
+    ['Viel Erfahrung', '× 1,1', 'Eingespielte Abläufe, weniger Leerlauf'],
+    ['3 – 4 Tourtage', '× 0,95', 'Beginnende Ermüdung'],
+    ['5 – 7 Tourtage', '× 0,90', 'Der klassische Einbruch ab Tag 3'],
+    ['Über 7 Tourtage', '× 0,85', 'Dauerbelastung ohne vollständige Erholung'],
   ],
-  note: 'Der Etappen-Rechner setzt genau diese Formel um – inklusive Fahrzeit und Tageslänge mit Pausen.',
 })}
+
+${h3('Schritt 2: Deine Reisegeschwindigkeit', 'formel-tempo')}
+${table({
+  head: ['Untergrund', 'Schnitt beladen', 'Anmerkung'],
+  rows: [
+    ['Asphalt', '19 km/h', 'Fernradwege, Straßen'],
+    ['Gemischt', '16 km/h', 'Asphalt plus Wald- und Wirtschaftswege'],
+    ['Schotter und Trails', '12,5 km/h', 'Loser Untergrund kostet Tempo und Konzentration'],
+    ['Gepäck über 6 kg', '−1,8 % je kg', 'Gedeckelt bei maximal −20 Prozent'],
+  ],
+  note: 'Das sind Reiseschnitte, keine Spitzenwerte: Sie enthalten Ampeln, Steigungen und das Suchen an Kreuzungen, aber keine echten Pausen.',
+})}
+
+${h3('Schritt 3: Die Anstiege abziehen', 'formel-hm')}
+<p>
+  Beladen bewältigst du etwa <strong>500 Höhenmeter pro Stunde</strong>. Diese Zeit geht von deinem
+  Budget ab, bevor du die Distanz ausrechnest. 600 Höhenmeter kosten dich also rund 1 Stunde 12
+  Minuten – und die fehlen dir für Kilometer.
+</p>
 
 ${callout(
   'Ein Rechenbeispiel',
-  '<p>Du fährst an einem guten Sonntag ohne Gepäck 100 Kilometer. Deine erste Bikepacking-Tour geht über gemischten Untergrund mit 600 Höhenmetern am Tag, du hast 10 Kilo Gepäck dabei.</p><p>100 × 0,6 = 60 · gemischt × 0,85 = 51 · erste Tour × 0,85 = 43,4 · Gepäck (10 kg) × 0,93 = 40,4 · minus Höhenmeter (600 ÷ 100 × 9 = 54) … <strong>rechnerisch bleiben rund 15 Kilometer.</strong></p><p>Das zeigt: Bei 600 Höhenmetern am Tag ist die Etappe nicht durch Distanz begrenzt, sondern durch die Anstiege. Realistisch planst du dann 35 bis 45 Kilometer mit diesen Höhenmetern – und das ist ein voller Tag.</p>',
+  '<p>Du fährst an einem guten Sonntag ohne Gepäck 100 Kilometer. Deine erste Bikepacking-Tour geht über drei Tage, gemischter Untergrund, 600 Höhenmeter am Tag, 10 Kilo Gepäck.</p>' +
+    '<p><strong>Zeitbudget:</strong> 100 ÷ 20 = 5 Std. · Tourfaktor × 1,2 = 6,0 · erste Tour × 0,85 = 5,1 · drei Tage × 0,95 = <strong>4,85 Stunden</strong><br>' +
+    '<strong>Tempo:</strong> gemischt 16 km/h · Gepäck (10 kg) × 0,93 = <strong>14,9 km/h</strong><br>' +
+    '<strong>Anstiege:</strong> 600 ÷ 500 = <strong>1,2 Stunden</strong></p>' +
+    '<p>Bleiben 4,85 − 1,2 = 3,65 Stunden zum Fahren. Mal 14,9 km/h ergibt <strong>rund 54 Kilometer</strong> – etwas mehr als die Hälfte deiner Referenzstrecke. Mit Pausen, Einkauf und Zeltaufbau ist das ein voller Tag von etwa acht Stunden.</p>',
   'info'
 )}
+<p>
+  Der <a href="/tools/etappen-rechner.html">Etappen-Rechner</a> setzt genau diese Rechnung um – mit
+  deinen Zahlen und inklusive der Tageslänge mit Pausen.
+</p>
 
 ${h2('Richtwerte für die Praxis', 'richtwerte')}
 ${table({
@@ -59,24 +94,25 @@ ${table({
 
 ${h2('Warum Höhenmeter so viel kosten', 'hoehenmeter')}
 <p>
-  Ein verbreiteter Umrechnungsfaktor im Radsport lautet: 100 Höhenmeter entsprechen etwa 8 bis 10
-  flachen Kilometern. Beladen liegt der Wert eher am oberen Rand, weil das Zusatzgewicht bergauf
-  vollständig durchschlägt – bergab bringt es dir dagegen nichts, weil du ohnehin bremst.
+  Höhenmeter kosten dich zweierlei: <strong>Zeit</strong>, die dir für Kilometer fehlt, und
+  <strong>Kraft</strong>, die am nächsten Tag fehlt. Für die Tagesplanung zählt die Zeit – und die
+  lässt sich gut abschätzen, weil beladen etwa 500 Höhenmeter pro Stunde zusammenkommen.
 </p>
 ${table({
-  head: ['Höhenmeter pro Tag', 'Entspricht flach', 'Charakter'],
+  head: ['Höhenmeter pro Tag', 'Zusätzliche Fahrzeit', 'Charakter'],
   rows: [
-    ['0 – 300 Hm', '0 – 27 km', 'Flussradweg, Küste, Norddeutschland'],
-    ['300 – 600 Hm', '27 – 54 km', 'Welliges Hügelland, Heide, Börde'],
-    ['600 – 1.000 Hm', '54 – 90 km', 'Mittelgebirge – Harz, Eifel, Schwarzwald'],
-    ['1.000 – 1.500 Hm', '90 – 135 km', 'Anspruchsvolles Mittelgebirge, Voralpen'],
-    ['über 1.500 Hm', 'über 135 km', 'Alpenüberquerung – eigener Planungsmaßstab'],
+    ['0 – 300 Hm', 'bis 36 Min.', 'Flussradweg, Küste, Norddeutschland'],
+    ['300 – 600 Hm', '36 – 72 Min.', 'Welliges Hügelland, Heide, Börde'],
+    ['600 – 1.000 Hm', '1:12 – 2:00 Std.', 'Mittelgebirge – Harz, Eifel, Schwarzwald'],
+    ['1.000 – 1.500 Hm', '2:00 – 3:00 Std.', 'Anspruchsvolles Mittelgebirge, Voralpen'],
+    ['über 1.500 Hm', 'über 3 Std.', 'Alpenüberquerung – eigener Planungsmaßstab'],
   ],
+  note: 'Die Kraftkosten liegen darüber: Als Faustregel im Radsport gilt, dass 100 Höhenmeter sich anfühlen wie 8 bis 10 flache Kilometer. Das ist der Grund, warum ein bergiger Tag noch am nächsten Morgen spürbar ist.',
 })}
 
 ${callout(
   'Der Fehler, der Touren kippt',
-  '<p>Fast alle Routenplaner zeigen Distanz groß und Höhenmeter klein. Deshalb planen Einsteiger nach Kilometern und werden von den Höhenmetern überrascht. Dreh es um: <strong>Plane zuerst die Höhenmeter, dann die Distanz.</strong> Ein 1.000-Höhenmeter-Tag ist auch mit nur 45 Kilometern ein anstrengender Tag.</p>',
+  '<p>Fast alle Routenplaner zeigen Distanz groß und Höhenmeter klein. Deshalb planen Einsteiger nach Kilometern und werden von den Höhenmetern überrascht. Dreh es um: <strong>Plane zuerst die Höhenmeter, dann die Distanz.</strong> Ein 1.000-Höhenmeter-Tag ist auch mit nur 45 Kilometern ein anstrengender Tag – die zwei Stunden Kletterzeit fehlen dir für alles andere.</p>',
   'warn'
 )}
 
@@ -153,12 +189,12 @@ module.exports = article({
   title: 'Wie weit kommst du am Tag?',
   metaTitle: 'Bikepacking: Wie viele km pro Tag sind realistisch? | Sattelfest',
   description:
-    'Realistische Tagesetappen beim Bikepacking berechnen: die 60-Prozent-Formel, warum 100 Höhenmeter 9 flachen Kilometern entsprechen, Richtwerte nach Erfahrung und wie ein Tourtag zeitlich wirklich aussieht.',
+    'Realistische Tagesetappen beim Bikepacking berechnen: das Zeitbudget-Modell, warum Höhenmeter Zeit statt Kilometer kosten, Richtwerte nach Erfahrung und wie ein Tourtag zeitlich wirklich aussieht.',
   lead:
-    'Die meisten planen mit ihrer besten Tagestour ohne Gepäck. Übrig bleiben rund 60 Prozent – und dann kommen die Höhenmeter.',
+    'Die meisten planen mit ihrer besten Tagestour ohne Gepäck. Übrig bleiben rund 60 Prozent – weil nicht die Strecke begrenzt, sondern die Zeit.',
   meta: [
     { icon: 'route', text: '9 Minuten Lesezeit' },
-    { icon: 'mountain', text: 'Mit Höhenmeter-Umrechnung' },
+    { icon: 'mountain', text: 'Mit Zeitbudget-Formel' },
     { icon: 'clock', text: 'Inklusive Tages-Zeitplan' },
   ],
   toc: [
@@ -177,7 +213,7 @@ module.exports = article({
     },
     {
       q: 'Wie rechne ich Höhenmeter in Kilometer um?',
-      a: '<p>Als Faustregel entsprechen 100 Höhenmeter etwa 8 bis 10 flachen Kilometern an Kraftaufwand. Mit Gepäck rechnest du besser mit 9 bis 10, weil das Zusatzgewicht bergauf voll durchschlägt und dir bergab nichts bringt. Ein Tag mit 800 Höhenmetern kostet dich also rund 72 flache Kilometer.</p>',
+      a: '<p>Für die Tagesplanung rechnest du in Zeit: Beladen schaffst du etwa 500 Höhenmeter pro Stunde, 100 Höhenmeter kosten dich also rund 12 Minuten zusätzliche Fahrzeit. Ein Tag mit 800 Höhenmetern frisst damit gut anderthalb Stunden deines Zeitbudgets. Die Kraftkosten liegen höher – als Faustregel fühlen sich 100 Höhenmeter an wie 8 bis 10 flache Kilometer.</p>',
     },
     {
       q: 'Wie viele Stunden ist man beim Bikepacking pro Tag unterwegs?',

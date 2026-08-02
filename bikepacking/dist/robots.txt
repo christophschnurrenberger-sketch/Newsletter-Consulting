@@ -1,0 +1,5 @@
+# robots.txt fuer Sattelfest
+User-agent: *
+Allow: /
+
+Sitemap: https://www.sattelfest.de/sitemap.xml

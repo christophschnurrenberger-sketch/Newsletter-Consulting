@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Bikepacking-Etappenrechner: Realistische Tagesdistanz berechnen | Sattelfest</title>
+  <meta name="description" content="Kostenloser Etappenrechner fürs Bikepacking: realistische Tagesdistanz aus Zeitbudget, Reisegeschwindigkeit und Höhenmetern – plus Fahrzeit, Tageslänge mit Pausen und Gewichts-Check.">
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1">
+  <meta name="author" content="Sattelfest">
+  <meta name="theme-color" content="#17303F">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <link rel="canonical" href="https://www.sattelfest.de/tools/etappen-rechner.html">
+  <meta property="og:locale" content="de_DE">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="Sattelfest">
+  <meta property="og:url" content="https://www.sattelfest.de/tools/etappen-rechner.html">
+  <meta property="og:title" content="Bikepacking-Etappenrechner: Realistische Tagesdistanz berechnen | Sattelfest">
+  <meta property="og:description" content="Kostenloser Etappenrechner fürs Bikepacking: realistische Tagesdistanz aus Zeitbudget, Reisegeschwindigkeit und Höhenmetern – plus Fahrzeit, Tageslänge mit Pausen und Gewichts-Check.">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Bikepacking-Etappenrechner: Realistische Tagesdistanz berechnen | Sattelfest">
+  <meta name="twitter:description" content="Kostenloser Etappenrechner fürs Bikepacking: realistische Tagesdistanz aus Zeitbudget, Reisegeschwindigkeit und Höhenmetern – plus Fahrzeit, Tageslänge mit Pausen und Gewichts-Check.">
+  <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../assets/site.css">
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Start","item":"https://www.sattelfest.de/"},{"@type":"ListItem","position":2,"name":"Service","item":"https://www.sattelfest.de/service/"},{"@type":"ListItem","position":3,"name":"Etappen- & Gewichts-Rechner","item":"https://www.sattelfest.de/tools/etappen-rechner.html"}]}</script>
+    <script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Etappen- & Gewichts-Rechner","description":"Kostenloser Etappenrechner fürs Bikepacking: realistische Tagesdistanz aus Zeitbudget, Reisegeschwindigkeit und Höhenmetern – plus Fahrzeit, Tageslänge mit Pausen und Gewichts-Check.","inLanguage":"de-DE","mainEntityOfPage":"https://www.sattelfest.de/tools/etappen-rechner.html","author":{"@type":"Organization","name":"Sattelfest"},"publisher":{"@type":"Organization","name":"Sattelfest"},"dateModified":"2026-08-02"}</script>
+    <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Wie realistisch ist die berechnete Tagesdistanz?","acceptedAnswer":{"@type":"Answer","text":"Sie bildet die Erfahrungswerte gut ab, die sich beim Bikepacking eingespielt haben: rund 500 Höhenmeter pro Stunde beladen, Reiseschnitte zwischen 12,5 und 19 km/h und ein Ergebnis, das typischerweise bei etwa 60 Prozent deiner Referenzstrecke landet. Was sie nicht kennt: Gegenwind, Hitze, schlechten Schlaf und Umleitungen. Plane deshalb pro Tag eine Ausstiegsmöglichkeit ein."}},{"@type":"Question","name":"Was gebe ich bei „gute Tagestour ohne Gepäck“ ein?","acceptedAnswer":{"@type":"Answer","text":"Die Strecke, die du an einem guten Tag ohne Gepäck komfortabel schaffst – nicht deine Bestleistung und nicht deine übliche Feierabendrunde. Wenn du unsicher bist: Nimm die längste Tour der letzten Saison und zieh 10 Prozent ab. Dieser eine Wert bestimmt das gesamte Ergebnis."}},{"@type":"Question","name":"Warum kommt bei vielen Höhenmetern eine so kurze Distanz heraus?","acceptedAnswer":{"@type":"Answer","text":"Weil Anstiege Zeit kosten, und Zeit ist das, was deinen Tag begrenzt. Beladen schaffst du rund 500 Höhenmeter pro Stunde: Ein Tag mit 1.500 Höhenmetern verbraucht damit drei Stunden deines Zeitbudgets, bevor du einen einzigen Kilometer weit gekommen bist. Bei bergigen Routen ist die Etappe deshalb nicht durch die Distanz begrenzt, sondern durch die Anstiege."}},{"@type":"Question","name":"Wie viel Gepäck ist zu viel?","acceptedAnswer":{"@type":"Answer","text":"Unter 7 Kilo ist leicht, 7 bis 11 Kilo ist der Bereich, in dem die meisten Bikepacker landen. Ab 11 Kilo wird es spürbar, über 16 Kilo ist es für ein Bikepacking-Setup zu viel – dann trägt sich das Gewicht auf einem Gepäckträger deutlich angenehmer als in Satteltasche und Lenkerrolle."}},{"@type":"Question","name":"Werden meine Eingaben gespeichert?","acceptedAnswer":{"@type":"Answer","text":"Nein. Der Rechner arbeitet vollständig in deinem Browser. Es werden keine Daten an einen Server übertragen, nichts gespeichert und keine Cookies gesetzt. Beim Neuladen der Seite stehen wieder die Ausgangswerte."}}]}</script>
+</head>
+<body class="">
+<a class="skip-link" href="#main">Zum Inhalt springen</a>
+<header class="site-header" id="site-header">
+  <div class="wrap header-top">
+    <a class="brand" href="../index.html" aria-label="Sattelfest Startseite">
+      <span class="brand-mark" aria-hidden="true"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="5.5" cy="17.5" r="3.5"></circle><circle cx="18.5" cy="17.5" r="3.5"></circle><path d="M15 6a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"></path><path d="M12 17.5V14l-3-3 4-3 2 3h3"></path></svg></span>
+      <span class="brand-name">Sattel<b>fest</b></span>
+      <span class="brand-claim">Bikepacking von der ersten Tour an</span>
+    </a>
+    <div class="header-utility">
+      <a href="../tools/packlisten-generator.html"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg> Packlisten-Generator</a>
+      <a href="../newsletter.html"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect width="20" height="16" x="2" y="4" rx="2"></rect><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path></svg> Newsletter</a>
+    </div>
+  </div>
+  <div class="wrap header-nav-row">
+    <a class="nav-compact-brand" href="../index.html">Sattel<b>fest</b></a>
+    <nav id="site-nav" class="site-nav" aria-label="Hauptnavigation">
+  <ul class="nav-list"><li class="nav-item has-drop">
+        <button type="button" class="nav-trigger" aria-expanded="false" aria-controls="drop-einstieg">
+          Einstieg<svg class="ico nav-caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><polyline points="6 9 12 15 18 9"></polyline></svg>
+        </button>
+        <div class="drop" id="drop-einstieg" hidden>
+          <div class="drop-inner">
+            <div class="drop-intro">
+              <p class="drop-eyebrow">Einstieg</p>
+              <p class="drop-text">Was Bikepacking überhaupt ist, welches Rad du dafür brauchst (Antwort: meistens deins) und wie weit du am ersten Tag realistisch kommst.</p>
+              <a class="drop-overview" href="../einstieg/index.html">Rubrik-Übersicht <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></a>
+            </div>
+            <ul class="drop-links"><li>
+            <a class="drop-link" href="../einstieg/was-ist-bikepacking.html">
+              <span class="drop-link-label">Was Bikepacking wirklich ist</span>
+              <span class="drop-link-teaser">Der Unterschied zur klassischen Radreise – und warum er über deine Taschen entscheidet.</span>
+            </a>
+          </li><li>
+            <a class="drop-link" href="../einstieg/erste-tour-fahrplan.html">
+              <span class="drop-link-label">Fahrplan: In 7 Schritten zur ersten Tour</span>
+              <span class="drop-link-teaser">Die komplette Reihenfolge vom Entschluss bis zur ersten Nacht draußen.</span>
+            </a>
+          </li><li>
+            <a class="drop-link" href="../einstieg/welches-fahrrad.html">
+              <span class="drop-link-label">Welches Rad passt zum Bikepacking?</span>
+              <span class="drop-link-teaser">Gravel, MTB, Trekking oder das Rad im Keller – die ehrliche Einordnung.</span>
+            </a>
+          </li><li>
+            <a class="drop-link" href="../einstieg/was-kostet-bikepacking.html">
+              <span class="drop-link-label">Was Bikepacking wirklich kostet</span>
+              <span class="drop-link-teaser">Drei Budgets komplett durchgerechnet, inklusive der Posten, die niemand einplant.</span>
+            </a>
+          </li><li>
+            <a class="drop-link" href="../einstieg/tagesetappen-planen.html">
+              <span class="drop-link-label">Wie weit kommst du am Tag?</span>
+              <span class="drop-link-teaser">Die Formel gegen die Selbstüberschätzung – mit Höhenmetern und Untergrund.</span>
+            </a>
+          </li><li>
+            <a class="drop-link" href="../einstieg/bikepacking-glossar.html">
+              <span class="drop-link-label">Bikepacking-Glossar A bis Z</span>
+              <span class="drop-link-teaser">Über 90 Begriffe von Anything Cage bis Zwiebelprinzip, verständlich erklärt.</span>
+            </a>
+          </li></ul>
+          </div>
+        </div>
+      </li><li class="nav-item has-drop">
+        <button type="button" class="nav-trigger" aria-expanded="false" aria-controls="drop-taschen">
+          Taschen<svg class="ico nav-caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><polyline points="6 9 12 15 18 9"></polyline></svg>
+        </button>
+        <div class="drop" id="drop-taschen" hidden>
+          <div class="drop-inner">
+            <div class="drop-intro">
+              <p class="drop-eyebrow">Taschen</p>
+              <p class="drop-text">Das Herzstück des Bikepackings. Welche Tasche welche Aufgabe hat, in welcher Reihenfolge du kaufst und wie du packst, damit das Rad noch fährt.</p>
+              <a class="drop-overview" href="../taschen/index.html">Rubrik-Übersicht <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></a>
+            </div>
+            <ul class="drop-links"><li>
+            <a class="drop-link" href="../taschen/taschensystem.html">
+              <span class="drop-link-label">Das Taschensystem verstehen</span>
+              <span class="drop-link-teaser">Fünf Positionen am Rad, vier Aufgaben, eine sinnvolle Kaufreihenfolge.</span>
+            </a>
+          </li><li>
+            <a class="drop-link" href="../taschen/satteltasche.html">
+              <span class="drop-link-label">Satteltasche (Seatpack)</span>
+              <span class="drop-link-teaser">Die erste Tasche, die du kaufst – und der häufigste Frustpunkt für Einsteiger.</span>
+            </a>
+          </li><li>
+            <a class="drop-link" href="../taschen/lenkerrolle.html">
+              <span class="drop-link-label">Lenkerrolle &amp; Lenkertasche</span>
+              <span class="drop-link-teaser">Viel Volumen, wenig Gewicht: Warum hier maximal 4 Kilo hineindürfen.</span>
+            </a>
+          </li><li>
+            <a class="drop-link" href="../taschen/rahmentasche.html">
+              <span class="drop-link-label">Rahmentasche</span>
+              <span class="drop-link-teaser">Der beste Platz am ganzen Rad – tief, zentral, fahrstabil.</span>
+            </a>
+          </li><li>
+            <a class="drop-link" href="../taschen/kleine-taschen.html">
+              <span class="drop-link-label">Oberrohr-, Gabel- &amp; Stemtaschen</span>
+              <span class="drop-link-teaser">Die Kleinteile, die den Tag angenehm machen: Snacks, Handy, Wasser.</span>
+            </a>
+          </li><li>
+            <a class="drop-link" href="../taschen/taschen-oder-packtaschen.html">
+              <span class="drop-link-label">Bikepacking-Taschen oder Packtaschen?</span>
+              <span class="drop-link-teaser">Gepäckträger ist nicht altmodisch – er ist für viele Touren schlicht besser.</span>
+            </a>
+          </li><li>
+            <a class="drop-link" href="../taschen/richtig-packen.html">
+              <span class="drop-link-label">Richtig packen: Gewichtsverteilung</span>
+              <span class="drop-link-teaser">Schwer nach unten und mittig – warum falsch packen wie ein Fahrfehler wirkt.</span>
+            </a>
+          </li><li>
+            <a class="drop-link" href="../taschen/wasserdicht-packen.html">
+              <span class="drop-link-label">Wasserdicht packen</span>
+              <span class="drop-link-teaser">„Wasserabweisend“ heißt nass. Das Zwei-Zonen-System hält deinen Schlafsack trocken.</span>
+            </a>
+          </li></ul>
+          </div>
+        </div>
+      </li><li class="nav-item has-drop">
+        <button type="button" class="nav-trigger" aria-expanded="false" aria-controls="drop-ausruestung">
+          Ausrüstung<svg class="ico nav-caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><polyline points="6 9 12 15 18 9"></polyline></svg>
+        </button>
+        <div class="drop" id="drop-ausruestung" hidden>
+          <div class="drop-inner">
+            <div class="drop-intro">
+              <p class="drop-eyebrow">Ausrüstung</p>
+              <p class="drop-text">Alles, was in die Taschen kommt – nach Gewicht sortiert und mit klarer Ansage, was Pflicht ist, was mitdarf und was zu Hause bleibt.</p>
+              <a class="drop-overview" href="../ausruestung/index.html">Rubrik-Übersicht <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></a>
+            </div>
+            <ul class="drop-links"><li>
+            <a class="drop-link" href="../ausruestung/packliste.html">
+              <span class="drop-link-label">Die Packliste mit Gewichten</span>
+              <span class="drop-link-teaser">Jede Zeile mit Gramm-Angabe und der Einordnung Pflicht, sinnvoll oder Ballast.</span>
+            </a>
+          </li><li>
+            <a class="drop-link" href="../ausruestung/schlafsystem.html">
+              <span class="drop-link-label">Zelt, Tarp oder Biwaksack?</span>
+              <span class="drop-link-teaser">Drei Wege, draußen zu schlafen – und welcher zu deiner ersten Tour passt.</span>
+            </a>
+          </li><li>
+            <a class="drop-link" href="../ausruestung/schlafsack-isomatte.html">
+              <span class="drop-link-label">Schlafsack &amp; Isomatte</span>
+              <span class="drop-link-teaser">Warum die Matte über deine kalte Nacht entscheidet, nicht der Schlafsack.</span>
+            </a>
+          </li><li>
+            <a class="drop-link" href="../ausruestung/kochen-unterwegs.html">
+              <span class="drop-link-label">Kochen unterwegs</span>
+              <span class="drop-link-teaser">Gaskocher, Spiritus oder gar nicht – mit ehrlicher Gewichtsrechnung.</span>
+            </a>
+          </li><li>
+            <a class="drop-link" href="../ausruestung/kleidung.html">
+              <span class="drop-link-label">Kleidung: Das Zwiebelprinzip</span>
+              <span class="drop-link-teaser">Zwei Garnituren reichen. Welche zwei, entscheidet über deinen Komfort.</span>
+            </a>
+          </li><li>
+            <a class="drop-link" href="../ausruestung/navigation.html">
+              <span class="drop-link-label">Navigation: Apps, GPS &amp; Karten</span>
+              <span class="drop-link-teaser">Komoot, Fahrradcomputer oder Handy am Lenker – Akku ist das eigentliche Thema.</span>
+            </a>
+          </li><li>
+            <a class="drop-link" href="../ausruestung/licht-strom.html">
+              <span class="drop-link-label">Licht, Strom &amp; Powerbank</span>
+              <span class="drop-link-teaser">Wie viel Milliamperestunden du brauchst – und wann sich ein Nabendynamo lohnt.</span>
+            </a>
+          </li><li>
+            <a class="drop-link" href="../ausruestung/werkzeug-reparatur.html">
+              <span class="drop-link-label">Werkzeug &amp; Reparatur-Kit</span>
+              <span class="drop-link-teaser">Die zwölf Teile, mit denen du 95 Prozent aller Pannen selbst löst.</span>
+            </a>
+          </li></ul>
+          </div>
+        </div>
+      </li><li class="nav-item has-drop">
+        <button type="button" class="nav-trigger" aria-expanded="false" aria-controls="drop-routen">
+          Routen &amp; Planung<svg class="ico nav-caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><polyline points="6 9 12 15 18 9"></polyline></svg>
+        </button>
+        <div class="drop" id="drop-routen" hidden>
+          <div class="drop-inner">
+            <div class="drop-intro">
+              <p class="drop-eyebrow">Routen &amp; Planung</p>
+              <p class="drop-text">Wohin die erste Tour geht, wo du legal übernachtest und wie aus einer Idee eine Route wird, die auch bei Regen noch Spaß macht.</p>
+              <a class="drop-overview" href="../routen/index.html">Rubrik-Übersicht <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></a>
+            </div>
+            <ul class="drop-links"><li>
+            <a class="drop-link" href="../routen/einsteiger-routen-deutschland.html">
+              <span class="drop-link-label">Einsteiger-Routen in Deutschland</span>
+              <span class="drop-link-teaser">Zehn Strecken mit Distanz, Höhenmetern, Untergrund und Anreise per Bahn.</span>
+            </a>
+          </li><li>
+            <a class="drop-link" href="../routen/erstes-mikroabenteuer.html">
+              <span class="drop-link-label">Das erste Mikroabenteuer (S24O)</span>
+              <span class="drop-link-teaser">Freitag nach der Arbeit los, Samstagmittag zurück. Der beste Einstieg überhaupt.</span>
+            </a>
+          </li><li>
+            <a class="drop-link" href="../routen/uebernachten.html">
+              <span class="drop-link-label">Übernachten: Wo du legal schläfst</span>
+              <span class="drop-link-teaser">Trekkingplatz, Campingplatz, Biwak – und was in Deutschland wirklich erlaubt ist.</span>
+            </a>
+          </li><li>
+            <a class="drop-link" href="../routen/route-selbst-planen.html">
+              <span class="drop-link-label">Route selbst planen</span>
+              <span class="drop-link-teaser">Von der groben Linie zum GPX-Track, das ohne böse Überraschung fahrbar ist.</span>
+            </a>
+          </li><li>
+            <a class="drop-link" href="../routen/routen-europa.html">
+              <span class="drop-link-label">Bikepacking-Routen in Europa</span>
+              <span class="drop-link-teaser">Acht Klassiker für die zweite Saison – mit ehrlicher Schwierigkeitseinordnung.</span>
+            </a>
+          </li><li>
+            <a class="drop-link" href="../routen/saison-wetter.html">
+              <span class="drop-link-label">Saison, Wetter &amp; Jahreszeit</span>
+              <span class="drop-link-teaser">Wann die beste Zeit ist und wie du drei Tage Regen einplanst, statt zu hoffen.</span>
+            </a>
+          </li><li>
+            <a class="drop-link" href="../routen/wasser-verpflegung.html">
+              <span class="drop-link-label">Wasser &amp; Verpflegung unterwegs</span>
+              <span class="drop-link-teaser">Wo du in Deutschland zuverlässig Wasser bekommst – und wie viel du brauchst.</span>
+            </a>
+          </li></ul>
+          </div>
+        </div>
+      </li><li class="nav-item has-drop">
+        <button type="button" class="nav-trigger" aria-expanded="false" aria-controls="drop-unterwegs">
+          Unterwegs<svg class="ico nav-caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><polyline points="6 9 12 15 18 9"></polyline></svg>
+        </button>
+        <div class="drop" id="drop-unterwegs" hidden>
+          <div class="drop-inner">
+            <div class="drop-intro">
+              <p class="drop-eyebrow">Unterwegs</p>
+              <p class="drop-text">Der Teil, über den kaum jemand schreibt: der Tagesrhythmus auf Tour, Pannen im Nirgendwo und was dein Körper nach 80 Kilometern sagt.</p>
+              <a class="drop-overview" href="../unterwegs/index.html">Rubrik-Übersicht <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></a>
+            </div>
+            <ul class="drop-links"><li>
+            <a class="drop-link" href="../unterwegs/tagesablauf.html">
+              <span class="drop-link-label">Der Tagesablauf auf Tour</span>
+              <span class="drop-link-teaser">Von 6:30 Uhr bis zur Dunkelheit – der Rhythmus, der Kilometer leicht macht.</span>
+            </a>
+          </li><li>
+            <a class="drop-link" href="../unterwegs/panne-beheben.html">
+              <span class="drop-link-label">Panne unterwegs beheben</span>
+              <span class="drop-link-teaser">Platten, Kettenriss, gerissene Speiche – die Notfall-Anleitungen im Detail.</span>
+            </a>
+          </li><li>
+            <a class="drop-link" href="../unterwegs/koerper-beschwerden.html">
+              <span class="drop-link-label">Sitzbeschwerden, Hände &amp; Knie</span>
+              <span class="drop-link-teaser">Die drei Baustellen, die Touren abbrechen – und wie du sie vorher löst.</span>
+            </a>
+          </li><li>
+            <a class="drop-link" href="../unterwegs/training-vorbereitung.html">
+              <span class="drop-link-label">Training &amp; Vorbereitung</span>
+              <span class="drop-link-teaser">Acht Wochen, drei Einheiten pro Woche – mehr braucht es nicht.</span>
+            </a>
+          </li><li>
+            <a class="drop-link" href="../unterwegs/allein-oder-gruppe.html">
+              <span class="drop-link-label">Allein, zu zweit oder in der Gruppe</span>
+              <span class="drop-link-teaser">Wie die Gruppengröße Tempo, Planung und Sicherheit verändert.</span>
+            </a>
+          </li><li>
+            <a class="drop-link" href="../unterwegs/sicherheit-notfall.html">
+              <span class="drop-link-label">Sicherheit &amp; Notfall</span>
+              <span class="drop-link-teaser">Erste Hilfe, Notruf ohne Empfang, Diebstahlschutz und die Nacht allein im Wald.</span>
+            </a>
+          </li></ul>
+          </div>
+        </div>
+      </li><li class="nav-item has-drop is-active">
+        <button type="button" class="nav-trigger" aria-expanded="false" aria-controls="drop-service">
+          Service<svg class="ico nav-caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><polyline points="6 9 12 15 18 9"></polyline></svg>
+        </button>
+        <div class="drop" id="drop-service" hidden>
+          <div class="drop-inner">
+            <div class="drop-intro">
+              <p class="drop-eyebrow">Service</p>
+              <p class="drop-text">Zwei Rechner, die dir Arbeit abnehmen, der Newsletter und die Fragen, die immer wieder kommen.</p>
+              <a class="drop-overview" href="../service/index.html">Rubrik-Übersicht <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></a>
+            </div>
+            <ul class="drop-links"><li>
+            <a class="drop-link" href="../tools/packlisten-generator.html">
+              <span class="drop-link-label">Packlisten-Generator</span>
+              <span class="drop-link-teaser">Acht Fragen, eine persönliche Packliste inklusive geschätztem Gesamtgewicht.</span>
+            </a>
+          </li><li>
+            <a class="drop-link is-current" href="../tools/etappen-rechner.html">
+              <span class="drop-link-label">Etappen- &amp; Gewichts-Rechner</span>
+              <span class="drop-link-teaser">Realistische Tagesdistanz aus Höhenmetern, Untergrund und Gepäck berechnen.</span>
+            </a>
+          </li><li>
+            <a class="drop-link" href="../newsletter.html">
+              <span class="drop-link-label">Newsletter</span>
+              <span class="drop-link-teaser">Alle 14 Tage: eine Route, ein Ausrüstungsteil, ein Fehler, den du nicht machen musst.</span>
+            </a>
+          </li><li>
+            <a class="drop-link" href="../faq.html">
+              <span class="drop-link-label">Häufige Fragen</span>
+              <span class="drop-link-teaser">Von „Brauche ich ein Gravelbike?“ bis „Wo gehe ich nachts aufs Klo?“.</span>
+            </a>
+          </li><li>
+            <a class="drop-link" href="../ueber-uns.html">
+              <span class="drop-link-label">Über Sattelfest</span>
+              <span class="drop-link-teaser">Wer hinter der Seite steckt und nach welchen Regeln wir empfehlen.</span>
+            </a>
+          </li></ul>
+          </div>
+        </div>
+      </li></ul>
+</nav>
+    <button type="button" id="nav-toggle" class="nav-toggle" aria-controls="site-nav" aria-expanded="false" aria-label="Menü öffnen">
+      <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><line x1="4" x2="20" y1="12" y2="12"></line><line x1="4" x2="20" y1="6" y2="6"></line><line x1="4" x2="20" y1="18" y2="18"></line></svg>
+    </button>
+  </div>
+</header>
+<main id="main" class="site-main">
+<div class="wrap"><nav class="crumbs" aria-label="Brotkrümelnavigation">
+  <ol><li><a href="../index.html">Start</a></li><li><a href="../service/index.html">Service</a></li><li aria-current="page">Etappen- &amp; Gewichts-Rechner</li></ol>
+</nav></div>
+<header class="article-head">
+  <div class="wrap">
+    <p class="label">Werkzeug · Kostenlos</p>
+    <h1 class="page-title">Etappen- & Gewichts-Rechner</h1>
+    <p class="page-lead">Wie weit kommst du an einem Tag wirklich – und ist dein Gepäck noch im Rahmen? Mit Höhenmetern, Untergrund, Mehrtagesermüdung und Tageslänge inklusive Pausen.</p>
+    <p class="article-meta"><span><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>2 Minuten</span><span><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M8 3 2 21h20L14 3l-3 7-3-7z"></path></svg>Zeitbudget statt Kilometer</span><span><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"></path></svg>Keine Datenübertragung</span></p>
+    <div class="article-hero"><figure class="fig">
+  <div class="fig-frame" style="--ratio:21 / 9"><div class="fig-placeholder">
+         <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect width="18" height="18" x="3" y="3" rx="2"></rect><circle cx="9" cy="9" r="2"></circle><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"></path></svg>
+         <span>Bild ergänzen</span>
+         <code>src/assets/img/tools/etappen-rechner.jpg</code>
+       </div></div>
+  
+</figure></div>
+  </div>
+</header>
+<section class="band band--plain ">
+  <div class="wrap"><div class="article-body">
+        <article class="prose">
+<p class="lead-p">
+  Zwei Rechnungen in einem Werkzeug: Wie weit kommst du an einem Tag realistisch – und ist dein
+  Gepäck noch im vernünftigen Rahmen? Der Rechner berücksichtigt Höhenmeter, Untergrund, Gewicht,
+  Erfahrung und Mehrtagesermüdung und gibt zusätzlich die Tageslänge inklusive Pausen aus.
+</p>
+
+<div class="tool" id="planner">
+  <h2 style="margin-top:0;color:var(--c-ink);font-size:1.25rem;font-weight:800">1. Deine Ausgangswerte</h2>
+  <p style="margin:.4rem 0 1.2rem;color:var(--c-muted);font-size:.92rem">
+    Der wichtigste Wert ist der erste: Wie weit kommst du an einem guten Tag <strong>ohne</strong> Gepäck?
+    Davon ausgehend rechnet der Planer alles Weitere.
+  </p>
+  <div class="tool-grid">
+    <div class="field">
+      <label for="pl-ref">Gute Tagestour ohne Gepäck (km)</label>
+      <input type="number" id="pl-ref" data-ref data-default="80" value="80" min="20" max="300" step="5">
+    </div>
+    <div class="field">
+      <label for="pl-hm">Höhenmeter pro Tag</label>
+      <input type="number" id="pl-hm" data-hm data-default="500" value="500" min="0" max="3000" step="50">
+    </div>
+    <div class="field">
+      <label for="pl-days">Anzahl Tourtage</label>
+      <input type="number" id="pl-days" data-days data-default="3" value="3" min="1" max="30" step="1">
+    </div>
+    <div class="field">
+      <label for="pl-surface">Untergrund</label>
+      <select id="pl-surface" data-surface>
+        <option value="asphalt">Überwiegend Asphalt</option>
+        <option value="gemischt" selected>Gemischt</option>
+        <option value="offroad">Schotter und Trails</option>
+      </select>
+    </div>
+    <div class="field">
+      <label for="pl-level">Bikepacking-Erfahrung</label>
+      <select id="pl-level" data-level>
+        <option value="erste">Erste Tour</option>
+        <option value="einige" selected>Ein paar Touren</option>
+        <option value="viele">Viel Erfahrung</option>
+      </select>
+    </div>
+  </div>
+
+  <h2 style="margin-top:2rem;color:var(--c-ink);font-size:1.25rem;font-weight:800">2. Dein Gewicht</h2>
+  <p style="margin:.4rem 0 1.2rem;color:var(--c-muted);font-size:.92rem">
+    Gepäck heißt: alles in den Taschen, ohne Wasser und ohne das, was du am Körper trägst.
+    Das Körpergewicht ist optional – es dient nur der Einordnung.
+  </p>
+  <div class="tool-grid">
+    <div class="field">
+      <label for="pl-load">Gepäckgewicht (kg)</label>
+      <input type="number" id="pl-load" data-load data-default="10" value="10" min="0" max="40" step="0.5">
+    </div>
+    <div class="field">
+      <label for="pl-bike">Gewicht des Rads (kg)</label>
+      <input type="number" id="pl-bike" data-bike data-default="12" value="12" min="6" max="30" step="0.5">
+    </div>
+    <div class="field">
+      <label for="pl-body">Körpergewicht (kg, optional)</label>
+      <input type="number" id="pl-body" data-body data-default="0" value="" min="0" max="200" step="1" placeholder="optional">
+    </div>
+  </div>
+
+  <div class="tool-actions">
+    <button type="button" class="btn btn--secondary" data-planner-reset>Zurücksetzen</button>
+  </div>
+
+  <div class="tool-result" data-planner-result hidden></div>
+</div>
+
+<h2 id="formel">Wie gerechnet wird</h2>
+<h3 id="formel-distanz">Die Tagesdistanz</h3>
+<blockquote>Tagesdistanz = (Zeitbudget − Zeit für die Anstiege) × Reisegeschwindigkeit</blockquote>
+<p>
+  Begrenzend ist auf Tour nicht die Strecke, sondern die <strong>Zeit</strong>. Deshalb rechnet der
+  Planer nicht mit Kilometer-Abzügen, sondern bestimmt zuerst, wie viele Stunden du im Sattel
+  aushältst – und wie viel davon die Anstiege verbrauchen.
+</p>
+
+<h3 id="formel-budget">Schritt 1: Das Zeitbudget</h3>
+<div class="table-wrap">
+  <table class="data-table">
+    
+    <thead><tr><th scope="col">Faktor</th><th scope="col">Wert</th><th scope="col">Begründung</th></tr></thead>
+    <tbody><tr><th scope="row">Referenzstrecke ÷ 20 km/h</th><td>= Stunden</td><td>Typischer Schnitt einer guten Tagestour ohne Gepäck</td></tr><tr><th scope="row">Tourfaktor</th><td>× 1,2</td><td>Auf Mehrtagestouren sitzt man länger im Sattel</td></tr><tr><th scope="row">Erste Tour</th><td>× 0,85</td><td>Alles dauert länger, weil noch nichts Routine ist</td></tr><tr><th scope="row">Ein paar Touren</th><td>× 1,0</td><td>Referenz</td></tr><tr><th scope="row">Viel Erfahrung</th><td>× 1,1</td><td>Eingespielte Abläufe, weniger Leerlauf</td></tr><tr><th scope="row">3 – 4 Tourtage</th><td>× 0,95</td><td>Beginnende Ermüdung</td></tr><tr><th scope="row">5 – 7 Tourtage</th><td>× 0,90</td><td>Der klassische Einbruch ab Tag 3</td></tr><tr><th scope="row">Über 7 Tourtage</th><td>× 0,85</td><td>Dauerbelastung ohne vollständige Erholung</td></tr></tbody>
+  </table>
+</div>
+
+<h3 id="formel-tempo">Schritt 2: Die Reisegeschwindigkeit</h3>
+<div class="table-wrap">
+  <table class="data-table">
+    
+    <thead><tr><th scope="col">Faktor</th><th scope="col">Wert</th><th scope="col">Begründung</th></tr></thead>
+    <tbody><tr><th scope="row">Asphalt</th><td>19 km/h</td><td>Fernradwege und Straßen</td></tr><tr><th scope="row">Gemischt</th><td>16 km/h</td><td>Wald- und Wirtschaftswege kosten Tempo</td></tr><tr><th scope="row">Schotter und Trails</th><td>12,5 km/h</td><td>Loser Untergrund kostet Tempo und Konzentration</td></tr><tr><th scope="row">Gepäck über 6 kg</th><td>−1,8 % je kg</td><td>Gedeckelt bei maximal −20 Prozent</td></tr></tbody>
+  </table>
+</div><p class="table-note">Das sind Reiseschnitte: Sie enthalten Ampeln, kurze Steigungen und das Suchen an Kreuzungen, aber keine echten Pausen.</p>
+
+<h3 id="formel-hm">Schritt 3: Die Anstiege</h3>
+<p>
+  Beladen bewältigst du etwa <strong>500 Höhenmeter pro Stunde</strong>. Diese Zeit wird vom Budget
+  abgezogen, bevor die Distanz errechnet wird. 600 Höhenmeter kosten also rund 1 Stunde 12 Minuten –
+  und genau die fehlen dir für Kilometer.
+</p>
+<ul class="tick-list tick-list--do"><li><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><polyline points="20 6 9 17 4 12"></polyline></svg><span><strong>Reine Fahrzeit</strong> ist die Zeit im Sattel, inklusive des Zeitaufschlags für Anstiege.</span></li><li><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><polyline points="20 6 9 17 4 12"></polyline></svg><span><strong>Tag inklusive Pausen</strong> rechnet 30 Prozent der Fahrzeit plus 45 Minuten für Mittagspause und Einkauf hinzu.</span></li><li><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><polyline points="20 6 9 17 4 12"></polyline></svg><span><strong>Nicht enthalten</strong> sind Zeltabbau am Morgen (45 bis 75 Minuten) und Aufbau am Abend (60 bis 90 Minuten).</span></li><li><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><polyline points="20 6 9 17 4 12"></polyline></svg><span><strong>Untergrenze 10 Kilometer:</strong> Wenn die Anstiege das Budget aufbrauchen, meldet der Rechner das ausdrücklich – dann ist die Etappe zu teilen.</span></li></ul>
+
+<h3 id="formel-gewicht">Der Gewichts-Check</h3>
+<p>
+  Das <strong>Systemgewicht</strong> ist die Masse, die du an jedem Anstieg mit hochziehst: Rad plus
+  Gepäck plus zwei Kilo für Wasser und Tagesverpflegung. Der optionale Anteil am Körpergewicht dient
+  der Einordnung – als grober Anhaltspunkt gilt Gepäck bis etwa 15 Prozent des Körpergewichts als
+  gut beherrschbar.
+</p>
+<div class="table-wrap">
+  <table class="data-table">
+    
+    <thead><tr><th scope="col">Gepäckgewicht</th><th scope="col">Einordnung</th></tr></thead>
+    <tbody><tr><th scope="row">unter 7 kg</th><td>Leicht – das Rad fährt sich fast wie ohne Gepäck</td></tr><tr><th scope="row">7 – 11 kg</th><td><strong>Der Bereich, in dem die meisten Bikepacker landen</strong></td></tr><tr><th scope="row">11 – 16 kg</th><td>Spürbar – prüfe, ob Zelt, Kocher und Kleidung wirklich alle mitmüssen</td></tr><tr><th scope="row">über 16 kg</th><td>Zu viel für ein Bikepacking-Setup – auf einem Gepäckträger angenehmer</td></tr></tbody>
+  </table>
+</div>
+
+<aside class="callout callout--info">
+  <div class="callout-icon"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg></div>
+  <div class="callout-body"><p class="callout-title">Warum am Ende rund 60 Prozent herauskommen</p><p>Beim ersten Rechnen erschrickt fast jeder: Aus 100 Kilometern werden schnell 55. Das ist kein Pessimismus der Formel, sondern die Folge einer falsch gestellten Ausgangsfrage. Deine beste Tagestour ohne Gepäck ist ein <strong>Maximalwert</strong>, den du einmal abrufst. Eine Bikepacking-Etappe musst du <strong>am nächsten Tag wiederholen</strong> – und am übernächsten auch. Dass am Ende etwa 60 Prozent übrig bleiben, ist deshalb kein Rechentrick, sondern das Ergebnis aus Zeitbudget, Tempo und Anstiegen.</p></div>
+</aside>
+
+<h2 id="grenzen">Was die Rechnung nicht kann</h2>
+<ul class="tick-list tick-list--dont"><li><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg><span><strong>Gegenwind.</strong> Vier Windstärken kosten mehr als 300 Höhenmeter – und stehen in keiner Formel.</span></li><li><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg><span><strong>Hitze.</strong> Über 30 Grad sinkt die sinnvolle Tagesdistanz um 20 bis 30 Prozent.</span></li><li><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg><span><strong>Schlechter Schlaf.</strong> Die zweite Nacht auf einer Isomatte ist selten die beste.</span></li><li><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg><span><strong>Sperrungen und Umwege.</strong> Eine gesperrte Brücke sind schnell 25 zusätzliche Kilometer.</span></li><li><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg><span><strong>Deine Tagesform.</strong> Sie schwankt stärker als jeder Faktor in dieser Tabelle.</span></li></ul>
+<p>
+  Deshalb gilt: Plane pro Tag <strong>eine Ausstiegsmöglichkeit</strong> ein – idealerweise einen
+  Bahnhof. Dann wird aus einer Etappe, die nicht aufgeht, einfach eine kürzere Etappe.
+</p>
+
+<h2 id="danach">Und danach?</h2>
+<ul class="tick-list tick-list--do"><li><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><polyline points="20 6 9 17 4 12"></polyline></svg><span><a href="../einstieg/tagesetappen-planen.html">Wie weit kommst du am Tag?</a> – die Formel im Detail, mit Richtwerten nach Erfahrung und dem vollständigen Tages-Zeitplan.</span></li><li><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><polyline points="20 6 9 17 4 12"></polyline></svg><span><a href="../routen/route-selbst-planen.html">Route selbst planen</a> – wie du aus der Tagesdistanz eine Route mit Schlafplätzen machst.</span></li><li><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><polyline points="20 6 9 17 4 12"></polyline></svg><span><a href="../tools/packlisten-generator.html">Packlisten-Generator</a> – falls dir der Gewichts-Check zu viel ausgerechnet hat.</span></li></ul>
+</article>
+        <aside class="article-aside"><div class="nl nl--aside">
+  <div class="nl-copy">
+    <p class="label label--light">Newsletter</p>
+    <h2 class="nl-title">Alle 14 Tage eine Tour weiter</h2>
+    <p class="nl-lead">Eine Route mit GPX-Hinweis, ein Ausrüstungsteil ohne Werbesprech und ein Fehler, den du dank uns nicht selbst machen musst. Kostenlos, jederzeit abbestellbar.</p>
+    <ul class="nl-perks">
+      <li><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><polyline points="20 6 9 17 4 12"></polyline></svg><span>Startgeschenk: die Sattelfest-Packliste als PDF, mit Gewichtsspalte</span></li>
+      <li><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><polyline points="20 6 9 17 4 12"></polyline></svg><span>Kein Spam, kein Weiterverkauf deiner Daten</span></li>
+      <li><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><polyline points="20 6 9 17 4 12"></polyline></svg><span>Abmeldung mit einem Klick in jeder E-Mail</span></li>
+    </ul>
+  </div>
+  <form class="nl-form" data-newsletter novalidate>
+    <div class="field">
+      <label for="nl-name-aside">Vorname <span class="opt">(optional)</span></label>
+      <input type="text" id="nl-name-aside" name="first_name" autocomplete="given-name" placeholder="Wie sollen wir dich ansprechen?">
+    </div>
+    <div class="field">
+      <label for="nl-mail-aside">E-Mail-Adresse</label>
+      <input type="email" id="nl-mail-aside" name="email" autocomplete="email" required placeholder="dein.name@beispiel.de">
+      <p class="field-error" data-error hidden>Bitte gib eine gültige E-Mail-Adresse ein.</p>
+    </div>
+    <div class="field field--check">
+      <input type="checkbox" id="nl-consent-aside" name="consent" required>
+      <label for="nl-consent-aside">Ich möchte den Newsletter erhalten und habe die <a href="../datenschutz.html">Datenschutzerklärung</a> gelesen.</label>
+    </div>
+    <input type="text" name="website" class="hp-field" tabindex="-1" autocomplete="off" aria-hidden="true">
+    <button type="submit" class="btn btn--primary btn--block">Packliste sichern <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></button>
+    <p class="nl-status" data-status role="status"></p>
+    <p class="nl-legal">Double-Opt-in: Du bekommst zuerst eine Bestätigungsmail. Erst danach startet der Versand.</p>
+  </form>
+</div>
+<div class="aside-block"><p class="aside-title">Passt dazu</p>
+         <ul class="related-list"><li><a href="../einstieg/tagesetappen-planen.html">Wie weit kommst du am Tag?</a></li><li><a href="../routen/route-selbst-planen.html">Route selbst planen</a></li><li><a href="../tools/packlisten-generator.html">Packlisten-Generator</a></li></ul></div></aside>
+      </div></div>
+</section>
+<section class="band band--soft ">
+  <div class="wrap"><div class="prose" style="max-width:none"><div class="faq">
+  <h2 id="haeufige-fragen">Häufige Fragen</h2>
+  <div class="faq-list"><details class="faq-item">
+      <summary>Wie realistisch ist die berechnete Tagesdistanz?<svg class="ico faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><polyline points="6 9 12 15 18 9"></polyline></svg></summary>
+      <div class="faq-answer"><p>Sie bildet die Erfahrungswerte gut ab, die sich beim Bikepacking eingespielt haben: rund 500 Höhenmeter pro Stunde beladen, Reiseschnitte zwischen 12,5 und 19 km/h und ein Ergebnis, das typischerweise bei etwa 60 Prozent deiner Referenzstrecke landet. Was sie nicht kennt: Gegenwind, Hitze, schlechten Schlaf und Umleitungen. Plane deshalb pro Tag eine Ausstiegsmöglichkeit ein.</p></div>
+    </details><details class="faq-item">
+      <summary>Was gebe ich bei „gute Tagestour ohne Gepäck“ ein?<svg class="ico faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><polyline points="6 9 12 15 18 9"></polyline></svg></summary>
+      <div class="faq-answer"><p>Die Strecke, die du an einem guten Tag ohne Gepäck komfortabel schaffst – nicht deine Bestleistung und nicht deine übliche Feierabendrunde. Wenn du unsicher bist: Nimm die längste Tour der letzten Saison und zieh 10 Prozent ab. Dieser eine Wert bestimmt das gesamte Ergebnis.</p></div>
+    </details><details class="faq-item">
+      <summary>Warum kommt bei vielen Höhenmetern eine so kurze Distanz heraus?<svg class="ico faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><polyline points="6 9 12 15 18 9"></polyline></svg></summary>
+      <div class="faq-answer"><p>Weil Anstiege Zeit kosten, und Zeit ist das, was deinen Tag begrenzt. Beladen schaffst du rund 500 Höhenmeter pro Stunde: Ein Tag mit 1.500 Höhenmetern verbraucht damit drei Stunden deines Zeitbudgets, bevor du einen einzigen Kilometer weit gekommen bist. Bei bergigen Routen ist die Etappe deshalb nicht durch die Distanz begrenzt, sondern durch die Anstiege.</p></div>
+    </details><details class="faq-item">
+      <summary>Wie viel Gepäck ist zu viel?<svg class="ico faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><polyline points="6 9 12 15 18 9"></polyline></svg></summary>
+      <div class="faq-answer"><p>Unter 7 Kilo ist leicht, 7 bis 11 Kilo ist der Bereich, in dem die meisten Bikepacker landen. Ab 11 Kilo wird es spürbar, über 16 Kilo ist es für ein Bikepacking-Setup zu viel – dann trägt sich das Gewicht auf einem Gepäckträger deutlich angenehmer als in Satteltasche und Lenkerrolle.</p></div>
+    </details><details class="faq-item">
+      <summary>Werden meine Eingaben gespeichert?<svg class="ico faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><polyline points="6 9 12 15 18 9"></polyline></svg></summary>
+      <div class="faq-answer"><p>Nein. Der Rechner arbeitet vollständig in deinem Browser. Es werden keine Daten an einen Server übertragen, nichts gespeichert und keine Cookies gesetzt. Beim Neuladen der Seite stehen wieder die Ausgangswerte.</p></div>
+    </details></div>
+</div></div></div>
+</section><section class="band band--soft"><div class="wrap"><nav class="pager" aria-label="Weitere Artikel dieser Rubrik">
+  <a class="pager-item pager-item--prev" href="../tools/packlisten-generator.html">
+    <span class="pager-dir"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg> Vorher</span>
+    <span class="pager-label">Packlisten-Generator</span></a>
+  <a class="pager-item pager-item--next" href="../newsletter.html">
+    <span class="pager-dir">Als Nächstes <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></span>
+    <span class="pager-label">Newsletter</span></a>
+</nav></div></section>
+</main>
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="foot-top">
+      <div class="foot-brand">
+        <span class="brand-name">Sattel<b>fest</b></span>
+        <p class="foot-copy">Unabhängiger Einstiegs-Guide fürs Bikepacking. Ohne Ausrüstungsmythen, ohne Heldengeschichten und ohne die Behauptung, dass du für die erste Nacht draußen ein neues Rad brauchst.</p>
+        <a class="btn btn--ghost btn--sm" href="../newsletter.html"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect width="20" height="16" x="2" y="4" rx="2"></rect><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path></svg> Newsletter abonnieren</a>
+        <p style="margin-top:1rem"><a href="../impressum.html" style="color:rgba(255,255,255,.55);font-size:.8rem">Impressum</a></p>
+      </div>
+      <div class="foot-cols"><div class="foot-col">
+      <p class="foot-eyebrow">Einstieg</p>
+      <ul class="foot-links">
+        <li><a href="../einstieg/was-ist-bikepacking.html">Was Bikepacking wirklich ist</a></li><li><a href="../einstieg/erste-tour-fahrplan.html">Fahrplan: In 7 Schritten zur ersten Tour</a></li><li><a href="../einstieg/welches-fahrrad.html">Welches Rad passt zum Bikepacking?</a></li><li><a href="../einstieg/was-kostet-bikepacking.html">Was Bikepacking wirklich kostet</a></li><li><a href="../einstieg/tagesetappen-planen.html">Wie weit kommst du am Tag?</a></li><li><a href="../einstieg/bikepacking-glossar.html">Bikepacking-Glossar A bis Z</a></li>
+      </ul>
+    </div><div class="foot-col">
+      <p class="foot-eyebrow">Taschen</p>
+      <ul class="foot-links">
+        <li><a href="../taschen/taschensystem.html">Das Taschensystem verstehen</a></li><li><a href="../taschen/satteltasche.html">Satteltasche (Seatpack)</a></li><li><a href="../taschen/lenkerrolle.html">Lenkerrolle &amp; Lenkertasche</a></li><li><a href="../taschen/rahmentasche.html">Rahmentasche</a></li><li><a href="../taschen/kleine-taschen.html">Oberrohr-, Gabel- &amp; Stemtaschen</a></li><li><a href="../taschen/taschen-oder-packtaschen.html">Bikepacking-Taschen oder Packtaschen?</a></li>
+      </ul>
+    </div><div class="foot-col">
+      <p class="foot-eyebrow">Ausrüstung</p>
+      <ul class="foot-links">
+        <li><a href="../ausruestung/packliste.html">Die Packliste mit Gewichten</a></li><li><a href="../ausruestung/schlafsystem.html">Zelt, Tarp oder Biwaksack?</a></li><li><a href="../ausruestung/schlafsack-isomatte.html">Schlafsack &amp; Isomatte</a></li><li><a href="../ausruestung/kochen-unterwegs.html">Kochen unterwegs</a></li><li><a href="../ausruestung/kleidung.html">Kleidung: Das Zwiebelprinzip</a></li><li><a href="../ausruestung/navigation.html">Navigation: Apps, GPS &amp; Karten</a></li>
+      </ul>
+    </div><div class="foot-col">
+      <p class="foot-eyebrow">Routen &amp; Planung</p>
+      <ul class="foot-links">
+        <li><a href="../routen/einsteiger-routen-deutschland.html">Einsteiger-Routen in Deutschland</a></li><li><a href="../routen/erstes-mikroabenteuer.html">Das erste Mikroabenteuer (S24O)</a></li><li><a href="../routen/uebernachten.html">Übernachten: Wo du legal schläfst</a></li><li><a href="../routen/route-selbst-planen.html">Route selbst planen</a></li><li><a href="../routen/routen-europa.html">Bikepacking-Routen in Europa</a></li><li><a href="../routen/saison-wetter.html">Saison, Wetter &amp; Jahreszeit</a></li>
+      </ul>
+    </div><div class="foot-col">
+      <p class="foot-eyebrow">Unterwegs</p>
+      <ul class="foot-links">
+        <li><a href="../unterwegs/tagesablauf.html">Der Tagesablauf auf Tour</a></li><li><a href="../unterwegs/panne-beheben.html">Panne unterwegs beheben</a></li><li><a href="../unterwegs/koerper-beschwerden.html">Sitzbeschwerden, Hände &amp; Knie</a></li><li><a href="../unterwegs/training-vorbereitung.html">Training &amp; Vorbereitung</a></li><li><a href="../unterwegs/allein-oder-gruppe.html">Allein, zu zweit oder in der Gruppe</a></li><li><a href="../unterwegs/sicherheit-notfall.html">Sicherheit &amp; Notfall</a></li>
+      </ul>
+    </div><div class="foot-col">
+      <p class="foot-eyebrow">Service</p>
+      <ul class="foot-links">
+        <li><a href="../tools/packlisten-generator.html">Packlisten-Generator</a></li><li><a href="../tools/etappen-rechner.html">Etappen- &amp; Gewichts-Rechner</a></li><li><a href="../newsletter.html">Newsletter</a></li><li><a href="../faq.html">Häufige Fragen</a></li><li><a href="../ueber-uns.html">Über Sattelfest</a></li>
+      </ul>
+    </div></div>
+    </div>
+    <div class="foot-legal">
+      <p class="foot-disclosure">Anzeige: Die mit * markierten Links sind Partnerlinks. Kaufst du darüber, erhalten wir eine Provision. Für dich ändert sich der Preis nicht.</p>
+      <div class="foot-bottom">
+        <p>&copy; <span data-year>2026</span> Sattelfest. Alle Rechte vorbehalten.</p>
+        <ul class="foot-legal-links">
+          <li><a href="../impressum.html">Impressum</a></li><li><a href="../datenschutz.html">Datenschutz</a></li><li><a href="../affiliate-hinweis.html">Affiliate-Hinweis</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</footer>
+<script src="../assets/config.js"></script>
+<script src="../assets/site.js" defer></script>
+</body>
+</html>

@@ -1744,3 +1744,221 @@
             color: var(--color-accent-red);
             text-decoration: none;
         }
+
+        /* =========================================================
+           Toolvergleich (Content-Bereich /toolvergleich/)
+           Nutzt die bestehenden Tokens, Buttons, .faq-* und den Footer.
+           ========================================================= */
+        .tv-hero {
+            background-color: var(--color-medium-bg);
+            border-bottom: 1px solid #E5E7EB;
+            padding-top: 3.5rem;
+            padding-bottom: 3.5rem;
+        }
+        .tv-hero .section-kicker { justify-content: flex-start; }
+        .tv-title {
+            color: var(--color-text-heading);
+            font-size: clamp(2rem, 4.5vw, 3.1rem);
+            line-height: 1.12;
+            font-weight: 800;
+            margin-top: 1rem;
+            margin-bottom: 0.9rem;
+        }
+        .tv-lead {
+            max-width: 60rem;
+            color: var(--color-text-body);
+            font-size: 1.12rem;
+            line-height: 1.7;
+        }
+        .tv-meta {
+            margin-top: 1rem;
+            color: var(--color-text-body);
+            font-size: 0.9rem;
+        }
+        .tv-body { padding-top: 3rem; padding-bottom: 3.5rem; }
+        .tv-wrap { max-width: 62rem; margin: 0 auto; }
+
+        /* Artikel-Fließtext */
+        .tv-prose > * + * { margin-top: 1.1rem; }
+        .tv-prose h2 {
+            color: var(--color-text-heading);
+            font-size: 1.6rem;
+            line-height: 1.25;
+            font-weight: 800;
+            margin-top: 2.6rem;
+            margin-bottom: 0.4rem;
+        }
+        .tv-prose h3 {
+            color: var(--color-text-heading);
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-top: 1.6rem;
+        }
+        .tv-prose p, .tv-prose li {
+            color: var(--color-text-body);
+            line-height: 1.78;
+            font-size: 1.02rem;
+        }
+        .tv-prose ul { padding-left: 1.3rem; list-style: disc; }
+        .tv-prose li { margin-bottom: 0.4rem; }
+        .tv-prose strong { color: var(--color-text-heading); }
+        .tv-prose a:not(.affiliate):not(.btn-primary-custom) {
+            color: var(--color-accent-red);
+            text-decoration: underline;
+            text-underline-offset: 2px;
+        }
+
+        /* Transparenzbox (oben im Artikel) */
+        .tv-transparency {
+            display: flex;
+            gap: 0.9rem;
+            padding: 1.15rem 1.35rem;
+            margin-bottom: 2rem;
+            background-color: #F3F6F9;
+            border: 1px solid #DDE7F0;
+            border-left: 3px solid var(--color-accent-red);
+            border-radius: 0.5rem;
+        }
+        .tv-transparency .lucide { flex: 0 0 1.25rem; width: 1.25rem; height: 1.25rem; color: var(--color-accent-red); margin-top: 0.15rem; }
+        .tv-transparency p { margin: 0; color: var(--color-text-heading); font-size: 0.95rem; line-height: 1.6; }
+        .tv-transparency strong { display: block; margin-bottom: 0.15rem; }
+
+        /* Vergleichstabelle */
+        .tv-table-wrap { overflow-x: auto; margin: 1.5rem 0; border: 1px solid #E0E6ED; border-radius: 0.6rem; }
+        .tv-table { width: 100%; border-collapse: collapse; min-width: 640px; background-color: #fff; }
+        .tv-table caption { text-align: left; padding: 0.9rem 1rem; color: var(--color-text-body); font-size: 0.85rem; }
+        .tv-table th, .tv-table td {
+            padding: 0.8rem 1rem;
+            text-align: left;
+            border-bottom: 1px solid #EAEEF3;
+            font-size: 0.95rem;
+            vertical-align: top;
+        }
+        .tv-table thead th {
+            background-color: var(--color-primary-dark-blue);
+            color: #fff;
+            font-weight: 700;
+            position: sticky;
+            top: 0;
+        }
+        .tv-table tbody th[scope="row"] { color: var(--color-text-heading); font-weight: 700; }
+        .tv-table tbody tr:nth-child(even) td,
+        .tv-table tbody tr:nth-child(even) th[scope="row"] { background-color: #FAFBFC; }
+        .tv-table .lucide { width: 1rem; height: 1rem; }
+        .tv-yes { color: var(--color-success-green); }
+        .tv-no  { color: #B0B7C0; }
+
+        /* Affiliate-Link + „Anzeige“-Kennzeichnung (unmittelbar am Link) */
+        .affiliate {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            color: var(--color-accent-red);
+            font-weight: 700;
+            text-decoration: none;
+            white-space: nowrap;
+        }
+        .affiliate:hover { text-decoration: underline; text-underline-offset: 2px; }
+        .affiliate .lucide { width: 0.9rem; height: 0.9rem; }
+        .ad-badge {
+            display: inline-block;
+            margin-left: 0.35rem;
+            padding: 0.05rem 0.4rem;
+            font-size: 0.66rem;
+            font-weight: 800;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            color: #6B7480;
+            background-color: #EEF1F5;
+            border: 1px solid #DCE2E9;
+            border-radius: 0.3rem;
+            vertical-align: middle;
+            white-space: nowrap;
+        }
+
+        /* Conversion-Abschluss (überleitend, kein Banner) */
+        .tv-conversion {
+            margin-top: 2.6rem;
+            padding: 1.6rem 1.75rem;
+            background-color: #F3F6F9;
+            border: 1px solid #DDE7F0;
+            border-radius: 0.6rem;
+        }
+        .tv-conversion p { margin: 0 0 0.9rem; color: var(--color-text-heading); line-height: 1.7; }
+        .tv-conversion p:last-child { margin-bottom: 0; }
+
+        /* Autorenbox */
+        .tv-author {
+            display: flex;
+            gap: 1.1rem;
+            align-items: center;
+            margin-top: 2.6rem;
+            padding-top: 1.6rem;
+            border-top: 1px solid #E5E7EB;
+        }
+        .tv-author img {
+            flex: 0 0 auto;
+            width: 64px; height: 64px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 1px solid #DDE3EA;
+        }
+        .tv-author-name { color: var(--color-text-heading); font-weight: 800; }
+        .tv-author-role { color: var(--color-text-body); font-size: 0.9rem; margin-bottom: 0.3rem; }
+        .tv-author p { margin: 0; color: var(--color-text-body); font-size: 0.95rem; line-height: 1.6; }
+        .tv-author a { color: var(--color-accent-red); font-weight: 700; text-decoration: none; }
+        .tv-author a:hover { text-decoration: underline; }
+
+        /* Übersicht: Artikel-Karten */
+        .tv-card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+        .tv-card {
+            display: flex;
+            flex-direction: column;
+            padding: 1.4rem;
+            background-color: #fff;
+            border: 1px solid #E0E6ED;
+            border-radius: 0.6rem;
+            box-shadow: 0 12px 30px rgba(20, 36, 58, 0.06);
+            text-decoration: none;
+            transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+        }
+        .tv-card:hover { transform: translateY(-3px); border-color: rgba(200,16,46,0.28); box-shadow: 0 18px 40px rgba(20,36,58,0.1); }
+        .tv-card-tag { color: var(--color-accent-red); font-size: 0.74rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.5rem; }
+        .tv-card h3 { color: var(--color-text-heading); font-size: 1.2rem; line-height: 1.25; font-weight: 800; margin-bottom: 0.4rem; }
+        .tv-card p { color: var(--color-text-body); line-height: 1.55; margin: 0 0 1rem; font-size: 0.95rem; }
+        .tv-card-more { margin-top: auto; color: var(--color-accent-red); font-weight: 700; font-size: 0.9rem; }
+
+        /* Consent-Platzhalter (Tracking erst nach Einwilligung, § 25 TDDDG) */
+        .consent-banner {
+            position: fixed;
+            left: 1rem; right: 1rem; bottom: 1rem;
+            z-index: 1200;
+            max-width: 680px;
+            margin: 0 auto;
+            padding: 1.1rem 1.25rem;
+            background-color: var(--color-primary-dark-blue);
+            color: #fff;
+            border-radius: 0.6rem;
+            box-shadow: 0 18px 44px rgba(0,0,0,0.28);
+            display: none;               /* wird per JS eingeblendet, solange keine Wahl getroffen */
+        }
+        .consent-banner.is-visible { display: block; }
+        .consent-banner p { margin: 0 0 0.85rem; font-size: 0.9rem; line-height: 1.55; color: rgba(255,255,255,0.86); }
+        .consent-banner a { color: #fff; text-decoration: underline; }
+        .consent-actions { display: flex; flex-wrap: wrap; gap: 0.6rem; }
+        .consent-actions button {
+            font: inherit; font-weight: 700; font-size: 0.9rem;
+            padding: 0.55rem 1.1rem; border-radius: 0.4rem; cursor: pointer; border: 1px solid transparent;
+        }
+        .consent-accept { background-color: var(--color-accent-red); color: #fff; }
+        .consent-decline { background-color: transparent; color: #fff; border-color: rgba(255,255,255,0.4); }
+
+        @media (max-width: 640px) {
+            .tv-title { font-size: 2rem; }
+            .tv-author { flex-direction: column; text-align: center; align-items: center; }
+        }

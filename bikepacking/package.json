@@ -1,0 +1,14 @@
+{
+  "name": "sattelfest",
+  "version": "1.0.0",
+  "description": "Statischer Bikepacking-Einstiegsguide – ohne Framework und ohne Abhängigkeiten.",
+  "private": true,
+  "scripts": {
+    "build": "node build.js",
+    "serve": "node build.js && python3 -m http.server 8080 --directory dist"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "license": "UNLICENSED"
+}

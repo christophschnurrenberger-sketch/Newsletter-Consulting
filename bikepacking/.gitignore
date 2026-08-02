@@ -1,0 +1,7 @@
+node_modules/
+.DS_Store
+*.log
+
+# dist/ ist bewusst NICHT ignoriert: So lässt sich das fertige Ergebnis
+# direkt aus dem Repository herunterladen und hochladen, ohne vorher
+# einen Build ausführen zu müssen.

@@ -1962,3 +1962,82 @@
             .tv-title { font-size: 2rem; }
             .tv-author { flex-direction: column; text-align: center; align-items: center; }
         }
+
+        /* =========================================================
+           Toolvergleich – Anbieter-Matrix + Bewertung + Steckbrief
+           ========================================================= */
+        .tv-matrix {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.1rem;
+            margin: 1.5rem 0 0.5rem;
+        }
+        .tv-vendor-card {
+            display: flex;
+            flex-direction: column;
+            padding: 1.5rem;
+            background-color: #fff;
+            border: 1px solid #E0E6ED;
+            border-radius: 0.7rem;
+            box-shadow: 0 12px 30px rgba(20, 36, 58, 0.06);
+            text-decoration: none;
+            transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+        }
+        .tv-vendor-card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(200, 16, 46, 0.3);
+            box-shadow: 0 20px 44px rgba(20, 36, 58, 0.12);
+        }
+        .tv-vendor-top { display: flex; align-items: baseline; justify-content: space-between; gap: 0.5rem; }
+        .tv-vendor-name { color: var(--color-text-heading); font-size: 1.35rem; font-weight: 800; }
+        .tv-vendor-flag { color: var(--color-text-body); font-size: 0.8rem; font-weight: 700; }
+        .tv-vendor-tag { color: var(--color-accent-red); font-size: 0.74rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; margin-top: 0.35rem; }
+        .tv-vendor-desc { color: var(--color-text-body); font-size: 0.94rem; line-height: 1.55; margin: 0.7rem 0 1rem; }
+
+        .tv-ratings { display: grid; gap: 0.5rem; margin-top: auto; padding-top: 0.9rem; border-top: 1px solid #EEF1F5; }
+        .tv-rating { display: grid; grid-template-columns: 5.2rem auto 1fr; align-items: center; gap: 0.6rem; }
+        .tv-rating-label { color: var(--color-text-body); font-size: 0.82rem; font-weight: 700; }
+        .tv-rating-value { color: var(--color-text-heading); font-size: 0.82rem; }
+        .rating-dots { display: inline-flex; gap: 3px; }
+        .rating-dots .dot { width: 9px; height: 9px; border-radius: 50%; background-color: #DCE2E9; }
+        .rating-dots .dot.on { background-color: var(--color-accent-red); }
+
+        .tv-vendor-more { margin-top: 1rem; color: var(--color-accent-red); font-weight: 700; font-size: 0.9rem; }
+
+        /* Methodik-/Legende-Hinweis unter der Matrix */
+        .tv-legend {
+            margin-top: 1rem;
+            padding: 0.9rem 1.1rem;
+            background-color: #F6F8FA;
+            border: 1px solid #E5EAF0;
+            border-radius: 0.5rem;
+            color: var(--color-text-body);
+            font-size: 0.85rem;
+            line-height: 1.6;
+        }
+        .tv-legend strong { color: var(--color-text-heading); }
+
+        /* Steckbrief auf Anbieter-Seiten */
+        .tv-steckbrief {
+            margin: 1.5rem 0;
+            border: 1px solid #E0E6ED;
+            border-radius: 0.6rem;
+            overflow: hidden;
+        }
+        .tv-steckbrief dl { margin: 0; }
+        .tv-steckbrief .row { display: grid; grid-template-columns: 12rem 1fr; }
+        .tv-steckbrief .row:nth-child(even) { background-color: #FAFBFC; }
+        .tv-steckbrief dt { padding: 0.75rem 1rem; color: var(--color-text-heading); font-weight: 700; font-size: 0.92rem; border-bottom: 1px solid #EEF1F5; }
+        .tv-steckbrief dd { padding: 0.75rem 1rem; margin: 0; color: var(--color-text-body); font-size: 0.95rem; border-bottom: 1px solid #EEF1F5; }
+        .tv-steckbrief .row:last-child dt, .tv-steckbrief .row:last-child dd { border-bottom: 0; }
+
+        /* Bewertungsblock auf Anbieter-Seiten (größer) */
+        .tv-score { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin: 1.5rem 0; }
+        .tv-score-item { padding: 1.1rem 1.25rem; background-color: #fff; border: 1px solid #E0E6ED; border-radius: 0.6rem; }
+        .tv-score-item .k { color: var(--color-secondary-blue); font-size: 0.72rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; }
+        .tv-score-item .v { display: block; margin: 0.4rem 0; color: var(--color-text-heading); font-weight: 800; }
+
+        @media (max-width: 560px) {
+            .tv-steckbrief .row { grid-template-columns: 1fr; }
+            .tv-steckbrief dt { border-bottom: 0; padding-bottom: 0; }
+        }

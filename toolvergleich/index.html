@@ -3,38 +3,32 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- TAUSCHEN je Seite: description (eine pro Seite) -->
-    <meta name="description" content="Newsletter-Tools wie CleverReach, Brevo, rapidmail, Mailchimp & Co. im strukturierten Vergleich – mit Fokus auf Mittelstand, DSGVO/Serverstandort und Automation.">
+    <meta name="description" content="Deutsche Newsletter-Tools im Überblick: CleverReach, rapidmail und mail2many (ATRIVIO) im Vergleich – Kosten, Leistung, Marktreife und Serverstandort. Zu jedem Anbieter ein Profil.">
     <meta name="robots" content="index, follow, max-image-preview:large">
     <meta name="theme-color" content="#14243A">
     <meta name="referrer" content="strict-origin-when-cross-origin">
-    <!-- TAUSCHEN je Seite: title (genau eine H1-nahe Aussage) -->
-    <title>Newsletter-Tools im Vergleich (CleverReach, Brevo & Co.) | AcumenMail</title>
+    <title>Newsletter-Tools aus Deutschland im Vergleich | AcumenMail</title>
     <link rel="canonical" href="https://www.newsletter-consulting.de/toolvergleich/">
     <meta property="og:type" content="website">
     <meta property="og:locale" content="de_DE">
     <meta property="og:site_name" content="AcumenMail">
-    <meta property="og:title" content="Newsletter-Tools im Vergleich | AcumenMail">
-    <meta property="og:description" content="CleverReach, Brevo, rapidmail, Mailchimp & Co. strukturiert verglichen – Mittelstand, DSGVO, Automation.">
+    <meta property="og:title" content="Newsletter-Tools aus Deutschland im Vergleich | AcumenMail">
+    <meta property="og:description" content="CleverReach, rapidmail und mail2many – Kosten, Leistung, Marktreife im Überblick.">
     <meta property="og:url" content="https://www.newsletter-consulting.de/toolvergleich/">
     <link rel="icon" type="image/png" href="../images/favicon.png">
     <link rel="apple-touch-icon" href="../images/favicon.png">
     <link rel="stylesheet" href="../assets/site.css">
 
-    <!-- JSON-LD: ItemList der verglichenen Tools (keine erfundenen Daten, nur Namen/Position) -->
+    <!-- JSON-LD: ItemList der verglichenen Anbieter -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
       "@type": "ItemList",
-      "name": "Newsletter-Tools im Vergleich",
-      "itemListOrder": "https://schema.org/ItemListUnordered",
+      "name": "Newsletter-Tools aus Deutschland im Vergleich",
       "itemListElement": [
-        { "@type": "ListItem", "position": 1, "name": "CleverReach" },
-        { "@type": "ListItem", "position": 2, "name": "Brevo" },
-        { "@type": "ListItem", "position": 3, "name": "rapidmail" },
-        { "@type": "ListItem", "position": 4, "name": "Mailchimp" },
-        { "@type": "ListItem", "position": 5, "name": "ActiveCampaign" },
-        { "@type": "ListItem", "position": 6, "name": "HubSpot" }
+        { "@type": "ListItem", "position": 1, "name": "CleverReach", "url": "https://www.newsletter-consulting.de/toolvergleich/cleverreach.html" },
+        { "@type": "ListItem", "position": 2, "name": "rapidmail", "url": "https://www.newsletter-consulting.de/toolvergleich/rapidmail.html" },
+        { "@type": "ListItem", "position": 3, "name": "mail2many", "url": "https://www.newsletter-consulting.de/toolvergleich/mail2many.html" }
       ]
     }
     </script>
@@ -70,8 +64,8 @@
         <section class="tv-hero">
             <div class="container mx-auto px-4">
                 <span class="section-kicker">Toolvergleich</span>
-                <h1 class="tv-title">Newsletter-Tools im Vergleich</h1>
-                <p class="tv-lead">Welches E-Mail-Tool zu einem Unternehmen passt, hängt von Zielgruppe, Datenschutz-Anforderungen und der geplanten Automatisierung ab – nicht vom Funktionsumfang allein. Diese Übersicht ordnet die gängigen Anbieter ein und verlinkt zu ausführlichen Einzelvergleichen.</p>
+                <h1 class="tv-title">Newsletter-Tools aus Deutschland im Vergleich</h1>
+                <p class="tv-lead">Drei etablierte deutsche Anbieter im Überblick – mit Blick auf Kosten, Leistung, Marktreife und Serverstandort. Klick auf einen Anbieter führt zu seinem ausführlichen Profil.</p>
             </div>
         </section>
 
@@ -79,110 +73,107 @@
             <div class="container mx-auto px-4">
                 <div class="tv-wrap">
 
-                    <!-- ===== Transparenzbox (fix, auch hier wegen Affiliate-Links) ===== -->
+                    <!-- ===== Transparenzbox ===== -->
                     <div class="tv-transparency">
                         <i data-lucide="shield-check" class="lucide" aria-hidden="true"></i>
-                        <p><strong>Transparenz.</strong> Ich berate Unternehmen in genau diesem Markt. Einige Links unten sind mit „Anzeige“ gekennzeichnete Partnerlinks – klickst du darüber und schließt ab, kann ich eine Provision erhalten. Das kostet dich nichts und beeinflusst die Einordnung in dieser Übersicht nicht.</p>
+                        <p><strong>Transparenz.</strong> Ich berate Unternehmen in genau diesem Markt. Auf den Anbieter-Profilen sind einzelne, mit „Anzeige“ gekennzeichnete Partnerlinks eingebunden – bei einem Abschluss darüber kann ich eine Provision erhalten. Das kostet dich nichts und beeinflusst die Einordnung nicht.</p>
                     </div>
 
-                    <h2 style="color:var(--color-text-heading);font-size:1.5rem;font-weight:800;margin-bottom:0.4rem;">Die Anbieter auf einen Blick</h2>
+                    <!-- ===== Anbieter-Matrix (Kacheln, je Anbieter eine Karte) =====
+                         ERGÄNZEN: pro Anbieter eine <a class="tv-vendor-card"> kopieren.
+                         Bewertungs-Punkte: <span class="dot on"></span> = gefüllt, <span class="dot"></span> = leer.
+                         Werte/Preise = recherchierte Einordnung, Stand siehe Legende. -->
+                    <div class="tv-matrix">
 
-                    <!-- ===== Vergleichstabelle (echtes <table> mit Kopfzeile) =====
-                         TAUSCHEN/ERGÄNZEN: Zeilen je Tool. Preise/Integrationszahlen sind
-                         [PLATZHALTER] – siehe Recherche-Liste. -->
-                    <div class="tv-table-wrap">
-                        <table class="tv-table">
-                            <caption>Übersicht gängiger Newsletter-/E-Mail-Marketing-Tools. Angaben mit [PLATZHALTER] bitte vor Veröffentlichung recherchieren.</caption>
-                            <thead>
-                                <tr>
-                                    <th scope="col">Tool</th>
-                                    <th scope="col">Serverstandort</th>
-                                    <th scope="col">Schwerpunkt</th>
-                                    <th scope="col">Automation</th>
-                                    <th scope="col">Segmentierung</th>
-                                    <th scope="col">Einstiegspreis</th>
-                                    <th scope="col">Zum Anbieter</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <th scope="row">CleverReach</th>
-                                    <td>Deutschland</td>
-                                    <td>KMU/Mittelstand, DSGVO-Fokus</td>
-                                    <td><i data-lucide="check" class="lucide tv-yes" aria-hidden="true"></i> Ja</td>
-                                    <td><i data-lucide="check" class="lucide tv-yes" aria-hidden="true"></i> Ja</td>
-                                    <td>ab [PLATZHALTER] €/Monat</td>
-                                    <td><a class="affiliate" href="[AFFILIATE-LINK CLEVERREACH]" rel="sponsored nofollow" target="_blank">Ansehen <i data-lucide="external-link" class="lucide" aria-hidden="true"></i></a><span class="ad-badge">Anzeige</span></td>
-                                </tr>
-                                <tr>
-                                    <th scope="row">Brevo</th>
-                                    <td>Frankreich (EU)</td>
-                                    <td>Marketing + CRM, E-Mail &amp; SMS</td>
-                                    <td><i data-lucide="check" class="lucide tv-yes" aria-hidden="true"></i> Ja</td>
-                                    <td><i data-lucide="check" class="lucide tv-yes" aria-hidden="true"></i> Ja</td>
-                                    <td>ab [PLATZHALTER] €/Monat</td>
-                                    <td><a class="affiliate" href="[AFFILIATE-LINK BREVO]" rel="sponsored nofollow" target="_blank">Ansehen <i data-lucide="external-link" class="lucide" aria-hidden="true"></i></a><span class="ad-badge">Anzeige</span></td>
-                                </tr>
-                                <tr>
-                                    <th scope="row">rapidmail</th>
-                                    <td>Deutschland</td>
-                                    <td>Kleine Unternehmen, Vereine</td>
-                                    <td><i data-lucide="check" class="lucide tv-yes" aria-hidden="true"></i> Ja</td>
-                                    <td><i data-lucide="check" class="lucide tv-yes" aria-hidden="true"></i> Ja</td>
-                                    <td>ab [PLATZHALTER] €/Monat</td>
-                                    <td><a class="affiliate" href="[AFFILIATE-LINK RAPIDMAIL]" rel="sponsored nofollow" target="_blank">Ansehen <i data-lucide="external-link" class="lucide" aria-hidden="true"></i></a><span class="ad-badge">Anzeige</span></td>
-                                </tr>
-                                <tr>
-                                    <th scope="row">Mailchimp</th>
-                                    <td>USA</td>
-                                    <td>Einsteiger, Content-Marketing</td>
-                                    <td><i data-lucide="check" class="lucide tv-yes" aria-hidden="true"></i> Ja</td>
-                                    <td><i data-lucide="check" class="lucide tv-yes" aria-hidden="true"></i> Ja</td>
-                                    <td>ab [PLATZHALTER] €/Monat</td>
-                                    <td><a class="affiliate" href="[AFFILIATE-LINK MAILCHIMP]" rel="sponsored nofollow" target="_blank">Ansehen <i data-lucide="external-link" class="lucide" aria-hidden="true"></i></a><span class="ad-badge">Anzeige</span></td>
-                                </tr>
-                                <tr>
-                                    <th scope="row">ActiveCampaign</th>
-                                    <td>USA</td>
-                                    <td>Automation-Fokus, CRM</td>
-                                    <td><i data-lucide="check" class="lucide tv-yes" aria-hidden="true"></i> Ja</td>
-                                    <td><i data-lucide="check" class="lucide tv-yes" aria-hidden="true"></i> Ja</td>
-                                    <td>ab [PLATZHALTER] €/Monat</td>
-                                    <td><a class="affiliate" href="[AFFILIATE-LINK ACTIVECAMPAIGN]" rel="sponsored nofollow" target="_blank">Ansehen <i data-lucide="external-link" class="lucide" aria-hidden="true"></i></a><span class="ad-badge">Anzeige</span></td>
-                                </tr>
-                                <tr>
-                                    <th scope="row">HubSpot</th>
-                                    <td>USA (EU-Rechenzentren optional)</td>
-                                    <td>All-in-one CRM &amp; Marketing</td>
-                                    <td><i data-lucide="check" class="lucide tv-yes" aria-hidden="true"></i> Ja</td>
-                                    <td><i data-lucide="check" class="lucide tv-yes" aria-hidden="true"></i> Ja</td>
-                                    <td>ab [PLATZHALTER] €/Monat</td>
-                                    <td><a class="affiliate" href="[AFFILIATE-LINK HUBSPOT]" rel="sponsored nofollow" target="_blank">Ansehen <i data-lucide="external-link" class="lucide" aria-hidden="true"></i></a><span class="ad-badge">Anzeige</span></td>
-                                </tr>
-                            </tbody>
-                        </table>
+                        <!-- CleverReach -->
+                        <a class="tv-vendor-card" href="cleverreach.html">
+                            <div class="tv-vendor-top">
+                                <span class="tv-vendor-name">CleverReach</span>
+                                <span class="tv-vendor-flag">🇩🇪 Rastede</span>
+                            </div>
+                            <span class="tv-vendor-tag">Allrounder · DSGVO</span>
+                            <p class="tv-vendor-desc">Umfangreiches Tool mit Automations-Builder (THEA), gestaffelte Preise nach Kontaktzahl, kostenloser Einstieg.</p>
+                            <div class="tv-ratings">
+                                <div class="tv-rating">
+                                    <span class="tv-rating-label">Kosten</span>
+                                    <span class="rating-dots" role="img" aria-label="Preis-Niveau 3 von 5"><span class="dot on"></span><span class="dot on"></span><span class="dot on"></span><span class="dot"></span><span class="dot"></span></span>
+                                    <span class="tv-rating-value">ab ~15 €/Mon.</span>
+                                </div>
+                                <div class="tv-rating">
+                                    <span class="tv-rating-label">Leistung</span>
+                                    <span class="rating-dots" role="img" aria-label="Leistung 4 von 5"><span class="dot on"></span><span class="dot on"></span><span class="dot on"></span><span class="dot on"></span><span class="dot"></span></span>
+                                    <span class="tv-rating-value">umfangreich</span>
+                                </div>
+                                <div class="tv-rating">
+                                    <span class="tv-rating-label">Marktreife</span>
+                                    <span class="rating-dots" role="img" aria-label="Marktreife 5 von 5"><span class="dot on"></span><span class="dot on"></span><span class="dot on"></span><span class="dot on"></span><span class="dot on"></span></span>
+                                    <span class="tv-rating-value">sehr etabliert</span>
+                                </div>
+                            </div>
+                            <span class="tv-vendor-more">Profil ansehen →</span>
+                        </a>
+
+                        <!-- rapidmail -->
+                        <a class="tv-vendor-card" href="rapidmail.html">
+                            <div class="tv-vendor-top">
+                                <span class="tv-vendor-name">rapidmail</span>
+                                <span class="tv-vendor-flag">🇩🇪 Freiburg</span>
+                            </div>
+                            <span class="tv-vendor-tag">Einfach · Support stark</span>
+                            <p class="tv-vendor-desc">Fokussiert auf das Wesentliche: Newsletter schnell erstellen und versenden. Telefon-Support in allen Tarifen.</p>
+                            <div class="tv-ratings">
+                                <div class="tv-rating">
+                                    <span class="tv-rating-label">Kosten</span>
+                                    <span class="rating-dots" role="img" aria-label="Preis-Niveau 3 von 5"><span class="dot on"></span><span class="dot on"></span><span class="dot on"></span><span class="dot"></span><span class="dot"></span></span>
+                                    <span class="tv-rating-value">ab [PLATZHALTER] €</span>
+                                </div>
+                                <div class="tv-rating">
+                                    <span class="tv-rating-label">Leistung</span>
+                                    <span class="rating-dots" role="img" aria-label="Leistung 3 von 5"><span class="dot on"></span><span class="dot on"></span><span class="dot on"></span><span class="dot"></span><span class="dot"></span></span>
+                                    <span class="tv-rating-value">fokussiert</span>
+                                </div>
+                                <div class="tv-rating">
+                                    <span class="tv-rating-label">Marktreife</span>
+                                    <span class="rating-dots" role="img" aria-label="Marktreife 4 von 5"><span class="dot on"></span><span class="dot on"></span><span class="dot on"></span><span class="dot on"></span><span class="dot"></span></span>
+                                    <span class="tv-rating-value">etabliert</span>
+                                </div>
+                            </div>
+                            <span class="tv-vendor-more">Profil ansehen →</span>
+                        </a>
+
+                        <!-- mail2many (ATRIVIO) -->
+                        <a class="tv-vendor-card" href="mail2many.html">
+                            <div class="tv-vendor-top">
+                                <span class="tv-vendor-name">mail2many</span>
+                                <span class="tv-vendor-flag">🇩🇪 Kempten</span>
+                            </div>
+                            <span class="tv-vendor-tag">Nische · Handel &amp; Hersteller</span>
+                            <p class="tv-vendor-desc">Spezialist der ATRIVIO GmbH für Hersteller-/Händler-Kommunikation (Channel-Modul). Über 18 Jahre am Markt.</p>
+                            <div class="tv-ratings">
+                                <div class="tv-rating">
+                                    <span class="tv-rating-label">Kosten</span>
+                                    <span class="rating-dots" role="img" aria-label="Preis auf Anfrage"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></span>
+                                    <span class="tv-rating-value">auf Anfrage</span>
+                                </div>
+                                <div class="tv-rating">
+                                    <span class="tv-rating-label">Leistung</span>
+                                    <span class="rating-dots" role="img" aria-label="Leistung 4 von 5"><span class="dot on"></span><span class="dot on"></span><span class="dot on"></span><span class="dot on"></span><span class="dot"></span></span>
+                                    <span class="tv-rating-value">spezialisiert</span>
+                                </div>
+                                <div class="tv-rating">
+                                    <span class="tv-rating-label">Marktreife</span>
+                                    <span class="rating-dots" role="img" aria-label="Marktreife 4 von 5"><span class="dot on"></span><span class="dot on"></span><span class="dot on"></span><span class="dot on"></span><span class="dot"></span></span>
+                                    <span class="tv-rating-value">etabliert</span>
+                                </div>
+                            </div>
+                            <span class="tv-vendor-more">Profil ansehen →</span>
+                        </a>
+
                     </div>
 
-                    <h2 style="color:var(--color-text-heading);font-size:1.5rem;font-weight:800;margin:2.4rem 0 0.4rem;">Ausführliche Vergleiche</h2>
-                    <p class="tv-lead" style="font-size:1rem;">Einzelvergleiche mit Einordnung, für wen sich welches Tool eignet.</p>
-
-                    <!-- ===== Artikel-Karten =====
-                         ERGÄNZEN: pro neuem Artikel eine <a class="tv-card"> kopieren. -->
-                    <div class="tv-card-grid">
-                        <a class="tv-card" href="cleverreach-vs-brevo.html">
-                            <span class="tv-card-tag">Vergleich</span>
-                            <h3>CleverReach vs. Brevo</h3>
-                            <p>Zwei EU-Tools im Direktvergleich: Serverstandort, Automation und für welche Unternehmensgröße sich welches eignet.</p>
-                            <span class="tv-card-more">Zum Vergleich →</span>
-                        </a>
-                        <!-- TAUSCHEN/ERGÄNZEN: weitere Artikel-Karte
-                        <a class="tv-card" href="SLUG.html">
-                            <span class="tv-card-tag">Vergleich</span>
-                            <h3>[Titel]</h3>
-                            <p>[Kurzbeschreibung]</p>
-                            <span class="tv-card-more">Zum Vergleich →</span>
-                        </a>
-                        -->
+                    <!-- ===== Legende / Methodik (Pflicht: Bewertung transparent machen) ===== -->
+                    <div class="tv-legend">
+                        <strong>Wie diese Bewertung entsteht:</strong> Kosten, Leistung und Marktreife sind eine redaktionelle Einordnung anhand öffentlich verfügbarer Informationen der Anbieter (Funktionsumfang, Preistransparenz, Etablierung/Marktpräsenz) – <strong>kein eigener Testbericht</strong>. Preise sind Näherungswerte (Stand: [PLATZHALTER: Monat/Jahr]) und können abweichen; bitte vor einer Entscheidung direkt beim Anbieter prüfen.
                     </div>
 
                     <!-- ===== Conversion-Überleitung + bestehender CTA ===== -->
@@ -237,8 +228,7 @@
         </div>
     </footer>
 
-    <!-- ===== Consent-Platzhalter (Tracking erst nach Einwilligung, § 25 TDDDG) =====
-         Aktuell KEIN Tracking aktiv. Banner erscheint, bis eine Wahl getroffen wurde. -->
+    <!-- ===== Consent-Platzhalter (Tracking erst nach Einwilligung, § 25 TDDDG) ===== -->
     <div id="consent-banner" class="consent-banner" role="dialog" aria-label="Datenschutz-Einstellungen">
         <p>Diese Seite verwendet aktuell keine Tracking-Cookies. Optionale Statistik-/Marketing-Dienste würden wir erst nach Ihrer Einwilligung laden. Mehr in der <a href="../Datenschutz.html">Datenschutzerklärung</a>.</p>
         <div class="consent-actions">

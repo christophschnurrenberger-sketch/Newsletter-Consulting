@@ -9,7 +9,7 @@
  *
  * @param array{status?:string,noindex?:bool,wide?:bool} $options
  */
-function nl_page(string $title, string $bodyHtml, array $options = []): never
+function nl_page(string $title, string $bodyHtml, array $options = []): void
 {
     $brand   = Settings::get('brand_name');
     $website = Settings::get('website_url');

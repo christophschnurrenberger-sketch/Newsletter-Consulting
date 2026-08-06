@@ -198,13 +198,13 @@ final class Util
         return is_numeric($v) ? (int) $v : $default;
     }
 
-    public static function redirect(string $url): never
+    public static function redirect(string $url): void
     {
         header('Location: ' . $url);
         exit;
     }
 
-    public static function json($data, int $status = 200): never
+    public static function json($data, int $status = 200): void
     {
         http_response_code($status);
         header('Content-Type: application/json; charset=utf-8');

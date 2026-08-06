@@ -17,7 +17,7 @@ require __DIR__ . '/lib/bootstrap.php';
 require __DIR__ . '/partials/page.php';
 
 /** Antwort ausliefern – je nach Aufruf als JSON oder Weiterleitung. */
-function respond(bool $ok, string $status, string $message): never
+function respond(bool $ok, string $status, string $message): void
 {
     if (Util::wantsJson()) {
         Util::json(['ok' => $ok, 'status' => $status, 'message' => $message], $ok ? 200 : 422);

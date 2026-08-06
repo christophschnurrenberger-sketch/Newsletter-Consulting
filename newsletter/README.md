@@ -11,13 +11,19 @@ Webhosting mit PHP 8 und einer Datenbank (SQLite genügt).
 
 1. **Hochladen:** den Ordner `newsletter/` auf den Webspace kopieren
    (z. B. nach `/newsletter`).
-2. **Einrichten:** `https://ihre-domain.de/newsletter/install.php` im Browser öffnen
+2. **Prüfen:** `https://ihre-domain.de/newsletter/systemcheck.php` öffnen.
+   Diese Seite läuft auf jedem Server und sagt Ihnen sofort, ob PHP-Version,
+   Erweiterungen, Schreibrechte und alle hochgeladenen Dateien in Ordnung sind.
+3. **Einrichten:** `https://ihre-domain.de/newsletter/install.php` im Browser öffnen
    und das Formular ausfüllen (Datenbank, Zugang, Absender).
-3. **install.php löschen** – der Installer weist am Ende darauf hin.
-4. **Anmelden:** `https://ihre-domain.de/newsletter/admin/login.php`
-5. **Versandweg hinterlegen:** Einstellungen → Versandweg → SMTP mit einem echten
+4. **install.php löschen** – der Installer weist am Ende darauf hin.
+5. **Anmelden:** `https://ihre-domain.de/newsletter/admin/login.php`
+6. **Versandweg hinterlegen:** Einstellungen → Versandweg → SMTP mit einem echten
    Postfach Ihrer Domain (siehe Abschnitt 4).
-6. **Cron-Job einrichten:** alle 5 Minuten (siehe Abschnitt 3).
+7. **Cron-Job einrichten:** alle 5 Minuten (siehe Abschnitt 3).
+
+**Voraussetzung:** PHP 8.0 oder neuer. Bei IONOS stellen Sie die Version unter
+„Websites & Shops → Ihre Website → PHP verwalten“ ein.
 
 Danach: Empfänger importieren oder das Anmeldeformular auf der Website nutzen,
 Newsletter schreiben, Testmail verschicken, senden.
@@ -239,8 +245,13 @@ welche Seite wie viele Anmeldungen bringt.
 
 ## 10. Wenn etwas nicht klappt
 
+**Erste Anlaufstelle bei jedem Problem:** `systemcheck.php` im Newsletter-Ordner.
+Die Seite hat keine Abhängigkeiten und funktioniert auch dann, wenn der Rest streikt.
+
 | Symptom | Ursache und Lösung |
 |---|---|
+| `install.php` zeigt nur die Kopfzeile, darunter bleibt alles leer | Ein PHP-Fehler bei abgeschalteter Fehleranzeige. Fast immer eine zu alte PHP-Version (nötig: 8.0+) oder eine unvollständig hochgeladene Datei. `systemcheck.php` nennt den Grund; seit dieser Fassung zeigt auch `install.php` den Fehler im Klartext an. |
+| „config.php konnte nicht geschrieben werden“ | Der Ordner `newsletter/` ist schreibgeschützt. Per FTP die Rechte auf 755 setzen. |
 | „Cron-Job meldet sich nicht“ | Cron nicht eingerichtet oder falscher Pfad. Testweise `versand.php` → „Portion jetzt senden“. |
 | Mails bleiben in der Warteschlange | Stundenlimit erreicht (Versand → „noch möglich“) oder Kampagne pausiert. |
 | SMTP-Fehler „Verbindung fehlgeschlagen“ | Host/Port/Verschlüsselung prüfen; viele Hoster erlauben ausgehendes SMTP nur zum eigenen Server. |

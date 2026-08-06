@@ -7,8 +7,63 @@
  * werden – das System weist im Admin-Bereich darauf hin.
  */
 
+/*
+ * Schritt 0: PHP-Version prüfen, BEVOR das eigentliche System geladen wird.
+ * Bei zu altem PHP könnten die Programmdateien gar nicht erst gelesen werden –
+ * das Ergebnis wäre eine weiße Seite ohne jede Erklärung.
+ */
+if (PHP_VERSION_ID < 80000) {
+    header('Content-Type: text/html; charset=utf-8');
+    echo '<!DOCTYPE html><html lang="de"><head><meta charset="utf-8"><title>PHP zu alt</title></head>'
+        . '<body style="font-family:Arial,Helvetica,sans-serif;max-width:640px;margin:60px auto;padding:0 20px;color:#14243A;">'
+        . '<h1 style="font-size:22px;">Ihr Server nutzt eine zu alte PHP-Version</h1>'
+        . '<p style="color:#4A5568;line-height:1.6;">Gefunden: <strong>PHP ' . PHP_VERSION . '</strong>. '
+        . 'Das Newslettersystem benötigt mindestens <strong>PHP 8.0</strong>.</p>'
+        . '<p style="color:#4A5568;line-height:1.6;">Die PHP-Version stellen Sie im Hosting-Menü um '
+        . '(bei IONOS: „Websites &amp; Shops“ → Ihre Website → „PHP verwalten“). '
+        . 'Danach diese Seite neu laden.</p>'
+        . '<p><a href="systemcheck.php" style="color:#C8102E;">Zum Systemcheck</a></p>'
+        . '</body></html>';
+    exit;
+}
+
+/*
+ * Fehler während der Einrichtung sichtbar machen. Ohne das bliebe die Seite
+ * bei einem Problem einfach leer – der häufigste Grund für Ratlosigkeit.
+ * Nach der Einrichtung wird install.php gelöscht, also bleibt nichts offen.
+ */
+@ini_set('display_errors', '1');
+error_reporting(E_ALL);
+
+register_shutdown_function(static function () {
+    $fehler = error_get_last();
+    if ($fehler === null || !in_array($fehler['type'], [E_ERROR, E_PARSE, E_CORE_ERROR, E_COMPILE_ERROR], true)) {
+        return;
+    }
+    echo '<div style="font-family:Arial,Helvetica,sans-serif;max-width:760px;margin:24px auto;padding:18px 22px;'
+        . 'background:#FDECEF;border:1px solid #F3C6CF;border-radius:8px;color:#8E0A20;line-height:1.6;">'
+        . '<strong>Die Einrichtung wurde durch einen Fehler abgebrochen:</strong><br>'
+        . htmlspecialchars($fehler['message'], ENT_QUOTES, 'UTF-8')
+        . '<br><span style="font-size:13px;">in ' . htmlspecialchars(basename((string) $fehler['file']), ENT_QUOTES, 'UTF-8')
+        . ', Zeile ' . (int) $fehler['line'] . '</span>'
+        . '<p style="margin:12px 0 0;"><a href="systemcheck.php" style="color:#8E0A20;">Systemcheck öffnen</a> – '
+        . 'dort steht, was auf diesem Server fehlt.</p></div>';
+});
+
 define('NL_INSTALLER', true);
 require __DIR__ . '/lib/bootstrap.php';
+
+// Der Installer zeigt Fehler im Klartext statt der allgemeinen Fehlerseite.
+set_exception_handler(static function (Throwable $e) {
+    echo '<div style="font-family:Arial,Helvetica,sans-serif;max-width:760px;margin:24px auto;padding:18px 22px;'
+        . 'background:#FDECEF;border:1px solid #F3C6CF;border-radius:8px;color:#8E0A20;line-height:1.6;">'
+        . '<strong>Fehler bei der Einrichtung:</strong><br>'
+        . htmlspecialchars($e->getMessage(), ENT_QUOTES, 'UTF-8')
+        . '<br><span style="font-size:13px;">in ' . htmlspecialchars(basename($e->getFile()), ENT_QUOTES, 'UTF-8')
+        . ', Zeile ' . $e->getLine() . '</span>'
+        . '<p style="margin:12px 0 0;"><a href="systemcheck.php" style="color:#8E0A20;">Systemcheck öffnen</a></p></div>';
+    exit(1);
+});
 
 $installed = Config::isInstalled();
 if ($installed) {
@@ -205,6 +260,9 @@ if (Util::isPost()) {
         <?php if (!$requirementsOk): ?>
             <p class="ad-hint">Bitte klären Sie die fehlenden Punkte mit Ihrem Hoster, bevor Sie fortfahren.</p>
         <?php endif; ?>
+        <p class="ad-hint">Etwas funktioniert nicht wie erwartet?
+            <a href="systemcheck.php">Systemcheck öffnen</a> – der prüft zusätzlich Schreibrechte und ob alle
+            Dateien vollständig hochgeladen wurden.</p>
     </div>
 
     <form method="post">

@@ -105,7 +105,7 @@ final class Tracking
     }
 
     /** Zählpixel ausliefern (immer, auch bei unbekanntem Token). */
-    public static function outputPixel(): never
+    public static function outputPixel(): void
     {
         header('Content-Type: image/gif');
         header('Content-Length: ' . strlen(self::PIXEL));

@@ -711,6 +711,51 @@
         </div>
     </div>
 
+    <!-- Newsletter-Anmeldung (eigenes System, kein Drittanbieter) -->
+    <section id="newsletter" class="newsletter-band" aria-labelledby="newsletter-title">
+        <div class="container mx-auto px-4">
+            <div class="newsletter-card">
+                <div class="newsletter-intro">
+                    <span class="newsletter-eyebrow">Praxis-Impulse per E-Mail</span>
+                    <h2 id="newsletter-title" class="newsletter-title">Alle paar Wochen ein Impuls, der Ihren Newsletter besser macht.</h2>
+                    <p class="newsletter-copy">Konkrete Beispiele zu Segmentierung, Automationen und Zustellbarkeit –
+                        aus echten Projekten. Kein Verkaufsgerede, jederzeit abbestellbar.</p>
+                    <ul class="newsletter-points">
+                        <li>Versand über unseren eigenen Server – keine Daten an Dritte</li>
+                        <li>Bestätigung per Double-Opt-in, Abmeldung mit einem Klick</li>
+                    </ul>
+                </div>
+
+                <form id="newsletter-form" class="newsletter-form" method="post" action="newsletter/subscribe.php" accept-charset="UTF-8">
+                    <!-- Spam-Schutz: für Menschen unsichtbar -->
+                    <div class="newsletter-hp" aria-hidden="true">
+                        <label for="nl-website">Website (bitte frei lassen)</label>
+                        <input type="text" id="nl-website" name="website" tabindex="-1" autocomplete="off">
+                    </div>
+                    <input type="hidden" name="quelle" value="startseite">
+
+                    <div class="newsletter-field">
+                        <label for="nl-first-name">Vorname <span class="newsletter-optional">(optional)</span></label>
+                        <input type="text" id="nl-first-name" name="first_name" autocomplete="given-name" maxlength="120" placeholder="Ihr Vorname">
+                    </div>
+
+                    <div class="newsletter-field">
+                        <label for="nl-email">E-Mail-Adresse</label>
+                        <input type="email" id="nl-email" name="email" required autocomplete="email" maxlength="190" placeholder="name@unternehmen.de">
+                    </div>
+
+                    <label class="newsletter-consent">
+                        <input type="checkbox" name="consent" value="1" required>
+                        <span>Ja, ich möchte den Newsletter erhalten. Die Einwilligung kann ich jederzeit widerrufen.
+                            Hinweise zur Verarbeitung stehen in der <a href="Datenschutz.html">Datenschutzerklärung</a>.</span>
+                    </label>
+
+                    <button type="submit" class="btn-primary-custom newsletter-submit">Newsletter abonnieren</button>
+                    <p id="newsletter-status" class="newsletter-status" role="status" aria-live="polite"></p>
+                </form>
+            </div>
+        </div>
+    </section>
 
 </main>
 
@@ -738,6 +783,8 @@
                         <a href="#how-we-work">Vorgehen</a>
                         <a href="#faq">FAQ</a>
                         <a href="toolvergleich/index.html">Toolvergleich</a>
+                        <a href="newsletter/anmelden.php">Newsletter</a>
+                        <a href="newsletter/archiv.php">Newsletter-Archiv</a>
                     </nav>
                 </div>
 
@@ -1131,5 +1178,6 @@ window.addEventListener('scroll', function () {
             });
         });
     </script>
+    <script src="assets/newsletter-signup.js" defer></script>
 </body>
 </html>

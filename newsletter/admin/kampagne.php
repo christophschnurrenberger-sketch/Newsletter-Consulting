@@ -1,0 +1,405 @@
+<?php
+/**
+ * kampagne.php – Newsletter schreiben, prüfen, testen und versenden.
+ *
+ * Sonderfall Vorschau: ?id=X&vorschau=1 liefert nur die fertige Mail
+ * (wird im Editor in einem Rahmen angezeigt) – ohne Verwaltungslayout.
+ */
+
+require_once dirname(__DIR__) . '/lib/bootstrap.php';
+
+/* ----------------------------------------------------------- Vorschau */
+
+if (Util::get('vorschau') === '1') {
+    Auth::require();
+    $id       = Util::getInt('id');
+    $campaign = Campaigns::byId($id);
+    if ($campaign === null) {
+        http_response_code(404);
+        exit('Newsletter nicht gefunden.');
+    }
+    Campaigns::compile($id);
+    $campaign = Campaigns::byId($id);
+
+    $sample = Renderer::sampleSubscriber();
+    $mail   = Campaigns::renderFor($campaign, $sample, 'vorschau');
+
+    header('Content-Type: text/html; charset=utf-8');
+    // Zählpixel in der Vorschau entfernen
+    echo preg_replace('#<img[^>]+track\.php\?o=[^>]*>#i', '', $mail['html']);
+    exit;
+}
+
+/* ------------------------------------------------------------ Anlegen */
+
+if (Util::get('neu') === '1') {
+    Auth::require();
+    $newId = Campaigns::create('Newsletter vom ' . date('d.m.Y'));
+    Util::flash('Neuer Newsletter angelegt. Betreff und Inhalt können Sie jetzt schreiben.');
+    Util::redirect('kampagne.php?id=' . $newId);
+}
+
+$pageTitle = 'Newsletter bearbeiten';
+require __DIR__ . '/partials/header.php';
+
+$id       = Util::isPost() ? Util::postInt('id') : Util::getInt('id');
+$campaign = Campaigns::byId($id);
+if ($campaign === null) {
+    Util::flash('Dieser Newsletter existiert nicht (mehr).', 'error');
+    Util::redirect('kampagnen.php');
+}
+
+$errors = [];
+
+/* ------------------------------------------------------------ Aktionen */
+
+if (Util::isPost()) {
+    Util::requireCsrf();
+    $action   = Util::post('aktion');
+    // Inhalte lassen sich nur ändern, solange nichts unterwegs ist –
+    // sonst bekämen die restlichen Empfänger eine andere Fassung.
+    $editable = in_array($campaign['status'], [Campaigns::DRAFT, Campaigns::SCHEDULED], true);
+
+    // Inhalte speichern (bei laufendem Versand gesperrt)
+    if (in_array($action, ['speichern', 'test', 'senden', 'planen'], true)) {
+        if (!$editable) {
+            $errors[] = 'Ein laufender oder abgeschlossener Versand kann nicht mehr bearbeitet werden.';
+        } else {
+            Campaigns::save($id, [
+                'name'           => Util::post('name'),
+                'subject'        => Util::post('subject'),
+                'preheader'      => Util::post('preheader'),
+                'from_name'      => Util::post('from_name'),
+                'from_email'     => Util::normalizeEmail(Util::post('from_email')),
+                'reply_to'       => Util::normalizeEmail(Util::post('reply_to')),
+                'template_id'    => Util::postInt('template_id') ?: null,
+                'list_id'        => Util::postInt('list_id') ?: null,
+                'content_html'   => Util::postRaw('content_html'),
+                'content_text'   => Util::postRaw('content_text'),
+                'track_opens'    => Util::post('track_opens') === '1' ? 1 : 0,
+                'track_clicks'   => Util::post('track_clicks') === '1' ? 1 : 0,
+                'archive_public' => Util::post('archive_public') === '1' ? 1 : 0,
+            ]);
+            Campaigns::compile($id);
+            $campaign = Campaigns::byId($id);
+        }
+    }
+
+    if ($action === 'speichern' && $errors === []) {
+        Util::flash('Gespeichert.');
+        Util::redirect('kampagne.php?id=' . $id);
+    }
+
+    if ($action === 'test' && $errors === []) {
+        try {
+            Campaigns::sendTest($id, Util::post('test_email'));
+            Util::flash('Testmail an <strong>' . Util::e(Util::post('test_email')) . '</strong> verschickt.');
+            Util::redirect('kampagne.php?id=' . $id);
+        } catch (Throwable $e) {
+            $errors[] = 'Testversand fehlgeschlagen: ' . $e->getMessage();
+        }
+    }
+
+    if ($action === 'senden' && $errors === []) {
+        try {
+            $count = Campaigns::start($id);
+            Util::flash('Versand gestartet: <strong>' . Util::num($count) . '</strong> Empfänger stehen in der '
+                . 'Warteschlange. Der Cron-Job verschickt sie portionsweise.');
+            Util::redirect('versand.php');
+        } catch (Throwable $e) {
+            $errors[] = $e->getMessage();
+        }
+    }
+
+    if ($action === 'planen' && $errors === []) {
+        $when = Util::post('scheduled_at');
+        $ts   = $when !== '' ? strtotime(str_replace('T', ' ', $when)) : 0;
+        if ($ts <= time()) {
+            $errors[] = 'Bitte wählen Sie einen Zeitpunkt in der Zukunft.';
+        } else {
+            try {
+                $count = Campaigns::start($id, date('Y-m-d H:i:s', $ts));
+                Util::flash('Versand geplant für <strong>' . Util::e(date('d.m.Y, H:i', $ts)) . '</strong> Uhr ('
+                    . Util::num($count) . ' Empfänger).');
+                Util::redirect('kampagne.php?id=' . $id);
+            } catch (Throwable $e) {
+                $errors[] = $e->getMessage();
+            }
+        }
+    }
+
+    if ($action === 'pause') {
+        Campaigns::pause($id);
+        Util::flash('Versand pausiert.');
+        Util::redirect('kampagne.php?id=' . $id);
+    }
+    if ($action === 'fortsetzen') {
+        Campaigns::resume($id);
+        Util::flash('Versand fortgesetzt.');
+        Util::redirect('kampagne.php?id=' . $id);
+    }
+    if ($action === 'abbrechen') {
+        Campaigns::cancel($id);
+        Util::flash('Versand abgebrochen. Bereits versendete Mails lassen sich nicht zurückholen.', 'warning');
+        Util::redirect('kampagne.php?id=' . $id);
+    }
+
+    $campaign = Campaigns::byId($id);
+}
+
+$stats     = Campaigns::stats($id);
+$problems  = Campaigns::validate($campaign);
+$editable  = in_array($campaign['status'], [Campaigns::DRAFT, Campaigns::SCHEDULED], true);
+$recipient = Campaigns::recipientCount($campaign);
+?>
+
+<div class="ad-page-head">
+    <div>
+        <h1><?= Util::e((string) $campaign['name']) ?></h1>
+        <p class="ad-sub">
+            <?= campaign_status_pill((string) $campaign['status']) ?>
+            · Liste: <?= Util::e(Lists::name($campaign['list_id'] !== null ? (int) $campaign['list_id'] : null)) ?>
+            · <?= Util::num($recipient) ?> aktive Empfänger
+        </p>
+    </div>
+    <div class="ad-actions-inline">
+        <a class="ad-btn ad-btn-secondary" href="kampagnen.php">Zurück zur Liste</a>
+        <?php if ((int) $stats['sent'] > 0): ?>
+            <a class="ad-btn ad-btn-secondary" href="statistik.php?id=<?= $id ?>">Auswertung</a>
+        <?php endif; ?>
+    </div>
+</div>
+
+<?php foreach ($errors as $error): ?>
+    <div class="ad-flash ad-flash-error"><?= Util::e($error) ?></div>
+<?php endforeach; ?>
+
+<?php if (!$editable): ?>
+    <div class="ad-flash ad-flash-info">
+        Dieser Newsletter ist <strong><?= Util::e(Campaigns::statusLabels()[$campaign['status']] ?? '') ?></strong>
+        und kann nicht mehr verändert werden. Für eine neue Ausgabe können Sie ihn kopieren.
+    </div>
+<?php endif; ?>
+
+<form method="post" data-warn-unsaved>
+    <?= Util::csrfField() ?>
+    <input type="hidden" name="id" value="<?= $id ?>">
+
+    <div class="ad-editor-grid">
+        <!-- ------------------------------------------------ linke Spalte -->
+        <div>
+            <div class="ad-card">
+                <h2>Betreff und Absender</h2>
+
+                <div class="ad-field">
+                    <label for="name">Interner Name <span class="ad-hint">(nur in der Verwaltung sichtbar)</span></label>
+                    <input type="text" id="name" name="name" maxlength="190" <?= $editable ? '' : 'disabled' ?>
+                           value="<?= Util::e((string) $campaign['name']) ?>">
+                </div>
+
+                <div class="ad-field">
+                    <label for="subject">Betreff</label>
+                    <input type="text" id="subject" name="subject" maxlength="255" <?= $editable ? '' : 'disabled' ?>
+                           value="<?= Util::e((string) $campaign['subject']) ?>"
+                           placeholder="z. B. 3 Kennzahlen, die Ihren Newsletter besser machen">
+                    <p class="ad-hint">40–60 Zeichen wirken am besten. Platzhalter wie {{vorname}} sind erlaubt.</p>
+                </div>
+
+                <div class="ad-field">
+                    <label for="preheader">Vorschautext (Preheader)</label>
+                    <input type="text" id="preheader" name="preheader" maxlength="255" <?= $editable ? '' : 'disabled' ?>
+                           value="<?= Util::e((string) $campaign['preheader']) ?>"
+                           placeholder="Ergänzt den Betreff in der Vorschau des Postfachs">
+                </div>
+
+                <div class="ad-row">
+                    <div class="ad-field">
+                        <label for="from_name">Absendername</label>
+                        <input type="text" id="from_name" name="from_name" maxlength="190" <?= $editable ? '' : 'disabled' ?>
+                               value="<?= Util::e((string) $campaign['from_name']) ?>">
+                    </div>
+                    <div class="ad-field">
+                        <label for="from_email">Absenderadresse</label>
+                        <input type="email" id="from_email" name="from_email" maxlength="190" <?= $editable ? '' : 'disabled' ?>
+                               value="<?= Util::e((string) $campaign['from_email']) ?>">
+                    </div>
+                    <div class="ad-field">
+                        <label for="reply_to">Antwortadresse <span class="ad-hint">(optional)</span></label>
+                        <input type="email" id="reply_to" name="reply_to" maxlength="190" <?= $editable ? '' : 'disabled' ?>
+                               value="<?= Util::e((string) $campaign['reply_to']) ?>">
+                    </div>
+                </div>
+            </div>
+
+            <div class="ad-card">
+                <h2>Inhalt</h2>
+                <div class="ad-field">
+                    <label for="content_html">HTML-Inhalt <span class="ad-hint">(wird in die Vorlage eingesetzt)</span></label>
+                    <textarea id="content_html" name="content_html" rows="20" class="ad-code"
+                        <?= $editable ? '' : 'disabled' ?>><?= Util::e((string) $campaign['content_html']) ?></textarea>
+                    <p class="ad-hint">Tipp: Für E-Mails eignen sich einfache Absätze mit Inline-Stilen –
+                        moderne CSS-Layouts zeigen viele Programme nicht korrekt an.</p>
+                </div>
+
+                <div class="ad-field">
+                    <label for="content_text">Textfassung <span class="ad-hint">(leer lassen = automatisch aus dem HTML)</span></label>
+                    <textarea id="content_text" name="content_text" rows="6" class="ad-code"
+                        <?= $editable ? '' : 'disabled' ?>><?= Util::e((string) $campaign['content_text']) ?></textarea>
+                    <p class="ad-hint">Jede Mail geht als HTML <em>und</em> als reiner Text raus – das verbessert
+                        die Zustellbarkeit deutlich.</p>
+                </div>
+            </div>
+
+            <div class="ad-card">
+                <h2>Vorschau</h2>
+                <div class="ad-actions" style="margin-top:0;margin-bottom:12px;">
+                    <button type="submit" name="aktion" value="speichern" class="ad-btn ad-btn-secondary ad-btn-small"
+                        <?= $editable ? '' : 'disabled' ?>>Speichern &amp; Vorschau aktualisieren</button>
+                    <a class="ad-btn ad-btn-secondary ad-btn-small" target="_blank" rel="noopener"
+                       href="kampagne.php?id=<?= $id ?>&amp;vorschau=1">In neuem Tab öffnen</a>
+                </div>
+                <iframe id="preview-frame" class="ad-preview-frame"
+                        src="kampagne.php?id=<?= $id ?>&amp;vorschau=1" title="Vorschau des Newsletters"></iframe>
+            </div>
+        </div>
+
+        <!-- ------------------------------------------------ rechte Spalte -->
+        <div>
+            <div class="ad-card">
+                <h2>Versand</h2>
+
+                <?php if ($problems !== []): ?>
+                    <div class="ad-flash ad-flash-warning" style="margin-bottom:14px;">
+                        <strong>Noch zu klären:</strong>
+                        <ul style="margin:8px 0 0 18px;padding:0;">
+                            <?php foreach ($problems as $problem): ?>
+                                <li><?= Util::e($problem) ?></li>
+                            <?php endforeach; ?>
+                        </ul>
+                    </div>
+                <?php else: ?>
+                    <div class="ad-flash ad-flash-success" style="margin-bottom:14px;">
+                        Versandbereit: <strong><?= Util::num($recipient) ?></strong> Empfänger.
+                    </div>
+                <?php endif; ?>
+
+                <?php if ($campaign['status'] === Campaigns::SENDING): ?>
+                    <p>Der Versand läuft. Fortschritt:
+                        <strong><?= Util::num((int) $stats['sent']) ?></strong> von
+                        <?= Util::num((int) $stats['total']) ?></p>
+                    <div class="ad-progress">
+                        <span style="width:<?= (int) $stats['total'] > 0 ? round((int) $stats['sent'] / (int) $stats['total'] * 100) : 0 ?>%"></span>
+                    </div>
+                    <div class="ad-actions">
+                        <button type="submit" name="aktion" value="pause" class="ad-btn ad-btn-secondary">Pausieren</button>
+                        <button type="submit" name="aktion" value="abbrechen" class="ad-btn ad-btn-danger"
+                                data-confirm="Versand wirklich abbrechen? Noch nicht versendete Mails werden verworfen.">Abbrechen</button>
+                    </div>
+                <?php elseif ($campaign['status'] === Campaigns::PAUSED): ?>
+                    <p>Der Versand ist pausiert. Es warten
+                        <strong><?= Util::num((int) $stats['pending']) ?></strong> Mails.</p>
+                    <div class="ad-actions">
+                        <button type="submit" name="aktion" value="fortsetzen" class="ad-btn">Fortsetzen</button>
+                        <button type="submit" name="aktion" value="abbrechen" class="ad-btn ad-btn-danger"
+                                data-confirm="Versand wirklich abbrechen?">Abbrechen</button>
+                    </div>
+                <?php elseif ($campaign['status'] === Campaigns::SCHEDULED): ?>
+                    <p>Geplant für <strong><?= Util::e(Util::dt((string) $campaign['scheduled_at'])) ?></strong> Uhr.</p>
+                    <div class="ad-actions">
+                        <button type="submit" name="aktion" value="abbrechen" class="ad-btn ad-btn-danger"
+                                data-confirm="Geplanten Versand abbrechen?">Planung aufheben</button>
+                    </div>
+                <?php elseif ($campaign['status'] === Campaigns::SENT): ?>
+                    <p>Versendet an <strong><?= Util::num((int) $stats['sent']) ?></strong> Empfänger.</p>
+                    <div class="ad-actions">
+                        <a class="ad-btn ad-btn-secondary" href="statistik.php?id=<?= $id ?>">Zur Auswertung</a>
+                    </div>
+                <?php else: ?>
+                    <div class="ad-actions" style="margin-top:0;">
+                        <button type="submit" name="aktion" value="senden" class="ad-btn"
+                                data-confirm="Newsletter jetzt an <?= Util::num($recipient) ?> Empfänger senden?"
+                            <?= $problems === [] ? '' : 'disabled' ?>>Jetzt senden</button>
+                    </div>
+                    <div class="ad-field" style="margin-top:16px;">
+                        <label for="scheduled_at">…oder später senden</label>
+                        <input type="datetime-local" id="scheduled_at" name="scheduled_at"
+                               value="<?= Util::e($campaign['scheduled_at'] !== null ? date('Y-m-d\TH:i', strtotime((string) $campaign['scheduled_at'])) : '') ?>">
+                        <button type="submit" name="aktion" value="planen" class="ad-btn ad-btn-secondary ad-btn-small"
+                                style="margin-top:8px;" <?= $problems === [] ? '' : 'disabled' ?>>Versand planen</button>
+                    </div>
+                <?php endif; ?>
+            </div>
+
+            <div class="ad-card">
+                <h2>Testversand</h2>
+                <div class="ad-field">
+                    <label for="test_email">Testadresse</label>
+                    <input type="email" id="test_email" name="test_email" value="<?= Util::e((string) ($currentUser['email'] ?? '')) ?>">
+                </div>
+                <button type="submit" name="aktion" value="test" class="ad-btn ad-btn-secondary"
+                    <?= $editable ? '' : 'disabled' ?>>Testmail senden</button>
+                <p class="ad-hint">Prüfen Sie die Testmail in mindestens zwei Programmen (z. B. Outlook und Handy).</p>
+            </div>
+
+            <div class="ad-card">
+                <h2>Vorlage &amp; Liste</h2>
+                <div class="ad-field">
+                    <label for="template_id">Design-Vorlage</label>
+                    <select id="template_id" name="template_id" <?= $editable ? '' : 'disabled' ?>>
+                        <?php foreach (Templates::all() as $template): ?>
+                            <option value="<?= (int) $template['id'] ?>"
+                                <?= (int) $campaign['template_id'] === (int) $template['id'] ? 'selected' : '' ?>>
+                                <?= Util::e((string) $template['name']) ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+                <div class="ad-field">
+                    <label for="list_id">Empfängerliste</label>
+                    <select id="list_id" name="list_id" <?= $editable ? '' : 'disabled' ?>>
+                        <option value="0">Alle aktiven Empfänger</option>
+                        <?php foreach (Lists::all() as $list): ?>
+                            <option value="<?= (int) $list['id'] ?>"
+                                <?= (int) $campaign['list_id'] === (int) $list['id'] ? 'selected' : '' ?>>
+                                <?= Util::e((string) $list['name']) ?>
+                                (<?= Util::num(Subscribers::countActiveForList((int) $list['id'])) ?>)
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+
+                <label class="ad-check">
+                    <input type="checkbox" name="track_opens" value="1" <?= (int) $campaign['track_opens'] === 1 ? 'checked' : '' ?>
+                        <?= $editable ? '' : 'disabled' ?>>
+                    <span>Öffnungen messen <em class="ad-hint">(unsichtbares Zählpixel)</em></span>
+                </label>
+                <label class="ad-check">
+                    <input type="checkbox" name="track_clicks" value="1" <?= (int) $campaign['track_clicks'] === 1 ? 'checked' : '' ?>
+                        <?= $editable ? '' : 'disabled' ?>>
+                    <span>Klicks messen <em class="ad-hint">(Links laufen über einen Zähler)</em></span>
+                </label>
+                <label class="ad-check">
+                    <input type="checkbox" name="archive_public" value="1" <?= (int) $campaign['archive_public'] === 1 ? 'checked' : '' ?>
+                        <?= $editable ? '' : 'disabled' ?>>
+                    <span>Im öffentlichen Archiv zeigen</span>
+                </label>
+
+                <div class="ad-actions">
+                    <button type="submit" name="aktion" value="speichern" class="ad-btn ad-btn-secondary"
+                        <?= $editable ? '' : 'disabled' ?>>Speichern</button>
+                </div>
+            </div>
+
+            <div class="ad-card">
+                <h2>Platzhalter</h2>
+                <ul class="ad-placeholder-list">
+                    <?php foreach (Renderer::placeholderHelp() as $code => $meaning): ?>
+                        <li><code><?= Util::e($code) ?></code><br><span class="ad-hint"><?= Util::e($meaning) ?></span></li>
+                    <?php endforeach; ?>
+                </ul>
+            </div>
+        </div>
+    </div>
+</form>
+
+<?php require __DIR__ . '/partials/footer.php';

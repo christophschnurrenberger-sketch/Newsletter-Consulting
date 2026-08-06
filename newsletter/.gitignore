@@ -1,0 +1,7 @@
+# Zugangsdaten und Daten des laufenden Betriebs gehören nicht ins Git.
+config.php
+data/*.sqlite
+data/*.sqlite-wal
+data/*.sqlite-shm
+data/*.lock
+data/outbox/

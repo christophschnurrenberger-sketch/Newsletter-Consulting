@@ -53,6 +53,12 @@ register_shutdown_function(static function () {
 define('NL_INSTALLER', true);
 require __DIR__ . '/lib/bootstrap.php';
 
+// bootstrap.php schaltet die Fehleranzeige ab (richtig für den Betrieb).
+// Für die einmalige Einrichtung schalten wir sie wieder ein – sonst bliebe
+// ein Problem unsichtbar und die Seite einfach leer.
+@ini_set('display_errors', '1');
+error_reporting(E_ALL);
+
 // Der Installer zeigt Fehler im Klartext statt der allgemeinen Fehlerseite.
 set_exception_handler(static function (Throwable $e) {
     echo '<div style="font-family:Arial,Helvetica,sans-serif;max-width:760px;margin:24px auto;padding:18px 22px;'

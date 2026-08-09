@@ -151,11 +151,20 @@ if (Util::isPost()) {
     }
 
     /* Datenbankzugang zusammenstellen und testen */
+    // Ein angehängter Port ("server.example.de:3307") wird mit übernommen;
+    // ohne Angabe gilt der MySQL-Standardport.
+    $dbHost = $values['db_host'];
+    $dbPort = 3306;
+    if (preg_match('/^(.+):(\d{2,5})$/', $dbHost, $hostTeile)) {
+        $dbHost = $hostTeile[1];
+        $dbPort = (int) $hostTeile[2];
+    }
+
     $dbConfig = $values['db_driver'] === 'mysql'
         ? [
             'driver' => 'mysql',
-            'host'   => $values['db_host'],
-            'port'   => 3306,
+            'host'   => $dbHost,
+            'port'   => $dbPort,
             'name'   => $values['db_name'],
             'user'   => $values['db_user'],
             'pass'   => $values['db_pass'],

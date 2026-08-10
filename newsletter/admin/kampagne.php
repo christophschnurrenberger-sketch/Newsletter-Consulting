@@ -40,7 +40,10 @@ if (Util::get('neu') === '1') {
 }
 
 $pageTitle = 'Newsletter bearbeiten';
+$extraCss  = ['assets/builder.css'];
+$extraJs   = ['assets/builder.js'];
 require __DIR__ . '/partials/header.php';
+require __DIR__ . '/partials/builder.php';
 
 $id       = Util::isPost() ? Util::postInt('id') : Util::getInt('id');
 $campaign = Campaigns::byId($id);
@@ -65,7 +68,7 @@ if (Util::isPost()) {
         if (!$editable) {
             $errors[] = 'Ein laufender oder abgeschlossener Versand kann nicht mehr bearbeitet werden.';
         } else {
-            Campaigns::save($id, [
+            $felder = [
                 'name'           => Util::post('name'),
                 'subject'        => Util::post('subject'),
                 'preheader'      => Util::post('preheader'),
@@ -74,12 +77,22 @@ if (Util::isPost()) {
                 'reply_to'       => Util::normalizeEmail(Util::post('reply_to')),
                 'template_id'    => Util::postInt('template_id') ?: null,
                 'list_id'        => Util::postInt('list_id') ?: null,
-                'content_html'   => Util::postRaw('content_html'),
-                'content_text'   => Util::postRaw('content_text'),
                 'track_opens'    => Util::post('track_opens') === '1' ? 1 : 0,
                 'track_clicks'   => Util::post('track_clicks') === '1' ? 1 : 0,
                 'archive_public' => Util::post('archive_public') === '1' ? 1 : 0,
-            ]);
+            ];
+
+            // Im Baukasten entstehen HTML und Text aus den Bausteinen,
+            // im HTML-Modus schreibt die Redaktion direkt in die Felder.
+            if (Util::post('editor_mode') === 'blocks') {
+                $felder['editor_mode'] = 'blocks';
+                $felder['blocks_json'] = Util::postRaw('blocks_json');
+            } else {
+                $felder['editor_mode'] = 'html';
+                $felder['content_html'] = Util::postRaw('content_html');
+                $felder['content_text'] = Util::postRaw('content_text');
+            }
+            Campaigns::save($id, $felder);
             Campaigns::compile($id);
             $campaign = Campaigns::byId($id);
         }
@@ -128,6 +141,38 @@ if (Util::isPost()) {
         }
     }
 
+    // Zwischen Baukasten und HTML wechseln, ohne Inhalte zu verlieren
+    if ($action === 'modus' && $editable) {
+        $ziel = Util::post('ziel') === 'blocks' ? 'blocks' : 'html';
+
+        // Erst den aktuellen Stand sichern, damit beim Wechsel nichts verloren geht
+        if ($campaign['editor_mode'] === 'blocks' && Util::postRaw('blocks_json') !== '') {
+            Campaigns::save($id, ['editor_mode' => 'blocks', 'blocks_json' => Util::postRaw('blocks_json')]);
+        } elseif ($campaign['editor_mode'] !== 'blocks' && Util::postRaw('content_html') !== '') {
+            Campaigns::save($id, ['content_html' => Util::postRaw('content_html')]);
+        }
+        $campaign = Campaigns::byId($id);
+
+        if ($ziel === 'blocks') {
+            $vorhanden = trim((string) $campaign['blocks_json']);
+            if ($vorhanden === '') {
+                // Bestehendes HTML als eigenen Baustein übernehmen
+                $start = Blocks::starterCampaign();
+                $inhalt = trim((string) $campaign['content_html']);
+                if ($inhalt !== '') {
+                    $start['blocks'] = [Blocks::block('html', ['html' => $inhalt])];
+                }
+                $vorhanden = (string) json_encode($start, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+            }
+            Campaigns::save($id, ['editor_mode' => 'blocks', 'blocks_json' => $vorhanden]);
+            Util::flash('Baukasten aktiviert. Ihr bisheriger Inhalt steht als Baustein „Eigenes HTML“ bereit.');
+        } else {
+            Campaigns::save($id, ['editor_mode' => 'html']);
+            Util::flash('HTML-Modus aktiviert. Die im Baukasten erzeugte Fassung können Sie hier weiterbearbeiten.');
+        }
+        Util::redirect('kampagne.php?id=' . $id);
+    }
+
     if ($action === 'pause') {
         Campaigns::pause($id);
         Util::flash('Versand pausiert.');
@@ -149,8 +194,9 @@ if (Util::isPost()) {
 
 $stats     = Campaigns::stats($id);
 $problems  = Campaigns::validate($campaign);
-$editable  = in_array($campaign['status'], [Campaigns::DRAFT, Campaigns::SCHEDULED], true);
-$recipient = Campaigns::recipientCount($campaign);
+$editable   = in_array($campaign['status'], [Campaigns::DRAFT, Campaigns::SCHEDULED], true);
+$recipient  = Campaigns::recipientCount($campaign);
+$useBuilder = Campaigns::usesBuilder($campaign);
 ?>
 
 <div class="ad-page-head">
@@ -181,9 +227,64 @@ $recipient = Campaigns::recipientCount($campaign);
     </div>
 <?php endif; ?>
 
+<?php
+// Die Inhaltskarte wird einmal aufgebaut und je nach Modus an anderer Stelle
+// ausgegeben: der Baukasten braucht die volle Breite, das HTML-Feld nicht.
+ob_start();
+?>
+            <div class="ad-card">
+                <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;">
+                    <h2 style="margin:0;">Inhalt</h2>
+                    <div class="ad-actions-inline">
+                        <button type="submit" name="aktion" value="modus" class="ad-btn ad-btn-small <?= $useBuilder ? '' : 'ad-btn-secondary' ?>"
+                                <?= $editable && !$useBuilder ? '' : 'disabled' ?>
+                                onclick="this.form.ziel.value='blocks'">Baukasten</button>
+                        <button type="submit" name="aktion" value="modus" class="ad-btn ad-btn-small <?= $useBuilder ? 'ad-btn-secondary' : '' ?>"
+                                <?= $editable && $useBuilder ? '' : 'disabled' ?>
+                                onclick="this.form.ziel.value='html'">HTML</button>
+                        <input type="hidden" name="ziel" value="">
+                    </div>
+                </div>
+
+                <?php if ($useBuilder && !$editable): ?>
+                    <p class="ad-hint" style="margin:6px 0 0;">Diese Ausgabe wurde mit dem Baukasten erstellt und ist
+                        abgeschlossen. Zum Weiterarbeiten kopieren Sie sie über „Newsletter → Kopieren“.</p>
+                <?php elseif ($useBuilder): ?>
+                    <p class="ad-hint" style="margin:6px 0 14px;">Bausteine per Drag &amp; Drop anordnen.
+                        Texte lassen sich direkt in der Vorschau schreiben; Platzhalter setzen Sie links ein.</p>
+                    <?php builder_ui(Campaigns::blocks($campaign), 'campaign'); ?>
+                    <input type="hidden" name="editor_mode" value="blocks">
+                <?php else: ?>
+                    <input type="hidden" name="editor_mode" value="html">
+                    <div class="ad-field" style="margin-top:14px;">
+                        <label for="content_html">HTML-Inhalt <span class="ad-hint">(wird in die Vorlage eingesetzt)</span></label>
+                        <textarea id="content_html" name="content_html" rows="20" class="ad-code"
+                            <?= $editable ? '' : 'disabled' ?>><?= Util::e((string) $campaign['content_html']) ?></textarea>
+                        <p class="ad-hint">Tipp: Für E-Mails eignen sich einfache Absätze mit Inline-Stilen –
+                            moderne CSS-Layouts zeigen viele Programme nicht korrekt an.</p>
+                    </div>
+
+                    <div class="ad-field">
+                        <label for="content_text">Textfassung <span class="ad-hint">(leer lassen = automatisch aus dem HTML)</span></label>
+                        <textarea id="content_text" name="content_text" rows="6" class="ad-code"
+                            <?= $editable ? '' : 'disabled' ?>><?= Util::e((string) $campaign['content_text']) ?></textarea>
+                        <p class="ad-hint">Jede Mail geht als HTML <em>und</em> als reiner Text raus – das verbessert
+                            die Zustellbarkeit deutlich.</p>
+                    </div>
+                <?php endif; ?>
+            </div>
+
+<?php
+$inhaltKarte = (string) ob_get_clean();
+?>
+
 <form method="post" data-warn-unsaved>
     <?= Util::csrfField() ?>
     <input type="hidden" name="id" value="<?= $id ?>">
+
+    <?php if ($useBuilder): ?>
+        <?= $inhaltKarte ?>
+    <?php endif; ?>
 
     <div class="ad-editor-grid">
         <!-- ------------------------------------------------ linke Spalte -->
@@ -231,24 +332,9 @@ $recipient = Campaigns::recipientCount($campaign);
                 </div>
             </div>
 
-            <div class="ad-card">
-                <h2>Inhalt</h2>
-                <div class="ad-field">
-                    <label for="content_html">HTML-Inhalt <span class="ad-hint">(wird in die Vorlage eingesetzt)</span></label>
-                    <textarea id="content_html" name="content_html" rows="20" class="ad-code"
-                        <?= $editable ? '' : 'disabled' ?>><?= Util::e((string) $campaign['content_html']) ?></textarea>
-                    <p class="ad-hint">Tipp: Für E-Mails eignen sich einfache Absätze mit Inline-Stilen –
-                        moderne CSS-Layouts zeigen viele Programme nicht korrekt an.</p>
-                </div>
-
-                <div class="ad-field">
-                    <label for="content_text">Textfassung <span class="ad-hint">(leer lassen = automatisch aus dem HTML)</span></label>
-                    <textarea id="content_text" name="content_text" rows="6" class="ad-code"
-                        <?= $editable ? '' : 'disabled' ?>><?= Util::e((string) $campaign['content_text']) ?></textarea>
-                    <p class="ad-hint">Jede Mail geht als HTML <em>und</em> als reiner Text raus – das verbessert
-                        die Zustellbarkeit deutlich.</p>
-                </div>
-            </div>
+            <?php if (!$useBuilder): ?>
+                <?= $inhaltKarte ?>
+            <?php endif; ?>
 
             <div class="ad-card">
                 <h2>Vorschau</h2>

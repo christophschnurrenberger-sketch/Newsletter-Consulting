@@ -7,5 +7,8 @@
 </footer>
 
 <script src="assets/admin.js"></script>
+<?php foreach (($extraJs ?? []) as $js): ?>
+<script src="<?= Util::e($js) ?>"></script>
+<?php endforeach; ?>
 </body>
 </html>

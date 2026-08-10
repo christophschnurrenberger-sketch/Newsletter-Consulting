@@ -19,8 +19,8 @@ Webhosting mit PHP 8 und einer Datenbank (SQLite genügt).
 4. **install.php löschen** – der Installer weist am Ende darauf hin.
 5. **Anmelden:** `https://ihre-domain.de/newsletter/admin/login.php`
 6. **Versandweg hinterlegen:** Einstellungen → Versandweg → SMTP mit einem echten
-   Postfach Ihrer Domain (siehe Abschnitt 4).
-7. **Cron-Job einrichten:** alle 5 Minuten (siehe Abschnitt 3).
+   Postfach Ihrer Domain (siehe Abschnitt 5).
+7. **Cron-Job einrichten:** alle 5 Minuten (siehe Abschnitt 4).
 
 **Voraussetzung:** PHP 8.0 oder neuer. Bei IONOS stellen Sie die Version unter
 „Websites & Shops → Ihre Website → PHP verwalten“ ein.
@@ -36,7 +36,8 @@ Newsletter schreiben, Testmail verschicken, senden.
 |---|---|
 | Anmeldung | Formular auf der Startseite und eigene Landingpage, Double-Opt-in, Honeypot, Zeit- und Rate-Limits, MX-Prüfung der Domain |
 | Empfänger | Suche, Filter, Sammelaktionen, Listen, CSV-Import/-Export, Einwilligungs-Protokoll, Sperrliste |
-| Redaktion | HTML-Vorlagen, Platzhalter (`{{vorname}}` …), Live-Vorschau, Testversand, Textfassung automatisch |
+| Redaktion | **Baukasten mit Drag & Drop**, Platzhalter (`{{vorname}}` …), Live-Vorschau, Testversand, Textfassung automatisch – wahlweise auch direkt in HTML |
+| Gestaltung | Eigene Vorlagen per Drag & Drop: Kopfzeile, Farben, Schrift, Breite, Footer; Bild-Upload mit Galerie |
 | Versand | Eigener SMTP-Client, portionsweiser Versand über Cron, Tempolimits, Wiederholungen, Pause/Fortsetzen/Abbrechen, Planung |
 | Messung | Öffnungen, Klicks je Link, Abmeldungen, Bounces, Verlaufsgrafik |
 | Automation | Willkommensstrecken mit mehreren Schritten und Wartezeiten |
@@ -45,7 +46,49 @@ Newsletter schreiben, Testmail verschicken, senden.
 
 ---
 
-## 3. Cron-Job einrichten (wichtig!)
+## 3. Der Baukasten: Newsletter und Vorlagen selbst gestalten
+
+Newsletter und Vorlagen stellen Sie per Drag & Drop aus Bausteinen zusammen –
+ohne HTML-Kenntnisse. Aus den Bausteinen erzeugt das System anschließend
+tabellenbasiertes E-Mail-HTML mit Inline-Stilen, wie es Outlook & Co. brauchen.
+
+**Bausteine:** Überschrift · Textabsatz (fett, kursiv, Links, Aufzählungen) ·
+Bild (mit Upload) · Knopf/Call-to-Action · Trennlinie · Abstand · Zwei Spalten ·
+Linkleiste · eigenes HTML · Inhaltsplatzhalter (nur in Vorlagen).
+
+**Bedienung**
+
+* Baustein aus der linken Leiste in die Mail **ziehen** – oder anklicken, dann
+  wird er unten angehängt.
+* Vorhandene Bausteine am Griff `⠿` verschieben; auf dem Handy über die
+  Pfeiltasten `↑ ↓` am Baustein.
+* Texte schreiben Sie direkt in der Vorschau. Rechts stellen Sie Größe, Farbe,
+  Ausrichtung und Abstände ein.
+* **Platzhalter** wie `{{vorname}}` setzt die Auswahl links an der Schreibmarke
+  ein – in Texten ebenso wie in Einstellungsfeldern.
+* Zwei Spalten brechen auf dem Handy automatisch untereinander um.
+
+**Eigene Vorlage bauen:** Vorlagen → „Neu im Baukasten“. Eine Vorlage ist der
+Rahmen um jede Ausgabe. Der Baustein **„Inhalt der Ausgabe“** markiert die
+Stelle, an der später der Text des jeweiligen Newsletters steht – er gehört in
+jede Vorlage (fehlt er, wird er automatisch ergänzt). Kopfzeile, Farben,
+Schriftart, Breite und Footer stellen Sie rechts unter „Gestaltung“ ein.
+Abmeldelink und Impressum stehen immer im Footer; beide sind gesetzlich
+vorgeschrieben und lassen sich nicht entfernen.
+
+**Bilder:** Der Upload legt sie in `newsletter/uploads/` ab (max. 3 MB,
+JPG/PNG/GIF/WebP). Der Ordner wird beim ersten Upload automatisch angelegt und
+gegen die Ausführung von Programmcode gesperrt. Bilder in E-Mails müssen
+öffentlich erreichbar sein – deshalb liegen sie dort und nicht im Datenordner.
+
+**Umschalten:** Über die Knöpfe „Baukasten“ / „HTML“ wechseln Sie jederzeit.
+Beim Wechsel zum Baukasten wandert vorhandenes HTML in einen Baustein
+„Eigenes HTML“; beim Wechsel zu HTML bearbeiten Sie die erzeugte Fassung weiter.
+Es geht nichts verloren.
+
+---
+
+## 4. Cron-Job einrichten (wichtig!)
 
 Der Versand läuft **nicht** beim Klick auf „Senden“, sondern im Hintergrund.
 Ohne Cron-Job bleibt die Warteschlange stehen.
@@ -72,7 +115,7 @@ und jede einzelne Mail wird vor dem Versand gesperrt.
 
 ---
 
-## 4. Zustellbarkeit: SPF, DKIM, DMARC
+## 5. Zustellbarkeit: SPF, DKIM, DMARC
 
 Eigener Versand heißt: Sie sind selbst für die Reputation verantwortlich. Drei
 DNS-Einträge entscheiden darüber, ob Ihre Mails im Posteingang landen.
@@ -97,7 +140,7 @@ auf „PASS“ stehen.
 
 ---
 
-## 5. Versandwege
+## 6. Versandwege
 
 | Weg | Wann sinnvoll |
 |---|---|
@@ -114,7 +157,7 @@ sich automatisch daran und verteilt den Versand über mehrere Läufe.
 
 ---
 
-## 6. Rechtliches (Deutschland/EU)
+## 7. Rechtliches (Deutschland/EU)
 
 Das System ist so gebaut, dass die Pflichten technisch erfüllt sind – die
 inhaltliche Verantwortung bleibt bei Ihnen.
@@ -148,7 +191,7 @@ Rechtsgrundlage, Speicherdauer, Widerruf – und den Hinweis auf die Messung von
 
 ---
 
-## 7. Aufbau
+## 8. Aufbau
 
 ```
 newsletter/
@@ -174,7 +217,8 @@ newsletter/
 │   ├── import.php           CSV-Import
 │   ├── listen.php           Verteiler
 │   ├── automationen.php     Willkommensstrecken
-│   ├── vorlagen.php         Design-Vorlagen
+│   ├── vorlagen.php         Design-Vorlagen (Baukasten oder HTML)
+│   ├── upload.php           Bild-Upload für den Baukasten
 │   ├── versand.php          Warteschlange steuern
 │   ├── protokoll.php        Ereignisse, Rückläufer, Sperrliste
 │   └── einstellungen.php    Absender, SMTP, Tempo, Texte, Zugänge
@@ -184,6 +228,7 @@ newsletter/
 │   ├── bounces.php          Rücklaufpostfach (stündlich)
 │   └── wartung.php          Aufräumen (täglich)
 │
+├── uploads/                 hochgeladene Bilder für den Baukasten
 ├── lib/                     Programmkern (siehe unten)
 └── data/                    Datenbank, Sperrdatei, Testpostausgang (gesperrt)
 ```
@@ -198,6 +243,7 @@ newsletter/
 | `Mailer.php` | eigener SMTP-Client, MIME-Aufbau, mail()- und Testmodus |
 | `Queue.php` | Warteschlange, Worker, Wiederholungen, Limits |
 | `Campaigns.php` | Ausgaben: speichern, prüfen, kompilieren, starten, auswerten |
+| `Blocks.php` | Baukasten: Bausteine prüfen, absichern und in E-Mail-HTML übersetzen |
 | `Renderer.php` / `Templates.php` | Vorlagen, Platzhalter, Tracking-Einbau |
 | `Subscribers.php` / `Lists.php` | Empfänger, Double-Opt-in, Listen, Import |
 | `Automations.php` | Mailstrecken |
@@ -207,7 +253,7 @@ newsletter/
 
 ---
 
-## 8. Anmeldeformular auf eigenen Seiten einbauen
+## 9. Anmeldeformular auf eigenen Seiten einbauen
 
 Auf der Startseite ist das Formular bereits eingebaut. Für weitere Seiten genügt
 dieses Minimalformular (funktioniert auch ohne JavaScript):
@@ -232,7 +278,7 @@ welche Seite wie viele Anmeldungen bringt.
 
 ---
 
-## 9. Wartung und Sicherung
+## 10. Wartung und Sicherung
 
 * **Sichern:** `config.php` und den Ordner `data/` (bei MySQL: den
   Datenbank-Export). Ohne `secret` aus der `config.php` sind gespeicherte
@@ -243,7 +289,7 @@ welche Seite wie viele Anmeldungen bringt.
 
 ---
 
-## 10. Wenn etwas nicht klappt
+## 11. Wenn etwas nicht klappt
 
 **Erste Anlaufstelle bei jedem Problem:** `systemcheck.php` im Newsletter-Ordner.
 Die Seite hat keine Abhängigkeiten und funktioniert auch dann, wenn der Rest streikt.
@@ -252,17 +298,19 @@ Die Seite hat keine Abhängigkeiten und funktioniert auch dann, wenn der Rest st
 |---|---|
 | `install.php` zeigt nur die Kopfzeile, darunter bleibt alles leer | Ein PHP-Fehler bei abgeschalteter Fehleranzeige. Fast immer eine zu alte PHP-Version (nötig: 8.0+) oder eine unvollständig hochgeladene Datei. `systemcheck.php` nennt den Grund; seit dieser Fassung zeigt auch `install.php` den Fehler im Klartext an. |
 | „config.php konnte nicht geschrieben werden“ | Der Ordner `newsletter/` ist schreibgeschützt. Per FTP die Rechte auf 755 setzen. |
+| Bild-Upload schlägt fehl | Der Ordner `newsletter/uploads/` fehlt oder ist schreibgeschützt – per FTP anlegen und auf 755 setzen. |
+| Bausteine lassen sich am Handy nicht ziehen | Touch-Geräte unterstützen kein Drag & Drop. Nutzen Sie die Pfeiltasten `↑ ↓` am Baustein. |
 | „Cron-Job meldet sich nicht“ | Cron nicht eingerichtet oder falscher Pfad. Testweise `versand.php` → „Portion jetzt senden“. |
 | Mails bleiben in der Warteschlange | Stundenlimit erreicht (Versand → „noch möglich“) oder Kampagne pausiert. |
 | SMTP-Fehler „Verbindung fehlgeschlagen“ | Host/Port/Verschlüsselung prüfen; viele Hoster erlauben ausgehendes SMTP nur zum eigenen Server. |
-| Mails landen im Spam | SPF/DKIM/DMARC prüfen (Abschnitt 4), Absenderadresse muss zur Domain passen, langsam warmlaufen. |
+| Mails landen im Spam | SPF/DKIM/DMARC prüfen (Abschnitt 5), Absenderadresse muss zur Domain passen, langsam warmlaufen. |
 | Bestätigungslinks führen ins Leere | `base_url` in `config.php` stimmt nicht mit der echten Adresse überein. |
 | Öffnungsraten wirken zu niedrig | Viele Programme laden Bilder nicht. Klicks sind die verlässlichere Kennzahl. |
 | Fehler im Protokoll | Admin → Protokoll → Fehler; dort steht die genaue Meldung. |
 
 ---
 
-## 11. Größenordnung
+## 12. Größenordnung
 
 SQLite trägt problemlos einige zehntausend Empfänger. Für sehr große Verteiler
 oder mehrere gleichzeitige Redakteure ist MySQL die bessere Wahl – umstellen

@@ -56,8 +56,10 @@ final class Campaigns
             'reply_to'       => Settings::get('reply_to'),
             'template_id'    => Templates::defaultId() ?: null,
             'list_id'        => Lists::defaultId() ?: null,
-            'content_html'   => Templates::starterContent(),
-            'content_text'   => '',
+            'content_html'   => Blocks::renderContent(Blocks::starterCampaign()),
+            'content_text'   => Blocks::toText(Blocks::starterCampaign()),
+            'blocks_json'    => (string) json_encode(Blocks::starterCampaign(), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES),
+            'editor_mode'    => 'blocks',
             'status'         => self::DRAFT,
             'track_opens'    => Settings::bool('track_opens') ? 1 : 0,
             'track_clicks'   => Settings::bool('track_clicks') ? 1 : 0,
@@ -72,7 +74,8 @@ final class Campaigns
     {
         $allowed = ['name', 'subject', 'preheader', 'from_name', 'from_email', 'reply_to',
                     'template_id', 'list_id', 'content_html', 'content_text',
-                    'track_opens', 'track_clicks', 'archive_public', 'scheduled_at'];
+                    'track_opens', 'track_clicks', 'archive_public', 'scheduled_at',
+                    'blocks_json', 'editor_mode'];
         $update = [];
         foreach ($allowed as $field) {
             if (array_key_exists($field, $data)) {
@@ -82,8 +85,32 @@ final class Campaigns
         if ($update === []) {
             return;
         }
+
+        // Im Baukasten-Modus entstehen HTML und Textfassung aus den Bausteinen.
+        if (($update['editor_mode'] ?? '') === 'blocks' && isset($update['blocks_json'])) {
+            $blocks = Blocks::parse((string) $update['blocks_json']);
+            $update['blocks_json']  = (string) json_encode($blocks, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+            $update['content_html'] = Blocks::renderContent($blocks);
+            $update['content_text'] = Blocks::toText($blocks);
+        }
+
         $update['updated_at'] = Util::now();
         DB::update('campaigns', $update, 'id = ?', [$id]);
+    }
+
+    /** Bausteine einer Ausgabe (leer = noch nie im Baukasten bearbeitet). */
+    public static function blocks(array $campaign): array
+    {
+        $json = (string) ($campaign['blocks_json'] ?? '');
+        if (trim($json) === '') {
+            return Blocks::starterCampaign();
+        }
+        return Blocks::parse($json);
+    }
+
+    public static function usesBuilder(array $campaign): bool
+    {
+        return ($campaign['editor_mode'] ?? 'html') === 'blocks';
     }
 
     public static function duplicate(int $id): int
@@ -104,6 +131,8 @@ final class Campaigns
             'list_id'        => $campaign['list_id'],
             'content_html'   => $campaign['content_html'],
             'content_text'   => $campaign['content_text'],
+            'blocks_json'    => $campaign['blocks_json'] ?? null,
+            'editor_mode'    => $campaign['editor_mode'] ?? 'html',
             'status'         => self::DRAFT,
             'track_opens'    => $campaign['track_opens'],
             'track_clicks'   => $campaign['track_clicks'],

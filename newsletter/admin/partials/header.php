@@ -59,6 +59,9 @@ function subscriber_status_pill(string $status): string
 <meta name="robots" content="noindex, nofollow">
 <title><?= Util::e($pageTitle) ?> · Newsletter-Verwaltung</title>
 <link rel="stylesheet" href="assets/admin.css">
+<?php foreach (($extraCss ?? []) as $css): ?>
+<link rel="stylesheet" href="<?= Util::e($css) ?>">
+<?php endforeach; ?>
 </head>
 <body>
 <header class="ad-topbar">

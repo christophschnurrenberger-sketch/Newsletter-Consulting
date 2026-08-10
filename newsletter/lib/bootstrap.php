@@ -18,7 +18,7 @@ date_default_timezone_set('Europe/Berlin');
 /* Klassen laden – bewusst ohne Composer, damit das System überall läuft. */
 foreach ([
     'Config', 'Util', 'DB', 'Schema', 'Settings', 'Log', 'Mailer', 'Urls',
-    'Lists', 'Events', 'Subscribers', 'Templates', 'Renderer', 'Campaigns',
+    'Lists', 'Events', 'Subscribers', 'Templates', 'Blocks', 'Renderer', 'Campaigns',
     'Queue', 'Automations', 'SystemMails', 'Auth', 'Tracking', 'Bounces',
 ] as $class) {
     require_once NL_ROOT . '/lib/' . $class . '.php';

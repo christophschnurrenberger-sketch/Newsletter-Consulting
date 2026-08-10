@@ -34,12 +34,26 @@ final class Templates
         return $tpl === null ? 0 : (int) $tpl['id'];
     }
 
-    public static function create(string $name, string $html, string $description = '', bool $isDefault = false): int
+    /**
+     * @param string|null $blocksJson Bausteine aus dem Baukasten; ist der Wert
+     *        gesetzt, entsteht das HTML daraus (statt aus $html).
+     */
+    public static function create(string $name, string $html, string $description = '',
+                                  bool $isDefault = false, ?string $blocksJson = null): int
     {
+        $mode = 'html';
+        if ($blocksJson !== null) {
+            $blocks     = Blocks::parse($blocksJson);
+            $blocksJson = (string) json_encode($blocks, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+            $html       = Blocks::renderDocument($blocks);
+            $mode       = 'blocks';
+        }
         $id = DB::insert('templates', [
             'name'        => mb_substr(trim($name), 0, 190),
             'description' => mb_substr(trim($description), 0, 255),
             'html'        => $html,
+            'blocks_json' => $blocksJson,
+            'editor_mode' => $mode,
             'is_default'  => $isDefault ? 1 : 0,
             'created_at'  => Util::now(),
             'updated_at'  => Util::now(),
@@ -50,14 +64,37 @@ final class Templates
         return $id;
     }
 
-    public static function update(int $id, string $name, string $html, string $description = ''): void
+    public static function update(int $id, string $name, string $html, string $description = '',
+                                  ?string $blocksJson = null): void
     {
-        DB::update('templates', [
+        $data = [
             'name'        => mb_substr(trim($name), 0, 190),
             'description' => mb_substr(trim($description), 0, 255),
             'html'        => $html,
             'updated_at'  => Util::now(),
-        ], 'id = ?', [$id]);
+        ];
+        if ($blocksJson !== null) {
+            $blocks              = Blocks::parse($blocksJson);
+            $data['blocks_json'] = (string) json_encode($blocks, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+            $data['html']        = Blocks::renderDocument($blocks);
+            $data['editor_mode'] = 'blocks';
+        }
+        DB::update('templates', $data, 'id = ?', [$id]);
+    }
+
+    /** Bausteine einer Vorlage (leer = noch nie im Baukasten bearbeitet). */
+    public static function blocks(?array $template): array
+    {
+        $json = (string) ($template['blocks_json'] ?? '');
+        if (trim($json) === '') {
+            return Blocks::starterTemplate();
+        }
+        return Blocks::parse($json);
+    }
+
+    public static function usesBuilder(?array $template): bool
+    {
+        return ($template['editor_mode'] ?? 'html') === 'blocks';
     }
 
     public static function makeDefault(int $id): void
@@ -83,6 +120,10 @@ final class Templates
             'Klares Layout mit Kopfzeile, Inhaltsbereich und rechtssicherem Footer.', true);
         self::create('Schlicht (nur Text)', self::plainHtml(),
             'Reduzierte Vorlage ohne Farbflächen – wirkt wie eine persönliche E-Mail.');
+        // Eine Vorlage im Baukasten-Modus – als Startpunkt zum Umbauen
+        self::create('Baukasten-Vorlage', '',
+            'Frei gestaltbar per Drag & Drop – Kopfzeile, Inhalt und Footer anpassen.',
+            false, (string) json_encode(Blocks::starterTemplate()));
     }
 
     /* ------------------------------------------------------------ Vorlagen */

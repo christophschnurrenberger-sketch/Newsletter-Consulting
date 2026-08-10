@@ -17,7 +17,7 @@
 final class Schema
 {
     /** Version des Schemas – wird in settings gespeichert. */
-    public const VERSION = 1;
+    public const VERSION = 2;
 
     public static function migrate(): void
     {
@@ -39,7 +39,43 @@ final class Schema
                 }
             }
         }
+        // Nachrüstung für Installationen aus einer früheren Fassung
+        self::ensureColumn('campaigns', 'blocks_json', '%TEXT%');
+        self::ensureColumn('campaigns', 'editor_mode', "%STR(10)% NOT NULL DEFAULT 'html'");
+        self::ensureColumn('templates', 'blocks_json', '%TEXT%');
+        self::ensureColumn('templates', 'editor_mode', "%STR(10)% NOT NULL DEFAULT 'html'");
+
         Settings::set('schema_version', (string) self::VERSION);
+    }
+
+    /**
+     * Ergänzt eine Spalte, falls sie noch fehlt.
+     * So bekommen bestehende Installationen neue Funktionen, ohne dass
+     * jemand von Hand in der Datenbank arbeiten muss.
+     */
+    public static function ensureColumn(string $table, string $column, string $definition): bool
+    {
+        if (in_array($column, self::columns($table), true)) {
+            return false;
+        }
+        DB::pdo()->exec('ALTER TABLE ' . $table . ' ADD COLUMN ' . $column . ' ' . self::translate($definition));
+        Log::info('schema', 'Spalte ' . $table . '.' . $column . ' ergänzt.');
+        return true;
+    }
+
+    /** @return string[] Spaltennamen einer Tabelle */
+    public static function columns(string $table): array
+    {
+        try {
+            if (DB::isSqlite()) {
+                $rows = DB::all('PRAGMA table_info(' . $table . ')');
+                return array_map(static fn($r) => (string) $r['name'], $rows);
+            }
+            $rows = DB::all('SHOW COLUMNS FROM ' . $table);
+            return array_map(static fn($r) => (string) ($r['Field'] ?? ''), $rows);
+        } catch (Throwable $e) {
+            return [];
+        }
     }
 
     public static function isInstalled(): bool
@@ -162,6 +198,8 @@ final class Schema
                 name        %STR(190)% NOT NULL,
                 description %STR(255)% NOT NULL DEFAULT \'\',
                 html        %TEXT%,
+                blocks_json %TEXT%,
+                editor_mode %STR(10)% NOT NULL DEFAULT \'html\',
                 is_default  %INT% NOT NULL DEFAULT 0,
                 created_at  %DT%,
                 updated_at  %DT%
@@ -182,6 +220,8 @@ final class Schema
                 content_text    %TEXT%,
                 compiled_html   %TEXT%,
                 compiled_text   %TEXT%,
+                blocks_json     %TEXT%,
+                editor_mode     %STR(10)% NOT NULL DEFAULT \'html\',
                 status          %STR(20)% NOT NULL DEFAULT \'draft\',
                 track_opens     %INT% NOT NULL DEFAULT 1,
                 track_clicks    %INT% NOT NULL DEFAULT 1,

@@ -17,7 +17,7 @@
 final class Schema
 {
     /** Version des Schemas – wird in settings gespeichert. */
-    public const VERSION = 2;
+    public const VERSION = 3;
 
     public static function migrate(): void
     {
@@ -44,6 +44,12 @@ final class Schema
         self::ensureColumn('campaigns', 'editor_mode', "%STR(10)% NOT NULL DEFAULT 'html'");
         self::ensureColumn('templates', 'blocks_json', '%TEXT%');
         self::ensureColumn('templates', 'editor_mode', "%STR(10)% NOT NULL DEFAULT 'html'");
+        self::ensureColumn('users', 'status', "%STR(20)% NOT NULL DEFAULT 'active'");
+        self::ensureColumn('automations', 'flow_json', '%TEXT%');
+        self::ensureColumn('automation_runs', 'node_id', "%STR(24)% NOT NULL DEFAULT ''");
+        self::ensureColumn('automation_runs', 'context_json', '%TEXT%');
+        self::ensureColumn('automation_steps', 'blocks_json', '%TEXT%');
+        self::ensureColumn('automation_steps', 'editor_mode', "%STR(10)% NOT NULL DEFAULT 'blocks'");
 
         Settings::set('schema_version', (string) self::VERSION);
     }
@@ -129,6 +135,7 @@ final class Schema
                 name          %STR(190)% NOT NULL DEFAULT \'\',
                 password_hash %STR(255)% NOT NULL,
                 role          %STR(20)%  NOT NULL DEFAULT \'admin\',
+                status        %STR(20)%  NOT NULL DEFAULT \'active\',
                 created_at    %DT%,
                 last_login_at %DT%
             )%ENGINE%',
@@ -240,6 +247,7 @@ final class Schema
                 name         %STR(190)% NOT NULL,
                 trigger_type %STR(40)% NOT NULL DEFAULT \'confirm\',
                 list_id      %INT%,
+                flow_json    %TEXT%,
                 status       %STR(20)% NOT NULL DEFAULT \'paused\',
                 created_at   %DT%,
                 updated_at   %DT%
@@ -256,6 +264,8 @@ final class Schema
                 content_text  %TEXT%,
                 compiled_html %TEXT%,
                 compiled_text %TEXT%,
+                blocks_json   %TEXT%,
+                editor_mode   %STR(10)% NOT NULL DEFAULT \'blocks\',
                 track_opens   %INT% NOT NULL DEFAULT 1,
                 track_clicks  %INT% NOT NULL DEFAULT 1,
                 created_at    %DT%,
@@ -267,7 +277,9 @@ final class Schema
                 id            %PK%,
                 automation_id %INT% NOT NULL,
                 subscriber_id %INT% NOT NULL,
-                step_id       %INT% NOT NULL,
+                step_id       %INT%,
+                node_id       %STR(24)% NOT NULL DEFAULT \'\',
+                context_json  %TEXT%,
                 status        %STR(20)% NOT NULL DEFAULT \'pending\',
                 due_at        %DT%,
                 queued_at     %DT%,

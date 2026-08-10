@@ -11,6 +11,10 @@ $preview = [];
 
 if (Util::isPost()) {
     Util::requireCsrf();
+    if (!Auth::can('empfaenger')) {
+        Util::flash('Dafür fehlt Ihnen die Berechtigung. Fragen Sie eine Administratorin oder einen Administrator.', 'error');
+        Util::redirect('import.php');
+    }
 
     $content = '';
     if (isset($_FILES['datei']) && is_array($_FILES['datei']) && (int) $_FILES['datei']['error'] === UPLOAD_ERR_OK) {

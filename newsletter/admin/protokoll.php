@@ -4,6 +4,7 @@
  */
 
 $pageTitle = 'Protokoll';
+$requiredRight = 'einstellungen';
 require __DIR__ . '/partials/header.php';
 
 if (Util::isPost()) {

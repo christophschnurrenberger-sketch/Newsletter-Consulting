@@ -2,12 +2,13 @@
 /**
  * Automations – zeitgesteuerte Mailstrecken (z. B. Willkommensserie).
  *
- * Auslöser ist derzeit die bestätigte Anmeldung. Beim Eintritt wird für
- * jeden Schritt ein Lauf mit Fälligkeitszeitpunkt angelegt; der Cron-Job
- * stellt fällige Läufe in dieselbe Warteschlange wie normale Kampagnen.
+ * Auslöser ist die bestätigte Anmeldung. Der Ablauf selbst wird im
+ * Baukasten zusammengezogen (lib/Flow.php): warten, Mail senden, Bedingung
+ * prüfen, Aktion ausführen. Jeder Empfänger bekommt einen Lauf, der Schritt
+ * für Schritt durch den Ablauf wandert; der Cron-Job schiebt ihn weiter.
  *
- * Die Verzögerung eines Schrittes zählt ab dem Eintritt in die Strecke
- * ("24 Stunden nach der Anmeldung"), nicht ab dem vorherigen Schritt.
+ * Die Inhalte der Mails stecken weiterhin in automation_steps – so nutzt
+ * der Versand dieselbe geprüfte Warteschlange wie normale Kampagnen.
  */
 final class Automations
 {
@@ -72,6 +73,87 @@ final class Automations
         });
     }
 
+    /* ----------------------------------------------------------- Ablauf */
+
+    /**
+     * Der Ablauf einer Strecke. Ältere Strecken ohne Ablauf werden aus
+     * ihren Schritten übersetzt, damit nichts verloren geht.
+     */
+    public static function flow(array $automation): array
+    {
+        $json = trim((string) ($automation['flow_json'] ?? ''));
+        if ($json !== '') {
+            return Flow::parse($json);
+        }
+
+        $nodes  = [];
+        $bisher = 0;
+        foreach (self::steps((int) $automation['id']) as $step) {
+            $wartezeit = max(0, (int) $step['delay_hours'] - $bisher);
+            $bisher    = (int) $step['delay_hours'];
+            if ($wartezeit > 0) {
+                $nodes[] = Flow::node('warten', ['value' => $wartezeit, 'einheit' => 'stunden']);
+            }
+            $nodes[] = Flow::node('mail', ['step_id' => (int) $step['id']]);
+        }
+        return ['nodes' => $nodes];
+    }
+
+    /**
+     * Speichert den Ablauf aus dem Baukasten.
+     * Jeder Mail-Knoten bekommt dabei einen Datensatz für seinen Inhalt;
+     * Schritte ohne Knoten werden entfernt.
+     */
+    public static function saveFlow(int $automationId, string $json): void
+    {
+        $flow = Flow::parse($json);
+        $verwendet = [];
+
+        $flow['nodes'] = self::mapNodes($flow['nodes'], function (array $node) use ($automationId, &$verwendet): array {
+            if ($node['type'] !== 'mail') {
+                return $node;
+            }
+            $stepId = (int) $node['step_id'];
+            $step   = $stepId > 0 ? self::step($stepId) : null;
+            if ($step === null || (int) $step['automation_id'] !== $automationId) {
+                $stepId = self::addStep($automationId, 0);
+            }
+            $node['step_id'] = $stepId;
+            $verwendet[]     = $stepId;
+            return $node;
+        });
+
+        foreach (self::steps($automationId) as $step) {
+            if (!in_array((int) $step['id'], $verwendet, true)) {
+                self::deleteStep((int) $step['id']);
+            }
+        }
+
+        DB::update('automations', [
+            'flow_json'  => (string) json_encode($flow, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES),
+            'updated_at' => Util::now(),
+        ], 'id = ?', [$automationId]);
+    }
+
+    /**
+     * Wendet eine Funktion auf alle Knoten an – auch in den Zweigen.
+     * @param array<int,array<string,mixed>> $nodes
+     * @return array<int,array<string,mixed>>
+     */
+    private static function mapNodes(array $nodes, callable $fn): array
+    {
+        $out = [];
+        foreach ($nodes as $node) {
+            $node = $fn($node);
+            if (($node['type'] ?? '') === 'bedingung') {
+                $node['ja']   = self::mapNodes((array) ($node['ja'] ?? []), $fn);
+                $node['nein'] = self::mapNodes((array) ($node['nein'] ?? []), $fn);
+            }
+            $out[] = $node;
+        }
+        return $out;
+    }
+
     /* --------------------------------------------------------------- Schritte */
 
     /** @return array<int,array<string,mixed>> */
@@ -95,14 +177,17 @@ final class Automations
             [$automationId]
         );
         $now = Util::now();
+        $start = Blocks::starterCampaign();
         return DB::insert('automation_steps', [
             'automation_id' => $automationId,
             'position'      => $position,
             'delay_hours'   => max(0, $delayHours),
             'subject'       => '',
             'template_id'   => Templates::defaultId() ?: null,
-            'content_html'  => Templates::starterContent(),
-            'content_text'  => '',
+            'content_html'  => Blocks::renderContent($start),
+            'content_text'  => Blocks::toText($start),
+            'blocks_json'   => (string) json_encode($start, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES),
+            'editor_mode'   => 'blocks',
             'track_opens'   => Settings::bool('track_opens') ? 1 : 0,
             'track_clicks'  => Settings::bool('track_clicks') ? 1 : 0,
             'created_at'    => $now,
@@ -114,7 +199,8 @@ final class Automations
     public static function saveStep(int $stepId, array $data): void
     {
         $allowed = ['position', 'delay_hours', 'subject', 'template_id',
-                    'content_html', 'content_text', 'track_opens', 'track_clicks'];
+                    'content_html', 'content_text', 'track_opens', 'track_clicks',
+                    'blocks_json', 'editor_mode'];
         $update = [];
         foreach ($allowed as $field) {
             if (array_key_exists($field, $data)) {
@@ -124,6 +210,15 @@ final class Automations
         if ($update === []) {
             return;
         }
+
+        // Im Baukasten entstehen HTML und Textfassung aus den Bausteinen
+        if (($update['editor_mode'] ?? '') === 'blocks' && isset($update['blocks_json'])) {
+            $blocks = Blocks::parse((string) $update['blocks_json']);
+            $update['blocks_json']  = (string) json_encode($blocks, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+            $update['content_html'] = Blocks::renderContent($blocks);
+            $update['content_text'] = Blocks::toText($blocks);
+        }
+
         $update['updated_at'] = Util::now();
         DB::update('automation_steps', $update, 'id = ?', [$stepId]);
         self::compileStep($stepId);
@@ -137,6 +232,18 @@ final class Automations
             DB::delete('automation_runs', 'step_id = ?', [$stepId]);
             DB::delete('automation_steps', 'id = ?', [$stepId]);
         });
+    }
+
+    /** Bausteine eines Schrittes (leer = noch nie im Baukasten bearbeitet). */
+    public static function stepBlocks(array $step): array
+    {
+        $json = (string) ($step['blocks_json'] ?? '');
+        return trim($json) === '' ? Blocks::starterCampaign() : Blocks::parse($json);
+    }
+
+    public static function stepUsesBuilder(array $step): bool
+    {
+        return ($step['editor_mode'] ?? 'html') === 'blocks';
     }
 
     /** Baut die versandfertige Fassung eines Schrittes. */
@@ -222,24 +329,24 @@ final class Automations
         if ($already > 0) {
             return 0;
         }
-        $steps = self::steps($automationId);
-        $now   = Util::now();
-        $count = 0;
-        foreach ($steps as $step) {
-            if (trim((string) $step['subject']) === '') {
-                continue; // unfertige Schritte überspringen
-            }
-            DB::insert('automation_runs', [
-                'automation_id' => $automationId,
-                'subscriber_id' => $subscriberId,
-                'step_id'       => (int) $step['id'],
-                'status'        => 'pending',
-                'due_at'        => Util::inHours((float) $step['delay_hours']),
-                'created_at'    => $now,
-            ]);
-            $count++;
+        $automation = self::byId($automationId);
+        if ($automation === null) {
+            return 0;
         }
-        return $count;
+        $index = Flow::index(self::flow($automation));
+        if ($index['first'] === null) {
+            return 0; // leerer Ablauf
+        }
+
+        DB::insert('automation_runs', [
+            'automation_id' => $automationId,
+            'subscriber_id' => $subscriberId,
+            'node_id'       => $index['first'],
+            'status'        => 'pending',
+            'due_at'        => Util::now(),
+            'created_at'    => Util::now(),
+        ]);
+        return 1;
     }
 
     /** Offene Läufe eines Empfängers beenden (Abmeldung, Sperre, Löschung). */
@@ -252,12 +359,17 @@ final class Automations
     /* ------------------------------------------------------------ Cron-Teil */
 
     /**
-     * Fällige Schritte in die Versandwarteschlange stellen.
+     * Schiebt fällige Läufe durch den Ablauf.
+     *
+     * Ein Lauf wandert so lange von Knoten zu Knoten, bis er auf eine
+     * Wartezeit trifft, eine Mail einreiht oder das Ende erreicht.
+     * Wird vom Cron-Job über Queue::process() aufgerufen.
+     *
      * @return int Anzahl neu eingereihter Mails
      */
-    public static function enqueueDue(): int
+    public static function tick(int $max = 200): int
     {
-        $due = DB::all(
+        $faellig = DB::all(
             "SELECT r.* FROM automation_runs r
              JOIN automations a ON a.id = r.automation_id
              JOIN subscribers s ON s.id = r.subscriber_id
@@ -266,46 +378,147 @@ final class Automations
                AND a.status = 'active'
                AND s.status = 'active'
              ORDER BY r.due_at
-             LIMIT 200",
+             LIMIT " . max(1, $max),
             [Util::now()]
         );
 
-        $queued = 0;
-        foreach ($due as $run) {
-            $subscriber = Subscribers::byId((int) $run['subscriber_id']);
-            if ($subscriber === null || $subscriber['status'] !== Subscribers::STATUS_ACTIVE) {
-                DB::update('automation_runs', ['status' => 'cancelled'], 'id = ?', [(int) $run['id']]);
-                continue;
-            }
-            $step = self::step((int) $run['step_id']);
-            if ($step === null || trim((string) $step['subject']) === '') {
-                DB::update('automation_runs', ['status' => 'cancelled'], 'id = ?', [(int) $run['id']]);
-                continue;
-            }
-            if (trim((string) $step['compiled_html']) === '') {
-                self::compileStep((int) $step['id']);
-            }
+        $eingereiht = 0;
+        foreach ($faellig as $run) {
+            $eingereiht += self::advance($run);
+        }
+        if ($eingereiht > 0) {
+            Log::info('automation', $eingereiht . ' Automations-Mail(s) eingereiht.');
+        }
+        return $eingereiht;
+    }
 
-            DB::insert('queue', [
-                'campaign_id'   => null,
-                'step_id'       => (int) $step['id'],
-                'subscriber_id' => (int) $subscriber['id'],
-                'email'         => (string) $subscriber['email'],
-                'token'         => Queue::freshToken(),
-                'status'        => Queue::PENDING,
-                'due_at'        => Util::now(),
-                'created_at'    => Util::now(),
-            ]);
-            DB::update('automation_runs', [
-                'status'    => 'queued',
-                'queued_at' => Util::now(),
-            ], 'id = ?', [(int) $run['id']]);
-            $queued++;
+    /** Alter Name – bleibt erhalten, damit der Cron unverändert läuft. */
+    public static function enqueueDue(): int
+    {
+        return self::tick();
+    }
+
+    /**
+     * Bringt einen einzelnen Lauf voran.
+     * @return int Anzahl eingereihter Mails (0 oder 1)
+     */
+    private static function advance(array $run): int
+    {
+        $runId      = (int) $run['id'];
+        $automation = self::byId((int) $run['automation_id']);
+        $subscriber = Subscribers::byId((int) $run['subscriber_id']);
+
+        if ($automation === null || $subscriber === null
+            || $subscriber['status'] !== Subscribers::STATUS_ACTIVE) {
+            DB::update('automation_runs', ['status' => 'cancelled'], 'id = ?', [$runId]);
+            return 0;
         }
-        if ($queued > 0) {
-            Log::info('automation', $queued . ' Automations-Mail(s) eingereiht.');
+
+        $index  = Flow::index(self::flow($automation));
+        $nodeId = (string) $run['node_id'] !== '' ? (string) $run['node_id'] : $index['first'];
+        $eingereiht = 0;
+
+        // Begrenzung gegen Endlosläufe bei ungünstig gebauten Abläufen
+        for ($schritt = 0; $schritt < 25; $schritt++) {
+            if ($nodeId === null || !isset($index['nodes'][$nodeId])) {
+                break; // Ende des Ablaufs oder Knoten wurde gelöscht
+            }
+            $node = $index['nodes'][$nodeId];
+
+            switch ((string) $node['type']) {
+                case 'warten':
+                    DB::update('automation_runs', [
+                        'node_id' => (string) ($index['next'][$nodeId] ?? ''),
+                        'due_at'  => date('Y-m-d H:i:s', time() + Flow::seconds($node)),
+                    ], 'id = ?', [$runId]);
+                    return $eingereiht;
+
+                case 'mail':
+                    $eingereiht += self::queueMail($node, $subscriber, (int) $automation['id']);
+                    // Kurze Pause: die Mail muss erst raus, bevor eine
+                    // Bedingung sinnvoll prüfen kann, ob sie geöffnet wurde.
+                    DB::update('automation_runs', [
+                        'node_id' => (string) ($index['next'][$nodeId] ?? ''),
+                        'due_at'  => date('Y-m-d H:i:s', time() + 300),
+                    ], 'id = ?', [$runId]);
+                    return $eingereiht;
+
+                case 'bedingung':
+                    $trifftZu = Flow::evaluate($node, $subscriber, (int) $automation['id']);
+                    $nodeId   = $trifftZu ? ($index['ja'][$nodeId] ?? null) : ($index['nein'][$nodeId] ?? null);
+                    continue 2;
+
+                case 'aktion':
+                    self::applyAction($node, $subscriber);
+                    $subscriber = Subscribers::byId((int) $subscriber['id']) ?? $subscriber;
+                    if ($subscriber['status'] !== Subscribers::STATUS_ACTIVE) {
+                        DB::update('automation_runs', ['status' => 'done'], 'id = ?', [$runId]);
+                        return $eingereiht;
+                    }
+                    $nodeId = $index['next'][$nodeId] ?? null;
+                    continue 2;
+
+                case 'ende':
+                    $nodeId = null;
+                    break 2;
+            }
         }
-        return $queued;
+
+        DB::update('automation_runs', [
+            'status'  => 'done',
+            'node_id' => '',
+        ], 'id = ?', [$runId]);
+        return $eingereiht;
+    }
+
+    /** Reiht die Mail eines Knotens in die Warteschlange ein. */
+    private static function queueMail(array $node, array $subscriber, int $automationId): int
+    {
+        $step = self::step((int) $node['step_id']);
+        if ($step === null || trim((string) $step['subject']) === '') {
+            return 0; // unfertiger Schritt wird stillschweigend übersprungen
+        }
+        if (Subscribers::isSuppressed((string) $subscriber['email'])) {
+            return 0;
+        }
+        if (trim((string) $step['compiled_html']) === '') {
+            self::compileStep((int) $step['id']);
+        }
+
+        DB::insert('queue', [
+            'campaign_id'   => null,
+            'step_id'       => (int) $step['id'],
+            'subscriber_id' => (int) $subscriber['id'],
+            'email'         => (string) $subscriber['email'],
+            'token'         => Queue::freshToken(),
+            'status'        => Queue::PENDING,
+            'due_at'        => Util::now(),
+            'created_at'    => Util::now(),
+        ]);
+        return 1;
+    }
+
+    /** Führt eine Aktion aus (Liste ändern, abmelden). */
+    private static function applyAction(array $node, array $subscriber): void
+    {
+        $subscriberId = (int) $subscriber['id'];
+        $listId       = (int) ($node['list_id'] ?? 0);
+
+        switch ((string) $node['aktion']) {
+            case 'liste_hinzufuegen':
+                if ($listId > 0) {
+                    Subscribers::addToLists($subscriberId, [$listId]);
+                }
+                break;
+            case 'liste_entfernen':
+                if ($listId > 0) {
+                    DB::delete('subscriber_lists', 'subscriber_id = ? AND list_id = ?', [$subscriberId, $listId]);
+                }
+                break;
+            case 'abmelden':
+                Subscribers::unsubscribe($subscriber, 'Abmeldung durch eine Automation', null, false);
+                break;
+        }
     }
 
     /* ------------------------------------------------------------ Statistik */

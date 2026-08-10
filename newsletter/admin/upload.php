@@ -13,7 +13,7 @@
 
 require_once dirname(__DIR__) . '/lib/bootstrap.php';
 
-Auth::require();
+Auth::require('kampagnen');
 
 const NL_UPLOAD_MAX  = 3145728; // 3 MB
 const NL_UPLOAD_DIR  = 'uploads';

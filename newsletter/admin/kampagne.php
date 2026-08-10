@@ -11,7 +11,7 @@ require_once dirname(__DIR__) . '/lib/bootstrap.php';
 /* ----------------------------------------------------------- Vorschau */
 
 if (Util::get('vorschau') === '1') {
-    Auth::require();
+    Auth::require('lesen');
     $id       = Util::getInt('id');
     $campaign = Campaigns::byId($id);
     if ($campaign === null) {
@@ -33,7 +33,7 @@ if (Util::get('vorschau') === '1') {
 /* ------------------------------------------------------------ Anlegen */
 
 if (Util::get('neu') === '1') {
-    Auth::require();
+    Auth::require('lesen');
     $newId = Campaigns::create('Newsletter vom ' . date('d.m.Y'));
     Util::flash('Neuer Newsletter angelegt. Betreff und Inhalt können Sie jetzt schreiben.');
     Util::redirect('kampagne.php?id=' . $newId);
@@ -58,6 +58,10 @@ $errors = [];
 
 if (Util::isPost()) {
     Util::requireCsrf();
+    if (!Auth::can('kampagnen')) {
+        Util::flash('Dafür fehlt Ihnen die Berechtigung. Fragen Sie eine Administratorin oder einen Administrator.', 'error');
+        Util::redirect('kampagnen.php');
+    }
     $action   = Util::post('aktion');
     // Inhalte lassen sich nur ändern, solange nichts unterwegs ist –
     // sonst bekämen die restlichen Empfänger eine andere Fassung.

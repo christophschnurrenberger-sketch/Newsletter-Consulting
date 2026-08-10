@@ -6,7 +6,8 @@
 
 require_once dirname(__DIR__, 2) . '/lib/bootstrap.php';
 
-$currentUser = Auth::require();
+// Jede Seite legt vor dem Einbinden fest, welches Recht sie braucht.
+$currentUser = Auth::require($requiredRight ?? 'lesen');
 $pageTitle   = $pageTitle ?? 'Übersicht';
 $currentFile = basename((string) ($_SERVER['SCRIPT_NAME'] ?? ''));
 $pendingMail = Queue::pendingCount();
@@ -71,7 +72,8 @@ function subscriber_status_pill(string $status): string
     </a>
     <div class="ad-topbar-right">
         <a class="ad-topbar-link" href="../anmelden.php" target="_blank" rel="noopener">Anmeldeseite ansehen</a>
-        <span class="ad-user"><?= Util::e((string) ($currentUser['name'] ?: $currentUser['email'])) ?></span>
+        <span class="ad-user"><?= Util::e((string) ($currentUser['name'] ?: $currentUser['email'])) ?>
+            · <?= Util::e(Auth::roleLabel((string) $currentUser['role'])) ?></span>
         <a class="ad-topbar-link" href="logout.php">Abmelden</a>
     </div>
 </header>
@@ -85,8 +87,11 @@ function subscriber_status_pill(string $status): string
         <?= admin_nav('automationen.php', 'Automationen') ?>
         <?= admin_nav('vorlagen.php', 'Vorlagen') ?>
         <?= admin_nav('versand.php', 'Versand', $pendingMail > 0 ? (string) $pendingMail : '') ?>
-        <?= admin_nav('protokoll.php', 'Protokoll') ?>
-        <?= admin_nav('einstellungen.php', 'Einstellungen') ?>
+        <?php if (Auth::can('einstellungen')): ?>
+            <?= admin_nav('protokoll.php', 'Protokoll') ?>
+            <?= admin_nav('einstellungen.php', 'Einstellungen') ?>
+        <?php endif; ?>
+        <?= admin_nav('benutzer.php', Auth::can('benutzer') ? 'Benutzer' : 'Mein Zugang') ?>
     </nav>
 
     <main class="ad-main">

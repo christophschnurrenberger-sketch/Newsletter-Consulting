@@ -7,7 +7,7 @@ require_once dirname(__DIR__) . '/lib/bootstrap.php';
 
 /* Vorschau einer Vorlage (wird im Rahmen angezeigt) */
 if (Util::get('vorschau') === '1') {
-    Auth::require();
+    Auth::require('lesen');
     $template = Templates::byId(Util::getInt('id'));
     if ($template === null) {
         http_response_code(404);
@@ -32,6 +32,10 @@ require __DIR__ . '/partials/builder.php';
 
 if (Util::isPost()) {
     Util::requireCsrf();
+    if (!Auth::can('kampagnen')) {
+        Util::flash('Dafür fehlt Ihnen die Berechtigung. Fragen Sie eine Administratorin oder einen Administrator.', 'error');
+        Util::redirect('vorlagen.php');
+    }
     $action = Util::post('aktion');
     $id     = Util::postInt('id');
 

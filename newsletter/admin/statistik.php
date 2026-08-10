@@ -15,6 +15,10 @@ if ($campaign === null) {
 
 if (Util::isPost()) {
     Util::requireCsrf();
+    if (!Auth::can('kampagnen')) {
+        Util::flash('Dafür fehlt Ihnen die Berechtigung. Fragen Sie eine Administratorin oder einen Administrator.', 'error');
+        Util::redirect('kampagnen.php');
+    }
     if (Util::post('aktion') === 'wiederholen') {
         $count = Queue::retryFailed($id);
         Util::flash(Util::num($count) . ' fehlgeschlagene Sendungen wurden erneut eingereiht.');

@@ -1,0 +1,236 @@
+/* ------------------------------------------------------------------
+   Automations-Baukasten – Ablauf per Drag & Drop
+   ------------------------------------------------------------------ */
+
+.fl {
+    display: grid;
+    grid-template-columns: 210px minmax(0, 1fr) 300px;
+    gap: 18px;
+    align-items: start;
+}
+
+@media (max-width: 1100px) {
+    .fl { grid-template-columns: 180px minmax(0, 1fr); }
+    .fl-inspector { grid-column: 1 / -1; }
+}
+
+@media (max-width: 700px) {
+    .fl { grid-template-columns: 1fr; }
+}
+
+.fl-palette,
+.fl-inspector {
+    background: #fff;
+    border: 1px solid var(--ad-border);
+    border-radius: 10px;
+    padding: 14px 16px;
+    position: sticky;
+    top: 12px;
+}
+
+.fl-palette h3,
+.fl-inspector h3 {
+    margin: 0 0 8px;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+    color: var(--ad-navy);
+}
+
+.fl-hint { font-size: 12.5px; color: var(--ad-muted); margin: 0 0 10px; line-height: 1.55; }
+.fl-link { font-size: 12.5px; }
+
+.fl-chip {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    width: 100%;
+    background: #FAFBFD;
+    border: 1px solid var(--ad-border);
+    border-radius: 7px;
+    padding: 9px 10px;
+    margin-bottom: 6px;
+    font-size: 13.5px;
+    font-family: inherit;
+    color: var(--ad-navy);
+    text-align: left;
+    cursor: grab;
+}
+
+.fl-chip:hover { border-color: var(--ad-red); background: #fff; }
+.fl-chip:active { cursor: grabbing; }
+
+.fl-chip-icon {
+    width: 24px; height: 24px; border-radius: 50%;
+    background: var(--ad-navy); color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; flex: 0 0 24px;
+}
+
+/* ------------------------------------------------------- Arbeitsfläche */
+
+.fl-stage {
+    background: var(--ad-bg);
+    border: 1px solid var(--ad-border);
+    border-radius: 10px;
+    padding: 16px;
+    min-width: 0;
+}
+
+.fl-trigger {
+    max-width: 520px;
+    margin: 0 auto;
+    background: var(--ad-navy);
+    color: #fff;
+    border-radius: 8px;
+    padding: 12px 16px;
+    font-size: 14px;
+    text-align: center;
+}
+
+.fl-trigger strong { display: block; font-size: 12px; text-transform: uppercase; letter-spacing: .5px; color: #8FA2B9; margin-bottom: 2px; }
+
+.fl-canvas { max-width: 520px; margin: 0 auto; }
+
+.fl-list { position: relative; }
+
+.fl-empty {
+    text-align: center;
+    color: var(--ad-muted);
+    font-size: 13.5px;
+    padding: 22px 12px;
+    border: 1px dashed var(--ad-border);
+    border-radius: 8px;
+    background: #fff;
+}
+
+/* Verbindungslinie und Ablagefläche */
+.fl-drop {
+    position: relative;
+    height: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: height .12s ease;
+}
+
+.fl-drop-line {
+    width: 2px;
+    height: 100%;
+    background: #C9D2DD;
+    display: block;
+}
+
+.fl-drop.is-over { height: 46px; }
+.fl-drop.is-over .fl-drop-line { width: 100%; height: 34px; background: rgba(200, 16, 46, .12); border: 1px dashed var(--ad-red); border-radius: 6px; }
+.fl-drop-large { height: 40px; }
+.fl-drop-large .fl-drop-line { width: 100%; height: 34px; background: transparent; border: 1px dashed var(--ad-border); border-radius: 6px; }
+
+/* ------------------------------------------------------------ Knoten */
+
+.fl-node {
+    background: #fff;
+    border: 1px solid var(--ad-border);
+    border-radius: 9px;
+    overflow: hidden;
+    box-shadow: 0 1px 2px rgba(20, 36, 58, .04);
+}
+
+.fl-node.is-selected { border-color: var(--ad-red); box-shadow: 0 0 0 3px rgba(200, 16, 46, .10); }
+.fl-node.is-dragging { opacity: .45; }
+
+.fl-node-bar { display: flex; align-items: center; gap: 8px; padding: 10px 12px; }
+.fl-grip { cursor: grab; color: var(--ad-muted); font-size: 14px; }
+.fl-grip:active { cursor: grabbing; }
+
+.fl-node-icon {
+    width: 26px; height: 26px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; flex: 0 0 26px; color: #fff; background: var(--ad-navy);
+}
+
+.fl-node-warten .fl-node-icon { background: #4A6FA5; }
+.fl-node-mail .fl-node-icon { background: var(--ad-red); }
+.fl-node-bedingung .fl-node-icon { background: #B7791F; }
+.fl-node-aktion .fl-node-icon { background: #2E7D53; }
+.fl-node-ende .fl-node-icon { background: #8A95A5; }
+
+.fl-node-title { font-size: 14px; color: var(--ad-navy); font-weight: 600; flex: 1; min-width: 0; }
+.fl-node-tools { display: flex; gap: 3px; }
+
+.fl-icon {
+    border: 1px solid transparent; background: transparent; border-radius: 5px;
+    width: 24px; height: 24px; font-size: 12px; cursor: pointer;
+    color: var(--ad-text); font-family: inherit; line-height: 1;
+}
+
+.fl-icon:hover { background: var(--ad-bg); border-color: var(--ad-border); }
+.fl-icon-danger:hover { color: var(--ad-red); border-color: #F3C6CF; background: #FDECEF; }
+
+.fl-node-body {
+    padding: 0 12px 11px 46px;
+    font-size: 13px;
+    color: var(--ad-text);
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.fl-mailsubject { color: var(--ad-navy); font-weight: 600; }
+
+/* ------------------------------------------------------------- Zweige */
+
+.fl-branches {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    padding: 4px 10px 12px;
+    background: #FAFBFD;
+    border-top: 1px solid var(--ad-border);
+}
+
+@media (max-width: 700px) {
+    .fl-branches { grid-template-columns: 1fr; }
+}
+
+.fl-branch { border: 1px dashed var(--ad-border); border-radius: 8px; padding: 8px; background: #fff; }
+.fl-branch-yes { border-color: #BFE0CD; }
+.fl-branch-no { border-color: #F3C6CF; }
+
+.fl-branch-title {
+    font-size: 10.5px;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+    font-weight: 700;
+    margin-bottom: 4px;
+    text-align: center;
+}
+
+.fl-branch-yes .fl-branch-title { color: #2E7D53; }
+.fl-branch-no .fl-branch-title { color: var(--ad-red); }
+.fl-branch .fl-node-title { font-size: 13px; }
+.fl-branch .fl-drop { height: 16px; }
+
+/* ------------------------------------------------------- Einstellungen */
+
+.fl-field { margin-bottom: 12px; }
+.fl-field > label { display: block; font-size: 12.5px; font-weight: 700; color: var(--ad-navy); margin-bottom: 4px; }
+
+.fl-input {
+    width: 100%;
+    padding: 7px 9px;
+    border: 1px solid var(--ad-border);
+    border-radius: 6px;
+    font-size: 13.5px;
+    font-family: inherit;
+    color: var(--ad-navy);
+    background: #fff;
+}
+
+.fl-input:focus { outline: none; border-color: var(--ad-red); box-shadow: 0 0 0 2px rgba(200, 16, 46, .12); }
+
+/* --------------------------------------------------------- Laufübersicht */
+
+.fl-runs { font-size: 13px; }
+.fl-runs td { padding: 6px 8px; border-bottom: 1px solid var(--ad-border); }

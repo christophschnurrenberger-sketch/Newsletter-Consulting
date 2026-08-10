@@ -13,6 +13,10 @@ $runResult = null;
 
 if (Util::isPost()) {
     Util::requireCsrf();
+    if (!Auth::can('kampagnen')) {
+        Util::flash('Dafür fehlt Ihnen die Berechtigung. Fragen Sie eine Administratorin oder einen Administrator.', 'error');
+        Util::redirect('versand.php');
+    }
     $action = Util::post('aktion');
 
     if ($action === 'jetzt_senden') {

@@ -78,16 +78,17 @@ $erwartet = array(
     'lib/Settings.php', 'lib/Log.php', 'lib/Mailer.php', 'lib/Urls.php', 'lib/Lists.php',
     'lib/Events.php', 'lib/Subscribers.php', 'lib/Templates.php', 'lib/Renderer.php',
     'lib/Campaigns.php', 'lib/Queue.php', 'lib/Automations.php', 'lib/SystemMails.php',
-    'lib/Auth.php', 'lib/Tracking.php', 'lib/Bounces.php', 'lib/Blocks.php',
+    'lib/Auth.php', 'lib/Tracking.php', 'lib/Bounces.php', 'lib/Blocks.php', 'lib/Flow.php',
     'partials/page.php', 'assets/newsletter.css',
     'admin/login.php', 'admin/logout.php', 'admin/index.php', 'admin/kampagnen.php',
     'admin/kampagne.php', 'admin/statistik.php', 'admin/empfaenger.php',
     'admin/empfaenger-detail.php', 'admin/import.php', 'admin/listen.php',
     'admin/automationen.php', 'admin/vorlagen.php', 'admin/versand.php',
-    'admin/protokoll.php', 'admin/einstellungen.php',
+    'admin/protokoll.php', 'admin/einstellungen.php', 'admin/benutzer.php',
     'admin/partials/header.php', 'admin/partials/footer.php',
     'admin/assets/admin.css', 'admin/assets/admin.js',
     'admin/assets/builder.css', 'admin/assets/builder.js',
+    'admin/assets/flow.css', 'admin/assets/flow.js',
     'admin/partials/builder.php', 'admin/upload.php',
     'cron/send.php', 'cron/bounces.php', 'cron/wartung.php',
 );
@@ -168,6 +169,9 @@ if (is_readable($bootstrapDatei)) {
 }
 $hatBaukasten = file_exists(dirname(__FILE__) . '/lib/Blocks.php')
     && file_exists(dirname(__FILE__) . '/admin/assets/builder.js');
+$hatAblauf = file_exists(dirname(__FILE__) . '/lib/Flow.php')
+    && file_exists(dirname(__FILE__) . '/admin/assets/flow.js')
+    && file_exists(dirname(__FILE__) . '/admin/benutzer.php');
 
 /* ------------------------------------------------------- Letzter PHP-Fehler */
 
@@ -185,7 +189,9 @@ $alsText = isset($_GET['format']) && $_GET['format'] === 'text';
 if ($alsText) {
     header('Content-Type: text/plain; charset=utf-8');
     echo "Systemcheck Newslettersystem\n";
-    echo "Fassung: " . $version . ($hatBaukasten ? " (Baukasten vorhanden)" : " (ohne Baukasten)") . "\n";
+    echo "Fassung: " . $version . "\n";
+    echo "Baukasten: " . ($hatBaukasten ? 'vorhanden' : 'FEHLT – ältere Fassung hochgeladen') . "\n";
+    echo "Automationen und Benutzer: " . ($hatAblauf ? 'vorhanden' : 'FEHLEN – ältere Fassung hochgeladen') . "\n";
     echo "PHP: " . PHP_VERSION . " (" . PHP_SAPI . ")\n";
     echo "Speichergrenze: " . @ini_get('memory_limit') . ", max. Laufzeit: " . @ini_get('max_execution_time') . "s\n";
     echo "config.php vorhanden: " . ($configVorhanden ? 'ja' : 'nein') . "\n\n";
@@ -277,6 +283,9 @@ function sc_e($wert)
                 <td><strong><?= sc_e($version) ?></strong>
                     <span class="pille <?= $hatBaukasten ? 'gut' : 'mittel' ?>">
                         <?= $hatBaukasten ? 'mit Baukasten' : 'ohne Baukasten – ältere Fassung hochgeladen' ?>
+                    </span>
+                    <span class="pille <?= $hatAblauf ? 'gut' : 'mittel' ?>">
+                        <?= $hatAblauf ? 'mit Automationen und Benutzern' : 'ohne Ablauf-Baukasten – ältere Fassung hochgeladen' ?>
                     </span>
                 </td>
             </tr>

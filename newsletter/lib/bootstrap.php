@@ -17,7 +17,7 @@ if (!defined('NL_ROOT')) {
  * Systemcheck – so lässt sich sofort erkennen, welcher Stand auf dem
  * Server liegt.
  */
-define('NL_VERSION', '1.1.0 (Baukasten)');
+define('NL_VERSION', '1.2.0 (Automationen)');
 
 mb_internal_encoding('UTF-8');
 date_default_timezone_set('Europe/Berlin');
@@ -26,7 +26,7 @@ date_default_timezone_set('Europe/Berlin');
 foreach ([
     'Config', 'Util', 'DB', 'Schema', 'Settings', 'Log', 'Mailer', 'Urls',
     'Lists', 'Events', 'Subscribers', 'Templates', 'Blocks', 'Renderer', 'Campaigns',
-    'Queue', 'Automations', 'SystemMails', 'Auth', 'Tracking', 'Bounces',
+    'Queue', 'Flow', 'Automations', 'SystemMails', 'Auth', 'Tracking', 'Bounces',
 ] as $class) {
     require_once NL_ROOT . '/lib/' . $class . '.php';
 }

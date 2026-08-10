@@ -4,6 +4,7 @@
  */
 
 $pageTitle = 'Einstellungen';
+$requiredRight = 'einstellungen';
 require __DIR__ . '/partials/header.php';
 
 if (Util::isPost()) {
@@ -103,46 +104,8 @@ if (Util::isPost()) {
         Util::redirect('einstellungen.php#bounce');
     }
 
-    if ($action === 'passwort') {
-        try {
-            $old = Util::postRaw('passwort_alt');
-            $new = Util::postRaw('passwort_neu');
-            if (!Auth::verifyPassword((int) $currentUser['id'], $old)) {
-                throw new InvalidArgumentException('Das bisherige Passwort stimmt nicht.');
-            }
-            Auth::setPassword((int) $currentUser['id'], $new);
-            Util::flash('Passwort geändert.');
-        } catch (Throwable $e) {
-            Util::flash(Util::e($e->getMessage()), 'error');
-        }
-        Util::redirect('einstellungen.php#zugaenge');
-    }
-
-    if ($action === 'benutzer_neu') {
-        try {
-            Auth::createUser(Util::post('neu_email'), Util::postRaw('neu_passwort'), Util::post('neu_name'));
-            Util::flash('Zugang angelegt.');
-        } catch (Throwable $e) {
-            Util::flash(Util::e($e->getMessage()), 'error');
-        }
-        Util::redirect('einstellungen.php#zugaenge');
-    }
-
-    if ($action === 'benutzer_loeschen') {
-        $userId = Util::postInt('user_id');
-        if ($userId === (int) $currentUser['id']) {
-            Util::flash('Sie können Ihren eigenen Zugang nicht löschen.', 'error');
-        } elseif (Auth::userCount() <= 1) {
-            Util::flash('Es muss mindestens ein Zugang bestehen bleiben.', 'error');
-        } else {
-            DB::delete('users', 'id = ?', [$userId]);
-            Util::flash('Zugang gelöscht.');
-        }
-        Util::redirect('einstellungen.php#zugaenge');
-    }
 }
 
-$users     = DB::all('SELECT id, email, name, created_at, last_login_at FROM users ORDER BY id');
 $cronToken = (string) Config::get('cron_token', '');
 $cronUrl   = Config::url('cron/send.php') . '?token=' . $cronToken;
 ?>
@@ -474,69 +437,10 @@ $cronUrl   = Config::url('cron/send.php') . '?token=' . $cronToken;
 <!-- ------------------------------------------------------------ Zugänge -->
 <div class="ad-card" id="zugaenge">
     <h2>Zugänge</h2>
-
-    <div class="ad-table-wrap">
-        <table class="ad-table">
-            <thead><tr><th>Adresse</th><th>Name</th><th>Angelegt</th><th>Letzte Anmeldung</th><th></th></tr></thead>
-            <tbody>
-            <?php foreach ($users as $user): ?>
-                <tr>
-                    <td class="ad-mono"><?= Util::e((string) $user['email']) ?></td>
-                    <td><?= Util::e((string) $user['name']) ?></td>
-                    <td><?= Util::e(Util::dt((string) $user['created_at'], 'd.m.Y')) ?></td>
-                    <td><?= Util::e(Util::dt((string) $user['last_login_at'])) ?></td>
-                    <td>
-                        <?php if ((int) $user['id'] !== (int) $currentUser['id']): ?>
-                            <form method="post" style="display:inline;">
-                                <?= Util::csrfField() ?>
-                                <input type="hidden" name="aktion" value="benutzer_loeschen">
-                                <input type="hidden" name="user_id" value="<?= (int) $user['id'] ?>">
-                                <button type="submit" class="ad-btn ad-btn-danger ad-btn-small"
-                                        data-confirm="Zugang wirklich löschen?">Löschen</button>
-                            </form>
-                        <?php endif; ?>
-                    </td>
-                </tr>
-            <?php endforeach; ?>
-            </tbody>
-        </table>
-    </div>
-
-    <div class="ad-grid-2">
-        <form method="post">
-            <?= Util::csrfField() ?>
-            <input type="hidden" name="aktion" value="passwort">
-            <h3>Eigenes Passwort ändern</h3>
-            <div class="ad-field">
-                <label for="passwort_alt">Bisheriges Passwort</label>
-                <input type="password" id="passwort_alt" name="passwort_alt" required autocomplete="current-password">
-            </div>
-            <div class="ad-field">
-                <label for="passwort_neu">Neues Passwort</label>
-                <input type="password" id="passwort_neu" name="passwort_neu" required autocomplete="new-password">
-                <p class="ad-hint">Mindestens 10 Zeichen, Buchstaben und Ziffern.</p>
-            </div>
-            <button type="submit" class="ad-btn ad-btn-secondary">Passwort ändern</button>
-        </form>
-
-        <form method="post">
-            <?= Util::csrfField() ?>
-            <input type="hidden" name="aktion" value="benutzer_neu">
-            <h3>Weiteren Zugang anlegen</h3>
-            <div class="ad-field">
-                <label for="neu_email">E-Mail-Adresse</label>
-                <input type="email" id="neu_email" name="neu_email" required>
-            </div>
-            <div class="ad-field">
-                <label for="neu_name">Name</label>
-                <input type="text" id="neu_name" name="neu_name">
-            </div>
-            <div class="ad-field">
-                <label for="neu_passwort">Passwort</label>
-                <input type="password" id="neu_passwort" name="neu_passwort" required autocomplete="new-password">
-            </div>
-            <button type="submit" class="ad-btn ad-btn-secondary">Zugang anlegen</button>
-        </form>
+    <p>Benutzer, Rollen und Passwörter verwalten Sie auf einer eigenen Seite –
+        dort sehen Sie auch, wer welche Rechte hat.</p>
+    <div class="ad-actions">
+        <a class="ad-btn" href="benutzer.php">Zur Benutzerverwaltung</a>
     </div>
 </div>
 

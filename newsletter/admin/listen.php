@@ -8,6 +8,10 @@ require __DIR__ . '/partials/header.php';
 
 if (Util::isPost()) {
     Util::requireCsrf();
+    if (!Auth::can('empfaenger')) {
+        Util::flash('Dafür fehlt Ihnen die Berechtigung. Fragen Sie eine Administratorin oder einen Administrator.', 'error');
+        Util::redirect('listen.php');
+    }
     $action = Util::post('aktion');
     $id     = Util::postInt('id');
 

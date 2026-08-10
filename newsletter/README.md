@@ -19,8 +19,8 @@ Webhosting mit PHP 8 und einer Datenbank (SQLite genügt).
 4. **install.php löschen** – der Installer weist am Ende darauf hin.
 5. **Anmelden:** `https://ihre-domain.de/newsletter/admin/login.php`
 6. **Versandweg hinterlegen:** Einstellungen → Versandweg → SMTP mit einem echten
-   Postfach Ihrer Domain (siehe Abschnitt 5).
-7. **Cron-Job einrichten:** alle 5 Minuten (siehe Abschnitt 4).
+   Postfach Ihrer Domain (siehe Abschnitt 7).
+7. **Cron-Job einrichten:** alle 5 Minuten (siehe Abschnitt 6).
 
 **Voraussetzung:** PHP 8.0 oder neuer. Bei IONOS stellen Sie die Version unter
 „Websites & Shops → Ihre Website → PHP verwalten“ ein.
@@ -40,7 +40,8 @@ Newsletter schreiben, Testmail verschicken, senden.
 | Gestaltung | Eigene Vorlagen per Drag & Drop: Kopfzeile, Farben, Schrift, Breite, Footer; Bild-Upload mit Galerie |
 | Versand | Eigener SMTP-Client, portionsweiser Versand über Cron, Tempolimits, Wiederholungen, Pause/Fortsetzen/Abbrechen, Planung |
 | Messung | Öffnungen, Klicks je Link, Abmeldungen, Bounces, Verlaufsgrafik |
-| Automation | Willkommensstrecken mit mehreren Schritten und Wartezeiten |
+| Automation | **Ablauf-Baukasten mit Drag & Drop**: warten, senden, Bedingungen („hat geöffnet?“) mit Ja-/Nein-Zweigen, Aktionen |
+| Zugänge | Mehrere Benutzer mit drei Rollen (Administrator, Redakteur, Betrachter), Sperren statt Löschen |
 | Zustellbarkeit | List-Unsubscribe (auch One-Click nach RFC 8058), Bounce-Auswertung per POP3, Sperrliste |
 | Recht | Double-Opt-in mit Protokoll, Abmeldelink in jeder Mail, Impressum im Footer, Selbstauskunft und Löschung für Empfänger |
 
@@ -88,7 +89,81 @@ Es geht nichts verloren.
 
 ---
 
-## 4. Cron-Job einrichten (wichtig!)
+## 4. Automationen: Abläufe per Drag & Drop
+
+Eine Automation ist eine Mailstrecke, die von selbst läuft. Ausgelöst wird sie
+durch eine **bestätigte Anmeldung** – wahlweise nur in einer bestimmten Liste.
+Den Ablauf ziehen Sie unter **Automationen** aus Schritten zusammen.
+
+**Schritte**
+
+| Schritt | Bedeutung |
+|---|---|
+| ⏱ **Warten** | Pause vor dem nächsten Schritt – 1 bis 365 Minuten, Stunden oder Tage. Die Zeit zählt jeweils ab dem vorherigen Schritt, nicht ab der Anmeldung. |
+| ✉ **E-Mail senden** | Verschickt eine Mail. Betreff und Inhalt schreiben Sie darunter im gewohnten Baukasten. Ohne Betreff wird der Schritt übersprungen. |
+| ? **Wenn … dann** | Prüft etwas und teilt den Ablauf in einen **Ja-** und einen **Nein-Zweig**. Danach laufen beide Zweige wieder zusammen. |
+| ⚙ **Aktion** | Empfänger zu einer Liste hinzufügen, aus einer Liste entfernen oder vom Newsletter abmelden. |
+| ■ **Strecke beenden** | Hier verlässt der Empfänger die Strecke; alles darunter wird nicht mehr ausgeführt. |
+
+**Bedingungen**
+
+* *hat die letzte Mail dieser Strecke geöffnet* – braucht „Öffnungen messen“ in
+  der betreffenden Mail.
+* *hat in der letzten Mail dieser Strecke geklickt* – braucht „Klicks messen“.
+* *steht in einer bestimmten Liste*
+* *hat ein Unternehmen hinterlegt*
+
+Geprüft wird immer die **zuletzt zugestellte** Mail dieser Strecke an diese
+Person. Wurde noch keine verschickt, gilt die Bedingung als nicht erfüllt – es
+geht im Nein-Zweig weiter.
+
+**Bedienung**
+
+* Schritt aus der linken Leiste in den Ablauf **ziehen** – oder anklicken, dann
+  wird er unten angehängt. In die Zweige einer Bedingung lässt sich ebenso ziehen.
+* Reihenfolge ändern: am Griff `⠿` ziehen oder die Pfeiltasten `↑ ↓` benutzen.
+* Rechts stellen Sie den ausgewählten Schritt ein (Wartezeit, Bedingung, Liste).
+* **Speichern nicht vergessen** – erst danach lässt sich der Inhalt einer neuen
+  Mail schreiben („Inhalt bearbeiten“ am Schritt).
+* Über „Hinweise zum Ablauf“ meldet das System Lücken: fehlender Betreff, nicht
+  gewählte Liste, Bedingung ohne Zweige.
+
+**Start und Kontrolle:** Eine Strecke läuft erst, wenn der Status auf **Aktiv**
+steht und gespeichert ist. Wer gerade unterwegs ist, steht unten in der Tabelle
+„Wer gerade in der Strecke ist“ samt nächstem Schritt und Fälligkeit. Meldet
+sich jemand ab, wird die Strecke für diese Person sofort beendet. Die Schritte
+selbst führt der Cron-Job aus (siehe nächster Abschnitt) – ohne ihn steht auch
+die Automation still.
+
+Ältere Strecken (Schritte mit Verzögerung, ohne Ablauf) werden beim ersten
+Öffnen automatisch in einen Ablauf übersetzt; es geht nichts verloren.
+
+---
+
+## 5. Benutzer und Rollen
+
+Unter **Benutzer** legen Administratoren weitere Zugänge an. Es gibt drei Rollen:
+
+| Rolle | Darf |
+|---|---|
+| **Administrator** | alles – zusätzlich Einstellungen, Versandweg, Protokoll und Zugänge |
+| **Redakteur** | Newsletter, Vorlagen, Automationen, Versand, Empfänger und Listen |
+| **Betrachter** | nur ansehen: Übersicht, Auswertungen, Empfänger – nichts ändern |
+
+* Zugänge lassen sich **sperren** statt löschen; gesperrte Konten kommen nicht
+  mehr hinein, bleiben aber im Protokoll erhalten.
+* Der **letzte aktive Administrator** kann nicht gelöscht, gesperrt oder
+  herabgestuft werden – sonst käme niemand mehr in die Einstellungen.
+* Jede Person ändert ihr Passwort selbst unter **Mein Zugang**; Administratoren
+  können außerdem ein neues Passwort vergeben (es wird im Klartext angezeigt,
+  damit Sie es weitergeben können – bitte auf sicherem Weg).
+* Die Rechte greifen nicht nur in der Navigation: Wer ein Recht nicht hat,
+  bekommt die Seite auch dann nicht, wenn er die Adresse direkt aufruft, und
+  abgeschickte Formulare werden abgewiesen.
+
+---
+
+## 6. Cron-Job einrichten (wichtig!)
 
 Der Versand läuft **nicht** beim Klick auf „Senden“, sondern im Hintergrund.
 Ohne Cron-Job bleibt die Warteschlange stehen.
@@ -115,7 +190,7 @@ und jede einzelne Mail wird vor dem Versand gesperrt.
 
 ---
 
-## 5. Zustellbarkeit: SPF, DKIM, DMARC
+## 7. Zustellbarkeit: SPF, DKIM, DMARC
 
 Eigener Versand heißt: Sie sind selbst für die Reputation verantwortlich. Drei
 DNS-Einträge entscheiden darüber, ob Ihre Mails im Posteingang landen.
@@ -140,7 +215,7 @@ auf „PASS“ stehen.
 
 ---
 
-## 6. Versandwege
+## 8. Versandwege
 
 | Weg | Wann sinnvoll |
 |---|---|
@@ -157,7 +232,7 @@ sich automatisch daran und verteilt den Versand über mehrere Läufe.
 
 ---
 
-## 7. Rechtliches (Deutschland/EU)
+## 9. Rechtliches (Deutschland/EU)
 
 Das System ist so gebaut, dass die Pflichten technisch erfüllt sind – die
 inhaltliche Verantwortung bleibt bei Ihnen.
@@ -191,7 +266,7 @@ Rechtsgrundlage, Speicherdauer, Widerruf – und den Hinweis auf die Messung von
 
 ---
 
-## 8. Aufbau
+## 10. Aufbau
 
 ```
 newsletter/
@@ -216,12 +291,13 @@ newsletter/
 │   ├── empfaenger-detail.php Einzelansicht mit Einwilligungs-Protokoll
 │   ├── import.php           CSV-Import
 │   ├── listen.php           Verteiler
-│   ├── automationen.php     Willkommensstrecken
+│   ├── automationen.php     Automationen: Ablauf-Baukasten und Mailinhalte
 │   ├── vorlagen.php         Design-Vorlagen (Baukasten oder HTML)
 │   ├── upload.php           Bild-Upload für den Baukasten
 │   ├── versand.php          Warteschlange steuern
 │   ├── protokoll.php        Ereignisse, Rückläufer, Sperrliste
-│   └── einstellungen.php    Absender, SMTP, Tempo, Texte, Zugänge
+│   ├── benutzer.php         Zugänge, Rollen, eigenes Passwort
+│   └── einstellungen.php    Absender, SMTP, Tempo, Texte
 │
 ├── cron/
 │   ├── send.php             Versand-Worker (alle 5 Minuten)
@@ -246,14 +322,15 @@ newsletter/
 | `Blocks.php` | Baukasten: Bausteine prüfen, absichern und in E-Mail-HTML übersetzen |
 | `Renderer.php` / `Templates.php` | Vorlagen, Platzhalter, Tracking-Einbau |
 | `Subscribers.php` / `Lists.php` | Empfänger, Double-Opt-in, Listen, Import |
-| `Automations.php` | Mailstrecken |
+| `Automations.php` | Mailstrecken: Teilnehmer aufnehmen, Ablauf ausführen, Mails einreihen |
+| `Flow.php` | Ablauf einer Automation: Struktur prüfen, Wege finden, Bedingungen auswerten |
 | `Bounces.php` | Rückläufer inkl. kleinem POP3-Client |
 | `Tracking.php` / `Events.php` | Öffnungen, Klicks, Ereignisse |
-| `Auth.php` / `Util.php` / `Log.php` | Anmeldung, Helfer, Protokoll |
+| `Auth.php` / `Util.php` / `Log.php` | Anmeldung, Rollen und Rechte, Helfer, Protokoll |
 
 ---
 
-## 9. Anmeldeformular auf eigenen Seiten einbauen
+## 11. Anmeldeformular auf eigenen Seiten einbauen
 
 Auf der Startseite ist das Formular bereits eingebaut. Für weitere Seiten genügt
 dieses Minimalformular (funktioniert auch ohne JavaScript):
@@ -278,7 +355,7 @@ welche Seite wie viele Anmeldungen bringt.
 
 ---
 
-## 10. Aktualisieren (neue Fassung einspielen)
+## 12. Aktualisieren (neue Fassung einspielen)
 
 1. Den Ordner `newsletter/` per FTP **über** den bestehenden hochladen und dabei
    überschreiben lassen. `config.php` und den Ordner `data/` dabei **nicht**
@@ -286,7 +363,7 @@ welche Seite wie viele Anmeldungen bringt.
 2. Eine beliebige Seite aufrufen. Die Datenbank wird automatisch auf den neuen
    Stand gebracht (neue Spalten und Tabellen werden ergänzt).
 3. Prüfen: Im Admin-Bereich steht unten die Fassung, z. B.
-   `Fassung 1.1.0 (Baukasten) · Datenbank 2`. Dasselbe zeigt `systemcheck.php`.
+   `Fassung 1.2.0 (Automationen) · Datenbank 3`. Dasselbe zeigt `systemcheck.php`.
 
 Ändert sich nichts, liegen meist ältere Dateien auf dem Server: `systemcheck.php`
 nennt die gefundene Fassung und ob der Baukasten dabei ist. Im Browser hilft ein
@@ -298,7 +375,7 @@ Neu angelegte Ausgaben starten immer im Baukasten.
 
 ---
 
-## 11. Wartung und Sicherung
+## 13. Wartung und Sicherung
 
 * **Sichern:** `config.php` und den Ordner `data/` (bei MySQL: den
   Datenbank-Export). Ohne `secret` aus der `config.php` sind gespeicherte
@@ -309,7 +386,7 @@ Neu angelegte Ausgaben starten immer im Baukasten.
 
 ---
 
-## 12. Wenn etwas nicht klappt
+## 14. Wenn etwas nicht klappt
 
 **Erste Anlaufstelle bei jedem Problem:** `systemcheck.php` im Newsletter-Ordner.
 Die Seite hat keine Abhängigkeiten und funktioniert auch dann, wenn der Rest streikt.
@@ -319,18 +396,21 @@ Die Seite hat keine Abhängigkeiten und funktioniert auch dann, wenn der Rest st
 | `install.php` zeigt nur die Kopfzeile, darunter bleibt alles leer | Ein PHP-Fehler bei abgeschalteter Fehleranzeige. Fast immer eine zu alte PHP-Version (nötig: 8.0+) oder eine unvollständig hochgeladene Datei. `systemcheck.php` nennt den Grund; seit dieser Fassung zeigt auch `install.php` den Fehler im Klartext an. |
 | „config.php konnte nicht geschrieben werden“ | Der Ordner `newsletter/` ist schreibgeschützt. Per FTP die Rechte auf 755 setzen. |
 | Bild-Upload schlägt fehl | Der Ordner `newsletter/uploads/` fehlt oder ist schreibgeschützt – per FTP anlegen und auf 755 setzen. |
-| Bausteine lassen sich am Handy nicht ziehen | Touch-Geräte unterstützen kein Drag & Drop. Nutzen Sie die Pfeiltasten `↑ ↓` am Baustein. |
+| Bausteine oder Schritte lassen sich am Handy nicht ziehen | Touch-Geräte unterstützen kein Drag & Drop. Nutzen Sie die Pfeiltasten `↑ ↓` am Baustein bzw. am Schritt – oder tippen Sie den Baustein in der linken Leiste an, dann wird er unten angehängt. |
+| Automation verschickt nichts | Status steht auf „Pausiert“, dem Mail-Schritt fehlt der Betreff, oder der Cron-Job läuft nicht. Die Hinweisbox über dem Ablauf nennt fehlende Angaben. |
+| Bedingung „hat geöffnet“ trifft nie zu | In der vorangehenden Mail muss „Öffnungen messen“ angehakt sein, und es muss vorher eine Mail dieser Strecke zugestellt worden sein. |
 | „Cron-Job meldet sich nicht“ | Cron nicht eingerichtet oder falscher Pfad. Testweise `versand.php` → „Portion jetzt senden“. |
 | Mails bleiben in der Warteschlange | Stundenlimit erreicht (Versand → „noch möglich“) oder Kampagne pausiert. |
 | SMTP-Fehler „Verbindung fehlgeschlagen“ | Host/Port/Verschlüsselung prüfen; viele Hoster erlauben ausgehendes SMTP nur zum eigenen Server. |
-| Mails landen im Spam | SPF/DKIM/DMARC prüfen (Abschnitt 5), Absenderadresse muss zur Domain passen, langsam warmlaufen. |
+| Mails landen im Spam | SPF/DKIM/DMARC prüfen (Abschnitt 7), Absenderadresse muss zur Domain passen, langsam warmlaufen. |
 | Bestätigungslinks führen ins Leere | `base_url` in `config.php` stimmt nicht mit der echten Adresse überein. |
 | Öffnungsraten wirken zu niedrig | Viele Programme laden Bilder nicht. Klicks sind die verlässlichere Kennzahl. |
+| „Dafür fehlt Ihnen die Berechtigung“ | Der Zugang hat die falsche Rolle. Ein Administrator ändert das unter Benutzer. |
 | Fehler im Protokoll | Admin → Protokoll → Fehler; dort steht die genaue Meldung. |
 
 ---
 
-## 13. Größenordnung
+## 15. Größenordnung
 
 SQLite trägt problemlos einige zehntausend Empfänger. Für sehr große Verteiler
 oder mehrere gleichzeitige Redakteure ist MySQL die bessere Wahl – umstellen

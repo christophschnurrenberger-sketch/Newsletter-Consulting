@@ -12,6 +12,13 @@ if (!defined('NL_ROOT')) {
     define('NL_ROOT', dirname(__DIR__));
 }
 
+/**
+ * Fassung des Programmcodes. Steht im Admin-Bereich unten und im
+ * Systemcheck – so lässt sich sofort erkennen, welcher Stand auf dem
+ * Server liegt.
+ */
+define('NL_VERSION', '1.1.0 (Baukasten)');
+
 mb_internal_encoding('UTF-8');
 date_default_timezone_set('Europe/Berlin');
 
@@ -70,6 +77,21 @@ if (!$configLoaded && !defined('NL_INSTALLER')) {
 
 if ($configLoaded) {
     DB::init();
+
+    /*
+     * Nach dem Hochladen einer neueren Fassung fehlen der Datenbank unter
+     * Umständen neue Spalten oder Tabellen. Das holen wir hier automatisch
+     * nach – sonst müsste nach jedem Update von Hand nachgearbeitet werden.
+     * Schema::migrate() ist idempotent und läuft nur bei geänderter Version.
+     */
+    try {
+        if (Schema::isInstalled() && (int) Settings::get('schema_version') < Schema::VERSION) {
+            Schema::migrate();
+            Log::info('schema', 'Datenbank auf Stand ' . Schema::VERSION . ' gebracht (' . NL_VERSION . ').');
+        }
+    } catch (Throwable $e) {
+        error_log('[Newsletter] Aktualisierung der Datenbank fehlgeschlagen: ' . $e->getMessage());
+    }
 }
 
 /* Sicherheitskopfzeilen für alle HTML-Ausgaben im Browser. */

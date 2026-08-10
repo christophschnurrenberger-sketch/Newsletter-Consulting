@@ -78,7 +78,7 @@ $erwartet = array(
     'lib/Settings.php', 'lib/Log.php', 'lib/Mailer.php', 'lib/Urls.php', 'lib/Lists.php',
     'lib/Events.php', 'lib/Subscribers.php', 'lib/Templates.php', 'lib/Renderer.php',
     'lib/Campaigns.php', 'lib/Queue.php', 'lib/Automations.php', 'lib/SystemMails.php',
-    'lib/Auth.php', 'lib/Tracking.php', 'lib/Bounces.php',
+    'lib/Auth.php', 'lib/Tracking.php', 'lib/Bounces.php', 'lib/Blocks.php',
     'partials/page.php', 'assets/newsletter.css',
     'admin/login.php', 'admin/logout.php', 'admin/index.php', 'admin/kampagnen.php',
     'admin/kampagne.php', 'admin/statistik.php', 'admin/empfaenger.php',
@@ -87,6 +87,8 @@ $erwartet = array(
     'admin/protokoll.php', 'admin/einstellungen.php',
     'admin/partials/header.php', 'admin/partials/footer.php',
     'admin/assets/admin.css', 'admin/assets/admin.js',
+    'admin/assets/builder.css', 'admin/assets/builder.js',
+    'admin/partials/builder.php', 'admin/upload.php',
     'cron/send.php', 'cron/bounces.php', 'cron/wartung.php',
 );
 
@@ -154,6 +156,19 @@ if ($kaputt > 0) {
 
 $configVorhanden = file_exists(dirname(__FILE__) . '/config.php');
 
+// Fassung des hochgeladenen Codes ermitteln – so sieht man sofort, ob die
+// neuen Dateien wirklich auf dem Server angekommen sind.
+$version = 'unbekannt';
+$bootstrapDatei = dirname(__FILE__) . '/lib/bootstrap.php';
+if (is_readable($bootstrapDatei)) {
+    $inhaltBootstrap = (string) file_get_contents($bootstrapDatei);
+    if (preg_match("/define\\('NL_VERSION',\\s*'([^']+)'\\)/", $inhaltBootstrap, $treffer)) {
+        $version = $treffer[1];
+    }
+}
+$hatBaukasten = file_exists(dirname(__FILE__) . '/lib/Blocks.php')
+    && file_exists(dirname(__FILE__) . '/admin/assets/builder.js');
+
 /* ------------------------------------------------------- Letzter PHP-Fehler */
 
 $letzterFehler = '';
@@ -170,6 +185,7 @@ $alsText = isset($_GET['format']) && $_GET['format'] === 'text';
 if ($alsText) {
     header('Content-Type: text/plain; charset=utf-8');
     echo "Systemcheck Newslettersystem\n";
+    echo "Fassung: " . $version . ($hatBaukasten ? " (Baukasten vorhanden)" : " (ohne Baukasten)") . "\n";
     echo "PHP: " . PHP_VERSION . " (" . PHP_SAPI . ")\n";
     echo "Speichergrenze: " . @ini_get('memory_limit') . ", max. Laufzeit: " . @ini_get('max_execution_time') . "s\n";
     echo "config.php vorhanden: " . ($configVorhanden ? 'ja' : 'nein') . "\n\n";
@@ -256,6 +272,14 @@ function sc_e($wert)
     <div class="karte">
         <h2 style="margin-top:0;">Server</h2>
         <table>
+            <tr>
+                <th style="width:45%;">Fassung des Programmcodes</th>
+                <td><strong><?= sc_e($version) ?></strong>
+                    <span class="pille <?= $hatBaukasten ? 'gut' : 'mittel' ?>">
+                        <?= $hatBaukasten ? 'mit Baukasten' : 'ohne Baukasten – ältere Fassung hochgeladen' ?>
+                    </span>
+                </td>
+            </tr>
             <tr>
                 <th style="width:45%;">PHP-Version</th>
                 <td><?= sc_e(PHP_VERSION) ?> (<?= sc_e(PHP_SAPI) ?>)

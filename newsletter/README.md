@@ -278,7 +278,27 @@ welche Seite wie viele Anmeldungen bringt.
 
 ---
 
-## 10. Wartung und Sicherung
+## 10. Aktualisieren (neue Fassung einspielen)
+
+1. Den Ordner `newsletter/` per FTP **über** den bestehenden hochladen und dabei
+   überschreiben lassen. `config.php` und den Ordner `data/` dabei **nicht**
+   löschen – dort stecken Zugangsdaten und Empfänger.
+2. Eine beliebige Seite aufrufen. Die Datenbank wird automatisch auf den neuen
+   Stand gebracht (neue Spalten und Tabellen werden ergänzt).
+3. Prüfen: Im Admin-Bereich steht unten die Fassung, z. B.
+   `Fassung 1.1.0 (Baukasten) · Datenbank 2`. Dasselbe zeigt `systemcheck.php`.
+
+Ändert sich nichts, liegen meist ältere Dateien auf dem Server: `systemcheck.php`
+nennt die gefundene Fassung und ob der Baukasten dabei ist. Im Browser hilft ein
+harter Neuladen (Strg+F5), damit CSS und JavaScript neu geholt werden.
+
+Bestehende Newsletter bleiben im HTML-Modus, damit sich nichts unbemerkt
+verändert – über den Knopf „Baukasten“ im Editor stellen Sie einzelne Ausgaben um.
+Neu angelegte Ausgaben starten immer im Baukasten.
+
+---
+
+## 11. Wartung und Sicherung
 
 * **Sichern:** `config.php` und den Ordner `data/` (bei MySQL: den
   Datenbank-Export). Ohne `secret` aus der `config.php` sind gespeicherte
@@ -289,7 +309,7 @@ welche Seite wie viele Anmeldungen bringt.
 
 ---
 
-## 11. Wenn etwas nicht klappt
+## 12. Wenn etwas nicht klappt
 
 **Erste Anlaufstelle bei jedem Problem:** `systemcheck.php` im Newsletter-Ordner.
 Die Seite hat keine Abhängigkeiten und funktioniert auch dann, wenn der Rest streikt.
@@ -310,7 +330,7 @@ Die Seite hat keine Abhängigkeiten und funktioniert auch dann, wenn der Rest st
 
 ---
 
-## 12. Größenordnung
+## 13. Größenordnung
 
 SQLite trägt problemlos einige zehntausend Empfänger. Für sehr große Verteiler
 oder mehrere gleichzeitige Redakteure ist MySQL die bessere Wahl – umstellen

@@ -140,6 +140,7 @@
     /* ------------------------------------------------------------- Zeichnen */
 
     function render() {
+        ablagen = [];
         canvas.innerHTML = '';
         if (state.blocks.length === 0) {
             canvas.appendChild(dropZone(state.blocks, 0, true));
@@ -162,54 +163,166 @@
     }
 
     /** Ablagefläche zwischen zwei Bausteinen. */
-    function dropZone(list, index, gross) {
-        var zone = document.createElement('div');
-        zone.className = 'bk-drop' + (gross ? ' bk-drop-large' : '');
-        zone.addEventListener('dragover', function (event) {
-            event.preventDefault();
-            event.dataTransfer.dropEffect = 'move';
-            zone.classList.add('is-over');
+    /* ----------------------------------------------------------- Ziehen
+     * Bewusst über Zeigerereignisse statt HTML5-Drag-&-Drop: Letzteres
+     * funktioniert auf Touchgeräten gar nicht und in Firefox nicht an
+     * <button>-Elementen. So lässt sich überall ziehen – auch am Finger.
+     */
+    var zug = null;   // { art:'neu'|'move', wert, schatten, zone }
+
+    /** Merkt sich alle Ablageflächen samt Ziel-Liste und Position. */
+    var ablagen = [];
+
+    /**
+     * Die Ablagefläche, die dem Zeiger am nächsten liegt.
+     *
+     * Bewusst großzügig: Die Flächen sind nur wenige Pixel hoch – man soll
+     * sie nicht millimetergenau treffen müssen. Gesucht wird deshalb die
+     * senkrecht nächstgelegene Fläche innerhalb der Arbeitsfläche.
+     */
+    function zoneUnterZeiger(x, y) {
+        var treffer  = null;
+        var naechste = 1e9;
+        ablagen.forEach(function (eintrag) {
+            if (!eintrag.el.isConnected) { return; }
+            var r = eintrag.el.getBoundingClientRect();
+            if (r.width === 0) { return; }
+            if (x < r.left - 40 || x > r.right + 40) { return; }
+            var abstand = Math.abs(y - (r.top + r.height / 2));
+            if (abstand < naechste) {
+                naechste = abstand;
+                treffer  = eintrag;
+            }
         });
-        zone.addEventListener('dragleave', function () { zone.classList.remove('is-over'); });
-        zone.addEventListener('drop', function (event) {
-            event.preventDefault();
-            event.stopPropagation();
-            zone.classList.remove('is-over');
-            handleDrop(event, list, index);
-        });
-        return zone;
+        return naechste > 400 ? null : treffer;
     }
 
-    function handleDrop(event, list, index) {
-        var neuerTyp = event.dataTransfer.getData('nl/new');
-        var bewegen  = event.dataTransfer.getData('nl/move');
+    function zugBeenden(abbruch) {
+        if (!zug) { return; }
+        if (zug.schatten && zug.schatten.parentNode) { zug.schatten.parentNode.removeChild(zug.schatten); }
+        if (zug.zone) { zug.zone.el.classList.remove('is-over'); }
+        document.body.classList.remove('bk-zieht');
+        var fertig = zug;
+        zug = null;
 
-        if (neuerTyp) {
-            if (list !== state.blocks && ['columns', 'social', 'html', 'content'].indexOf(neuerTyp) !== -1) {
-                hinweis('Dieser Baustein passt nicht in eine Spalte.');
-                return;
-            }
-            var block = makeBlock(neuerTyp);
-            list.splice(index, 0, block);
-            selected = block.id;
+        if (abbruch || !fertig.zone) {
             render();
             return;
         }
-
-        if (bewegen) {
-            var found = locate(bewegen);
-            if (!found) { return; }
-            if (found.block.type === 'columns' && list !== state.blocks) {
-                hinweis('Spalten lassen sich nicht ineinander schachteln.');
-                return;
-            }
-            var ziel = index;
-            if (found.list === list && found.index < index) { ziel--; }
-            found.list.splice(found.index, 1);
-            list.splice(ziel, 0, found.block);
-            selected = found.block.id;
-            render();
+        if (fertig.art === 'neu') {
+            einfuegenNeu(fertig.wert, fertig.zone.list, fertig.zone.index);
+        } else {
+            verschiebeNach(fertig.wert, fertig.zone.list, fertig.zone.index);
         }
+    }
+
+    /** Schluckt genau einen Klick – den, der auf ein Ziehen folgt. */
+    function klickSchlucken() {
+        function weg(event) {
+            event.stopPropagation();
+            event.preventDefault();
+            document.removeEventListener('click', weg, true);
+        }
+        document.addEventListener('click', weg, true);
+        window.setTimeout(function () { document.removeEventListener('click', weg, true); }, 400);
+    }
+
+    /** Macht ein Element ziehbar. `holen` liefert { art, wert, name }. */
+    function ziehbar(element, holen) {
+        element.addEventListener('pointerdown', function (event) {
+            if (event.button !== 0) { return; }
+            // Bedienknöpfe im Kopf des Bausteins nicht abfangen
+            if (event.target.closest && event.target.closest('[data-act]')) { return; }
+            if (event.target.isContentEditable) { return; }
+
+            var startX = event.clientX;
+            var startY = event.clientY;
+            var gestartet = false;
+            var zeiger = event.pointerId;
+
+            function bewegen(e) {
+                if (!gestartet) {
+                    if (Math.abs(e.clientX - startX) + Math.abs(e.clientY - startY) < 6) { return; }
+                    var daten = holen();
+                    if (!daten) { return; }
+                    gestartet = true;
+                    try { element.setPointerCapture(zeiger); } catch (err) { /* egal */ }
+
+                    var schatten = document.createElement('div');
+                    schatten.className = 'bk-ghost';
+                    schatten.textContent = daten.name || 'Baustein';
+                    document.body.appendChild(schatten);
+                    document.body.classList.add('bk-zieht');
+                    zug = { art: daten.art, wert: daten.wert, schatten: schatten, zone: null };
+                }
+                e.preventDefault();
+                zug.schatten.style.left = e.clientX + 'px';
+                zug.schatten.style.top  = e.clientY + 'px';
+
+                var ziel = zoneUnterZeiger(e.clientX, e.clientY);
+                if (zug.zone && zug.zone !== ziel) { zug.zone.el.classList.remove('is-over'); }
+                zug.zone = ziel;
+                if (ziel) { ziel.el.classList.add('is-over'); }
+            }
+
+            function loslassen() {
+                document.removeEventListener('pointermove', bewegen);
+                document.removeEventListener('pointerup', loslassen);
+                document.removeEventListener('pointercancel', abbrechen);
+                if (!gestartet) { return; }
+                // Nach dem Loslassen feuert der Browser noch einen Klick.
+                // Der würde den Baustein ein zweites Mal anhängen.
+                klickSchlucken();
+                zugBeenden(false);
+            }
+            function abbrechen() {
+                document.removeEventListener('pointermove', bewegen);
+                document.removeEventListener('pointerup', loslassen);
+                document.removeEventListener('pointercancel', abbrechen);
+                zugBeenden(true);
+            }
+
+            document.addEventListener('pointermove', bewegen);
+            document.addEventListener('pointerup', loslassen);
+            document.addEventListener('pointercancel', abbrechen);
+        });
+    }
+
+    /** Einen neuen Baustein an einer Stelle einsetzen. */
+    function einfuegenNeu(typ, list, index) {
+        if (list !== state.blocks && ['columns', 'social', 'html', 'content'].indexOf(typ) !== -1) {
+            hinweis('Dieser Baustein passt nicht in eine Spalte.');
+            render();
+            return;
+        }
+        var block = makeBlock(typ);
+        list.splice(index, 0, block);
+        selected = block.id;
+        render();
+    }
+
+    /** Einen vorhandenen Baustein an eine andere Stelle setzen. */
+    function verschiebeNach(id, list, index) {
+        var found = locate(id);
+        if (!found) { render(); return; }
+        if (list !== state.blocks && ['columns', 'social', 'html', 'content'].indexOf(found.block.type) !== -1) {
+            hinweis('Dieser Baustein passt nicht in eine Spalte.');
+            render();
+            return;
+        }
+        var ziel = index;
+        if (found.list === list && found.index < index) { ziel--; }
+        found.list.splice(found.index, 1);
+        list.splice(ziel, 0, found.block);
+        selected = found.block.id;
+        render();
+    }
+
+    function dropZone(list, index, gross) {
+        var zone = document.createElement('div');
+        zone.className = 'bk-drop' + (gross ? ' bk-drop-large' : '');
+        ablagen.push({ el: zone, list: list, index: index });
+        return zone;
     }
 
     /** Karte eines Bausteins auf der Arbeitsfläche. */
@@ -221,7 +334,7 @@
         var kopf = document.createElement('div');
         kopf.className = 'bk-block-bar';
         kopf.innerHTML =
-            '<span class="bk-grip" title="Zum Verschieben ziehen" draggable="true" aria-hidden="true">⠿</span>' +
+            '<span class="bk-grip" title="Zum Verschieben ziehen" aria-hidden="true">⠿</span>' +
             '<span class="bk-block-name">' + esc(window.NL_BLOCK_LABELS[block.type] || block.type) + '</span>' +
             '<span class="bk-block-tools">' +
             '<button type="button" class="bk-icon" data-act="up" title="Nach oben">↑</button>' +
@@ -230,13 +343,11 @@
             '<button type="button" class="bk-icon bk-icon-danger" data-act="del" title="Löschen">✕</button>' +
             '</span>';
 
-        var griff = kopf.querySelector('.bk-grip');
-        griff.addEventListener('dragstart', function (event) {
-            event.dataTransfer.setData('nl/move', block.id);
-            event.dataTransfer.effectAllowed = 'move';
-            card.classList.add('is-dragging');
+        // Der ganze Kopf des Bausteins ist Anfasser, nicht nur das Griffsymbol
+        ziehbar(kopf, function () {
+            return { art: 'move', wert: block.id,
+                     name: window.NL_BLOCK_LABELS[block.type] || block.type };
         });
-        griff.addEventListener('dragend', function () { card.classList.remove('is-dragging'); });
 
         kopf.addEventListener('click', function (event) {
             var button = event.target.closest('[data-act]');
@@ -997,9 +1108,9 @@
 
     root.querySelectorAll('[data-add]').forEach(function (chip) {
         var typ = chip.getAttribute('data-add');
-        chip.addEventListener('dragstart', function (event) {
-            event.dataTransfer.setData('nl/new', typ);
-            event.dataTransfer.effectAllowed = 'copy';
+        chip.removeAttribute('draggable');
+        ziehbar(chip, function () {
+            return { art: 'neu', wert: typ, name: window.NL_BLOCK_LABELS[typ] || typ };
         });
         chip.addEventListener('click', function () {
             var block = makeBlock(typ);
@@ -1011,12 +1122,7 @@
         });
     });
 
-    // Ablegen irgendwo auf der Fläche hängt den Baustein hinten an
-    canvas.addEventListener('dragover', function (event) { event.preventDefault(); });
-    canvas.addEventListener('drop', function (event) {
-        event.preventDefault();
-        handleDrop(event, state.blocks, state.blocks.length);
-    });
+
 
     /* --------------------------------------------------------- Platzhalter */
 

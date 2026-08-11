@@ -351,3 +351,20 @@
 .bk-inline:hover { box-shadow: 0 0 0 1px var(--ad-border, #E0E6ED); }
 .bk-inline:focus { box-shadow: 0 0 0 2px var(--ad-accent, #C8102E); }
 .bk-inline:empty::before { content: attr(data-platzhalter); color: var(--ad-muted, #8A95A5); }
+
+/* Ziehen mit dem Zeiger – funktioniert auch am Finger */
+.bk-ghost {
+    position: fixed; z-index: 9999; pointer-events: none;
+    transform: translate(-50%, -140%);
+    padding: 7px 12px; border-radius: 6px;
+    background: var(--ad-navy, #14243A); color: #fff;
+    font-size: 12.5px; font-weight: 700; white-space: nowrap;
+    box-shadow: 0 8px 24px rgba(20, 36, 58, .28);
+}
+body.bk-zieht { user-select: none; -webkit-user-select: none; }
+/* Während des Ziehens nur hervorheben, nicht die Größe ändern –
+   sonst verschiebt sich die Fläche unter dem Zeiger weg. */
+body.bk-zieht .bk-drop { background: rgba(20, 36, 58, .05); border-radius: 4px; }
+.bk-block-bar { cursor: grab; touch-action: none; }
+.bk-block-bar:active { cursor: grabbing; }
+.bk-chip { touch-action: none; }

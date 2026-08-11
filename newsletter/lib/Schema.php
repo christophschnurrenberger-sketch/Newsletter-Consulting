@@ -17,7 +17,7 @@
 final class Schema
 {
     /** Version des Schemas – wird in settings gespeichert. */
-    public const VERSION = 4;
+    public const VERSION = 5;
 
     public static function migrate(): void
     {
@@ -58,6 +58,8 @@ final class Schema
         self::ensureColumn('templates', 'privacy_url', "%STR(190)% NOT NULL DEFAULT ''");
         self::ensureColumn('templates', 'sender_name', "%STR(190)% NOT NULL DEFAULT ''");
         self::ensureColumn('templates', 'sender_email', "%STR(190)% NOT NULL DEFAULT ''");
+        // Sicherungskopie beim Wechsel von HTML in den Baukasten
+        self::ensureColumn('templates', 'html_backup', '%TEXT%');
 
         Settings::set('schema_version', (string) self::VERSION);
     }
@@ -222,6 +224,7 @@ final class Schema
                 privacy_url %STR(190)% NOT NULL DEFAULT \'\',
                 sender_name %STR(190)% NOT NULL DEFAULT \'\',
                 sender_email %STR(190)% NOT NULL DEFAULT \'\',
+                html_backup %TEXT%,
                 is_default  %INT% NOT NULL DEFAULT 0,
                 created_at  %DT%,
                 updated_at  %DT%

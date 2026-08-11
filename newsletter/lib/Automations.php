@@ -177,13 +177,15 @@ final class Automations
             [$automationId]
         );
         $now = Util::now();
-        $start = Blocks::starterCampaign();
+        // Der Schritt erbt Schriften und Farben der Standardvorlage
+        $template = Templates::defaultTemplate();
+        $start    = Blocks::starterCampaign($template);
         return DB::insert('automation_steps', [
             'automation_id' => $automationId,
             'position'      => $position,
             'delay_hours'   => max(0, $delayHours),
             'subject'       => '',
-            'template_id'   => Templates::defaultId() ?: null,
+            'template_id'   => $template !== null ? (int) $template['id'] : null,
             'content_html'  => Blocks::renderContent($start),
             'content_text'  => Blocks::toText($start),
             'blocks_json'   => (string) json_encode($start, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES),

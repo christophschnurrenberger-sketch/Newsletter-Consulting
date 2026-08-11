@@ -54,23 +54,73 @@ final class Blocks
             'headerText' => '#FFFFFF',
             'logoText'   => 'A',
             'showFooter' => 1,
+            // Kopfzeile wahlweise als Logo-Quadrat oder als Wortmarke
+            'headerStyle'    => 'logo',
+            'headFont'       => '',
+            'wordmark'       => '',
+            'wordmarkAccent' => '',
+            'accentColor'    => '#C8102E',
+            'claim'          => '',
+            'borderColor'    => '#E0E6ED',
+            // Footer mit eigenen Farben und Platz für einen Pflichthinweis
+            'footerBg'   => '',
+            'footerText' => '#8A95A5',
+            'note'       => '',
         ];
     }
 
-    /** Startaufbau für eine neue Ausgabe (Baukasten-Modus). */
-    public static function starterCampaign(): array
+    /**
+     * Startaufbau für eine neue Ausgabe (Baukasten-Modus).
+     *
+     * Ist eine Vorlage angegeben, erbt die Ausgabe deren Schriften und
+     * Farben. So beginnt ein Newsletter der zweiten Marke gleich in ihrem
+     * Design und nicht in dem der Hauptmarke.
+     *
+     * @param array<string,mixed>|null $template Vorlage aus der Datenbank
+     */
+    public static function starterCampaign(?array $template = null): array
     {
+        $meta   = self::metaFromTemplate($template);
+        $akzent = (string) $meta['linkColor'];
+
         return [
-            'meta'   => self::defaultMeta(),
+            'meta'   => $meta,
             'blocks' => [
-                self::block('heading', ['text' => 'Ihre Überschrift', 'size' => 24]),
+                self::block('heading', ['text' => 'Ihre Überschrift', 'size' => 24,
+                    'color' => (string) $meta['headColor']]),
                 self::block('text', ['html' => '<p>{{anrede}},</p><p>hier steht der erste Absatz. '
                     . 'Schreiben Sie so, wie Sie mit einer Kundin sprechen: ein Gedanke pro Absatz, '
                     . 'ein konkretes Beispiel, ein klarer nächster Schritt.</p>']),
-                self::block('button', ['label' => 'Jetzt ansehen', 'href' => 'https://www.newsletter-consulting.de/']),
+                self::block('button', ['label' => 'Jetzt ansehen', 'href' => '{{website_url}}', 'bg' => $akzent,
+                    'radius' => (int) $meta['radius'] > 6 ? 6 : (int) $meta['radius']]),
                 self::block('text', ['html' => '<p>Herzliche Grüße<br><strong>Ihr Team von {{marke}}</strong></p>']),
             ],
         ];
+    }
+
+    /**
+     * Die Gestaltung einer Vorlage als Grundlage für den Inhalt.
+     * Ohne Vorlage gelten die Vorgaben.
+     *
+     * @param array<string,mixed>|null $template
+     * @return array<string,mixed>
+     */
+    public static function metaFromTemplate(?array $template): array
+    {
+        $meta = self::defaultMeta();
+        $json = trim((string) ($template['blocks_json'] ?? ''));
+        if ($json === '') {
+            return $meta;
+        }
+        $vorlage = self::parse($json)['meta'];
+
+        // Nur die Angaben übernehmen, die den Inhalt betreffen –
+        // Kopfzeile und Footer gehören der Vorlage.
+        foreach (['font', 'headFont', 'textColor', 'headColor', 'linkColor', 'accentColor',
+                  'cardBg', 'bg', 'borderColor', 'width', 'padding', 'radius'] as $key) {
+            $meta[$key] = $vorlage[$key];
+        }
+        return $meta;
     }
 
     /** Startaufbau für eine neue Vorlage (mit Platzhalter für den Inhalt). */
@@ -147,7 +197,13 @@ final class Blocks
                 'padding' => max(0, min(60, (int) $value)),
                 'showHeader', 'showFooter' => (int) ((bool) $value),
                 'font'    => self::cleanFont((string) $value),
+                'headFont' => trim((string) $value) === '' ? '' : self::cleanFont((string) $value),
                 'logoText' => mb_substr(trim(strip_tags((string) $value)), 0, 3),
+                'headerStyle' => in_array($value, ['logo', 'wortmarke'], true) ? (string) $value : 'logo',
+                'wordmark', 'wordmarkAccent' => mb_substr(trim(strip_tags((string) $value)), 0, 40),
+                'claim'   => mb_substr(trim(strip_tags((string) $value)), 0, 120),
+                'note'    => mb_substr(trim(strip_tags((string) $value)), 0, 600),
+                'footerBg' => trim((string) $value) === '' ? '' : self::color((string) $value, '#FFFFFF'),
                 default   => self::color((string) $value, (string) $fallback),
             };
         }
@@ -336,37 +392,53 @@ final class Blocks
         $width = (int) $meta['width'];
         $pad   = (int) $meta['padding'];
 
+        // Schrift für Überschriften und Wortmarke – leer heißt: wie der Fließtext
+        $headFont = trim((string) $meta['headFont']) !== '' ? (string) $meta['headFont'] : $font;
+
         $header = '';
         if (!empty($meta['showHeader'])) {
-            $header = '<tr><td style="background-color:' . $meta['headerBg'] . ';padding:22px ' . $pad . 'px;">'
-                . '<table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr>'
-                . '<td style="background-color:' . $meta['cardBg'] . ';color:' . $meta['headerBg']
-                . ';width:36px;height:36px;border-radius:7px;font-family:' . $font
-                . ';font-weight:bold;font-size:18px;text-align:center;line-height:36px;">'
-                . Util::e((string) $meta['logoText']) . '</td>'
-                . '<td style="padding-left:12px;color:' . $meta['headerText'] . ';font-family:' . $font
-                . ';font-weight:bold;font-size:18px;letter-spacing:0.2px;">{{marke}}</td>'
+            $rand = $meta['headerStyle'] === 'wortmarke'
+                ? ';border-bottom:1px solid ' . $meta['borderColor']
+                : '';
+            $header = '<tr><td style="background-color:' . $meta['headerBg'] . ';padding:22px ' . $pad . 'px'
+                . $rand . ';">'
+                . '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr>'
+                . self::headerBrand($meta, $font, $headFont)
                 . '</tr></table></td></tr>';
+        }
+
+        $footerBg   = trim((string) $meta['footerBg']) !== '' ? (string) $meta['footerBg'] : (string) $meta['bg'];
+        $footerText = (string) $meta['footerText'];
+        $footerLink = 'style="color:' . $footerText . ';text-decoration:underline;"';
+
+        // Freier Hinweis über dem Impressum – z. B. die Pflichtangabe zu Partnerlinks
+        $note = '';
+        if (trim((string) $meta['note']) !== '') {
+            $note = '<div style="margin-bottom:14px;padding:12px 14px;border-left:2px solid '
+                . $meta['accentColor'] . ';font-size:12px;line-height:1.55;">'
+                . nl2br(Util::e((string) $meta['note'])) . '</div>';
         }
 
         $footer = '';
         if (!empty($meta['showFooter'])) {
-            $footer = '<tr><td style="background-color:' . $meta['bg'] . ';padding:20px ' . $pad
-                . 'px;border-top:1px solid #E0E6ED;font-family:' . $font
-                . ';color:#8A95A5;font-size:12px;line-height:1.6;">'
+            $footer = '<tr><td style="background-color:' . $footerBg . ';padding:20px ' . $pad
+                . 'px;border-top:1px solid ' . $meta['borderColor'] . ';font-family:' . $font
+                . ';color:' . $footerText . ';font-size:12px;line-height:1.6;">'
                 . 'Sie erhalten diese E-Mail, weil Sie sich unter {{website}} für unseren Newsletter '
-                . 'angemeldet und die Anmeldung bestätigt haben.<br><br>{{impressum}}<br><br>'
-                . '<a href="{{abmelden_url}}" style="color:#8A95A5;text-decoration:underline;">Newsletter abbestellen</a> &middot; '
-                . '<a href="{{praeferenzen_url}}" style="color:#8A95A5;text-decoration:underline;">Daten &amp; Einstellungen</a> &middot; '
-                . '<a href="{{datenschutz_url}}" style="color:#8A95A5;text-decoration:underline;">Datenschutz</a> &middot; '
-                . '<a href="{{impressum_url}}" style="color:#8A95A5;text-decoration:underline;">Impressum</a> &middot; '
-                . '<a href="{{webansicht_url}}" style="color:#8A95A5;text-decoration:underline;">Im Browser ansehen</a>'
+                . 'angemeldet und die Anmeldung bestätigt haben.<br><br>'
+                . $note
+                . '{{impressum}}<br><br>'
+                . '<a href="{{abmelden_url}}" ' . $footerLink . '>Newsletter abbestellen</a> &middot; '
+                . '<a href="{{praeferenzen_url}}" ' . $footerLink . '>Daten &amp; Einstellungen</a> &middot; '
+                . '<a href="{{datenschutz_url}}" ' . $footerLink . '>Datenschutz</a> &middot; '
+                . '<a href="{{impressum_url}}" ' . $footerLink . '>Impressum</a> &middot; '
+                . '<a href="{{webansicht_url}}" ' . $footerLink . '>Im Browser ansehen</a>'
                 . '</td></tr>';
         } else {
             // Abmeldelink ist Pflicht – auch ohne gestalteten Footer.
             $footer = '<tr><td style="padding:12px ' . $pad . 'px;font-family:' . $font
-                . ';color:#8A95A5;font-size:12px;line-height:1.6;">{{impressum}}<br>'
-                . '<a href="{{abmelden_url}}" style="color:#8A95A5;">Abmelden</a></td></tr>';
+                . ';color:' . $footerText . ';font-size:12px;line-height:1.6;">' . $note . '{{impressum}}<br>'
+                . '<a href="{{abmelden_url}}" style="color:' . $footerText . ';">Abmelden</a></td></tr>';
         }
 
         return '<!DOCTYPE html>' . "\n"
@@ -382,12 +454,49 @@ final class Blocks
             . 'style="background-color:' . $meta['bg'] . ';padding:24px 12px;"><tr><td align="center">' . "\n"
             . '<table role="presentation" width="' . $width . '" cellpadding="0" cellspacing="0" border="0" '
             . 'style="max-width:' . $width . 'px;width:100%;background-color:' . $meta['cardBg']
-            . ';border:1px solid #E0E6ED;border-radius:' . (int) $meta['radius'] . 'px;overflow:hidden;">' . "\n"
+            . ';border:1px solid ' . $meta['borderColor'] . ';border-radius:' . (int) $meta['radius'] . 'px;overflow:hidden;">' . "\n"
             . $header
             . '<tr><td style="padding:' . $pad . 'px;font-family:' . $font . ';color:' . $meta['textColor']
             . ';font-size:15px;line-height:1.65;">' . "\n" . $inner . "\n" . '</td></tr>' . "\n"
             . $footer
             . '</table></td></tr></table></body></html>';
+    }
+
+    /**
+     * Die Marke in der Kopfzeile – wahlweise als Logo-Quadrat mit Kürzel
+     * oder als Wortmarke, bei der ein Teil farblich hervorgehoben ist
+     * (etwa „Fairway54"). Rechts steht bei Bedarf ein kurzer Claim.
+     *
+     * @param array<string,mixed> $meta
+     */
+    private static function headerBrand(array $meta, string $font, string $headFont): string
+    {
+        $claim = trim((string) $meta['claim']) !== ''
+            ? '<td class="nl-col nl-claim" align="right" style="font-family:' . $font
+              . ';font-size:11px;font-weight:bold;letter-spacing:0.08em;text-transform:uppercase;color:'
+              . $meta['footerText'] . ';">' . Util::e((string) $meta['claim']) . '</td>'
+            : '';
+
+        if ($meta['headerStyle'] === 'wortmarke') {
+            $name   = trim((string) $meta['wordmark']);
+            $marke  = $name !== '' ? Util::e($name) : '{{marke}}';
+            $akzent = trim((string) $meta['wordmarkAccent']);
+            if ($akzent !== '') {
+                $marke .= '<span style="color:' . $meta['accentColor'] . ';">' . Util::e($akzent) . '</span>';
+            }
+            return '<td class="nl-col" align="left" style="font-family:' . $headFont
+                . ';font-size:28px;line-height:1;font-weight:bold;letter-spacing:-0.03em;color:'
+                . $meta['headerText'] . ';">' . $marke . '</td>' . $claim;
+        }
+
+        return '<td class="nl-col" align="left"><table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr>'
+            . '<td style="background-color:' . $meta['cardBg'] . ';color:' . $meta['headerBg']
+            . ';width:36px;height:36px;border-radius:7px;font-family:' . $font
+            . ';font-weight:bold;font-size:18px;text-align:center;line-height:36px;">'
+            . Util::e((string) $meta['logoText']) . '</td>'
+            . '<td style="padding-left:12px;color:' . $meta['headerText'] . ';font-family:' . $headFont
+            . ';font-weight:bold;font-size:18px;letter-spacing:0.2px;">{{marke}}</td>'
+            . '</tr></table></td>' . $claim;
     }
 
     /** Spalten brechen auf dem Handy untereinander um. */
@@ -396,7 +505,8 @@ final class Blocks
         return '<style type="text/css">@media only screen and (max-width:600px){'
             . '.nl-col{display:block!important;width:100%!important;max-width:100%!important;'
             . 'padding-left:0!important;padding-right:0!important;}'
-            . '.nl-col-gap{height:16px!important;}}</style>';
+            . '.nl-col-gap{height:16px!important;}'
+            . '.nl-claim{text-align:left!important;padding-top:8px!important;}}</style>';
     }
 
     /**
@@ -417,8 +527,10 @@ final class Blocks
 
         switch ($type) {
             case 'heading':
+                $headFont = trim((string) ($meta['headFont'] ?? '')) !== ''
+                    ? (string) $meta['headFont'] : $font;
                 return $wrap(
-                    '<h2 style="margin:0;font-family:' . $font . ';font-size:' . (int) $block['size']
+                    '<h2 style="margin:0;font-family:' . $headFont . ';font-size:' . (int) $block['size']
                     . 'px;line-height:1.3;font-weight:bold;color:' . $block['color']
                     . ';text-align:' . $block['align'] . ';">' . Util::e((string) $block['text']) . '</h2>',
                     $space

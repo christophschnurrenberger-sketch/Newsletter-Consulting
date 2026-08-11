@@ -58,6 +58,20 @@ tabellenbasiertes E-Mail-HTML mit Inline-Stilen, wie es Outlook & Co. brauchen.
 Bild (mit Upload) · Knopf/Call-to-Action · Trennlinie · Abstand · Zwei Spalten ·
 Linkleiste · eigenes HTML · Inhaltsplatzhalter (nur in Vorlagen).
 
+**Kopfzeile und Footer einer Vorlage** stellen Sie rechts unter „Gestaltung“ ein:
+
+* **Art der Kopfzeile:** Logo-Quadrat mit Kürzel oder **Wortmarke als Text** –
+  bei der Wortmarke lässt sich ein Teil farblich hervorheben (etwa die „54“ in
+  „Fairway54“), dazu kommt auf Wunsch ein Claim rechts oben.
+* **Schrift für Überschriften** getrennt vom Fließtext (z. B. Serifen für
+  Überschriften, Grotesk für den Text).
+* **Farben** für Seitenhintergrund, Inhaltsfläche, Rahmen, Kopfzeile und Footer.
+* **Hinweis über dem Impressum** – hier gehört bei Affiliate-Newslettern die
+  Pflichtangabe zu Partnerlinks hin.
+
+Damit lässt sich auch ein fremdes Website-Design im Baukasten nachbauen; HTML
+brauchen Sie nur noch für Sonderfälle.
+
 **Bedienung**
 
 * Baustein aus der linken Leiste in die Mail **ziehen** – oder anklicken, dann
@@ -84,9 +98,16 @@ gegen die Ausführung von Programmcode gesperrt. Bilder in E-Mails müssen
 öffentlich erreichbar sein – deshalb liegen sie dort und nicht im Datenordner.
 
 **Umschalten:** Über die Knöpfe „Baukasten“ / „HTML“ wechseln Sie jederzeit.
-Beim Wechsel zum Baukasten wandert vorhandenes HTML in einen Baustein
-„Eigenes HTML“; beim Wechsel zu HTML bearbeiten Sie die erzeugte Fassung weiter.
-Es geht nichts verloren.
+Bei einer **Ausgabe** wandert vorhandenes HTML in einen Baustein „Eigenes HTML“.
+
+Bei einer **Vorlage** ist das anders: Ein von Hand geschriebener Rahmen lässt
+sich nicht in Bausteine zerlegen, er wird beim Wechsel durch einen
+Standardrahmen ersetzt. Die bisherige Fassung wird deshalb gesichert – über
+„HTML zurückholen“ ist sie wieder da.
+
+**Neue Ausgaben erben die Gestaltung ihrer Vorlage:** Schriften, Text-, Link-
+und Knopffarbe kommen aus der Standardvorlage. Ein Newsletter der zweiten Marke
+beginnt damit gleich in deren Farben.
 
 ---
 
@@ -197,6 +218,8 @@ Website schon mit; Impressum und Absender tragen Sie danach unter „Marke diese
 Vorlage" nach. Eigene Entwürfe legen Sie einfach als weitere `.html`-Datei in
 diesen Ordner – mit einem Kommentarkopf aus `Vorlage:`, `Beschreibung:`,
 `Marke:` und `Website:`, dann erscheinen sie automatisch in der Auswahl.
+Baukasten-Vorlagen legen Sie als `.json` ab; dort stehen dieselben Angaben
+als Felder `vorlage`, `beschreibung`, `marke`, `website` neben `blocks`.
 
 Der **Inhalt** einer Ausgabe entsteht weiterhin im Baukasten. Farben für Links
 und Knöpfe stellen Sie dort rechts unter „Gestaltung" ein – bei einer zweiten
@@ -360,7 +383,7 @@ newsletter/
 │   └── wartung.php          Aufräumen (täglich)
 │
 ├── uploads/                 hochgeladene Bilder für den Baukasten
-├── vorlagen/                fertige Vorlagen zum Übernehmen (HTML-Dateien)
+├── vorlagen/                fertige Vorlagen zum Übernehmen (.html oder .json)
 ├── lib/                     Programmkern (siehe unten)
 └── data/                    Datenbank, Sperrdatei, Testpostausgang (gesperrt)
 ```
@@ -419,7 +442,7 @@ welche Seite wie viele Anmeldungen bringt.
 2. Eine beliebige Seite aufrufen. Die Datenbank wird automatisch auf den neuen
    Stand gebracht (neue Spalten und Tabellen werden ergänzt).
 3. Prüfen: Im Admin-Bereich steht unten die Fassung, z. B.
-   `Fassung 1.3.0 (Mehrere Marken) · Datenbank 4`. Dasselbe zeigt `systemcheck.php`.
+   `Fassung 1.4.0 (Freies Vorlagen-Design) · Datenbank 5`. Dasselbe zeigt `systemcheck.php`.
 
 Ändert sich nichts, liegen meist ältere Dateien auf dem Server: `systemcheck.php`
 nennt die gefundene Fassung und ob der Baukasten dabei ist. Im Browser hilft ein

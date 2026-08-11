@@ -325,3 +325,16 @@
     z-index: 1100;
     box-shadow: 0 6px 24px rgba(20, 36, 58, .28);
 }
+
+/* Zwischenüberschrift in der Gestaltungsleiste */
+.bk-group {
+    margin: 18px 0 2px;
+    padding-top: 12px;
+    border-top: 1px solid var(--ad-border, #E0E6ED);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--ad-muted, #8A95A5);
+}
+.bk-group:first-of-type { border-top: 0; }

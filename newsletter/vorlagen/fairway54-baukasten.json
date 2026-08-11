@@ -1,0 +1,40 @@
+{
+    "vorlage": "Fairway54 (Baukasten)",
+    "beschreibung": "Golf-Design zum Weiterbauen: Wortmarke, warmes Papier, dunkelgrüner Footer mit Partnerlink-Hinweis.",
+    "marke": "Fairway54",
+    "website": "https://www.fairway54.de",
+    "blocks": {
+        "meta": {
+            "bg": "#FAF9F5",
+            "cardBg": "#FFFFFF",
+            "width": 620,
+            "font": "Arial, Helvetica, sans-serif",
+            "textColor": "#3F4A43",
+            "headColor": "#16261C",
+            "linkColor": "#1E6B45",
+            "radius": 2,
+            "padding": 40,
+            "showHeader": 1,
+            "headerBg": "#FFFFFF",
+            "headerText": "#16261C",
+            "logoText": "A",
+            "showFooter": 1,
+            "headerStyle": "wortmarke",
+            "headFont": "Georgia, \"Times New Roman\", serif",
+            "wordmark": "Fairway",
+            "wordmarkAccent": "54",
+            "accentColor": "#1E6B45",
+            "claim": "Golf lernen von HCP 54 bis 36",
+            "borderColor": "#E1DED5",
+            "footerBg": "#0E2E1D",
+            "footerText": "#C6D3CA",
+            "note": "Anzeige: Die mit * markierten Links sind Partnerlinks. Kaufst du darüber, erhalten wir eine Provision. Für dich ändert sich der Preis nicht."
+        },
+        "blocks": [
+            {
+                "id": "be05476d0",
+                "type": "content"
+            }
+        ]
+    }
+}

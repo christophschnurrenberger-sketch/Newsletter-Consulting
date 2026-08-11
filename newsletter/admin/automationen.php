@@ -93,7 +93,7 @@ if (Util::isPost()) {
         if ($step !== null && Util::post('ziel') === 'blocks') {
             $vorhanden = trim((string) $step['blocks_json']);
             if ($vorhanden === '') {
-                $start = Blocks::starterCampaign();
+                $start = Blocks::starterCampaign(Templates::byId((int) $step['template_id']));
                 $inhalt = trim((string) $step['content_html']);
                 if ($inhalt !== '') {
                     $start['blocks'] = [Blocks::block('html', ['html' => $inhalt])];

@@ -161,7 +161,7 @@ if (Util::isPost()) {
             $vorhanden = trim((string) $campaign['blocks_json']);
             if ($vorhanden === '') {
                 // Bestehendes HTML als eigenen Baustein übernehmen
-                $start = Blocks::starterCampaign();
+                $start = Blocks::starterCampaign(Templates::byId((int) $campaign['template_id']));
                 $inhalt = trim((string) $campaign['content_html']);
                 if ($inhalt !== '') {
                     $start['blocks'] = [Blocks::block('html', ['html' => $inhalt])];

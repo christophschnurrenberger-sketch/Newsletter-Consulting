@@ -13,7 +13,7 @@ if (Util::get('vorschau') === '1') {
         http_response_code(404);
         exit('Vorlage nicht gefunden.');
     }
-    $html = Renderer::wrap($template, Templates::starterContent(), 'Beispiel-Betreff', 'Beispiel-Vorschautext');
+    $html = Renderer::wrap($template, Templates::starterContent($template), 'Beispiel-Betreff', 'Beispiel-Vorschautext');
     $html = Renderer::applyBrand($html, $template, true);
     $html = Renderer::personalize($html, Renderer::sampleSubscriber(), [
         'abmelden_url'     => '#',
@@ -77,23 +77,35 @@ if (Util::isPost()) {
     if ($action === 'modus' && $id > 0) {
         $template = Templates::byId($id);
         if ($template !== null && Util::post('ziel') === 'blocks') {
-            // Bestehendes HTML als Baustein übernehmen, damit nichts verloren geht
-            $start = Blocks::starterTemplate();
-            $html  = trim((string) $template['html']);
-            if (trim((string) $template['blocks_json']) === '' && $html !== '') {
-                $start['blocks'] = [
-                    Blocks::block('content'),
-                ];
+            // Ein von Hand geschriebener Rahmen lässt sich nicht in Bausteine
+            // zerlegen. Damit nichts verloren geht, wird er vorher gesichert.
+            $html = trim((string) $template['html']);
+            if ($template['editor_mode'] !== 'blocks' && $html !== '') {
+                DB::update('templates', ['html_backup' => $html], 'id = ?', [$id]);
             }
             $json = trim((string) $template['blocks_json']) !== ''
                 ? (string) $template['blocks_json']
-                : (string) json_encode($start);
+                : (string) json_encode(Blocks::starterTemplate());
             Templates::update($id, (string) $template['name'], '', (string) $template['description'], $json);
-            Util::flash('Baukasten aktiviert. Die Vorlage wird ab jetzt aus Bausteinen erzeugt.');
+            Util::flash('Baukasten aktiviert. Der bisherige HTML-Rahmen ist gesichert und lässt sich '
+                . 'über „HTML zurückholen" wiederherstellen.');
         } elseif ($template !== null) {
             DB::update('templates', ['editor_mode' => 'html'], 'id = ?', [$id]);
             Util::flash('HTML-Modus aktiviert. Sie bearbeiten jetzt den erzeugten Code direkt.');
         }
+        Util::redirect('vorlagen.php?id=' . $id);
+    }
+
+    if ($action === 'html_zurueck' && $id > 0) {
+        $template = Templates::byId($id);
+        $sicherung = trim((string) ($template['html_backup'] ?? ''));
+        if ($template === null || $sicherung === '') {
+            Util::flash('Es gibt keine gesicherte HTML-Fassung.', 'error');
+            Util::redirect('vorlagen.php?id=' . $id);
+        }
+        Templates::update($id, (string) $template['name'], $sicherung, (string) $template['description']);
+        DB::update('templates', ['editor_mode' => 'html', 'html_backup' => null], 'id = ?', [$id]);
+        Util::flash('Die gesicherte HTML-Fassung ist wieder da.');
         Util::redirect('vorlagen.php?id=' . $id);
     }
 
@@ -231,6 +243,10 @@ $current   = Templates::byId(Util::getInt('id')) ?? Templates::defaultTemplate()
 
                 <div class="ad-actions">
                     <button type="submit" name="aktion" value="speichern_baukasten" class="ad-btn">Vorlage speichern</button>
+                    <?php if (trim((string) ($current['html_backup'] ?? '')) !== ''): ?>
+                        <button type="submit" name="aktion" value="html_zurueck" class="ad-btn ad-btn-secondary"
+                                data-confirm="Die gesicherte HTML-Fassung wiederherstellen? Die Bausteine dieser Vorlage gehen dabei verloren.">HTML zurückholen</button>
+                    <?php endif; ?>
                     <?php if ((int) $current['is_default'] !== 1): ?>
                         <button type="submit" name="aktion" value="standard" class="ad-btn ad-btn-secondary">Als Standard</button>
                     <?php endif; ?>
@@ -281,7 +297,7 @@ $current   = Templates::byId(Util::getInt('id')) ?? Templates::defaultTemplate()
                 <div class="ad-actions">
                     <button type="submit" name="aktion" value="speichern" class="ad-btn">Speichern</button>
                     <button type="submit" name="aktion" value="modus" class="ad-btn ad-btn-secondary"
-                            data-confirm="Zum Baukasten wechseln? Die Vorlage wird ab dann aus Bausteinen erzeugt.">Im Baukasten gestalten</button>
+                            data-confirm="Zum Baukasten wechseln? Ein von Hand geschriebener HTML-Rahmen lässt sich nicht in Bausteine zerlegen – er wird durch einen Standardrahmen ersetzt. Die bisherige Fassung wird gesichert und lässt sich zurückholen.">Im Baukasten gestalten</button>
                     <?php if ((int) $current['is_default'] !== 1): ?>
                         <button type="submit" name="aktion" value="standard" class="ad-btn ad-btn-secondary">Als Standard</button>
                     <?php endif; ?>

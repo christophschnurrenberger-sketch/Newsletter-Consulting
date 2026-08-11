@@ -757,20 +757,49 @@
         ];
         if (MODE === 'template') {
             felder = felder.concat([
+                { k: 'headFont', t: 'font', l: 'Schrift für Überschriften', leer: '— wie Fließtext —' },
                 { k: 'bg', t: 'color', l: 'Seitenhintergrund' },
                 { k: 'cardBg', t: 'color', l: 'Inhaltsfläche' },
+                { k: 'borderColor', t: 'color', l: 'Rahmenfarbe' },
                 { k: 'width', t: 'number', l: 'Breite (px)', min: 320, max: 900 },
                 { k: 'padding', t: 'number', l: 'Innenabstand (px)', min: 0, max: 60 },
                 { k: 'radius', t: 'number', l: 'Ecken abrunden (px)', min: 0, max: 30 },
-                { k: 'showHeader', t: 'toggle', l: 'Kopfzeile mit Logo anzeigen' },
+
+                { gruppe: 'Kopfzeile' },
+                { k: 'showHeader', t: 'toggle', l: 'Kopfzeile anzeigen' },
+                { k: 'headerStyle', t: 'select', l: 'Art der Kopfzeile',
+                  o: { logo: 'Logo-Quadrat mit Kürzel', wortmarke: 'Wortmarke als Text' } },
                 { k: 'headerBg', t: 'color', l: 'Farbe der Kopfzeile' },
-                { k: 'headerText', t: 'color', l: 'Schrift in der Kopfzeile' },
-                { k: 'logoText', t: 'text', l: 'Kürzel im Logo (max. 3 Zeichen)' },
-                { k: 'showFooter', t: 'toggle', l: 'Footer mit Pflichtangaben anzeigen' }
+                { k: 'headerText', t: 'color', l: 'Schrift in der Kopfzeile' }
+            ]);
+            if (state.meta.headerStyle === 'wortmarke') {
+                felder = felder.concat([
+                    { k: 'wordmark', t: 'text', l: 'Wortmarke (leer = Name der Marke)' },
+                    { k: 'wordmarkAccent', t: 'text', l: 'Hervorgehobener Teil (z. B. „54")' },
+                    { k: 'accentColor', t: 'color', l: 'Farbe des hervorgehobenen Teils' }
+                ]);
+            } else {
+                felder.push({ k: 'logoText', t: 'text', l: 'Kürzel im Logo (max. 3 Zeichen)' });
+            }
+            felder = felder.concat([
+                { k: 'claim', t: 'text', l: 'Claim rechts oben (optional)' },
+
+                { gruppe: 'Footer' },
+                { k: 'showFooter', t: 'toggle', l: 'Footer mit Pflichtangaben anzeigen' },
+                { k: 'footerBg', t: 'color', l: 'Farbe des Footers (leer = Seitenhintergrund)' },
+                { k: 'footerText', t: 'color', l: 'Schrift im Footer' },
+                { k: 'note', t: 'area', l: 'Hinweis über dem Impressum (z. B. Partnerlinks)' }
             ]);
         }
 
         felder.forEach(function (feld) {
+            if (feld.gruppe) {
+                var titel = document.createElement('h4');
+                titel.className = 'bk-group';
+                titel.textContent = feld.gruppe;
+                karte.appendChild(titel);
+                return;
+            }
             karte.appendChild(metaRow(feld));
         });
 
@@ -808,21 +837,43 @@
 
         zeile.appendChild(label);
 
-        if (feld.t === 'font') {
+        if (feld.t === 'font' || feld.t === 'select') {
             var auswahl = document.createElement('select');
             auswahl.className = 'bk-input';
-            Object.keys(window.NL_FONTS || {}).forEach(function (wert) {
+            var optionen = feld.t === 'font' ? (window.NL_FONTS || {}) : feld.o;
+            if (feld.t === 'font' && feld.leer) {
+                var leerOption = document.createElement('option');
+                leerOption.value = '';
+                leerOption.textContent = feld.leer;
+                leerOption.selected = !state.meta[feld.k];
+                auswahl.appendChild(leerOption);
+            }
+            Object.keys(optionen).forEach(function (wert) {
                 var option = document.createElement('option');
                 option.value = wert;
-                option.textContent = window.NL_FONTS[wert];
-                option.selected = state.meta.font === wert;
+                option.textContent = optionen[wert];
+                option.selected = String(state.meta[feld.k]) === wert;
                 auswahl.appendChild(option);
             });
             auswahl.addEventListener('change', function () {
-                state.meta.font = auswahl.value;
-                save();
+                state.meta[feld.k] = auswahl.value;
+                render();
             });
             zeile.appendChild(auswahl);
+            return zeile;
+        }
+
+        if (feld.t === 'area') {
+            var flaeche = document.createElement('textarea');
+            flaeche.className = 'bk-input';
+            flaeche.rows = 3;
+            flaeche.value = state.meta[feld.k] || '';
+            flaeche.addEventListener('input', function () {
+                state.meta[feld.k] = flaeche.value;
+                save();
+            });
+            flaeche.addEventListener('focus', function () { lastFocus = flaeche; });
+            zeile.appendChild(flaeche);
             return zeile;
         }
 

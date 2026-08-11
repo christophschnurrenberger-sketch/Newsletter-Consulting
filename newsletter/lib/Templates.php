@@ -186,6 +186,8 @@ final class Templates
     public static function files(): array
     {
         $out = [];
+
+        // HTML-Vorlagen: Angaben stehen im Kommentarkopf
         foreach (glob(NL_ROOT . '/vorlagen/*.html') ?: [] as $pfad) {
             $kopf = (string) file_get_contents($pfad, false, null, 0, 800);
             $lies = static function (string $feld) use ($kopf): string {
@@ -197,8 +199,26 @@ final class Templates
                 'description' => $lies('Beschreibung'),
                 'brand'       => $lies('Marke'),
                 'website'     => $lies('Website'),
+                'baukasten'   => false,
             ];
         }
+
+        // Baukasten-Vorlagen: Angaben stehen in der JSON-Datei selbst
+        foreach (glob(NL_ROOT . '/vorlagen/*.json') ?: [] as $pfad) {
+            $daten = json_decode((string) file_get_contents($pfad), true);
+            if (!is_array($daten) || !is_array($daten['blocks'] ?? null)) {
+                continue;
+            }
+            $schluessel = basename($pfad, '.json');
+            $out[$schluessel] = [
+                'name'        => (string) ($daten['vorlage'] ?? $schluessel),
+                'description' => (string) ($daten['beschreibung'] ?? ''),
+                'brand'       => (string) ($daten['marke'] ?? ''),
+                'website'     => (string) ($daten['website'] ?? ''),
+                'baukasten'   => true,
+            ];
+        }
+
         ksort($out);
         return $out;
     }
@@ -212,12 +232,23 @@ final class Templates
     public static function createFromFile(string $schluessel): int
     {
         $schluessel = preg_replace('/[^a-z0-9_-]/i', '', $schluessel) ?? '';
-        $pfad       = NL_ROOT . '/vorlagen/' . $schluessel . '.html';
         $angaben    = self::files()[$schluessel] ?? null;
-        if ($angaben === null || !is_file($pfad)) {
+        if ($angaben === null) {
             return 0;
         }
-        $id = self::create($angaben['name'], (string) file_get_contents($pfad), $angaben['description']);
+        $endung = $angaben['baukasten'] ? '.json' : '.html';
+        $pfad   = NL_ROOT . '/vorlagen/' . $schluessel . $endung;
+        if (!is_file($pfad)) {
+            return 0;
+        }
+
+        if ($angaben['baukasten']) {
+            $daten = json_decode((string) file_get_contents($pfad), true);
+            $id    = self::create($angaben['name'], '', $angaben['description'], false,
+                (string) json_encode($daten['blocks'], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
+        } else {
+            $id = self::create($angaben['name'], (string) file_get_contents($pfad), $angaben['description']);
+        }
         if ($angaben['brand'] !== '' || $angaben['website'] !== '') {
             self::saveBrand($id, [
                 'brand_name'  => $angaben['brand'],
@@ -331,7 +362,22 @@ HTML;
     }
 
     /** Startinhalt für eine neue Kampagne. */
-    public static function starterContent(): string
+    public static function starterContent(?array $template = null): string
+    {
+        // Beispielinhalt in den Farben der Vorlage – sonst zeigt die Vorschau
+        // eine fremde Akzentfarbe und wirkt wie ein Fehler.
+        $meta   = Blocks::metaFromTemplate($template);
+        $akzent = (string) $meta['linkColor'];
+        $kopf   = (string) $meta['headColor'];
+
+        return str_replace(
+            ['#C8102E', '#14243A'],
+            [$akzent, $kopf],
+            self::starterContentHtml()
+        );
+    }
+
+    private static function starterContentHtml(): string
     {
         return <<<'HTML'
 <p style="margin:0 0 16px;font-size:22px;font-weight:bold;color:#14243A;">Überschrift des Newsletters</p>

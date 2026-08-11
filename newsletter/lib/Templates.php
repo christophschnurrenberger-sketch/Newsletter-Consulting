@@ -362,19 +362,89 @@ HTML;
     }
 
     /** Startinhalt für eine neue Kampagne. */
-    public static function starterContent(?array $template = null): string
+    /**
+     * Was in der Vorschau an der Stelle von {{inhalt}} steht.
+     *
+     * Voreingestellt ist ein deutlich markierter Platzhalter: Eine Vorlage
+     * ist nur der Rahmen, sie enthält keinen Text. Ein Beispielinhalt würde
+     * den Eindruck erwecken, in der Vorlage stecke bereits ein Newsletter.
+     *
+     * @param bool $mitBeispiel true zeigt einen Beispieltext zur Beurteilung
+     *                          von Schrift und Farben
+     */
+    public static function starterContent(?array $template = null, bool $mitBeispiel = false): string
     {
-        // Beispielinhalt in den Farben der Vorlage – sonst zeigt die Vorschau
-        // eine fremde Akzentfarbe und wirkt wie ein Fehler.
         $meta   = Blocks::metaFromTemplate($template);
         $akzent = (string) $meta['linkColor'];
         $kopf   = (string) $meta['headColor'];
+
+        if (!$mitBeispiel) {
+            return '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">'
+                . '<tr><td style="border:2px dashed ' . $meta['borderColor'] . ';border-radius:6px;'
+                . 'padding:34px 20px;text-align:center;font-family:' . $meta['font']
+                . ';font-size:14px;line-height:1.6;color:' . $meta['textColor'] . ';">'
+                . '<strong style="color:' . $kopf . ';">Hier steht der Inhalt der jeweiligen Ausgabe</strong><br>'
+                . 'Die Vorlage ist nur der Rahmen. Den Text schreiben Sie unter „Newsletter“.'
+                . '</td></tr></table>';
+        }
 
         return str_replace(
             ['#C8102E', '#14243A'],
             [$akzent, $kopf],
             self::starterContentHtml()
         );
+    }
+
+    /**
+     * Ein schlanker HTML-Rahmen für eine neue Vorlage: Kopfzeile, Platz für
+     * den Inhalt, Footer mit den Pflichtangaben – sonst nichts. Alles
+     * Weitere baut man sich selbst zusammen.
+     */
+    public static function minimalHtml(): string
+    {
+        return <<<'HTML'
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>{{betreff}}</title>
+</head>
+<body style="margin:0;padding:0;background-color:#F6F8FA;">
+<span style="display:none!important;opacity:0;color:#F6F8FA;font-size:1px;line-height:1px;max-height:0;max-width:0;overflow:hidden;">{{preheader}}</span>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#F6F8FA;padding:24px 12px;">
+<tr><td align="center">
+
+  <table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" style="max-width:600px;width:100%;background-color:#ffffff;border:1px solid #E0E6ED;border-radius:8px;">
+
+    <!-- Kopfzeile -->
+    <tr><td style="padding:22px 32px;border-bottom:1px solid #E0E6ED;font-family:Arial,Helvetica,sans-serif;font-size:18px;font-weight:bold;color:#14243A;">
+      {{marke}}
+    </td></tr>
+
+    <!-- Hier wird der Text der jeweiligen Ausgabe eingesetzt -->
+    <tr><td style="padding:32px;font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:1.65;color:#4A5568;">
+      {{inhalt}}
+    </td></tr>
+
+    <!-- Footer: Impressum und Abmeldelink sind Pflicht -->
+    <tr><td style="padding:20px 32px;border-top:1px solid #E0E6ED;font-family:Arial,Helvetica,sans-serif;font-size:12px;line-height:1.6;color:#8A95A5;">
+      Sie erhalten diese E-Mail, weil Sie sich unter {{website}} für unseren Newsletter angemeldet und die Anmeldung bestätigt haben.<br><br>
+      {{impressum}}<br><br>
+      <a href="{{abmelden_url}}" style="color:#8A95A5;text-decoration:underline;">Newsletter abbestellen</a> &middot;
+      <a href="{{praeferenzen_url}}" style="color:#8A95A5;text-decoration:underline;">Daten &amp; Einstellungen</a> &middot;
+      <a href="{{datenschutz_url}}" style="color:#8A95A5;text-decoration:underline;">Datenschutz</a> &middot;
+      <a href="{{impressum_url}}" style="color:#8A95A5;text-decoration:underline;">Impressum</a> &middot;
+      <a href="{{webansicht_url}}" style="color:#8A95A5;text-decoration:underline;">Im Browser ansehen</a>
+    </td></tr>
+
+  </table>
+
+</td></tr>
+</table>
+</body>
+</html>
+HTML;
     }
 
     private static function starterContentHtml(): string

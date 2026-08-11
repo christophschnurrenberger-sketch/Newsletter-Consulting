@@ -13,7 +13,9 @@ if (Util::get('vorschau') === '1') {
         http_response_code(404);
         exit('Vorlage nicht gefunden.');
     }
-    $html = Renderer::wrap($template, Templates::starterContent($template), 'Beispiel-Betreff', 'Beispiel-Vorschautext');
+    $mitBeispiel = Util::get('beispiel') === '1';
+    $html = Renderer::wrap($template, Templates::starterContent($template, $mitBeispiel),
+        'Beispiel-Betreff', 'Beispiel-Vorschautext');
     $html = Renderer::applyBrand($html, $template, true);
     $html = Renderer::personalize($html, Renderer::sampleSubscriber(), [
         'abmelden_url'     => '#',
@@ -45,11 +47,11 @@ if (Util::isPost()) {
         $newId = $imBaukasten
             ? Templates::create(Util::post('name') ?: 'Neue Vorlage', '', Util::post('description'), false,
                 (string) json_encode(Blocks::starterTemplate()))
-            : Templates::create(Util::post('name') ?: 'Neue Vorlage', Templates::standardHtml(),
+            : Templates::create(Util::post('name') ?: 'Neue Vorlage', Templates::minimalHtml(),
                 Util::post('description'));
         Util::flash($imBaukasten
-            ? 'Vorlage angelegt. Ziehen Sie jetzt Bausteine an die gewünschte Stelle.'
-            : 'Vorlage angelegt.');
+            ? 'Vorlage angelegt: Kopfzeile, Platz für den Inhalt und Footer. Alles dazwischen bauen Sie selbst.'
+            : 'Vorlage angelegt – ein schlanker Rahmen mit Kopfzeile, {{inhalt}} und den Pflichtangaben.');
         Util::redirect('vorlagen.php?id=' . $newId);
     }
     if ($action === 'marke' && $id > 0) {
@@ -265,7 +267,10 @@ $current   = Templates::byId(Util::getInt('id')) ?? Templates::defaultTemplate()
             <iframe class="ad-preview-frame" style="height:560px;"
                     src="vorlagen.php?id=<?= (int) $current['id'] ?>&amp;vorschau=1"
                     title="Vorschau der Vorlage"></iframe>
-            <p class="ad-hint">Die Vorschau zeigt den gespeicherten Stand mit Beispielinhalt.</p>
+            <p class="ad-hint">Die Vorschau zeigt den gespeicherten Stand. Die Vorlage ist nur der Rahmen –
+                der Text kommt später aus dem jeweiligen Newsletter.
+                <a href="vorlagen.php?id=<?= (int) $current['id'] ?>&amp;vorschau=1&amp;beispiel=1"
+                   target="_blank" rel="noopener">Mit Beispieltext ansehen</a></p>
         </div>
     <?php else: ?>
     <div class="ad-editor-grid">
@@ -316,7 +321,9 @@ $current   = Templates::byId(Util::getInt('id')) ?? Templates::defaultTemplate()
             <iframe class="ad-preview-frame" style="height:520px;"
                     src="vorlagen.php?id=<?= (int) $current['id'] ?>&amp;vorschau=1"
                     title="Vorschau der Vorlage"></iframe>
-            <p class="ad-hint">Die Vorschau zeigt die Vorlage mit Beispielinhalt.</p>
+            <p class="ad-hint">Die Vorlage ist nur der Rahmen – der Text kommt später aus dem Newsletter.
+                <a href="vorlagen.php?id=<?= (int) $current['id'] ?>&amp;vorschau=1&amp;beispiel=1"
+                   target="_blank" rel="noopener">Mit Beispieltext ansehen</a></p>
         </div>
     </div>
     <?php endif; ?>

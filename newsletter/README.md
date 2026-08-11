@@ -58,7 +58,16 @@ tabellenbasiertes E-Mail-HTML mit Inline-Stilen, wie es Outlook & Co. brauchen.
 Bild (mit Upload) · Knopf/Call-to-Action · Trennlinie · Abstand · Zwei Spalten ·
 Linkleiste · eigenes HTML · Inhaltsplatzhalter (nur in Vorlagen).
 
-**Eine Vorlage besteht aus drei Bausteinen:** Kopfzeile, „Inhalt der Ausgabe“
+**Eine neue Vorlage enthält nur Kopfzeile und Footer** – dazwischen steht der
+Baustein „Inhalt der Ausgabe“, der die Stelle für den späteren Newsletter-Text
+markiert. Kein Beispieltext, keine vorgefertigte Gestaltung: Alles dazwischen
+bauen Sie selbst. Das gilt für beide Wege, „Neu im Baukasten“ und „Neu als HTML“.
+
+Die Vorschau zeigt deshalb an der Stelle des Inhalts eine gestrichelte Fläche.
+Über „Mit Beispieltext ansehen“ lässt sich einmalig ein Musternewsletter
+einblenden, wenn Sie Schrift und Farben beurteilen wollen.
+
+**Die drei Bausteine einer Vorlage:** Kopfzeile, „Inhalt der Ausgabe“
 und Footer. Alle drei lassen sich verschieben, einstellen und durch eigene
 Bausteine ergänzen – Sie können also auch etwas über die Kopfzeile setzen oder
 zwischen Inhalt und Footer eine feste Grußformel legen.
@@ -459,7 +468,7 @@ welche Seite wie viele Anmeldungen bringt.
 2. Eine beliebige Seite aufrufen. Die Datenbank wird automatisch auf den neuen
    Stand gebracht (neue Spalten und Tabellen werden ergänzt).
 3. Prüfen: Im Admin-Bereich steht unten die Fassung, z. B.
-   `Fassung 1.6.0 (Vorlage aus Bausteinen) · Datenbank 5`. Dasselbe zeigt `systemcheck.php`.
+   `Fassung 1.6.1 (Vorlage aus Bausteinen) · Datenbank 5`. Dasselbe zeigt `systemcheck.php`.
 
 **Ändert sich nichts?** Dann sagt `systemcheck.php` genau, woran es liegt:
 

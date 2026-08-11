@@ -173,6 +173,70 @@ $hatAblauf = file_exists(dirname(__FILE__) . '/lib/Flow.php')
     && file_exists(dirname(__FILE__) . '/admin/assets/flow.js')
     && file_exists(dirname(__FILE__) . '/admin/benutzer.php');
 
+/* ------------------------------------------------- Zwischenspeicher (OPcache) */
+
+// Viele Hoster halten kompilierten PHP-Code im Arbeitsspeicher. Wurde eine
+// Datei hochgeladen, der Server liefert aber weiter die alte Fassung, liegt
+// es fast immer daran.
+$opcacheAn      = function_exists('opcache_get_status') && @ini_get('opcache.enable');
+$opcacheStatus  = array();
+$opcachePruefen = @ini_get('opcache.validate_timestamps');
+if ($opcacheAn && function_exists('opcache_get_status')) {
+    $roh = @opcache_get_status(false);
+    if (is_array($roh)) {
+        $opcacheStatus = $roh;
+    }
+}
+
+$geleert = '';
+if (isset($_POST['leeren']) && $_POST['leeren'] === 'opcache') {
+    if (function_exists('opcache_reset') && @opcache_reset()) {
+        $geleert = 'Der Zwischenspeicher wurde geleert. Bitte die Seite neu laden.';
+    } else {
+        $geleert = 'Der Zwischenspeicher ließ sich nicht leeren – oft ist das auf gemieteten '
+                 . 'Servern gesperrt. Warten Sie ein bis zwei Minuten oder ändern Sie die '
+                 . 'PHP-Version einmal hin und zurück, das leert ihn ebenfalls.';
+    }
+}
+
+/* ------------------------------------------------------------- Prüfsummen */
+
+// pruefsummen.txt wird beim Ausliefern erzeugt und enthält je Datei eine
+// Zeile "sha256  pfad". Damit lässt sich Datei für Datei feststellen, was
+// beim Hochladen nicht angekommen ist.
+$pruefDatei   = dirname(__FILE__) . '/pruefsummen.txt';
+$pruefFassung = '';
+$veraltet     = array();
+$pruefGeprueft = 0;
+if (is_readable($pruefDatei)) {
+    foreach (file($pruefDatei) as $zeile) {
+        $zeile = trim($zeile);
+        if ($zeile === '' || substr($zeile, 0, 1) === '#') {
+            if (strpos($zeile, '# Fassung:') === 0) {
+                $pruefFassung = trim(substr($zeile, 10));
+            }
+            continue;
+        }
+        $teile = preg_split('/\s+/', $zeile, 2);
+        if (count($teile) !== 2) {
+            continue;
+        }
+        list($soll, $relativ) = $teile;
+        $pfad = dirname(__FILE__) . '/' . $relativ;
+        if (!is_readable($pfad)) {
+            continue; // fehlende Dateien meldet bereits die Liste oben
+        }
+        $pruefGeprueft++;
+        if (hash_file('sha256', $pfad) !== $soll) {
+            $veraltet[] = $relativ;
+        }
+    }
+}
+if ($veraltet) {
+    $probleme[] = count($veraltet) . ' Datei(en) stimmen nicht mit der ausgelieferten Fassung überein. '
+        . 'Meist wurden sie beim Hochladen übersprungen – bitte gezielt erneut übertragen.';
+}
+
 /* ------------------------------------------------------- Letzter PHP-Fehler */
 
 $letzterFehler = '';
@@ -194,7 +258,17 @@ if ($alsText) {
     echo "Automationen und Benutzer: " . ($hatAblauf ? 'vorhanden' : 'FEHLEN – ältere Fassung hochgeladen') . "\n";
     echo "PHP: " . PHP_VERSION . " (" . PHP_SAPI . ")\n";
     echo "Speichergrenze: " . @ini_get('memory_limit') . ", max. Laufzeit: " . @ini_get('max_execution_time') . "s\n";
-    echo "config.php vorhanden: " . ($configVorhanden ? 'ja' : 'nein') . "\n\n";
+    echo "config.php vorhanden: " . ($configVorhanden ? 'ja' : 'nein') . "\n";
+    echo "Zwischenspeicher (OPcache): " . ($opcacheAn ? 'an' : 'aus')
+        . ($opcacheAn && $opcachePruefen === '0' ? ' – prüft Dateidatum NICHT' : '') . "\n";
+    if ($pruefGeprueft > 0) {
+        echo "Prüfsummen: " . $pruefGeprueft . " Dateien verglichen"
+            . ($pruefFassung !== '' ? " (Liste gehört zu Fassung " . $pruefFassung . ")" : '') . "\n";
+        echo "Abweichend: " . ($veraltet ? implode(', ', $veraltet) : 'keine') . "\n";
+    } else {
+        echo "Prüfsummen: keine Liste gefunden (pruefsummen.txt fehlt)\n";
+    }
+    echo "\n";
     foreach ($dateien as $d) {
         if ($d['status'] !== 'ok') {
             echo strtoupper($d['status']) . ': ' . $d['datei'] . ' – ' . $d['hinweis'] . "\n";
@@ -232,6 +306,10 @@ function sc_e($wert)
     .gut { background:#E7F4EC; color:#2E7D53; }
     .schlecht { background:#FDECEF; color:#C8102E; }
     .mittel { background:#FCF3E3; color:#B7791F; }
+    .klein { color:#6B7683; font-size:12.5px; line-height:1.5; margin-top:5px; }
+    button { background:#14243A; color:#fff; border:0; border-radius:6px; padding:8px 14px;
+             font-size:13px; font-weight:700; cursor:pointer; }
+    button:hover { background:#22354F; }
     .meldung { padding:14px 18px; border-radius:8px; margin-bottom:16px; }
     .m-fehler { background:#FDECEF; color:#8E0A20; border:1px solid #F3C6CF; }
     .m-warn { background:#FCF3E3; color:#7A5312; border:1px solid #EBD6AE; }
@@ -279,7 +357,7 @@ function sc_e($wert)
         <h2 style="margin-top:0;">Server</h2>
         <table>
             <tr>
-                <th style="width:45%;">Fassung des Programmcodes</th>
+                <th style="width:45%;">Fassung auf der Festplatte</th>
                 <td><strong><?= sc_e($version) ?></strong>
                     <span class="pille <?= $hatBaukasten ? 'gut' : 'mittel' ?>">
                         <?= $hatBaukasten ? 'mit Baukasten' : 'ohne Baukasten – ältere Fassung hochgeladen' ?>
@@ -287,6 +365,48 @@ function sc_e($wert)
                     <span class="pille <?= $hatAblauf ? 'gut' : 'mittel' ?>">
                         <?= $hatAblauf ? 'mit Automationen und Benutzern' : 'ohne Ablauf-Baukasten – ältere Fassung hochgeladen' ?>
                     </span>
+                </td>
+            </tr>
+            <tr>
+                <th style="width:45%;">Dateien vollständig aktuell?</th>
+                <td>
+                    <?php if ($pruefGeprueft === 0): ?>
+                        <span class="pille mittel">keine Prüfliste gefunden</span>
+                        <div class="klein">Die Datei <code>pruefsummen.txt</code> fehlt – sie gehört mit hochgeladen.</div>
+                    <?php elseif ($veraltet): ?>
+                        <span class="pille schlecht"><?= count($veraltet) ?> Datei(en) veraltet</span>
+                        <div class="klein">Diese Dateien sind auf dem Server anders als in der ausgelieferten
+                            Fassung <?= sc_e($pruefFassung) ?> – bitte gezielt erneut hochladen:</div>
+                        <pre><?= sc_e(implode("\n", $veraltet)) ?></pre>
+                    <?php else: ?>
+                        <span class="pille gut">alle <?= (int) $pruefGeprueft ?> Dateien aktuell</span>
+                        <div class="klein">Verglichen mit der Prüfliste der Fassung <?= sc_e($pruefFassung) ?>.</div>
+                    <?php endif; ?>
+                </td>
+            </tr>
+            <tr>
+                <th style="width:45%;">Zwischenspeicher für PHP</th>
+                <td>
+                    <?php if (!$opcacheAn): ?>
+                        <span class="pille gut">aus</span>
+                        <div class="klein">Hochgeladene Dateien wirken sofort.</div>
+                    <?php else: ?>
+                        <span class="pille <?= $opcachePruefen === '0' ? 'schlecht' : 'mittel' ?>">an<?php
+                            echo $opcachePruefen === '0' ? ' – prüft das Dateidatum nicht' : ''; ?></span>
+                        <div class="klein">
+                            Der Server hält kompilierten PHP-Code im Arbeitsspeicher.
+                            <strong>Steht im Admin-Bereich unten eine ältere Fassung als hier
+                            (<?= sc_e($version) ?>), liefert der Server alten Code.</strong>
+                            Dann hilft der Knopf unten – oder ein bis zwei Minuten warten.
+                        </div>
+                        <?php if ($geleert !== ''): ?>
+                            <div class="klein" style="margin-top:8px;"><strong><?= sc_e($geleert) ?></strong></div>
+                        <?php endif; ?>
+                        <form method="post" style="margin-top:8px;">
+                            <input type="hidden" name="leeren" value="opcache">
+                            <button type="submit">Zwischenspeicher jetzt leeren</button>
+                        </form>
+                    <?php endif; ?>
                 </td>
             </tr>
             <tr>

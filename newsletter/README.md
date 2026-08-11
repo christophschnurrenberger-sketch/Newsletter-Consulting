@@ -381,10 +381,12 @@ newsletter/
 │   ├── benutzer.php         Zugänge, Rollen, eigenes Passwort
 │   └── einstellungen.php    Absender, SMTP, Tempo, Texte
 │
+├── pruefsummen.txt          Prüfliste für den Systemcheck (mit hochladen)
 ├── cron/
 │   ├── send.php             Versand-Worker (alle 5 Minuten)
 │   ├── bounces.php          Rücklaufpostfach (stündlich)
-│   └── wartung.php          Aufräumen (täglich)
+│   ├── wartung.php          Aufräumen (täglich)
+│   └── pruefsummen.php      erzeugt die Prüfliste (nur beim Ausliefern)
 │
 ├── uploads/                 hochgeladene Bilder für den Baukasten
 ├── vorlagen/                fertige Vorlagen zum Übernehmen (.html oder .json)
@@ -446,11 +448,23 @@ welche Seite wie viele Anmeldungen bringt.
 2. Eine beliebige Seite aufrufen. Die Datenbank wird automatisch auf den neuen
    Stand gebracht (neue Spalten und Tabellen werden ergänzt).
 3. Prüfen: Im Admin-Bereich steht unten die Fassung, z. B.
-   `Fassung 1.4.1 (Freies Vorlagen-Design) · Datenbank 5`. Dasselbe zeigt `systemcheck.php`.
+   `Fassung 1.5.0 (Upload-Prüfung) · Datenbank 5`. Dasselbe zeigt `systemcheck.php`.
 
-Ändert sich nichts, liegen meist ältere Dateien auf dem Server: `systemcheck.php`
-nennt die gefundene Fassung und ob der Baukasten dabei ist. Im Browser hilft ein
-harter Neuladen (Strg+F5), damit CSS und JavaScript neu geholt werden.
+**Ändert sich nichts?** Dann sagt `systemcheck.php` genau, woran es liegt:
+
+* **„X Datei(en) veraltet"** – diese Dateien sind beim Hochladen nicht
+  angekommen. Der Systemcheck nennt sie beim Namen; übertragen Sie genau diese
+  erneut. Grundlage ist die mitgelieferte Liste `pruefsummen.txt`.
+* **„Zwischenspeicher für PHP: an"** und im Admin-Bereich steht unten eine
+  **ältere** Fassung als im Systemcheck – dann liegen die neuen Dateien zwar auf
+  dem Server, PHP liefert aber noch den alten, kompilierten Code. Der Knopf
+  „Zwischenspeicher jetzt leeren" behebt das; sonst ein bis zwei Minuten warten
+  oder bei IONOS die PHP-Version einmal hin und zurück stellen.
+* Beide Angaben stimmen und es sieht trotzdem alt aus? Dann hängt nur der
+  Browser: Strg+F5 lädt CSS und JavaScript neu.
+
+Die Fassungsangabe im Admin-Bereich kommt aus PHP, nicht aus dem Browser –
+Strg+F5 kann sie also nie ändern.
 
 Bestehende Newsletter bleiben im HTML-Modus, damit sich nichts unbemerkt
 verändert – über den Knopf „Baukasten“ im Editor stellen Sie einzelne Ausgaben um.

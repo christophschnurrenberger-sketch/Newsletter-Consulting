@@ -76,6 +76,12 @@
             var value = base[key];
             block[key] = Array.isArray(value) ? JSON.parse(JSON.stringify(value)) : value;
         });
+        // Neue Bausteine übernehmen die Farben der Gestaltung, damit ein
+        // Newsletter nicht in fremden Akzentfarben beginnt.
+        var meta = state.meta || {};
+        if (type === 'button' && meta.linkColor) { block.bg = meta.linkColor; }
+        if (type === 'heading' && meta.headColor) { block.color = meta.headColor; }
+        if (type === 'divider' && meta.borderColor) { block.color = meta.borderColor; }
         return block;
     }
 
@@ -274,9 +280,13 @@
 
         switch (block.type) {
             case 'heading':
-                box.innerHTML = '<div style="font-size:' + (block.size || 22) + 'px;font-weight:700;color:'
-                    + esc(block.color || '#14243A') + ';text-align:' + esc(block.align) + ';line-height:1.3;">'
-                    + esc(block.text || 'Überschrift') + '</div>';
+                box.appendChild(einzeiler(block, 'text', 'Überschrift', {
+                    fontSize: (block.size || 22) + 'px',
+                    fontWeight: '700',
+                    color: block.color || '#14243A',
+                    textAlign: block.align || 'left',
+                    lineHeight: '1.3'
+                }));
                 break;
 
             case 'text':
@@ -310,10 +320,18 @@
                 break;
 
             case 'button':
-                box.innerHTML = '<div style="text-align:' + esc(block.align) + '">'
-                    + '<span style="display:inline-block;padding:12px 24px;border-radius:' + (block.radius || 6)
-                    + 'px;background:' + esc(block.bg) + ';color:' + esc(block.color)
-                    + ';font-weight:700;font-size:14px;">' + esc(block.label || 'Knopf') + '</span></div>';
+                var huelle = document.createElement('div');
+                huelle.style.textAlign = block.align || 'left';
+                huelle.appendChild(einzeiler(block, 'label', 'Knopf', {
+                    display: 'inline-block',
+                    padding: '12px 24px',
+                    borderRadius: (block.radius || 6) + 'px',
+                    background: block.bg,
+                    color: block.color,
+                    fontWeight: '700',
+                    fontSize: '14px'
+                }));
+                box.appendChild(huelle);
                 break;
 
             case 'divider':
@@ -363,6 +381,46 @@
                 break;
         }
         return box;
+    }
+
+    /**
+     * Ein einzeiliges Feld, das sich direkt im Baustein beschriften lässt –
+     * für Überschrift und Knopf. Nur Text, keine Formatierung.
+     */
+    function einzeiler(block, schluessel, platzhalter, stil) {
+        var feld = document.createElement('div');
+        feld.className = 'bk-inline';
+        feld.contentEditable = 'true';
+        feld.setAttribute('role', 'textbox');
+        feld.setAttribute('data-platzhalter', platzhalter);
+        feld.textContent = block[schluessel] || '';
+        Object.keys(stil).forEach(function (k) { feld.style[k] = stil[k]; });
+
+        feld.addEventListener('input', function () {
+            block[schluessel] = feld.textContent;
+            save();
+        });
+        // Zeilenumbruch beendet die Eingabe, statt eine zweite Zeile zu öffnen
+        feld.addEventListener('keydown', function (event) {
+            if (event.key === 'Enter') { event.preventDefault(); feld.blur(); }
+        });
+        // Nur reinen Text einfügen
+        feld.addEventListener('paste', function (event) {
+            event.preventDefault();
+            var text = (event.clipboardData || window.clipboardData).getData('text');
+            document.execCommand('insertText', false, text.replace(/\s+/g, ' '));
+        });
+        feld.addEventListener('focus', function () {
+            lastFocus = feld;
+            selected = block.id;
+            markSelection();
+            renderInspector();
+        });
+        feld.addEventListener('mousedown', function (event) { event.stopPropagation(); lastFocus = feld; });
+        ['keyup', 'mouseup', 'blur'].forEach(function (name) {
+            feld.addEventListener(name, function () { lastFocus = feld; merkeSchreibmarke(feld); });
+        });
+        return feld;
     }
 
     /** Kleine Leiste über dem Textfeld: fett, kursiv, Link, Liste. */
@@ -460,31 +518,35 @@
 
     function renderInspector() {
         inspector.innerHTML = '';
-        inspector.appendChild(metaPanel());
 
         var block = selected ? findBlock(selected) : null;
-        if (!block) {
+
+        // Der angeklickte Baustein steht oben – sonst sucht man seine
+        // Einstellungen unterhalb der langen Gestaltungsleiste.
+        if (block) {
+            var karte = document.createElement('div');
+            karte.className = 'bk-panel';
+            karte.innerHTML = '<h3>' + esc(window.NL_BLOCK_LABELS[block.type] || block.type) + '</h3>';
+
+            (FIELDS[block.type] || []).forEach(function (feld) {
+                karte.appendChild(fieldRow(block, feld));
+            });
+            if ((FIELDS[block.type] || []).length === 0) {
+                var p = document.createElement('p');
+                p.className = 'bk-hint';
+                p.textContent = 'Dieser Baustein hat keine Einstellungen.';
+                karte.appendChild(p);
+            }
+            inspector.appendChild(karte);
+        } else {
             var hinweisBox = document.createElement('p');
             hinweisBox.className = 'bk-hint';
-            hinweisBox.textContent = 'Klicken Sie auf einen Baustein, um ihn einzustellen.';
+            hinweisBox.textContent = 'Klicken Sie auf einen Baustein, um ihn einzustellen. '
+                + 'Texte und Überschriften lassen sich auch direkt anklicken und überschreiben.';
             inspector.appendChild(hinweisBox);
-            return;
         }
 
-        var karte = document.createElement('div');
-        karte.className = 'bk-panel';
-        karte.innerHTML = '<h3>' + esc(window.NL_BLOCK_LABELS[block.type] || block.type) + '</h3>';
-
-        (FIELDS[block.type] || []).forEach(function (feld) {
-            karte.appendChild(fieldRow(block, feld));
-        });
-        if ((FIELDS[block.type] || []).length === 0) {
-            var p = document.createElement('p');
-            p.className = 'bk-hint';
-            p.textContent = 'Dieser Baustein hat keine Einstellungen.';
-            karte.appendChild(p);
-        }
-        inspector.appendChild(karte);
+        inspector.appendChild(metaPanel());
     }
 
     function fieldRow(block, feld) {
@@ -745,6 +807,8 @@
 
     /* ----------------------------------------------------- Grundeinstellungen */
 
+    var offeneGruppen = {};
+
     function metaPanel() {
         var karte = document.createElement('div');
         karte.className = 'bk-panel';
@@ -757,6 +821,7 @@
         ];
         if (MODE === 'template') {
             felder = felder.concat([
+                { gruppe: 'Seite und Maße' },
                 { k: 'headFont', t: 'font', l: 'Schrift für Überschriften', leer: '— wie Fließtext —' },
                 { k: 'bg', t: 'color', l: 'Seitenhintergrund' },
                 { k: 'cardBg', t: 'color', l: 'Inhaltsfläche' },
@@ -792,15 +857,26 @@
             ]);
         }
 
+        // Kopfzeile und Footer stecken in aufklappbaren Abschnitten – sonst
+        // wird die Leiste so lang, dass die Baustein-Einstellungen untergehen.
+        var ziel = karte;
         felder.forEach(function (feld) {
             if (feld.gruppe) {
-                var titel = document.createElement('h4');
+                var kasten = document.createElement('details');
+                kasten.className = 'bk-group-box';
+                kasten.open = offeneGruppen[feld.gruppe] === true;
+                var titel = document.createElement('summary');
                 titel.className = 'bk-group';
                 titel.textContent = feld.gruppe;
-                karte.appendChild(titel);
+                kasten.appendChild(titel);
+                kasten.addEventListener('toggle', function () {
+                    offeneGruppen[feld.gruppe] = kasten.open;
+                });
+                karte.appendChild(kasten);
+                ziel = kasten;
                 return;
             }
-            karte.appendChild(metaRow(feld));
+            ziel.appendChild(metaRow(feld));
         });
 
         if (MODE === 'template') {

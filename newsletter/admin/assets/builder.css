@@ -338,3 +338,16 @@
     color: var(--ad-muted, #8A95A5);
 }
 .bk-group:first-of-type { border-top: 0; }
+
+/* Aufklappbare Abschnitte in der Gestaltungsleiste */
+.bk-group-box { margin: 14px 0 0; border-top: 1px solid var(--ad-border, #E0E6ED); }
+.bk-group-box > summary { cursor: pointer; list-style: none; padding: 10px 0 6px; }
+.bk-group-box > summary::-webkit-details-marker { display: none; }
+.bk-group-box > summary::after { content: " ▸"; color: var(--ad-muted, #8A95A5); }
+.bk-group-box[open] > summary::after { content: " ▾"; }
+
+/* Direkt beschriftbare Felder im Baustein */
+.bk-inline { outline: none; border-radius: 3px; min-height: 1em; cursor: text; }
+.bk-inline:hover { box-shadow: 0 0 0 1px var(--ad-border, #E0E6ED); }
+.bk-inline:focus { box-shadow: 0 0 0 2px var(--ad-accent, #C8102E); }
+.bk-inline:empty::before { content: attr(data-platzhalter); color: var(--ad-muted, #8A95A5); }

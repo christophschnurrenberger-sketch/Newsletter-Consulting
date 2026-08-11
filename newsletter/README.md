@@ -76,6 +76,10 @@ brauchen Sie nur noch für Sonderfälle.
 
 * Baustein aus der linken Leiste in die Mail **ziehen** – oder anklicken, dann
   wird er unten angehängt.
+* **Texte schreiben Sie direkt im Baustein:** Textabsatz, Überschrift und
+  Knopfbeschriftung lassen sich anklicken und überschreiben.
+* Rechts stehen oben die Einstellungen des angeklickten Bausteins, darunter
+  die Gestaltung der ganzen Mail (aufklappbar nach Seite, Kopfzeile, Footer).
 * Vorhandene Bausteine am Griff `⠿` verschieben; auf dem Handy über die
   Pfeiltasten `↑ ↓` am Baustein.
 * Texte schreiben Sie direkt in der Vorschau. Rechts stellen Sie Größe, Farbe,
@@ -442,7 +446,7 @@ welche Seite wie viele Anmeldungen bringt.
 2. Eine beliebige Seite aufrufen. Die Datenbank wird automatisch auf den neuen
    Stand gebracht (neue Spalten und Tabellen werden ergänzt).
 3. Prüfen: Im Admin-Bereich steht unten die Fassung, z. B.
-   `Fassung 1.4.0 (Freies Vorlagen-Design) · Datenbank 5`. Dasselbe zeigt `systemcheck.php`.
+   `Fassung 1.4.1 (Freies Vorlagen-Design) · Datenbank 5`. Dasselbe zeigt `systemcheck.php`.
 
 Ändert sich nichts, liegen meist ältere Dateien auf dem Server: `systemcheck.php`
 nennt die gefundene Fassung und ob der Baukasten dabei ist. Im Browser hilft ein

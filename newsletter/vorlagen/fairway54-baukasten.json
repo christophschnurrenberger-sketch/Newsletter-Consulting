@@ -1,6 +1,6 @@
 {
     "vorlage": "Fairway54 (Baukasten)",
-    "beschreibung": "Golf-Design zum Weiterbauen: Wortmarke, warmes Papier, dunkelgrüner Footer mit Partnerlink-Hinweis.",
+    "beschreibung": "Golf-Design zum Weiterbauen: Kopfzeile, Inhalt und Footer sind Bausteine.",
     "marke": "Fairway54",
     "website": "https://www.fairway54.de",
     "blocks": {
@@ -15,25 +15,44 @@
             "radius": 2,
             "padding": 40,
             "showHeader": 1,
-            "headerBg": "#FFFFFF",
-            "headerText": "#16261C",
+            "headerBg": "#14243A",
+            "headerText": "#FFFFFF",
             "logoText": "A",
             "showFooter": 1,
-            "headerStyle": "wortmarke",
+            "headerStyle": "logo",
             "headFont": "Georgia, \"Times New Roman\", serif",
-            "wordmark": "Fairway",
-            "wordmarkAccent": "54",
+            "wordmark": "",
+            "wordmarkAccent": "",
             "accentColor": "#1E6B45",
-            "claim": "Golf lernen von HCP 54 bis 36",
+            "claim": "",
             "borderColor": "#E1DED5",
-            "footerBg": "#0E2E1D",
+            "footerBg": "",
             "footerText": "#C6D3CA",
-            "note": "Anzeige: Die mit * markierten Links sind Partnerlinks. Kaufst du darüber, erhalten wir eine Provision. Für dich ändert sich der Preis nicht."
+            "note": ""
         },
         "blocks": [
             {
-                "id": "be05476d0",
+                "id": "ba2703381",
+                "type": "kopf",
+                "stil": "wortmarke",
+                "wortmarke": "Fairway",
+                "akzentTeil": "54",
+                "akzentFarbe": "#1E6B45",
+                "bg": "#FFFFFF",
+                "farbe": "#16261C",
+                "claim": "Golf lernen von HCP 54 bis 36",
+                "logoText": "A"
+            },
+            {
+                "id": "bfaea0eba",
                 "type": "content"
+            },
+            {
+                "id": "bcb54b8c2",
+                "type": "fuss",
+                "bg": "#0E2E1D",
+                "farbe": "#C6D3CA",
+                "hinweis": "Anzeige: Die mit * markierten Links sind Partnerlinks. Kaufst du darüber, erhalten wir eine Provision. Für dich ändert sich der Preis nicht."
             }
         ]
     }

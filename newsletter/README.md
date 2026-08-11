@@ -58,16 +58,24 @@ tabellenbasiertes E-Mail-HTML mit Inline-Stilen, wie es Outlook & Co. brauchen.
 Bild (mit Upload) · Knopf/Call-to-Action · Trennlinie · Abstand · Zwei Spalten ·
 Linkleiste · eigenes HTML · Inhaltsplatzhalter (nur in Vorlagen).
 
-**Kopfzeile und Footer einer Vorlage** stellen Sie rechts unter „Gestaltung“ ein:
+**Eine Vorlage besteht aus drei Bausteinen:** Kopfzeile, „Inhalt der Ausgabe“
+und Footer. Alle drei lassen sich verschieben, einstellen und durch eigene
+Bausteine ergänzen – Sie können also auch etwas über die Kopfzeile setzen oder
+zwischen Inhalt und Footer eine feste Grußformel legen.
 
-* **Art der Kopfzeile:** Logo-Quadrat mit Kürzel oder **Wortmarke als Text** –
-  bei der Wortmarke lässt sich ein Teil farblich hervorheben (etwa die „54“ in
-  „Fairway54“), dazu kommt auf Wunsch ein Claim rechts oben.
+* **Kopfzeile:** Logo-Quadrat mit Kürzel oder **Wortmarke als Text**, bei der ein
+  Teil farblich hervorgehoben wird (etwa die „54“ in „Fairway54“), dazu ein Claim.
+* **Footer:** eigene Farben und ein freier Hinweis über dem Impressum – dort
+  gehört bei Affiliate-Newslettern die Pflichtangabe zu Partnerlinks hin.
+  Impressum, Abmeldelink, Datenschutz und „Im Browser ansehen“ stecken fest darin.
+* Fehlt der Footer-Baustein, hängt das System Impressum und Abmeldelink trotzdem
+  an – beides ist gesetzlich vorgeschrieben.
+
+Für die ganze Mail gilt weiterhin rechts unter „Gestaltung“:
+
 * **Schrift für Überschriften** getrennt vom Fließtext (z. B. Serifen für
   Überschriften, Grotesk für den Text).
-* **Farben** für Seitenhintergrund, Inhaltsfläche, Rahmen, Kopfzeile und Footer.
-* **Hinweis über dem Impressum** – hier gehört bei Affiliate-Newslettern die
-  Pflichtangabe zu Partnerlinks hin.
+* **Farben** für Seitenhintergrund, Inhaltsfläche und Rahmen sowie die Maße.
 
 Damit lässt sich auch ein fremdes Website-Design im Baukasten nachbauen; HTML
 brauchen Sie nur noch für Sonderfälle.
@@ -75,7 +83,10 @@ brauchen Sie nur noch für Sonderfälle.
 **Bedienung**
 
 * Baustein aus der linken Leiste in die Mail **ziehen** – oder anklicken, dann
-  wird er unten angehängt.
+  wird er unten angehängt. Das Ziehen läuft über Zeigerereignisse und
+  funktioniert deshalb in jedem Browser und auch auf dem Handy.
+* Vorhandene Bausteine ziehen Sie am **Kopf des Bausteins**, nicht nur am
+  Griffsymbol.
 * **Texte schreiben Sie direkt im Baustein:** Textabsatz, Überschrift und
   Knopfbeschriftung lassen sich anklicken und überschreiben.
 * Rechts stehen oben die Einstellungen des angeklickten Bausteins, darunter
@@ -448,7 +459,7 @@ welche Seite wie viele Anmeldungen bringt.
 2. Eine beliebige Seite aufrufen. Die Datenbank wird automatisch auf den neuen
    Stand gebracht (neue Spalten und Tabellen werden ergänzt).
 3. Prüfen: Im Admin-Bereich steht unten die Fassung, z. B.
-   `Fassung 1.5.0 (Upload-Prüfung) · Datenbank 5`. Dasselbe zeigt `systemcheck.php`.
+   `Fassung 1.6.0 (Vorlage aus Bausteinen) · Datenbank 5`. Dasselbe zeigt `systemcheck.php`.
 
 **Ändert sich nichts?** Dann sagt `systemcheck.php` genau, woran es liegt:
 

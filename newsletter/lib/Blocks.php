@@ -29,6 +29,8 @@ final class Blocks
         'social'   => 'Links (z. B. Social Media)',
         'html'     => 'Eigenes HTML',
         'content'  => 'Inhalt der Ausgabe',
+        'kopf'     => 'Kopfzeile',
+        'fuss'     => 'Footer (Pflichtangaben)',
     ];
 
     /** Diese Bausteine dürfen in einer Spalte stehen. */
@@ -123,13 +125,22 @@ final class Blocks
         return $meta;
     }
 
-    /** Startaufbau für eine neue Vorlage (mit Platzhalter für den Inhalt). */
+    /**
+     * Startaufbau für eine neue Vorlage: Kopfzeile, Inhalt, Footer.
+     *
+     * Alle drei sind Bausteine – die Vorlage lässt sich also vollständig
+     * im Baukasten zusammenstellen, ohne verstecktes Beiwerk.
+     */
     public static function starterTemplate(): array
     {
+        $meta = self::defaultMeta();
         return [
-            'meta'   => self::defaultMeta(),
+            'meta'   => $meta,
             'blocks' => [
+                self::block('kopf', ['bg' => $meta['headerBg'], 'farbe' => $meta['headerText'],
+                                     'logoText' => $meta['logoText'], 'akzentFarbe' => $meta['linkColor']]),
                 self::block('content'),
+                self::block('fuss', ['farbe' => $meta['footerText']]),
             ],
         ];
     }
@@ -153,6 +164,9 @@ final class Blocks
             'social'  => ['links' => [], 'align' => 'center', 'space' => 12, 'color' => '#8A95A5'],
             'html'    => ['html' => '<p>Eigenes HTML …</p>', 'space' => 12],
             'content' => [],
+            'kopf'    => ['stil' => 'logo', 'bg' => '#14243A', 'farbe' => '#FFFFFF', 'logoText' => 'A',
+                          'wortmarke' => '', 'akzentTeil' => '', 'akzentFarbe' => '#C8102E', 'claim' => ''],
+            'fuss'    => ['bg' => '', 'farbe' => '#8A95A5', 'hinweis' => ''],
         ];
         $block = ['id' => 'b' . bin2hex(random_bytes(4)), 'type' => $type];
         return $block + $data + ($defaults[$type] ?? []);
@@ -325,6 +339,29 @@ final class Blocks
             case 'content':
                 // Kein Inhalt – hier wird später die Ausgabe eingesetzt.
                 break;
+
+            case 'kopf':
+                $block += [
+                    'stil'        => in_array($raw['stil'] ?? '', ['logo', 'wortmarke'], true)
+                                     ? (string) $raw['stil'] : 'logo',
+                    'bg'          => self::color((string) ($raw['bg'] ?? ''), '#14243A'),
+                    'farbe'       => self::color((string) ($raw['farbe'] ?? ''), '#FFFFFF'),
+                    'logoText'    => mb_substr(trim(strip_tags((string) ($raw['logoText'] ?? ''))), 0, 3),
+                    'wortmarke'   => mb_substr(trim(strip_tags((string) ($raw['wortmarke'] ?? ''))), 0, 40),
+                    'akzentTeil'  => mb_substr(trim(strip_tags((string) ($raw['akzentTeil'] ?? ''))), 0, 40),
+                    'akzentFarbe' => self::color((string) ($raw['akzentFarbe'] ?? ''), '#C8102E'),
+                    'claim'       => mb_substr(trim(strip_tags((string) ($raw['claim'] ?? ''))), 0, 120),
+                ];
+                break;
+
+            case 'fuss':
+                $block += [
+                    'bg'      => trim((string) ($raw['bg'] ?? '')) === ''
+                                 ? '' : self::color((string) $raw['bg'], '#FFFFFF'),
+                    'farbe'   => self::color((string) ($raw['farbe'] ?? ''), '#8A95A5'),
+                    'hinweis' => mb_substr(trim(strip_tags((string) ($raw['hinweis'] ?? ''))), 0, 600),
+                ];
+                break;
         }
         return $block;
     }
@@ -376,11 +413,13 @@ final class Blocks
         $meta  = $data['meta'] ?? self::defaultMeta();
         $inner = '';
         $hasContent = false;
+        $hatKopf = false;
+        $hatFuss = false;
 
         foreach ($data['blocks'] ?? [] as $block) {
-            if ($block['type'] === 'content') {
-                $hasContent = true;
-            }
+            if ($block['type'] === 'content') { $hasContent = true; }
+            if ($block['type'] === 'kopf')    { $hatKopf = true; }
+            if ($block['type'] === 'fuss')    { $hatFuss = true; }
             $inner .= self::renderBlock($block, $meta);
         }
         // Ohne Inhaltsbaustein bliebe die Vorlage leer – deshalb anhängen.
@@ -395,8 +434,9 @@ final class Blocks
         // Schrift für Überschriften und Wortmarke – leer heißt: wie der Fließtext
         $headFont = trim((string) $meta['headFont']) !== '' ? (string) $meta['headFont'] : $font;
 
+        // Steckt die Kopfzeile als Baustein im Ablauf, wird sie dort gezeichnet.
         $header = '';
-        if (!empty($meta['showHeader'])) {
+        if (!$hatKopf && !empty($meta['showHeader'])) {
             $rand = $meta['headerStyle'] === 'wortmarke'
                 ? ';border-bottom:1px solid ' . $meta['borderColor']
                 : '';
@@ -420,7 +460,10 @@ final class Blocks
         }
 
         $footer = '';
-        if (!empty($meta['showFooter'])) {
+        if ($hatFuss) {
+            // Der Footer-Baustein bringt Impressum und Abmeldelink selbst mit.
+            $footer = '';
+        } elseif (!empty($meta['showFooter'])) {
             $footer = '<tr><td style="background-color:' . $footerBg . ';padding:20px ' . $pad
                 . 'px;border-top:1px solid ' . $meta['borderColor'] . ';font-family:' . $font
                 . ';color:' . $footerText . ';font-size:12px;line-height:1.6;">'
@@ -460,6 +503,94 @@ final class Blocks
             . ';font-size:15px;line-height:1.65;">' . "\n" . $inner . "\n" . '</td></tr>' . "\n"
             . $footer
             . '</table></td></tr></table></body></html>';
+    }
+
+    /**
+     * Kopfzeile als eigener Baustein – frei platzierbar in der Vorlage.
+     *
+     * @param array<string,mixed> $block
+     * @param array<string,mixed> $meta
+     */
+    private static function renderKopf(array $block, array $meta): string
+    {
+        $font     = (string) $meta['font'];
+        $headFont = trim((string) $meta['headFont']) !== '' ? (string) $meta['headFont'] : $font;
+        $pad      = (int) $meta['padding'];
+
+        $claim = trim((string) $block['claim']) !== ''
+            ? '<td class="nl-col nl-claim" align="right" style="font-family:' . $font
+              . ';font-size:11px;font-weight:bold;letter-spacing:0.08em;text-transform:uppercase;color:'
+              . $meta['footerText'] . ';">' . Util::e((string) $block['claim']) . '</td>'
+            : '';
+
+        if ($block['stil'] === 'wortmarke') {
+            $name  = trim((string) $block['wortmarke']);
+            $marke = $name !== '' ? Util::e($name) : '{{marke}}';
+            if (trim((string) $block['akzentTeil']) !== '') {
+                $marke .= '<span style="color:' . $block['akzentFarbe'] . ';">'
+                        . Util::e((string) $block['akzentTeil']) . '</span>';
+            }
+            $inhalt = '<td class="nl-col" align="left" style="font-family:' . $headFont
+                . ';font-size:28px;line-height:1;font-weight:bold;letter-spacing:-0.03em;color:'
+                . $block['farbe'] . ';">' . $marke . '</td>' . $claim;
+        } else {
+            $inhalt = '<td class="nl-col" align="left">'
+                . '<table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr>'
+                . '<td style="background-color:' . $meta['cardBg'] . ';color:' . $block['bg']
+                . ';width:36px;height:36px;border-radius:7px;font-family:' . $font
+                . ';font-weight:bold;font-size:18px;text-align:center;line-height:36px;">'
+                . Util::e((string) $block['logoText']) . '</td>'
+                . '<td style="padding-left:12px;color:' . $block['farbe'] . ';font-family:' . $headFont
+                . ';font-weight:bold;font-size:18px;letter-spacing:0.2px;">{{marke}}</td>'
+                . '</tr></table></td>' . $claim;
+        }
+
+        // Der Baustein bringt seinen eigenen Rand mit, damit er die volle
+        // Breite der Inhaltsfläche einnimmt.
+        return '</td></tr><tr><td style="background-color:' . $block['bg'] . ';padding:22px ' . $pad
+            . 'px;border-bottom:1px solid ' . $meta['borderColor'] . ';">'
+            . '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr>'
+            . $inhalt . '</tr></table>'
+            . '</td></tr><tr><td style="padding:' . $pad . 'px ' . $pad . 'px 0;font-family:' . $font
+            . ';color:' . $meta['textColor'] . ';font-size:15px;line-height:1.65;">';
+    }
+
+    /**
+     * Footer als eigener Baustein. Abmeldelink und Impressum sind Pflicht
+     * und stehen deshalb fest darin.
+     *
+     * @param array<string,mixed> $block
+     * @param array<string,mixed> $meta
+     */
+    private static function renderFuss(array $block, array $meta): string
+    {
+        $font  = (string) $meta['font'];
+        $pad   = (int) $meta['padding'];
+        $bg    = trim((string) $block['bg']) !== '' ? (string) $block['bg'] : (string) $meta['bg'];
+        $farbe = (string) $block['farbe'];
+        $link  = 'style="color:' . $farbe . ';text-decoration:underline;"';
+
+        $hinweis = '';
+        if (trim((string) $block['hinweis']) !== '') {
+            $hinweis = '<div style="margin-bottom:14px;padding:12px 14px;border-left:2px solid '
+                . $meta['accentColor'] . ';font-size:12px;line-height:1.55;">'
+                . nl2br(Util::e((string) $block['hinweis'])) . '</div>';
+        }
+
+        return '</td></tr><tr><td style="background-color:' . $bg . ';padding:20px ' . $pad
+            . 'px;border-top:1px solid ' . $meta['borderColor'] . ';font-family:' . $font
+            . ';color:' . $farbe . ';font-size:12px;line-height:1.6;">'
+            . 'Sie erhalten diese E-Mail, weil Sie sich unter {{website}} für unseren Newsletter '
+            . 'angemeldet und die Anmeldung bestätigt haben.<br><br>'
+            . $hinweis
+            . '{{impressum}}<br><br>'
+            . '<a href="{{abmelden_url}}" ' . $link . '>Newsletter abbestellen</a> &middot; '
+            . '<a href="{{praeferenzen_url}}" ' . $link . '>Daten &amp; Einstellungen</a> &middot; '
+            . '<a href="{{datenschutz_url}}" ' . $link . '>Datenschutz</a> &middot; '
+            . '<a href="{{impressum_url}}" ' . $link . '>Impressum</a> &middot; '
+            . '<a href="{{webansicht_url}}" ' . $link . '>Im Browser ansehen</a>'
+            . '</td></tr><tr><td style="padding:0 ' . $pad . 'px ' . $pad . 'px;font-family:' . $font
+            . ';color:' . $meta['textColor'] . ';font-size:15px;line-height:1.65;">';
     }
 
     /**
@@ -626,6 +757,12 @@ final class Blocks
 
             case 'content':
                 return '{{inhalt}}' . "\n";
+
+            case 'kopf':
+                return self::renderKopf($block, $meta);
+
+            case 'fuss':
+                return self::renderFuss($block, $meta);
         }
         return '';
     }
@@ -687,6 +824,13 @@ final class Blocks
                 return implode("\n", $parts);
             case 'content':
                 return '{{inhalt}}';
+
+            case 'kopf':
+                return '';
+
+            case 'fuss':
+                return trim((string) ($block['hinweis'] ?? '')) !== ''
+                    ? (string) $block['hinweis'] : '';
         }
         return '';
     }

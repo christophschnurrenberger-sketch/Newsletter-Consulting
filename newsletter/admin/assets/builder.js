@@ -66,7 +66,10 @@
         columns: { gap: 20, space: 12, left: [], right: [] },
         social:  { links: [{ label: 'LinkedIn', href: '' }, { label: 'Website', href: '' }], align: 'center', color: '#8A95A5', space: 12 },
         html:    { html: '<p>Eigenes HTML …</p>', space: 12 },
-        content: {}
+        content: {},
+        kopf:    { stil: 'logo', bg: '#14243A', farbe: '#FFFFFF', logoText: 'A',
+                   wortmarke: '', akzentTeil: '', akzentFarbe: '#C8102E', claim: '' },
+        fuss:    { bg: '', farbe: '#8A95A5', hinweis: '' }
     };
 
     function makeBlock(type) {
@@ -490,6 +493,32 @@
             case 'content':
                 box.innerHTML = '<div class="bk-content-slot">Hier erscheint der Inhalt der jeweiligen Ausgabe</div>';
                 break;
+
+            case 'kopf':
+                var marke = esc(block.wortmarke || '{{marke}}');
+                if (block.stil === 'wortmarke' && block.akzentTeil) {
+                    marke += '<span style="color:' + esc(block.akzentFarbe) + '">' + esc(block.akzentTeil) + '</span>';
+                }
+                box.innerHTML = '<div style="background:' + esc(block.bg) + ';color:' + esc(block.farbe)
+                    + ';padding:14px 16px;border-radius:4px;display:flex;justify-content:space-between;'
+                    + 'align-items:center;gap:12px;">'
+                    + (block.stil === 'wortmarke'
+                        ? '<span style="font-size:20px;font-weight:700;letter-spacing:-.02em;">' + marke + '</span>'
+                        : '<span style="font-weight:700;"><span style="display:inline-block;width:24px;height:24px;'
+                          + 'line-height:24px;text-align:center;border-radius:5px;background:#fff;color:'
+                          + esc(block.bg) + ';margin-right:8px;">' + esc(block.logoText || 'A') + '</span>{{marke}}</span>')
+                    + '<span style="font-size:10px;letter-spacing:.08em;text-transform:uppercase;opacity:.75;">'
+                    + esc(block.claim || '') + '</span></div>';
+                break;
+
+            case 'fuss':
+                box.innerHTML = '<div style="background:' + esc(block.bg || meta.bg || '#F6F8FA') + ';color:'
+                    + esc(block.farbe) + ';padding:14px 16px;border-radius:4px;font-size:12px;line-height:1.6;">'
+                    + (block.hinweis ? '<div style="border-left:2px solid ' + esc(meta.accentColor || '#C8102E')
+                        + ';padding-left:10px;margin-bottom:10px;">' + esc(block.hinweis) + '</div>' : '')
+                    + 'Impressum, Abmeldelink, Datenschutz und „Im Browser ansehen“ – '
+                    + 'stehen fest drin und sind gesetzlich vorgeschrieben.</div>';
+                break;
         }
         return box;
     }
@@ -624,7 +653,23 @@
             { k: 'html', t: 'textarea', l: 'HTML-Code' },
             { k: 'space', t: 'number', l: 'Abstand unten (px)', min: 0, max: 80 }
         ],
-        content: []
+        content: [],
+        kopf: [
+            { k: 'stil', t: 'select', l: 'Art der Kopfzeile',
+              o: { logo: 'Logo-Quadrat mit Kürzel', wortmarke: 'Wortmarke als Text' } },
+            { k: 'bg', t: 'color', l: 'Hintergrund' },
+            { k: 'farbe', t: 'color', l: 'Schriftfarbe' },
+            { k: 'logoText', t: 'text', l: 'Kürzel im Logo (max. 3 Zeichen)' },
+            { k: 'wortmarke', t: 'text', l: 'Wortmarke (leer = Name der Marke)' },
+            { k: 'akzentTeil', t: 'text', l: 'Hervorgehobener Teil (z. B. „54")' },
+            { k: 'akzentFarbe', t: 'color', l: 'Farbe des hervorgehobenen Teils' },
+            { k: 'claim', t: 'text', l: 'Claim rechts oben (optional)' }
+        ],
+        fuss: [
+            { k: 'bg', t: 'color', l: 'Hintergrund (leer = Seitenfarbe)' },
+            { k: 'farbe', t: 'color', l: 'Schriftfarbe' },
+            { k: 'hinweis', t: 'textarea', l: 'Hinweis über dem Impressum (z. B. Partnerlinks)' }
+        ]
     };
 
     function renderInspector() {
@@ -666,6 +711,24 @@
         var label = document.createElement('label');
         label.textContent = feld.l;
         zeile.appendChild(label);
+
+        if (feld.t === 'select') {
+            var auswahl = document.createElement('select');
+            auswahl.className = 'bk-input';
+            Object.keys(feld.o).forEach(function (wert) {
+                var option = document.createElement('option');
+                option.value = wert;
+                option.textContent = feld.o[wert];
+                option.selected = String(block[feld.k]) === wert;
+                auswahl.appendChild(option);
+            });
+            auswahl.addEventListener('change', function () {
+                block[feld.k] = auswahl.value;
+                render();
+            });
+            zeile.appendChild(auswahl);
+            return zeile;
+        }
 
         if (feld.t === 'align') {
             var gruppe = document.createElement('div');

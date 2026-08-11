@@ -16,12 +16,13 @@ function builder_ui(array $blocks, string $mode = 'campaign', string $fieldName 
 {
     $typen = Blocks::TYPES;
     if ($mode !== 'template') {
-        unset($typen['content']); // nur Vorlagen haben einen Inhaltsplatzhalter
+        // Inhaltsplatzhalter, Kopfzeile und Footer gehören zur Vorlage
+        unset($typen['content'], $typen['kopf'], $typen['fuss']);
     }
     $icons = [
         'heading' => 'H', 'text' => '¶', 'image' => '▣', 'button' => '⬛',
         'divider' => '—', 'spacer' => '↕', 'columns' => '▥', 'social' => '⋯',
-        'html' => '&lt;/&gt;', 'content' => '⧉',
+        'html' => '&lt;/&gt;', 'content' => '⧉', 'kopf' => '▤', 'fuss' => '▨',
     ];
     ?>
     <div class="bk" data-builder data-mode="<?= Util::e($mode) ?>"

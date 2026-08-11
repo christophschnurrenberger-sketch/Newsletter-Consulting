@@ -109,6 +109,15 @@ if (Util::isPost()) {
         }
         Util::redirect('vorlagen.php?id=' . $id);
     }
+    if ($action === 'aus_datei') {
+        $neuId = Templates::createFromFile(Util::post('datei'));
+        if ($neuId === 0) {
+            Util::flash('Diese mitgelieferte Vorlage gibt es nicht.', 'error');
+            Util::redirect('vorlagen.php');
+        }
+        Util::flash('Vorlage übernommen. Prüfen Sie unten die Angaben unter „Marke dieser Vorlage".');
+        Util::redirect('vorlagen.php?id=' . $neuId);
+    }
     if ($action === 'standard' && $id > 0) {
         Templates::makeDefault($id);
         Util::flash('Standardvorlage geändert.');
@@ -146,6 +155,31 @@ $current   = Templates::byId(Util::getInt('id')) ?? Templates::defaultTemplate()
         <button type="submit" name="baukasten" value="0" class="ad-btn ad-btn-secondary">Neu als HTML</button>
     </form>
 </div>
+
+<?php $fertige = Templates::files(); ?>
+<?php if ($fertige !== []): ?>
+    <div class="ad-card">
+        <h2 style="margin-top:0;">Fertige Vorlage übernehmen</h2>
+        <p class="ad-hint">Mitgelieferte Entwürfe aus dem Ordner <code>newsletter/vorlagen/</code> –
+            fertig gestaltet, danach beliebig änderbar.</p>
+        <form method="post" class="ad-actions-inline" style="margin-top:10px;">
+            <?= Util::csrfField() ?>
+            <input type="hidden" name="aktion" value="aus_datei">
+            <select name="datei" class="ad-input" style="width:auto;min-width:240px;">
+                <?php foreach ($fertige as $schluessel => $angaben): ?>
+                    <option value="<?= Util::e($schluessel) ?>"><?= Util::e($angaben['name']) ?></option>
+                <?php endforeach; ?>
+            </select>
+            <button type="submit" class="ad-btn ad-btn-secondary">Übernehmen</button>
+        </form>
+        <ul class="ad-hint" style="margin:12px 0 0 18px;padding:0;">
+            <?php foreach ($fertige as $angaben): ?>
+                <li><strong><?= Util::e($angaben['name']) ?></strong><?= $angaben['description'] !== ''
+                    ? ' – ' . Util::e($angaben['description']) : '' ?></li>
+            <?php endforeach; ?>
+        </ul>
+    </div>
+<?php endif; ?>
 
 <div class="ad-card ad-card-tight">
     <div class="ad-actions" style="margin-top:0;">

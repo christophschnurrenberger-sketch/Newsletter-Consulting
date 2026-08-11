@@ -191,6 +191,17 @@ Pro Projekt brauchen Sie drei Dinge:
 **Leere Felder greifen auf die Einstellungen zurück.** Die Hauptmarke braucht
 also nichts einzutragen – für sie bleibt alles wie bisher.
 
+**Abkürzung:** Unter Vorlagen → „Fertige Vorlage übernehmen" liegen fertig
+gestaltete Entwürfe aus dem Ordner `newsletter/vorlagen/`. Sie bringen Name und
+Website schon mit; Impressum und Absender tragen Sie danach unter „Marke dieser
+Vorlage" nach. Eigene Entwürfe legen Sie einfach als weitere `.html`-Datei in
+diesen Ordner – mit einem Kommentarkopf aus `Vorlage:`, `Beschreibung:`,
+`Marke:` und `Website:`, dann erscheinen sie automatisch in der Auswahl.
+
+Der **Inhalt** einer Ausgabe entsteht weiterhin im Baukasten. Farben für Links
+und Knöpfe stellen Sie dort rechts unter „Gestaltung" ein – bei einer zweiten
+Marke also einmal auf deren Akzentfarbe setzen.
+
 Beim Schreiben eines Newsletters wählen Sie oben die passende **Vorlage** und
 die passende **Liste**; Absendername und -adresse stehen im Editor und lassen
 sich pro Ausgabe überschreiben. Automationen übernehmen den Absender aus der
@@ -349,6 +360,7 @@ newsletter/
 │   └── wartung.php          Aufräumen (täglich)
 │
 ├── uploads/                 hochgeladene Bilder für den Baukasten
+├── vorlagen/                fertige Vorlagen zum Übernehmen (HTML-Dateien)
 ├── lib/                     Programmkern (siehe unten)
 └── data/                    Datenbank, Sperrdatei, Testpostausgang (gesperrt)
 ```

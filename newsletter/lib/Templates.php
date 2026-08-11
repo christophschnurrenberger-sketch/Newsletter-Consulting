@@ -170,6 +170,63 @@ final class Templates
         DB::delete('templates', 'id = ?', [$id]);
     }
 
+    /* -------------------------------------------------- Fertige Vorlagen */
+
+    /**
+     * Fertige Vorlagen aus dem Ordner newsletter/vorlagen/.
+     *
+     * Jede Datei beginnt mit einem Kommentarkopf:
+     *   Vorlage:      Name in der Auswahl
+     *   Beschreibung: kurze Erläuterung
+     *   Marke:        Vorschlag für den Markennamen
+     *   Website:      Vorschlag für die Website
+     *
+     * @return array<string,array{name:string,description:string,brand:string,website:string}>
+     */
+    public static function files(): array
+    {
+        $out = [];
+        foreach (glob(NL_ROOT . '/vorlagen/*.html') ?: [] as $pfad) {
+            $kopf = (string) file_get_contents($pfad, false, null, 0, 800);
+            $lies = static function (string $feld) use ($kopf): string {
+                return preg_match('/^\s*' . $feld . ':\s*(.+)$/mu', $kopf, $t) ? trim($t[1]) : '';
+            };
+            $schluessel = basename($pfad, '.html');
+            $out[$schluessel] = [
+                'name'        => $lies('Vorlage') ?: $schluessel,
+                'description' => $lies('Beschreibung'),
+                'brand'       => $lies('Marke'),
+                'website'     => $lies('Website'),
+            ];
+        }
+        ksort($out);
+        return $out;
+    }
+
+    /**
+     * Legt eine Vorlage aus einer mitgelieferten Datei an – samt Marke,
+     * damit Kopfzeile und Footer sofort stimmen.
+     *
+     * @return int Kennung der neuen Vorlage, 0 wenn die Datei fehlt
+     */
+    public static function createFromFile(string $schluessel): int
+    {
+        $schluessel = preg_replace('/[^a-z0-9_-]/i', '', $schluessel) ?? '';
+        $pfad       = NL_ROOT . '/vorlagen/' . $schluessel . '.html';
+        $angaben    = self::files()[$schluessel] ?? null;
+        if ($angaben === null || !is_file($pfad)) {
+            return 0;
+        }
+        $id = self::create($angaben['name'], (string) file_get_contents($pfad), $angaben['description']);
+        if ($angaben['brand'] !== '' || $angaben['website'] !== '') {
+            self::saveBrand($id, [
+                'brand_name'  => $angaben['brand'],
+                'website_url' => $angaben['website'],
+            ]);
+        }
+        return $id;
+    }
+
     /** Legt beim ersten Start die mitgelieferten Vorlagen an. */
     public static function ensureDefaults(): void
     {

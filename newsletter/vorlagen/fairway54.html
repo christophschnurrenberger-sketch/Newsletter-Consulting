@@ -1,0 +1,116 @@
+<!--
+Vorlage: Fairway54
+Beschreibung: Redaktionelles Golf-Design – warmes Papier, Serifen-Überschriften, dunkelgrüner Footer mit Partnerlink-Hinweis.
+Marke: Fairway54
+Website: https://www.fairway54.de
+-->
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="x-apple-disable-message-reformatting">
+<title>{{betreff}}</title>
+<!--[if mso]>
+<style>body,table,td,p,a,span{font-family:Arial,Helvetica,sans-serif !important;}</style>
+<![endif]-->
+<style>
+    /* Auf schmalen Geräten sacken die zwei Spalten untereinander. */
+    @media only screen and (max-width:620px) {
+        .nl-wrap { width:100% !important; }
+        .nl-pad { padding-left:22px !important; padding-right:22px !important; }
+        .nl-col { display:block !important; width:100% !important; padding-right:0 !important; }
+        .nl-h1 { font-size:26px !important; line-height:1.22 !important; }
+        /* Wortmarke und Claim untereinander statt nebeneinander */
+        .nl-claim { text-align:left !important; padding-top:8px !important; }
+    }
+    a { color:#1E6B45; }
+</style>
+</head>
+<body style="margin:0;padding:0;background-color:#FAF9F5;-webkit-font-smoothing:antialiased;">
+
+<!-- Vorschautext im Postfach, in der Mail selbst unsichtbar -->
+<span style="display:none!important;opacity:0;color:#FAF9F5;font-size:1px;line-height:1px;max-height:0;max-width:0;overflow:hidden;">{{preheader}}</span>
+
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#FAF9F5;">
+<tr><td align="center" style="padding:28px 12px;">
+
+  <table role="presentation" width="620" cellpadding="0" cellspacing="0" border="0" class="nl-wrap"
+         style="max-width:620px;width:100%;background-color:#FFFFFF;border:1px solid #E1DED5;border-radius:2px;">
+
+    <!-- Kopf: Wortmarke wie auf der Website, Serifen mit grüner 54 -->
+    <tr><td class="nl-pad" style="padding:26px 40px 18px;border-bottom:1px solid #E1DED5;">
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr>
+        <td class="nl-col" align="left" style="font-family:Georgia,'Times New Roman',serif;font-size:28px;line-height:1;
+                                font-weight:700;letter-spacing:-0.03em;color:#16261C;">
+          Fairway<span style="color:#1E6B45;">54</span>
+        </td>
+        <td class="nl-col nl-claim" align="right" style="font-family:-apple-system,'Segoe UI',Arial,Helvetica,sans-serif;font-size:11px;
+                                 font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#6E7A72;">
+          Golf lernen von HCP&nbsp;54 bis 36
+        </td>
+      </tr></table>
+    </td></tr>
+
+    <!-- Inhalt der jeweiligen Ausgabe -->
+    <tr><td class="nl-pad" style="padding:30px 40px 34px;font-family:-apple-system,'Segoe UI',Arial,Helvetica,sans-serif;
+                                  font-size:17px;line-height:1.62;color:#3F4A43;">
+      {{inhalt}}
+    </td></tr>
+
+    <!-- Abbinder mit Verweis auf die Website -->
+    <tr><td class="nl-pad" style="padding:0 40px 30px;">
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr><td style="border-top:1px solid #E1DED5;padding-top:18px;
+                       font-family:-apple-system,'Segoe UI',Arial,Helvetica,sans-serif;font-size:14px;
+                       line-height:1.6;color:#6E7A72;">
+          Mehr Übungen, Tests und Kaufberatung für den Weg von Handicap&nbsp;54 auf 36:
+          <a href="{{website_url}}" style="color:#1E6B45;font-weight:700;text-decoration:underline;">{{website}}</a>
+        </td></tr>
+      </table>
+    </td></tr>
+
+  </table>
+
+  <!-- Footer im dunklen Grün der Website -->
+  <table role="presentation" width="620" cellpadding="0" cellspacing="0" border="0" class="nl-wrap"
+         style="max-width:620px;width:100%;background-color:#0E2E1D;border-radius:2px;margin-top:14px;">
+    <tr><td class="nl-pad" style="padding:26px 40px;font-family:-apple-system,'Segoe UI',Arial,Helvetica,sans-serif;
+                                  font-size:13px;line-height:1.62;color:rgba(255,255,255,0.72);">
+
+      <div style="font-family:Georgia,'Times New Roman',serif;font-size:20px;font-weight:700;
+                  letter-spacing:-0.02em;color:#FFFFFF;padding-bottom:10px;">Fairway54</div>
+
+      <p style="margin:0 0 14px;">
+        Sie erhalten diese E-Mail, weil Sie sich unter {{website}} für den Newsletter angemeldet
+        und die Anmeldung bestätigt haben.
+      </p>
+
+      <!-- Pflichtangabe für Partnerlinks (UWG) -->
+      <p style="margin:0 0 14px;padding:12px 14px;background-color:rgba(255,255,255,0.06);
+                border-left:2px solid #D9B44A;color:rgba(255,255,255,0.6);font-size:12px;line-height:1.55;">
+        <strong style="color:rgba(255,255,255,0.8);">Anzeige:</strong> Die mit * markierten Links sind
+        Partnerlinks. Kaufst du darüber, erhalten wir eine Provision. Für dich ändert sich der Preis nicht.
+      </p>
+
+      <p style="margin:0 0 14px;color:rgba(255,255,255,0.6);font-size:12px;">{{impressum}}</p>
+
+      <p style="margin:0;padding-top:14px;border-top:1px solid rgba(255,255,255,0.16);font-size:12px;">
+        <a href="{{abmelden_url}}" style="color:rgba(255,255,255,0.8);text-decoration:underline;">Newsletter abbestellen</a>
+        &nbsp;·&nbsp;
+        <a href="{{praeferenzen_url}}" style="color:rgba(255,255,255,0.8);text-decoration:underline;">Daten &amp; Einstellungen</a>
+        &nbsp;·&nbsp;
+        <a href="{{datenschutz_url}}" style="color:rgba(255,255,255,0.8);text-decoration:underline;">Datenschutz</a>
+        &nbsp;·&nbsp;
+        <a href="{{impressum_url}}" style="color:rgba(255,255,255,0.8);text-decoration:underline;">Impressum</a>
+        &nbsp;·&nbsp;
+        <a href="{{webansicht_url}}" style="color:rgba(255,255,255,0.8);text-decoration:underline;">Im Browser ansehen</a>
+      </p>
+
+    </td></tr>
+  </table>
+
+</td></tr>
+</table>
+</body>
+</html>

@@ -35,6 +35,42 @@ final class Renderer
         return $html;
     }
 
+    /**
+     * Setzt die Markenangaben einer Vorlage ein – Name, Website, Impressum.
+     *
+     * Das passiert schon beim Kompilieren und nicht erst beim Versand: So
+     * kostet es nichts pro Empfänger, und in der fertigen Mail steht von
+     * Anfang an die richtige Marke. Vorlagen ohne eigene Marke bleiben
+     * unberührt; für sie gelten wie bisher die Einstellungen.
+     *
+     * @param bool $html true für HTML (maskiert, Zeilenumbrüche als <br>),
+     *                   false für die Textfassung
+     */
+    public static function applyBrand(string $inhalt, ?array $template, bool $html): string
+    {
+        if (!Templates::hasOwnBrand($template)) {
+            return $inhalt;
+        }
+        $brand = Templates::brand($template);
+        $esc   = static fn(string $v): string => $html ? Util::e($v) : $v;
+
+        return str_replace([
+            '{{marke}}',
+            '{{website}}',
+            '{{website_url}}',
+            '{{impressum}}',
+            '{{impressum_url}}',
+            '{{datenschutz_url}}',
+        ], [
+            $esc($brand['brand_name']),
+            $esc(self::displayHost($brand['website_url'])),
+            $esc($brand['website_url']),
+            $html ? nl2br(Util::e($brand['imprint'])) : $brand['imprint'],
+            $esc($brand['imprint_url']),
+            $esc($brand['privacy_url']),
+        ], $inhalt);
+    }
+
     /* ------------------------------------------------------------ compile */
 
     /**

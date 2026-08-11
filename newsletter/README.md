@@ -19,8 +19,8 @@ Webhosting mit PHP 8 und einer Datenbank (SQLite genügt).
 4. **install.php löschen** – der Installer weist am Ende darauf hin.
 5. **Anmelden:** `https://ihre-domain.de/newsletter/admin/login.php`
 6. **Versandweg hinterlegen:** Einstellungen → Versandweg → SMTP mit einem echten
-   Postfach Ihrer Domain (siehe Abschnitt 7).
-7. **Cron-Job einrichten:** alle 5 Minuten (siehe Abschnitt 6).
+   Postfach Ihrer Domain (siehe Abschnitt 8).
+7. **Cron-Job einrichten:** alle 5 Minuten (siehe Abschnitt 7).
 
 **Voraussetzung:** PHP 8.0 oder neuer. Bei IONOS stellen Sie die Version unter
 „Websites & Shops → Ihre Website → PHP verwalten“ ein.
@@ -42,6 +42,7 @@ Newsletter schreiben, Testmail verschicken, senden.
 | Messung | Öffnungen, Klicks je Link, Abmeldungen, Bounces, Verlaufsgrafik |
 | Automation | **Ablauf-Baukasten mit Drag & Drop**: warten, senden, Bedingungen („hat geöffnet?“) mit Ja-/Nein-Zweigen, Aktionen |
 | Zugänge | Mehrere Benutzer mit drei Rollen (Administrator, Redakteur, Betrachter), Sperren statt Löschen |
+| Mehrere Marken | Eine Installation für mehrere Websites: Vorlage mit eigenem Namen, Impressum und Absender |
 | Zustellbarkeit | List-Unsubscribe (auch One-Click nach RFC 8058), Bounce-Auswertung per POP3, Sperrliste |
 | Recht | Double-Opt-in mit Protokoll, Abmeldelink in jeder Mail, Impressum im Footer, Selbstauskunft und Löschung für Empfänger |
 
@@ -163,7 +164,50 @@ Unter **Benutzer** legen Administratoren weitere Zugänge an. Es gibt drei Rolle
 
 ---
 
-## 6. Cron-Job einrichten (wichtig!)
+## 6. Mehrere Websites aus einer Installation
+
+Sie können mit **einer** Installation Newsletter für mehrere Projekte
+verschicken – jedes mit eigenem Namen, eigener Website, eigenem Impressum und
+eigener Absenderadresse. Das spart eine zweite Datenbank, einen zweiten
+Cron-Job und doppelte Updates.
+
+Pro Projekt brauchen Sie drei Dinge:
+
+1. **Eine Liste** (Listen → „Neue Liste"), damit die Empfänger getrennt
+   bleiben. Wer sich für Projekt A angemeldet hat, darf keine Post von
+   Projekt B bekommen – die Einwilligung gilt immer nur für das Projekt,
+   bei dem sie erteilt wurde.
+2. **Eine Vorlage** im Design des Projekts (Vorlagen → „Neu im Baukasten").
+3. **Die Marke der Vorlage** (Vorlagen → Abschnitt „Marke dieser Vorlage"):
+
+| Feld | Wirkung |
+|---|---|
+| Name der Marke | erscheint in der Kopfzeile und als `{{marke}}` |
+| Website | Footer-Zeile „Sie erhalten diese E-Mail, weil Sie sich unter … angemeldet haben" |
+| Impressum im Footer | die Pflichtangaben dieses Projekts (`{{impressum}}`) |
+| Impressum-Seite / Datenschutz-Seite | die Links im Footer |
+| Absendername / Absenderadresse | Absender für Automationen mit dieser Vorlage und Vorschlag für neue Newsletter |
+
+**Leere Felder greifen auf die Einstellungen zurück.** Die Hauptmarke braucht
+also nichts einzutragen – für sie bleibt alles wie bisher.
+
+Beim Schreiben eines Newsletters wählen Sie oben die passende **Vorlage** und
+die passende **Liste**; Absendername und -adresse stehen im Editor und lassen
+sich pro Ausgabe überschreiben. Automationen übernehmen den Absender aus der
+Vorlage des jeweiligen Schrittes.
+
+> **Wichtig:** Die Absenderadresse muss zu einer Domain gehören, für die Ihr
+> Versandweg senden darf. Bei SMTP über ein Postfach von Domain A können Sie
+> nicht ohne Weiteres als Domain B auftreten – sonst landen die Mails im Spam.
+> Entweder ein zweites Postfach für Domain B einrichten (dann brauchen Sie doch
+> zwei Installationen oder Sie wechseln den Versandweg pro Marke), oder als
+> Absender eine Adresse Ihrer Hauptdomain nehmen und im Text auf das Projekt
+> hinweisen. SPF und DKIM (Abschnitt 8) müssen zur verwendeten Absenderdomain
+> passen.
+
+---
+
+## 7. Cron-Job einrichten (wichtig!)
 
 Der Versand läuft **nicht** beim Klick auf „Senden“, sondern im Hintergrund.
 Ohne Cron-Job bleibt die Warteschlange stehen.
@@ -190,7 +234,7 @@ und jede einzelne Mail wird vor dem Versand gesperrt.
 
 ---
 
-## 7. Zustellbarkeit: SPF, DKIM, DMARC
+## 8. Zustellbarkeit: SPF, DKIM, DMARC
 
 Eigener Versand heißt: Sie sind selbst für die Reputation verantwortlich. Drei
 DNS-Einträge entscheiden darüber, ob Ihre Mails im Posteingang landen.
@@ -215,7 +259,7 @@ auf „PASS“ stehen.
 
 ---
 
-## 8. Versandwege
+## 9. Versandwege
 
 | Weg | Wann sinnvoll |
 |---|---|
@@ -232,7 +276,7 @@ sich automatisch daran und verteilt den Versand über mehrere Läufe.
 
 ---
 
-## 9. Rechtliches (Deutschland/EU)
+## 10. Rechtliches (Deutschland/EU)
 
 Das System ist so gebaut, dass die Pflichten technisch erfüllt sind – die
 inhaltliche Verantwortung bleibt bei Ihnen.
@@ -266,7 +310,7 @@ Rechtsgrundlage, Speicherdauer, Widerruf – und den Hinweis auf die Messung von
 
 ---
 
-## 10. Aufbau
+## 11. Aufbau
 
 ```
 newsletter/
@@ -292,7 +336,7 @@ newsletter/
 │   ├── import.php           CSV-Import
 │   ├── listen.php           Verteiler
 │   ├── automationen.php     Automationen: Ablauf-Baukasten und Mailinhalte
-│   ├── vorlagen.php         Design-Vorlagen (Baukasten oder HTML)
+│   ├── vorlagen.php         Design-Vorlagen samt Marke (Baukasten oder HTML)
 │   ├── upload.php           Bild-Upload für den Baukasten
 │   ├── versand.php          Warteschlange steuern
 │   ├── protokoll.php        Ereignisse, Rückläufer, Sperrliste
@@ -320,7 +364,7 @@ newsletter/
 | `Queue.php` | Warteschlange, Worker, Wiederholungen, Limits |
 | `Campaigns.php` | Ausgaben: speichern, prüfen, kompilieren, starten, auswerten |
 | `Blocks.php` | Baukasten: Bausteine prüfen, absichern und in E-Mail-HTML übersetzen |
-| `Renderer.php` / `Templates.php` | Vorlagen, Platzhalter, Tracking-Einbau |
+| `Renderer.php` / `Templates.php` | Vorlagen, Marke je Vorlage, Platzhalter, Tracking-Einbau |
 | `Subscribers.php` / `Lists.php` | Empfänger, Double-Opt-in, Listen, Import |
 | `Automations.php` | Mailstrecken: Teilnehmer aufnehmen, Ablauf ausführen, Mails einreihen |
 | `Flow.php` | Ablauf einer Automation: Struktur prüfen, Wege finden, Bedingungen auswerten |
@@ -330,7 +374,7 @@ newsletter/
 
 ---
 
-## 11. Anmeldeformular auf eigenen Seiten einbauen
+## 12. Anmeldeformular auf eigenen Seiten einbauen
 
 Auf der Startseite ist das Formular bereits eingebaut. Für weitere Seiten genügt
 dieses Minimalformular (funktioniert auch ohne JavaScript):
@@ -355,7 +399,7 @@ welche Seite wie viele Anmeldungen bringt.
 
 ---
 
-## 12. Aktualisieren (neue Fassung einspielen)
+## 13. Aktualisieren (neue Fassung einspielen)
 
 1. Den Ordner `newsletter/` per FTP **über** den bestehenden hochladen und dabei
    überschreiben lassen. `config.php` und den Ordner `data/` dabei **nicht**
@@ -363,7 +407,7 @@ welche Seite wie viele Anmeldungen bringt.
 2. Eine beliebige Seite aufrufen. Die Datenbank wird automatisch auf den neuen
    Stand gebracht (neue Spalten und Tabellen werden ergänzt).
 3. Prüfen: Im Admin-Bereich steht unten die Fassung, z. B.
-   `Fassung 1.2.0 (Automationen) · Datenbank 3`. Dasselbe zeigt `systemcheck.php`.
+   `Fassung 1.3.0 (Mehrere Marken) · Datenbank 4`. Dasselbe zeigt `systemcheck.php`.
 
 Ändert sich nichts, liegen meist ältere Dateien auf dem Server: `systemcheck.php`
 nennt die gefundene Fassung und ob der Baukasten dabei ist. Im Browser hilft ein
@@ -375,7 +419,7 @@ Neu angelegte Ausgaben starten immer im Baukasten.
 
 ---
 
-## 13. Wartung und Sicherung
+## 14. Wartung und Sicherung
 
 * **Sichern:** `config.php` und den Ordner `data/` (bei MySQL: den
   Datenbank-Export). Ohne `secret` aus der `config.php` sind gespeicherte
@@ -386,7 +430,7 @@ Neu angelegte Ausgaben starten immer im Baukasten.
 
 ---
 
-## 14. Wenn etwas nicht klappt
+## 15. Wenn etwas nicht klappt
 
 **Erste Anlaufstelle bei jedem Problem:** `systemcheck.php` im Newsletter-Ordner.
 Die Seite hat keine Abhängigkeiten und funktioniert auch dann, wenn der Rest streikt.
@@ -402,15 +446,16 @@ Die Seite hat keine Abhängigkeiten und funktioniert auch dann, wenn der Rest st
 | „Cron-Job meldet sich nicht“ | Cron nicht eingerichtet oder falscher Pfad. Testweise `versand.php` → „Portion jetzt senden“. |
 | Mails bleiben in der Warteschlange | Stundenlimit erreicht (Versand → „noch möglich“) oder Kampagne pausiert. |
 | SMTP-Fehler „Verbindung fehlgeschlagen“ | Host/Port/Verschlüsselung prüfen; viele Hoster erlauben ausgehendes SMTP nur zum eigenen Server. |
-| Mails landen im Spam | SPF/DKIM/DMARC prüfen (Abschnitt 7), Absenderadresse muss zur Domain passen, langsam warmlaufen. |
+| Mails landen im Spam | SPF/DKIM/DMARC prüfen (Abschnitt 8), Absenderadresse muss zur Domain passen, langsam warmlaufen. |
 | Bestätigungslinks führen ins Leere | `base_url` in `config.php` stimmt nicht mit der echten Adresse überein. |
 | Öffnungsraten wirken zu niedrig | Viele Programme laden Bilder nicht. Klicks sind die verlässlichere Kennzahl. |
 | „Dafür fehlt Ihnen die Berechtigung“ | Der Zugang hat die falsche Rolle. Ein Administrator ändert das unter Benutzer. |
+| Im Newsletter steht das falsche Impressum | Die Vorlage gehört zu einem anderen Projekt: Vorlagen → „Marke dieser Vorlage“ ausfüllen (Abschnitt 6). Bereits versendete Ausgaben bleiben unverändert. |
 | Fehler im Protokoll | Admin → Protokoll → Fehler; dort steht die genaue Meldung. |
 
 ---
 
-## 15. Größenordnung
+## 16. Größenordnung
 
 SQLite trägt problemlos einige zehntausend Empfänger. Für sehr große Verteiler
 oder mehrere gleichzeitige Redakteure ist MySQL die bessere Wahl – umstellen

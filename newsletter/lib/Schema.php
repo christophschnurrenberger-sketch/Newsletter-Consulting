@@ -17,7 +17,7 @@
 final class Schema
 {
     /** Version des Schemas – wird in settings gespeichert. */
-    public const VERSION = 3;
+    public const VERSION = 4;
 
     public static function migrate(): void
     {
@@ -50,6 +50,14 @@ final class Schema
         self::ensureColumn('automation_runs', 'context_json', '%TEXT%');
         self::ensureColumn('automation_steps', 'blocks_json', '%TEXT%');
         self::ensureColumn('automation_steps', 'editor_mode', "%STR(10)% NOT NULL DEFAULT 'blocks'");
+        // Eigene Marke je Vorlage – für mehrere Websites in einer Installation
+        self::ensureColumn('templates', 'brand_name', "%STR(190)% NOT NULL DEFAULT ''");
+        self::ensureColumn('templates', 'website_url', "%STR(190)% NOT NULL DEFAULT ''");
+        self::ensureColumn('templates', 'imprint', '%TEXT%');
+        self::ensureColumn('templates', 'imprint_url', "%STR(190)% NOT NULL DEFAULT ''");
+        self::ensureColumn('templates', 'privacy_url', "%STR(190)% NOT NULL DEFAULT ''");
+        self::ensureColumn('templates', 'sender_name', "%STR(190)% NOT NULL DEFAULT ''");
+        self::ensureColumn('templates', 'sender_email', "%STR(190)% NOT NULL DEFAULT ''");
 
         Settings::set('schema_version', (string) self::VERSION);
     }
@@ -207,6 +215,13 @@ final class Schema
                 html        %TEXT%,
                 blocks_json %TEXT%,
                 editor_mode %STR(10)% NOT NULL DEFAULT \'html\',
+                brand_name  %STR(190)% NOT NULL DEFAULT \'\',
+                website_url %STR(190)% NOT NULL DEFAULT \'\',
+                imprint     %TEXT%,
+                imprint_url %STR(190)% NOT NULL DEFAULT \'\',
+                privacy_url %STR(190)% NOT NULL DEFAULT \'\',
+                sender_name %STR(190)% NOT NULL DEFAULT \'\',
+                sender_email %STR(190)% NOT NULL DEFAULT \'\',
                 is_default  %INT% NOT NULL DEFAULT 0,
                 created_at  %DT%,
                 updated_at  %DT%

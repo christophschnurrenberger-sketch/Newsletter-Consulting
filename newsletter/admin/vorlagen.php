@@ -14,6 +14,7 @@ if (Util::get('vorschau') === '1') {
         exit('Vorlage nicht gefunden.');
     }
     $html = Renderer::wrap($template, Templates::starterContent(), 'Beispiel-Betreff', 'Beispiel-Vorschautext');
+    $html = Renderer::applyBrand($html, $template, true);
     $html = Renderer::personalize($html, Renderer::sampleSubscriber(), [
         'abmelden_url'     => '#',
         'praeferenzen_url' => '#',
@@ -50,6 +51,20 @@ if (Util::isPost()) {
             ? 'Vorlage angelegt. Ziehen Sie jetzt Bausteine an die gewünschte Stelle.'
             : 'Vorlage angelegt.');
         Util::redirect('vorlagen.php?id=' . $newId);
+    }
+    if ($action === 'marke' && $id > 0) {
+        Templates::saveBrand($id, [
+            'brand_name'   => Util::post('brand_name'),
+            'website_url'  => Util::post('brand_website_url'),
+            'imprint'      => Util::postRaw('brand_imprint'),
+            'imprint_url'  => Util::post('brand_imprint_url'),
+            'privacy_url'  => Util::post('brand_privacy_url'),
+            'sender_name'  => Util::post('brand_sender_name'),
+            'sender_email' => Util::normalizeEmail(Util::post('brand_sender_email')),
+        ]);
+        // Die fertige Fassung wird beim nächsten Kompilieren neu gebaut.
+        Util::flash('Marke der Vorlage gespeichert.');
+        Util::redirect('vorlagen.php?id=' . $id . '#marke');
     }
     if ($action === 'speichern_baukasten' && $id > 0) {
         $template = Templates::byId($id);
@@ -255,6 +270,84 @@ $current   = Templates::byId(Util::getInt('id')) ?? Templates::defaultTemplate()
         </div>
     </div>
     <?php endif; ?>
+
+    <!-- ---------------------------------------------------------- Marke -->
+    <?php $marke = Templates::brand($current); ?>
+    <div class="ad-card" id="marke">
+        <h2 style="margin-top:0;">Marke dieser Vorlage</h2>
+        <p class="ad-hint">Nur ausfüllen, wenn diese Vorlage zu einer <strong>anderen Website</strong> gehört –
+            etwa einem zweiten Projekt mit eigenem Impressum. Leere Felder verwenden automatisch die Angaben
+            aus den <a href="einstellungen.php">Einstellungen</a>. Kopfzeile und Footer der Vorlage übernehmen
+            die Werte beim nächsten Speichern des Newsletters.</p>
+
+        <form method="post">
+            <?= Util::csrfField() ?>
+            <input type="hidden" name="id" value="<?= (int) $current['id'] ?>">
+            <input type="hidden" name="aktion" value="marke">
+
+            <div class="ad-row">
+                <div class="ad-field">
+                    <label for="brand_name">Name der Marke <span class="ad-hint">({{marke}})</span></label>
+                    <input type="text" id="brand_name" name="brand_name" maxlength="190"
+                           value="<?= Util::e((string) $current['brand_name']) ?>"
+                           placeholder="<?= Util::e(Settings::get('brand_name')) ?>">
+                </div>
+                <div class="ad-field">
+                    <label for="brand_website_url">Website <span class="ad-hint">({{website}})</span></label>
+                    <input type="url" id="brand_website_url" name="brand_website_url" maxlength="190"
+                           value="<?= Util::e((string) $current['website_url']) ?>"
+                           placeholder="<?= Util::e(Settings::get('website_url')) ?>">
+                </div>
+            </div>
+
+            <div class="ad-field">
+                <label for="brand_imprint">Impressum im Footer <span class="ad-hint">({{impressum}} – Pflichtangaben)</span></label>
+                <textarea id="brand_imprint" name="brand_imprint" rows="3"
+                          placeholder="<?= Util::e(Settings::get('imprint')) ?>"><?= Util::e((string) $current['imprint']) ?></textarea>
+            </div>
+
+            <div class="ad-row">
+                <div class="ad-field">
+                    <label for="brand_imprint_url">Impressum-Seite <span class="ad-hint">({{impressum_url}})</span></label>
+                    <input type="url" id="brand_imprint_url" name="brand_imprint_url" maxlength="190"
+                           value="<?= Util::e((string) $current['imprint_url']) ?>"
+                           placeholder="<?= Util::e(Settings::get('imprint_url')) ?>">
+                </div>
+                <div class="ad-field">
+                    <label for="brand_privacy_url">Datenschutz-Seite <span class="ad-hint">({{datenschutz_url}})</span></label>
+                    <input type="url" id="brand_privacy_url" name="brand_privacy_url" maxlength="190"
+                           value="<?= Util::e((string) $current['privacy_url']) ?>"
+                           placeholder="<?= Util::e(Settings::get('privacy_url')) ?>">
+                </div>
+            </div>
+
+            <div class="ad-row">
+                <div class="ad-field">
+                    <label for="brand_sender_name">Absendername</label>
+                    <input type="text" id="brand_sender_name" name="brand_sender_name" maxlength="190"
+                           value="<?= Util::e((string) $current['sender_name']) ?>"
+                           placeholder="<?= Util::e(Settings::get('sender_name')) ?>">
+                </div>
+                <div class="ad-field">
+                    <label for="brand_sender_email">Absenderadresse</label>
+                    <input type="email" id="brand_sender_email" name="brand_sender_email" maxlength="190"
+                           value="<?= Util::e((string) $current['sender_email']) ?>"
+                           placeholder="<?= Util::e(Settings::get('sender_email')) ?>">
+                    <p class="ad-hint">Gilt für Automationen mit dieser Vorlage und als Vorschlag für neue
+                        Newsletter. Die Adresse muss zu einer Domain gehören, für die Ihr Versandweg senden darf.</p>
+                </div>
+            </div>
+
+            <div class="ad-actions">
+                <button type="submit" class="ad-btn">Marke speichern</button>
+                <?php if (Templates::hasOwnBrand($current)): ?>
+                    <span class="ad-pill ad-pill-blue">eigene Marke: <?= Util::e($marke['brand_name']) ?></span>
+                <?php else: ?>
+                    <span class="ad-hint">Zurzeit gelten die Einstellungen (<?= Util::e($marke['brand_name']) ?>).</span>
+                <?php endif; ?>
+            </div>
+        </form>
+    </div>
 <?php endif; ?>
 
 <?php require __DIR__ . '/partials/footer.php';

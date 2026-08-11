@@ -224,6 +224,23 @@ final class Automations
         self::compileStep($stepId);
     }
 
+    /**
+     * Baut alle Schritte neu, die diese Vorlage benutzen.
+     *
+     * Nötig, wenn sich die Vorlage oder ihre Marke geändert hat: Schritte
+     * halten eine fertig kompilierte Fassung, die sonst veraltet.
+     *
+     * @return int Zahl der neu gebauten Schritte
+     */
+    public static function recompileForTemplate(int $templateId): int
+    {
+        $ids = DB::column('SELECT id FROM automation_steps WHERE template_id = ?', [$templateId]);
+        foreach ($ids as $id) {
+            self::compileStep((int) $id);
+        }
+        return count($ids);
+    }
+
     public static function deleteStep(int $stepId): void
     {
         DB::transaction(static function () use ($stepId) {
@@ -255,6 +272,7 @@ final class Automations
         }
         $template = Templates::byId($step['template_id'] !== null ? (int) $step['template_id'] : null);
         $html = Renderer::wrap($template, (string) $step['content_html'], (string) $step['subject']);
+        $html = Renderer::applyBrand($html, $template, true);
         $html = Renderer::compile($html, null, $stepId,
             (int) $step['track_clicks'] === 1, (int) $step['track_opens'] === 1);
 
@@ -265,6 +283,7 @@ final class Automations
         $text .= "\n\n-- \n{{impressum}}\n\n"
               . "Newsletter abbestellen: {{abmelden_url}}\n"
               . "Daten & Einstellungen: {{praeferenzen_url}}\n";
+        $text = Renderer::applyBrand($text, $template, false);
 
         DB::update('automation_steps', [
             'compiled_html' => $html,
@@ -287,13 +306,19 @@ final class Automations
             self::compileStep($stepId);
             $step = self::step($stepId);
         }
+        // Absender aus der Vorlage, damit eine zweite Marke unter ihrem
+        // eigenen Namen verschickt; ohne eigene Angabe gelten die Einstellungen.
+        $brand = Templates::brand(Templates::byId(
+            $step['template_id'] !== null ? (int) $step['template_id'] : null
+        ));
+
         return [
             'id'            => 0,
             'name'          => 'Automation Schritt ' . $step['position'],
             'subject'       => $step['subject'],
             'preheader'     => '',
-            'from_name'     => Settings::get('sender_name'),
-            'from_email'    => Settings::get('sender_email'),
+            'from_name'     => $brand['sender_name'],
+            'from_email'    => $brand['sender_email'],
             'reply_to'      => Settings::get('reply_to'),
             'compiled_html' => $step['compiled_html'],
             'compiled_text' => $step['compiled_text'],

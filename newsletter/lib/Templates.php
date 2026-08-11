@@ -80,6 +80,66 @@ final class Templates
             $data['editor_mode'] = 'blocks';
         }
         DB::update('templates', $data, 'id = ?', [$id]);
+        Automations::recompileForTemplate($id);
+    }
+
+    /* --------------------------------------------------------------- Marke */
+
+    /**
+     * Felder, mit denen eine Vorlage eine eigene Marke bekommt.
+     * Leer bedeutet immer: Angabe aus den Einstellungen verwenden.
+     *
+     * So lassen sich mehrere Websites aus einer Installation bedienen –
+     * jede mit eigenem Namen, eigener Website und eigenem Impressum.
+     */
+    public const BRAND_FIELDS = [
+        'brand_name'  => 'brand_name',
+        'website_url' => 'website_url',
+        'imprint'     => 'imprint',
+        'imprint_url' => 'imprint_url',
+        'privacy_url' => 'privacy_url',
+        'sender_name' => 'sender_name',
+        'sender_email' => 'sender_email',
+    ];
+
+    /**
+     * Die gültigen Markenangaben für eine Vorlage: eigener Wert, sonst
+     * der Wert aus den Einstellungen.
+     *
+     * @return array<string,string>
+     */
+    public static function brand(?array $template): array
+    {
+        $brand = [];
+        foreach (self::BRAND_FIELDS as $spalte => $einstellung) {
+            $eigen = trim((string) ($template[$spalte] ?? ''));
+            $brand[$spalte] = $eigen !== '' ? $eigen : Settings::get($einstellung);
+        }
+        return $brand;
+    }
+
+    /** Hat diese Vorlage eine eigene Marke hinterlegt? */
+    public static function hasOwnBrand(?array $template): bool
+    {
+        foreach (array_keys(self::BRAND_FIELDS) as $spalte) {
+            if (trim((string) ($template[$spalte] ?? '')) !== '') {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /** Speichert die Markenangaben einer Vorlage (leere Felder = Einstellungen). */
+    public static function saveBrand(int $id, array $werte): void
+    {
+        $data = ['updated_at' => Util::now()];
+        foreach (array_keys(self::BRAND_FIELDS) as $spalte) {
+            $wert = trim((string) ($werte[$spalte] ?? ''));
+            $data[$spalte] = $spalte === 'imprint' ? mb_substr($wert, 0, 2000) : mb_substr($wert, 0, 190);
+        }
+        DB::update('templates', $data, 'id = ?', [$id]);
+        // Automations-Mails halten eine fertige Fassung – die muss mit.
+        Automations::recompileForTemplate($id);
     }
 
     /** Bausteine einer Vorlage (leer = noch nie im Baukasten bearbeitet). */

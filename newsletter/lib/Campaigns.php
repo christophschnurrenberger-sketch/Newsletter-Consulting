@@ -46,15 +46,20 @@ final class Campaigns
 
     public static function create(string $name): int
     {
-        $now = Util::now();
+        $now      = Util::now();
+        $template = Templates::defaultTemplate();
+        // Absender aus der Standardvorlage vorbelegen – bei mehreren Marken
+        // stimmt so schon der Vorschlag. Änderbar bleibt er im Editor.
+        $brand = Templates::brand($template);
+
         return DB::insert('campaigns', [
             'name'           => mb_substr(trim($name), 0, 190) ?: 'Neuer Newsletter',
             'subject'        => '',
             'preheader'      => '',
-            'from_name'      => Settings::get('sender_name'),
-            'from_email'     => Settings::get('sender_email'),
+            'from_name'      => $brand['sender_name'],
+            'from_email'     => $brand['sender_email'],
             'reply_to'       => Settings::get('reply_to'),
-            'template_id'    => Templates::defaultId() ?: null,
+            'template_id'    => $template !== null ? (int) $template['id'] : null,
             'list_id'        => Lists::defaultId() ?: null,
             'content_html'   => Blocks::renderContent(Blocks::starterCampaign()),
             'content_text'   => Blocks::toText(Blocks::starterCampaign()),
@@ -182,6 +187,7 @@ final class Campaigns
 
         $html = Renderer::wrap($template, (string) $campaign['content_html'],
             (string) $campaign['subject'], (string) $campaign['preheader']);
+        $html = Renderer::applyBrand($html, $template, true);
         $html = Renderer::compile($html, $id, null,
             (int) $campaign['track_clicks'] === 1, (int) $campaign['track_opens'] === 1);
 
@@ -193,6 +199,7 @@ final class Campaigns
               . "Newsletter abbestellen: {{abmelden_url}}\n"
               . "Daten & Einstellungen: {{praeferenzen_url}}\n"
               . "Im Browser ansehen: {{webansicht_url}}\n";
+        $text = Renderer::applyBrand($text, $template, false);
 
         DB::update('campaigns', [
             'compiled_html' => $html,

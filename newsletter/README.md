@@ -110,7 +110,11 @@ brauchen Sie nur noch für Sonderfälle.
   Ausrichtung und Abstände ein.
 * **Platzhalter** wie `{{vorname}}` setzt die Auswahl links an der Schreibmarke
   ein – in Texten ebenso wie in Einstellungsfeldern.
-* Zwei Spalten brechen auf dem Handy automatisch untereinander um.
+* **Zwei Spalten:** Unter jeder Spalte stehen „Text schreiben“ und „Bild
+  einsetzen“ sowie eine Auswahl für Überschrift, Knopf, Trennlinie und
+  Abstand. Man muss also nichts hineinziehen – ein Klick genügt, danach
+  schreibt man direkt in der Spalte. Auf dem Handy brechen die Spalten
+  automatisch untereinander um.
 
 **Eigene Vorlage bauen:** Vorlagen → „Neu im Baukasten“. Eine Vorlage ist der
 Rahmen um jede Ausgabe. Der Baustein **„Inhalt der Ausgabe“** markiert die
@@ -472,7 +476,7 @@ welche Seite wie viele Anmeldungen bringt.
 2. Eine beliebige Seite aufrufen. Die Datenbank wird automatisch auf den neuen
    Stand gebracht (neue Spalten und Tabellen werden ergänzt).
 3. Prüfen: Im Admin-Bereich steht unten die Fassung, z. B.
-   `Fassung 1.7.0 (Automatisch speichern) · Datenbank 5`. Dasselbe zeigt `systemcheck.php`.
+   `Fassung 1.7.1 (Automatisch speichern) · Datenbank 5`. Dasselbe zeigt `systemcheck.php`.
 
 **Ändert sich nichts?** Dann sagt `systemcheck.php` genau, woran es liegt:
 

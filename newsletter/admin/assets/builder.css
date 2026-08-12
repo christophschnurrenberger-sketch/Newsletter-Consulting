@@ -379,3 +379,26 @@ body.bk-zieht .bk-drop { background: rgba(20, 36, 58, .05); border-radius: 4px; 
 }
 .bk-autosave.is-gespeichert { color: #2E7D53; }
 .bk-autosave.is-fehler { color: var(--ad-accent, #C8102E); }
+
+/* Bausteine in eine Spalte setzen – ohne Ziehen */
+.bk-column-add {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px dashed var(--ad-border, #E0E6ED);
+}
+.bk-column-btn,
+.bk-column-select {
+    padding: 5px 10px;
+    border: 1px solid var(--ad-border, #E0E6ED);
+    border-radius: 5px;
+    background: #fff;
+    color: var(--ad-navy, #14243A);
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+}
+.bk-column-btn:hover { border-color: var(--ad-navy, #14243A); }
+.bk-column-select { padding-right: 4px; }

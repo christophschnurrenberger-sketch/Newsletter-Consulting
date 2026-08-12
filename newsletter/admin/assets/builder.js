@@ -549,6 +549,8 @@
                         spalte.appendChild(blockCard(child, block[seite], i));
                         spalte.appendChild(dropZone(block[seite], i + 1));
                     });
+                    // Ohne Klickweg käme man hier nur per Ziehen hinein.
+                    spalte.appendChild(spaltenZugabe(block[seite]));
                     grid.appendChild(spalte);
                 });
                 box.appendChild(grid);
@@ -635,6 +637,66 @@
             feld.addEventListener(name, function () { lastFocus = feld; merkeSchreibmarke(feld); });
         });
         return feld;
+    }
+
+    /** Bausteine, die in eine Spalte passen. */
+    var SPALTEN_TYPEN = ['text', 'heading', 'image', 'button', 'divider', 'spacer'];
+
+    /**
+     * Knopfleiste am Fuß einer Spalte: Text schreiben, Bild einsetzen und
+     * weitere Bausteine – ohne dass man etwas hineinziehen muss.
+     */
+    function spaltenZugabe(liste) {
+        var leiste = document.createElement('div');
+        leiste.className = 'bk-column-add';
+
+        [['text', 'Text schreiben'], ['image', 'Bild einsetzen']].forEach(function (paar) {
+            var knopf = document.createElement('button');
+            knopf.type = 'button';
+            knopf.className = 'bk-column-btn';
+            knopf.textContent = paar[1];
+            knopf.addEventListener('click', function (event) {
+                event.stopPropagation();
+                inSpalteEinsetzen(liste, paar[0]);
+            });
+            leiste.appendChild(knopf);
+        });
+
+        var mehr = document.createElement('select');
+        mehr.className = 'bk-column-select';
+        var kopf = document.createElement('option');
+        kopf.value = '';
+        kopf.textContent = 'Mehr …';
+        mehr.appendChild(kopf);
+        SPALTEN_TYPEN.forEach(function (typ) {
+            if (typ === 'text' || typ === 'image') { return; }
+            var option = document.createElement('option');
+            option.value = typ;
+            option.textContent = window.NL_BLOCK_LABELS[typ] || typ;
+            mehr.appendChild(option);
+        });
+        mehr.addEventListener('change', function (event) {
+            event.stopPropagation();
+            if (mehr.value !== '') { inSpalteEinsetzen(liste, mehr.value); }
+        });
+        mehr.addEventListener('click', function (event) { event.stopPropagation(); });
+        leiste.appendChild(mehr);
+
+        return leiste;
+    }
+
+    /** Setzt einen Baustein ans Ende einer Spalte und wählt ihn aus. */
+    function inSpalteEinsetzen(liste, typ) {
+        var block = makeBlock(typ);
+        liste.push(block);
+        selected = block.id;
+        render();
+        // Beim Text gleich die Schreibmarke setzen – das ist der häufigste Fall.
+        var karte = canvas.querySelector('.bk-block[data-id="' + block.id + '"]');
+        if (!karte) { return; }
+        var feld = karte.querySelector('.bk-rich, .bk-inline');
+        if (feld) { feld.focus(); }
+        karte.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
 
     /** Kleine Leiste über dem Textfeld: fett, kursiv, Link, Liste. */

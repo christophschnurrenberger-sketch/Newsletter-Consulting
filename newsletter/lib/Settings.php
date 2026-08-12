@@ -71,6 +71,12 @@ final class Settings
         'bounce_delete'     => '1',          // verarbeitete Mails löschen
         'bounce_hard_limit' => '3',          // Soft-Bounces bis zur Sperre
 
+        /* --- Textassistent (optional, kostenpflichtig beim Anbieter) --- */
+        'ai_provider'       => '',           // leer = aus, kein Knopf, keine Anfrage
+        'ai_model'          => '',           // leer = Voreinstellung des Anbieters
+        'ai_key'            => '',           // verschlüsselt gespeichert
+        'ai_voice'          => '',           // eigener Hinweis zum Tonfall
+
         /* --- Sonstiges ------------------------------------------------ */
         'schema_version'    => '0',
         'installed_at'      => '',
@@ -78,7 +84,7 @@ final class Settings
     ];
 
     /** Einstellungen, die verschlüsselt in der Datenbank liegen. */
-    private const SECRETS = ['smtp_pass', 'bounce_pass'];
+    private const SECRETS = ['smtp_pass', 'bounce_pass', 'ai_key'];
 
     /** @return array<string,string> */
     public static function all(bool $fresh = false): array

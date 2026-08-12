@@ -104,6 +104,41 @@ if (Util::isPost()) {
         Util::redirect('einstellungen.php#bounce');
     }
 
+    if ($action === 'ki') {
+        $anbieter = Util::post('ai_provider');
+        $values = [
+            'ai_provider' => isset(Ai::PROVIDERS[$anbieter]) ? $anbieter : '',
+            'ai_model'    => trim(Util::post('ai_model')),
+            'ai_voice'    => mb_substr(Util::postRaw('ai_voice'), 0, 500),
+        ];
+        // Schlüssel nur überschreiben, wenn ein neuer eingegeben wurde
+        $neuerKey = trim(Util::postRaw('ai_key'));
+        if ($neuerKey !== '') {
+            $values['ai_key'] = $neuerKey;
+        }
+        if (Util::post('ai_key_loeschen') === '1') {
+            $values['ai_key'] = '';
+        }
+        Settings::setMany($values);
+
+        // Wie beim Versandweg gleich ausprobieren, statt es erst beim
+        // Schreiben eines Newsletters zu merken.
+        if (Ai::available()) {
+            try {
+                Ai::suggest('korrigieren', 'Das ist ein kurzer Test.');
+                Util::flash('Textassistent gespeichert und erfolgreich geprüft.');
+            } catch (Throwable $e) {
+                Util::flash('Gespeichert, aber die Prüfung schlug fehl: ' . Util::e($e->getMessage()), 'warning');
+            }
+        } else {
+            Util::flash($values['ai_provider'] === ''
+                ? 'Textassistent ausgeschaltet.'
+                : 'Gespeichert. Es fehlt noch der Schlüssel des Anbieters.',
+                $values['ai_provider'] === '' ? 'success' : 'warning');
+        }
+        Util::redirect('einstellungen.php#ki');
+    }
+
 }
 
 $cronToken = (string) Config::get('cron_token', '');
@@ -418,6 +453,69 @@ $cronUrl   = Config::url('cron/send.php') . '?token=' . $cronToken;
         </label>
 
         <button type="submit" class="ad-btn">Speichern</button>
+    </form>
+</div>
+
+<!-- --------------------------------------------------------- Textassistent -->
+<div class="ad-card" id="ki">
+    <h2>Textassistent</h2>
+    <p class="ad-hint" style="margin-top:-4px;">Optional: Im Baukasten erscheint neben jedem Textfeld ein
+        Knopf, der auf Wunsch einen Vorschlag formuliert – umformulieren, kürzen, Rechtschreibung prüfen,
+        Betreffzeilen finden. Sie sehen den Vorschlag zuerst und entscheiden, ob er übernommen wird.</p>
+
+    <p class="ad-hint"><strong>Bitte beachten Sie:</strong> Für jeden Vorschlag wird der betreffende Text an
+        den gewählten Anbieter übertragen und dort verarbeitet. Schicken Sie keine personenbezogenen Daten
+        Ihrer Empfänger mit und schließen Sie mit dem Anbieter einen Auftragsverarbeitungsvertrag ab
+        (Art.&nbsp;28 DSGVO). Der Anbieter rechnet jede Anfrage ab – die Kosten entstehen bei Ihnen, nicht
+        im Newslettersystem. Ohne Schlüssel bleibt alles aus: Es wird nichts übertragen und im Baukasten
+        taucht kein Knopf auf.</p>
+
+    <form method="post">
+        <?= Util::csrfField() ?>
+        <input type="hidden" name="aktion" value="ki">
+
+        <div class="ad-row">
+            <div class="ad-field">
+                <label for="ai_provider">Anbieter</label>
+                <select id="ai_provider" name="ai_provider">
+                    <?php foreach (Ai::PROVIDERS as $wert => $label): ?>
+                        <option value="<?= Util::e($wert) ?>" <?= Settings::get('ai_provider') === $wert ? 'selected' : '' ?>>
+                            <?= Util::e($label) ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+            <div class="ad-field">
+                <label for="ai_model">Modell <span class="ad-hint">(leer = Voreinstellung)</span></label>
+                <input type="text" id="ai_model" name="ai_model" value="<?= Util::e(Settings::get('ai_model')) ?>"
+                       placeholder="<?= Util::e(Ai::DEFAULT_MODELS[Settings::get('ai_provider')] ?? 'z. B. claude-sonnet-5') ?>">
+            </div>
+            <div class="ad-field">
+                <label for="ai_key">Schlüssel (API-Key)</label>
+                <input type="password" id="ai_key" name="ai_key" autocomplete="new-password"
+                       placeholder="<?= Settings::hasSecret('ai_key') ? 'gespeichert – leer lassen, um ihn zu behalten' : 'sk-…' ?>">
+            </div>
+        </div>
+
+        <div class="ad-field">
+            <label for="ai_voice">Tonfall und Besonderheiten <span class="ad-hint">(optional)</span></label>
+            <textarea id="ai_voice" name="ai_voice" rows="3"
+                      placeholder="z. B. Wir duzen unsere Leser. Kurze Sätze. Keine Anglizismen."><?= Util::e(Settings::get('ai_voice')) ?></textarea>
+            <p class="ad-hint">Diese Vorgabe bekommt der Assistent bei jedem Vorschlag mit.</p>
+        </div>
+
+        <?php if (Settings::hasSecret('ai_key')): ?>
+            <label class="ad-check">
+                <input type="checkbox" name="ai_key_loeschen" value="1">
+                <span>Gespeicherten Schlüssel löschen</span>
+            </label>
+        <?php endif; ?>
+
+        <button type="submit" class="ad-btn">Speichern und prüfen</button>
+        <?php if (Ai::available()): ?>
+            <p class="ad-hint">Der Assistent ist aktiv: <?= Util::e(Ai::PROVIDERS[Ai::provider()]) ?>,
+                Modell <?= Util::e(Ai::model()) ?>.</p>
+        <?php endif; ?>
     </form>
 </div>
 

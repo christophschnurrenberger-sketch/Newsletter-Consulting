@@ -28,6 +28,7 @@ function builder_ui(array $blocks, string $mode = 'campaign', string $fieldName 
     <div class="bk" data-builder data-mode="<?= Util::e($mode) ?>"
          data-upload="upload.php"
          data-autosave="1"
+         <?= Ai::available() ? 'data-ki="ki.php"' : '' ?>
          data-csrf="<?= Util::e(Util::csrfToken()) ?>">
 
         <!-- Bausteine zum Hineinziehen -->
@@ -51,6 +52,13 @@ function builder_ui(array $blocks, string $mode = 'campaign', string $fieldName 
                     <option value="<?= Util::e($code) ?>"><?= Util::e($code) ?> – <?= Util::e(Util::shorten($bedeutung, 40)) ?></option>
                 <?php endforeach; ?>
             </select>
+
+            <?php if (Ai::available()): ?>
+                <h3 style="margin-top:22px;">Textassistent</h3>
+                <p class="bk-hint">Formuliert auf Wunsch einen Vorschlag für das Textfeld,
+                    in dem die Schreibmarke steht. Sie sehen ihn zuerst.</p>
+                <button type="button" class="bk-ki-open" data-ki-open>✨ Text vorschlagen</button>
+            <?php endif; ?>
         </aside>
 
         <!-- Arbeitsfläche -->
@@ -76,6 +84,7 @@ function builder_ui(array $blocks, string $mode = 'campaign', string $fieldName 
     <script>
         window.NL_FONTS = <?= json_encode(Blocks::fonts(), JSON_UNESCAPED_UNICODE) ?>;
         window.NL_BLOCK_LABELS = <?= json_encode(Blocks::TYPES, JSON_UNESCAPED_UNICODE) ?>;
+        window.NL_KI_ACTIONS = <?= json_encode(Ai::ACTIONS, JSON_UNESCAPED_UNICODE) ?>;
     </script>
     <?php
 }

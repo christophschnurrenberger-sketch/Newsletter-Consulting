@@ -402,3 +402,57 @@ body.bk-zieht .bk-drop { background: rgba(20, 36, 58, .05); border-radius: 4px; 
 }
 .bk-column-btn:hover { border-color: var(--ad-navy, #14243A); }
 .bk-column-select { padding-right: 4px; }
+
+/* ------------------------------------------------------- Textassistent */
+
+/* Knopf in der kleinen Leiste über dem Textfeld */
+.bk-richbtn-ki {
+    width: auto;
+    padding: 0 7px;
+    border-color: #C9D8CD;
+    background: #F3F8F4;
+}
+.bk-richbtn-ki:hover { background: #E7F1EA; }
+
+/* Knopf in der linken Spalte */
+.bk-ki-open {
+    width: 100%;
+    padding: 8px 10px;
+    border: 1px solid var(--ad-border, #E0E6ED);
+    border-radius: 6px;
+    background: #fff;
+    color: var(--ad-navy, #14243A);
+    font-size: 12.5px;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+}
+.bk-ki-open:hover { border-color: var(--ad-navy, #14243A); }
+
+/* Fenster */
+.bk-ki-box { max-width: 620px; }
+.bk-ki-row { display: flex; gap: 8px; align-items: center; margin-bottom: 10px; }
+.bk-ki-row .bk-select { flex: 1; margin: 0; }
+
+.bk-ki-hint,
+.bk-ki-result {
+    width: 100%;
+    padding: 9px 11px;
+    border: 1px solid var(--ad-border, #E0E6ED);
+    border-radius: 6px;
+    font-family: inherit;
+    font-size: 13.5px;
+    line-height: 1.55;
+    color: var(--ad-navy, #14243A);
+    box-sizing: border-box;
+    resize: vertical;
+}
+.bk-ki-result { background: #FCFDFC; margin-top: 6px; }
+
+.bk-ki-status {
+    margin: 10px 0 0;
+    font-size: 12.5px;
+    color: var(--ad-muted, #6B7A8D);
+}
+
+.bk-ki-actions { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0 10px; }

@@ -16,6 +16,7 @@
 
     var MODE      = root.getAttribute('data-mode') || 'campaign';
     var UPLOAD    = root.getAttribute('data-upload') || 'upload.php';
+    var KI        = root.getAttribute('data-ki') || '';   // leer = Assistent aus
     var CSRF      = root.getAttribute('data-csrf') || '';
     var field     = root.querySelector('[data-blocks-field]');
     var canvas    = root.querySelector('[data-canvas]');
@@ -731,7 +732,260 @@
             });
             bar.appendChild(b);
         });
+        if (KI) {
+            var ki = document.createElement('button');
+            ki.type = 'button';
+            ki.className = 'bk-richbtn bk-richbtn-ki';
+            ki.title = 'Textassistent – Vorschlag holen';
+            ki.textContent = '✨';
+            ki.addEventListener('mousedown', function (event) { event.preventDefault(); });
+            ki.addEventListener('click', function () { kiOeffnen(editor); });
+            bar.appendChild(ki);
+        }
         return bar;
+    }
+
+    /* ------------------------------------------------------- Textassistent
+     * Ein Fenster, das für das gewählte Feld einen Vorschlag holt. Der
+     * Vorschlag landet nie ungefragt im Newsletter: Man liest ihn, ändert
+     * ihn bei Bedarf und entscheidet dann, ob er den Text ersetzt oder an
+     * der Schreibmarke eingesetzt wird.
+     */
+
+    /** Liest den Klartext eines Feldes – egal ob Eingabefeld oder Textfläche. */
+    function feldText(feld) {
+        if (!feld) { return ''; }
+        if (feld.isContentEditable) {
+            return (feld.innerText || feld.textContent || '').trim();
+        }
+        return ('value' in feld) ? String(feld.value).trim() : '';
+    }
+
+    /** Der gesamte Text des Newsletters – Grundlage für Betreffvorschläge. */
+    function gesamterText() {
+        var teile = [];
+        function durch(liste) {
+            (liste || []).forEach(function (block) {
+                if (block.type === 'heading')      { teile.push(block.text || ''); }
+                else if (block.type === 'text')    { teile.push(entHtml(block.html || '')); }
+                else if (block.type === 'button')  { teile.push(block.label || ''); }
+                else if (block.type === 'columns') { durch(block.left); durch(block.right); }
+            });
+        }
+        durch(state.blocks);
+        return teile.filter(function (t) { return t.trim() !== ''; }).join('\n\n');
+    }
+
+    /** Macht aus HTML wieder lesbaren Text. */
+    function entHtml(html) {
+        var hilfe = document.createElement('div');
+        hilfe.innerHTML = html;
+        return (hilfe.innerText || hilfe.textContent || '').trim();
+    }
+
+    /**
+     * Öffnet den Assistenten für ein Feld.
+     *
+     * @param feld     Zielfeld (contentEditable oder input/textarea)
+     * @param vorgabe  gewünschte Aufgabe, sonst „umformulieren"/„schreiben"
+     */
+    function kiOeffnen(feld, vorgabe) {
+        if (!KI) { return; }
+        if (!feld) {
+            hinweis('Bitte klicken Sie zuerst in das Textfeld, um das es gehen soll.');
+            return;
+        }
+        var vorhanden = feldText(feld);
+
+        var hof = document.createElement('div');
+        hof.className = 'bk-modal';
+        var kasten = document.createElement('div');
+        kasten.className = 'bk-modal-box bk-ki-box';
+        hof.appendChild(kasten);
+
+        var titel = document.createElement('h3');
+        titel.textContent = 'Textassistent';
+        kasten.appendChild(titel);
+
+        /* Aufgabe wählen */
+        var reihe = document.createElement('div');
+        reihe.className = 'bk-ki-row';
+        var wahl = document.createElement('select');
+        wahl.className = 'bk-select';
+        Object.keys(window.NL_KI_ACTIONS || {}).forEach(function (schluessel) {
+            if (schluessel === 'betreff' && !vorgabe) { return; }   // nur beim Betreff sinnvoll
+            var option = document.createElement('option');
+            option.value = schluessel;
+            option.textContent = window.NL_KI_ACTIONS[schluessel];
+            wahl.appendChild(option);
+        });
+        wahl.value = vorgabe || (vorhanden === '' ? 'schreiben' : 'umformulieren');
+        reihe.appendChild(wahl);
+
+        var holen = document.createElement('button');
+        holen.type = 'button';
+        holen.className = 'ad-btn';
+        holen.textContent = 'Vorschlag holen';
+        reihe.appendChild(holen);
+        kasten.appendChild(reihe);
+
+        /* Freie Vorgabe */
+        var hinweisFeld = document.createElement('textarea');
+        hinweisFeld.className = 'bk-ki-hint';
+        hinweisFeld.rows = 2;
+        hinweisFeld.placeholder = 'Worum soll es gehen? (optional, z. B. „Einladung zum Golfturnier am 3. Mai")';
+        kasten.appendChild(hinweisFeld);
+
+        /* Ergebnis */
+        var stand = document.createElement('p');
+        stand.className = 'bk-ki-status';
+        stand.textContent = vorhanden === ''
+            ? 'Das Feld ist noch leer – beschreiben Sie oben kurz, worum es geht.'
+            : 'Grundlage ist der Text im gewählten Feld.';
+        kasten.appendChild(stand);
+
+        var ergebnis = document.createElement('textarea');
+        ergebnis.className = 'bk-ki-result';
+        ergebnis.rows = 9;
+        ergebnis.hidden = true;
+        kasten.appendChild(ergebnis);
+
+        /* Knöpfe */
+        var leiste = document.createElement('div');
+        leiste.className = 'bk-ki-actions';
+
+        var ersetzen = document.createElement('button');
+        ersetzen.type = 'button';
+        ersetzen.className = 'ad-btn';
+        ersetzen.textContent = 'Text ersetzen';
+        ersetzen.hidden = true;
+
+        var einfuegen = document.createElement('button');
+        einfuegen.type = 'button';
+        einfuegen.className = 'ad-btn ad-btn-secondary';
+        einfuegen.textContent = 'An der Schreibmarke einfügen';
+        einfuegen.hidden = true;
+
+        var zu = document.createElement('button');
+        zu.type = 'button';
+        zu.className = 'ad-btn ad-btn-secondary';
+        zu.textContent = 'Schließen';
+
+        leiste.appendChild(ersetzen);
+        leiste.appendChild(einfuegen);
+        leiste.appendChild(zu);
+        kasten.appendChild(leiste);
+
+        var fussnote = document.createElement('p');
+        fussnote.className = 'bk-hint';
+        fussnote.textContent = 'Der Text wird zum eingestellten Anbieter übertragen und dort verarbeitet. '
+            + 'Bitte prüfen Sie jeden Vorschlag, bevor er in den Versand geht.';
+        kasten.appendChild(fussnote);
+
+        function schliessen() {
+            if (hof.parentNode) { hof.parentNode.removeChild(hof); }
+            document.removeEventListener('keydown', taste, true);
+        }
+        function taste(event) {
+            if (event.key === 'Escape') { schliessen(); }
+        }
+        document.addEventListener('keydown', taste, true);
+        zu.addEventListener('click', schliessen);
+        hof.addEventListener('click', function (event) {
+            if (event.target === hof) { schliessen(); }
+        });
+
+        holen.addEventListener('click', function () {
+            var aufgabe = wahl.value;
+            // Beim Betreff ist der ganze Newsletter die Grundlage, nicht das Feld.
+            var quelle = aufgabe === 'betreff' ? gesamterText() : feldText(feld);
+
+            if (quelle === '' && hinweisFeld.value.trim() === '') {
+                stand.textContent = 'Bitte schreiben Sie kurz auf, worum es gehen soll.';
+                hinweisFeld.focus();
+                return;
+            }
+            holen.disabled = true;
+            stand.textContent = 'Der Assistent überlegt …';
+
+            var daten = new FormData();
+            daten.set('_csrf', CSRF);
+            daten.set('aktion', aufgabe);
+            daten.set('text', quelle);
+            daten.set('hinweis', hinweisFeld.value);
+
+            fetch(KI, { method: 'POST', body: daten, credentials: 'same-origin' })
+                .then(function (a) { return a.json(); })
+                .then(function (antwort) {
+                    if (!antwort || !antwort.ok) {
+                        throw new Error((antwort && antwort.fehler) || 'Der Vorschlag kam nicht an.');
+                    }
+                    ergebnis.value  = antwort.text;
+                    ergebnis.hidden = false;
+                    ersetzen.hidden = false;
+                    einfuegen.hidden = (aufgabe === 'betreff');
+                    stand.textContent = aufgabe === 'betreff'
+                        ? 'Drei Vorschläge – lassen Sie die gewünschte Zeile oben stehen; '
+                          + 'übernommen wird die erste.'
+                        : 'Vorschlag – gern noch ändern und dann übernehmen:';
+                    ergebnis.focus();
+                })
+                .catch(function (fehler) {
+                    stand.textContent = String(fehler.message || fehler);
+                })
+                .then(function () { holen.disabled = false; });
+        });
+
+        ersetzen.addEventListener('click', function () {
+            uebernehmen(feld, ergebnis.value, true);
+            schliessen();
+        });
+        einfuegen.addEventListener('click', function () {
+            uebernehmen(feld, ergebnis.value, false);
+            schliessen();
+        });
+
+        document.body.appendChild(hof);
+        (vorhanden === '' ? hinweisFeld : holen).focus();
+    }
+
+    /** Trägt den Vorschlag in das Feld ein – ersetzend oder an der Marke. */
+    function uebernehmen(feld, text, ersetzen) {
+        text = String(text || '').trim();
+        if (text === '') { return; }
+
+        if (feld.isContentEditable) {
+            if (ersetzen) {
+                if (feld.classList.contains('bk-rich')) {
+                    // Absätze bleiben Absätze, damit die Mail sauber umbricht.
+                    feld.innerHTML = text.split(/\n{2,}/).map(function (absatz) {
+                        return '<p>' + esc(absatz).replace(/\n/g, '<br>') + '</p>';
+                    }).join('');
+                } else {
+                    feld.textContent = text.replace(/\s+/g, ' ');
+                }
+                feld.dispatchEvent(new Event('input', { bubbles: true }));
+            } else {
+                einsetzenInText(feld, text);
+            }
+            return;
+        }
+        if (!('value' in feld)) { return; }
+
+        if (ersetzen) {
+            // Ein einzeiliges Feld (etwa der Betreff) bekommt die erste Zeile;
+            // bei mehreren Vorschlägen steht die gewünschte dort oben.
+            feld.value = feld.tagName === 'TEXTAREA'
+                ? text
+                : (text.split(/\n/).filter(function (z) { return z.trim() !== ''; })[0] || '').trim();
+        } else {
+            var stelle = (feld.selectionStart === null || feld.selectionStart === undefined)
+                ? feld.value.length : feld.selectionStart;
+            feld.value = feld.value.slice(0, stelle) + text + feld.value.slice(stelle);
+        }
+        feld.dispatchEvent(new Event('input', { bubbles: true }));
+        feld.dispatchEvent(new Event('change', { bubbles: true }));
+        feld.focus();
     }
 
     /* ----------------------------------------------------------- Einstellungen */
@@ -1322,6 +1576,27 @@
     });
 
 
+
+    /* ------------------------------------------------- Knöpfe für den Assistenten */
+
+    var kiKnopf = root.querySelector('[data-ki-open]');
+    if (kiKnopf) {
+        kiKnopf.addEventListener('click', function () {
+            kiOeffnen(zielFeld());
+        });
+    }
+
+    /*
+     * Der Betreff steht außerhalb des Baukastens, gehört aber zur selben
+     * Seite. Sein Knopf bekommt den ganzen Newsletter als Grundlage.
+     */
+    document.querySelectorAll('[data-ki-betreff]').forEach(function (knopf) {
+        if (!KI) { knopf.hidden = true; return; }
+        knopf.addEventListener('click', function () {
+            var ziel = document.getElementById(knopf.getAttribute('data-ki-betreff'));
+            kiOeffnen(ziel, 'betreff');
+        });
+    });
 
     /* --------------------------------------------------------- Platzhalter */
 

@@ -315,6 +315,11 @@ $inhaltKarte = (string) ob_get_clean();
                            value="<?= Util::e((string) $campaign['subject']) ?>"
                            placeholder="z. B. 3 Kennzahlen, die Ihren Newsletter besser machen">
                     <p class="ad-hint">40–60 Zeichen wirken am besten. Platzhalter wie {{vorname}} sind erlaubt.</p>
+                    <?php if ($editable && Ai::available()): ?>
+                        <button type="button" class="ad-btn ad-btn-secondary ad-btn-small" data-ki-betreff="subject">
+                            ✨ Betreff vorschlagen lassen
+                        </button>
+                    <?php endif; ?>
                 </div>
 
                 <div class="ad-field">

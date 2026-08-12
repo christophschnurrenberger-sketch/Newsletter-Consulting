@@ -41,6 +41,7 @@ Newsletter schreiben, Testmail verschicken, senden.
 | Versand | Eigener SMTP-Client, portionsweiser Versand über Cron, Tempolimits, Wiederholungen, Pause/Fortsetzen/Abbrechen, Planung |
 | Messung | Öffnungen, Klicks je Link, Abmeldungen, Bounces, Verlaufsgrafik |
 | Automation | **Ablauf-Baukasten mit Drag & Drop**: warten, senden, Bedingungen („hat geöffnet?“) mit Ja-/Nein-Zweigen, Aktionen |
+| Textassistent | Optional: Vorschläge per Klick (umformulieren, kürzen, korrigieren, Betreffzeilen) – nur mit eigenem Schlüssel, ab Werk aus |
 | Zugänge | Mehrere Benutzer mit drei Rollen (Administrator, Redakteur, Betrachter), Sperren statt Löschen |
 | Mehrere Marken | Eine Installation für mehrere Websites: Vorlage mit eigenem Namen, Impressum und Absender |
 | Zustellbarkeit | List-Unsubscribe (auch One-Click nach RFC 8058), Bounce-Auswertung per POP3, Sperrliste |
@@ -140,6 +141,31 @@ Standardrahmen ersetzt. Die bisherige Fassung wird deshalb gesichert – über
 **Neue Ausgaben erben die Gestaltung ihrer Vorlage:** Schriften, Text-, Link-
 und Knopffarbe kommen aus der Standardvorlage. Ein Newsletter der zweiten Marke
 beginnt damit gleich in deren Farben.
+
+**Textassistent (freiwillig, ab Werk aus).** Unter *Einstellungen →
+Textassistent* lässt sich ein Sprachmodell hinterlegen (Anthropic oder OpenAI,
+mit eigenem Schlüssel). Danach steht über jedem Textfeld ein ✨-Knopf: anders
+formulieren, kürzen, ausbauen, persönlicher oder sachlicher schreiben,
+Rechtschreibung prüfen. Am Betreff gibt es zusätzlich „Betreff vorschlagen
+lassen“ – Grundlage ist dort der ganze Newsletter. Jeder Vorschlag erscheint
+erst im Fenster; Sie ändern ihn nach Belieben und entscheiden dann, ob er den
+Text ersetzt oder an der Schreibmarke eingesetzt wird. Ein fester Tonfall
+(„Wir duzen unsere Leser“) lässt sich einmal hinterlegen und gilt dann immer.
+
+Drei Dinge sollten Sie dabei wissen:
+
+* **Ohne Schlüssel passiert nichts.** Kein Knopf, keine Verbindung nach außen.
+  Das System funktioniert vollständig ohne den Assistenten.
+* **Der Text verlässt Ihren Server.** Für jeden Vorschlag geht der betreffende
+  Abschnitt zum gewählten Anbieter. Schicken Sie keine personenbezogenen Daten
+  Ihrer Empfänger mit und schließen Sie mit dem Anbieter einen
+  Auftragsverarbeitungsvertrag (Art. 28 DSGVO).
+* **Der Anbieter rechnet ab.** Jede Anfrage kostet dort Geld; das
+  Newslettersystem selbst verlangt nichts. Der Schlüssel liegt verschlüsselt in
+  der Datenbank und wird in der Oberfläche nie wieder angezeigt.
+
+Vorgaben, die immer gelten (Deutsch, keine Werbefloskeln, Platzhalter wie
+`{{vorname}}` bleiben unangetastet), stehen im Code und nicht im Formular.
 
 ---
 
@@ -404,6 +430,7 @@ newsletter/
 │   ├── automationen.php     Automationen: Ablauf-Baukasten und Mailinhalte
 │   ├── vorlagen.php         Design-Vorlagen samt Marke (Baukasten oder HTML)
 │   ├── upload.php           Bild-Upload für den Baukasten
+│   ├── ki.php               holt Textvorschläge (nur wenn eingerichtet)
 │   ├── versand.php          Warteschlange steuern
 │   ├── protokoll.php        Ereignisse, Rückläufer, Sperrliste
 │   ├── benutzer.php         Zugänge, Rollen, eigenes Passwort
@@ -439,6 +466,7 @@ newsletter/
 | `Flow.php` | Ablauf einer Automation: Struktur prüfen, Wege finden, Bedingungen auswerten |
 | `Bounces.php` | Rückläufer inkl. kleinem POP3-Client |
 | `Tracking.php` / `Events.php` | Öffnungen, Klicks, Ereignisse |
+| `Ai.php` | Textassistent: Anweisung, Anfrage an den Anbieter, lesbare Fehler |
 | `Auth.php` / `Util.php` / `Log.php` | Anmeldung, Rollen und Rechte, Helfer, Protokoll |
 
 ---

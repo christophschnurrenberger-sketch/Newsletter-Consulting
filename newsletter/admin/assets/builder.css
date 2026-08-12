@@ -368,3 +368,14 @@ body.bk-zieht .bk-drop { background: rgba(20, 36, 58, .05); border-radius: 4px; 
 .bk-block-bar { cursor: grab; touch-action: none; }
 .bk-block-bar:active { cursor: grabbing; }
 .bk-chip { touch-action: none; }
+
+/* Anzeige des automatischen Speicherns */
+.bk-autosave {
+    margin-right: auto;
+    padding-left: 14px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--ad-muted, #8A95A5);
+}
+.bk-autosave.is-gespeichert { color: #2E7D53; }
+.bk-autosave.is-fehler { color: var(--ad-accent, #C8102E); }

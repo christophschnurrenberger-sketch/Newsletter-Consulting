@@ -102,6 +102,13 @@ if (Util::isPost()) {
         }
     }
 
+    // Der Baukasten speichert im Hintergrund – Antwort als JSON.
+    if (Util::post('autosave') === '1') {
+        Util::json($errors === []
+            ? ['ok' => true, 'zeit' => date('H:i')]
+            : ['ok' => false, 'fehler' => implode(' ', $errors)], $errors === [] ? 200 : 409);
+    }
+
     if ($action === 'speichern' && $errors === []) {
         Util::flash('Gespeichert.');
         Util::redirect('kampagne.php?id=' . $id);

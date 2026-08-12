@@ -237,6 +237,24 @@ if ($veraltet) {
         . 'Meist wurden sie beim Hochladen übersprungen – bitte gezielt erneut übertragen.';
 }
 
+/* ------------------------------------------------- Schutzdatei der Bilder */
+
+// "php_flag" ohne Absicherung lässt Apache mit Fehler 500 antworten, sobald
+// PHP als CGI läuft – dann ist kein Bild im Ordner mehr abrufbar.
+$uploadHtaccess = dirname(__FILE__) . '/uploads/.htaccess';
+$uploadRiskant  = false;
+if (is_readable($uploadHtaccess)) {
+    $inhaltHt = (string) file_get_contents($uploadHtaccess);
+    $uploadRiskant = preg_match('/^\s*php_flag/mi', $inhaltHt) === 1
+        && stripos($inhaltHt, '<IfModule') === false;
+}
+if ($uploadRiskant) {
+    $probleme[] = 'Die Datei uploads/.htaccess enthält "php_flag" ohne Absicherung. '
+        . 'Läuft PHP als CGI, antwortet der Server für den ganzen Ordner mit Fehler 500 – '
+        . 'hochgeladene Bilder erscheinen dann nicht. Die Datei per FTP löschen; '
+        . 'sie wird beim nächsten Bild-Upload richtig neu angelegt.';
+}
+
 /* ------------------------------------------------------- Letzter PHP-Fehler */
 
 $letzterFehler = '';
@@ -259,6 +277,7 @@ if ($alsText) {
     echo "PHP: " . PHP_VERSION . " (" . PHP_SAPI . ")\n";
     echo "Speichergrenze: " . @ini_get('memory_limit') . ", max. Laufzeit: " . @ini_get('max_execution_time') . "s\n";
     echo "config.php vorhanden: " . ($configVorhanden ? 'ja' : 'nein') . "\n";
+    echo "Bilder-Schutzdatei: " . ($uploadRiskant ? 'RISKANT – siehe Probleme' : 'in Ordnung') . "\n";
     echo "Zwischenspeicher (OPcache): " . ($opcacheAn ? 'an' : 'aus')
         . ($opcacheAn && $opcachePruefen === '0' ? ' – prüft Dateidatum NICHT' : '') . "\n";
     if ($pruefGeprueft > 0) {

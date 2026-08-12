@@ -229,10 +229,25 @@ final class Util
         exit;
     }
 
+    /**
+     * Antwort als JSON.
+     *
+     * Vorher wird alles verworfen, was die Seite schon ausgegeben hat: Die
+     * Admin-Seiten schreiben ihren Seitenkopf, bevor sie ein Formular
+     * verarbeiten. Ohne das Aufräumen käme HTML vor dem JSON an und die
+     * Gegenstelle könnte die Antwort nicht lesen.
+     */
     public static function json($data, int $status = 200): void
     {
-        http_response_code($status);
-        header('Content-Type: application/json; charset=utf-8');
+        while (ob_get_level() > 0) {
+            if (!@ob_end_clean()) {
+                break;
+            }
+        }
+        if (!headers_sent()) {
+            http_response_code($status);
+            header('Content-Type: application/json; charset=utf-8');
+        }
         echo json_encode($data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
         exit;
     }

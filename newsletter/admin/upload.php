@@ -30,16 +30,42 @@ function upload_verzeichnis_vorbereiten(string $verzeichnis): string
         return 'Der Ordner uploads/ ist nicht beschreibbar. Bitte per FTP die Rechte auf 755 setzen.';
     }
     $schutz = $verzeichnis . '/.htaccess';
-    if (!is_file($schutz)) {
-        @file_put_contents($schutz,
-            "# Hier liegen nur Bilder – niemals Programmcode ausführen.\n"
-            . "php_flag engine off\n"
-            . "<FilesMatch \"\\.(php|phtml|php3|php4|php5|php7|phps|cgi|pl|py|sh)$\">\n"
-            . "    Require all denied\n"
-            . "</FilesMatch>\n"
-            . "AddType text/plain .php .phtml .cgi .pl\n");
+    $inhalt = is_file($schutz) ? (string) file_get_contents($schutz) : '';
+
+    // Eine ältere Fassung schrieb "php_flag engine off" ohne Absicherung.
+    // Läuft PHP als CGI oder FastCGI – bei vielen Hostern der Normalfall –
+    // kennt Apache diesen Befehl nicht und antwortet für den ganzen Ordner
+    // mit Fehler 500: Kein einziges Bild wäre mehr abrufbar. Deshalb wird
+    // eine solche Datei hier ersetzt.
+    $riskant = $inhalt !== '' && preg_match('/^\s*php_flag/mi', $inhalt) === 1
+        && stripos($inhalt, '<IfModule') === false;
+
+    if ($inhalt === '' || $riskant) {
+        @file_put_contents($schutz, upload_schutzdatei());
     }
     return '';
+}
+
+/**
+ * Inhalt der Schutzdatei.
+ *
+ * Jede Anweisung steckt in einer Abfrage, ob das zuständige Apache-Modul
+ * überhaupt geladen ist. Sonst quittiert der Server einen unbekannten
+ * Befehl mit Fehler 500 – und der trifft dann alle Bilder im Ordner.
+ */
+function upload_schutzdatei(): string
+{
+    return "# Hier liegen nur Bilder – niemals Programmcode ausführen.\n"
+        . "# Alle Anweisungen sind abgesichert: Kennt der Server sie nicht,\n"
+        . "# werden sie übersprungen statt einen Fehler 500 auszulösen.\n\n"
+        . "<IfModule mod_php.c>\n    php_flag engine off\n</IfModule>\n"
+        . "<IfModule mod_php7.c>\n    php_flag engine off\n</IfModule>\n"
+        . "<IfModule mod_php8.c>\n    php_flag engine off\n</IfModule>\n\n"
+        . "<FilesMatch \"\\.(php|phtml|php3|php4|php5|php7|php8|phps|cgi|pl|py|sh)$\">\n"
+        . "    <IfModule mod_authz_core.c>\n        Require all denied\n    </IfModule>\n"
+        . "    <IfModule !mod_authz_core.c>\n        Order allow,deny\n        Deny from all\n    </IfModule>\n"
+        . "</FilesMatch>\n\n"
+        . "<IfModule mod_mime.c>\n    AddType text/plain .php .phtml .cgi .pl\n</IfModule>\n";
 }
 
 $fehler = upload_verzeichnis_vorbereiten($verzeichnis);

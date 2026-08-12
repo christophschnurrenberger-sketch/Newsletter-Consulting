@@ -27,6 +27,7 @@ function builder_ui(array $blocks, string $mode = 'campaign', string $fieldName 
     ?>
     <div class="bk" data-builder data-mode="<?= Util::e($mode) ?>"
          data-upload="upload.php"
+         data-autosave="1"
          data-csrf="<?= Util::e(Util::csrfToken()) ?>">
 
         <!-- Bausteine zum Hineinziehen -->
@@ -56,6 +57,7 @@ function builder_ui(array $blocks, string $mode = 'campaign', string $fieldName 
         <div class="bk-stage">
             <div class="bk-stage-bar">
                 <span class="bk-stage-title"><?= $mode === 'template' ? 'Vorlage' : 'Ausgabe' ?> zusammenstellen</span>
+                <span class="bk-autosave" data-autosave-status></span>
                 <span class="bk-stage-info" data-count></span>
             </div>
             <div class="bk-canvas" data-canvas></div>

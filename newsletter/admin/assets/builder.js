@@ -42,6 +42,80 @@
     function save() {
         field.value = JSON.stringify(state);
         field.dispatchEvent(new Event('input', { bubbles: true }));
+        autoSpeichern();
+    }
+
+    /* ------------------------------------------------------ Automatisch speichern
+     * Jede Änderung geht kurz darauf von selbst zum Server. So stimmt die
+     * Vorschau immer mit dem überein, was man gerade gebaut hat, und nichts
+     * geht verloren, wenn der Reiter zugeht.
+     */
+    var speicherUhr  = null;
+    var speicherLauf = false;
+    var nochmal      = false;
+
+    function autoSpeichern() {
+        if (root.getAttribute('data-autosave') !== '1') { return; }
+        window.clearTimeout(speicherUhr);
+        speicherUhr = window.setTimeout(schicken, 900);
+        merkeStand('ungespeichert');
+    }
+
+    function schicken() {
+        var form = field.form;
+        if (!form) { return; }
+        if (speicherLauf) { nochmal = true; return; }
+        speicherLauf = true;
+        merkeStand('speichert');
+
+        var daten = new FormData(form);
+        daten.set('autosave', '1');
+        // Der Knopf, der sonst mitgeschickt würde, fehlt bei fetch – die
+        // Seite braucht die Aktion aber, um den Baukasten zu erkennen.
+        if (!daten.get('aktion')) {
+            daten.set('aktion', MODE === 'template' ? 'speichern_baukasten' : 'speichern');
+        }
+
+        fetch(window.location.href, {
+            method: 'POST', body: daten, credentials: 'same-origin',
+            headers: { 'X-Requested-With': 'fetch' }
+        })
+            .then(function (a) { return a.ok ? a.json() : Promise.reject(new Error(a.status)); })
+            .then(function (antwort) {
+                if (!antwort || !antwort.ok) { throw new Error('abgelehnt'); }
+                merkeStand('gespeichert');
+                vorschauErneuern();
+            })
+            .catch(function () { merkeStand('fehler'); })
+            .then(function () {
+                speicherLauf = false;
+                if (nochmal) { nochmal = false; schicken(); }
+            });
+    }
+
+    /** Zeigt oben am Baukasten, woran man ist. */
+    function merkeStand(art) {
+        var anzeige = document.querySelector('[data-autosave-status]');
+        if (!anzeige) { return; }
+        var texte = {
+            ungespeichert: 'Änderung erkannt …',
+            speichert:     'Wird gespeichert …',
+            gespeichert:   'Gespeichert um ' + new Date().toLocaleTimeString('de-DE',
+                               { hour: '2-digit', minute: '2-digit' }),
+            fehler:        'Nicht gespeichert – bitte auf „Speichern“ klicken'
+        };
+        anzeige.textContent = texte[art] || '';
+        anzeige.className = 'bk-autosave is-' + art;
+    }
+
+    /** Lädt die Vorschau neu, damit sie zum aktuellen Stand passt. */
+    function vorschauErneuern() {
+        document.querySelectorAll('iframe.ad-preview-frame').forEach(function (rahmen) {
+            var quelle = rahmen.getAttribute('src') || '';
+            if (quelle === '') { return; }
+            var basis = quelle.split('&_t=')[0].split('?_t=')[0];
+            rahmen.src = basis + (basis.indexOf('?') === -1 ? '?' : '&') + '_t=' + Date.now();
+        });
     }
 
     function uid() {

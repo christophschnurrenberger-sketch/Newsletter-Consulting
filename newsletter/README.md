@@ -96,6 +96,10 @@ brauchen Sie nur noch für Sonderfälle.
   funktioniert deshalb in jedem Browser und auch auf dem Handy.
 * Vorhandene Bausteine ziehen Sie am **Kopf des Bausteins**, nicht nur am
   Griffsymbol.
+* **Der Baukasten speichert von selbst.** Kurz nach jeder Änderung geht der
+  Stand zum Server, oben steht dann „Gespeichert um …“, und die Vorschau lädt
+  sich neu. Der Knopf „Speichern“ bleibt trotzdem – er ist der sichere Weg,
+  wenn die Verbindung mal hakt.
 * **Texte schreiben Sie direkt im Baustein:** Textabsatz, Überschrift und
   Knopfbeschriftung lassen sich anklicken und überschreiben.
 * Rechts stehen oben die Einstellungen des angeklickten Bausteins, darunter
@@ -468,7 +472,7 @@ welche Seite wie viele Anmeldungen bringt.
 2. Eine beliebige Seite aufrufen. Die Datenbank wird automatisch auf den neuen
    Stand gebracht (neue Spalten und Tabellen werden ergänzt).
 3. Prüfen: Im Admin-Bereich steht unten die Fassung, z. B.
-   `Fassung 1.6.2 (Vorlage aus Bausteinen) · Datenbank 5`. Dasselbe zeigt `systemcheck.php`.
+   `Fassung 1.7.0 (Automatisch speichern) · Datenbank 5`. Dasselbe zeigt `systemcheck.php`.
 
 **Ändert sich nichts?** Dann sagt `systemcheck.php` genau, woran es liegt:
 
@@ -513,6 +517,7 @@ Die Seite hat keine Abhängigkeiten und funktioniert auch dann, wenn der Rest st
 | `install.php` zeigt nur die Kopfzeile, darunter bleibt alles leer | Ein PHP-Fehler bei abgeschalteter Fehleranzeige. Fast immer eine zu alte PHP-Version (nötig: 8.0+) oder eine unvollständig hochgeladene Datei. `systemcheck.php` nennt den Grund; seit dieser Fassung zeigt auch `install.php` den Fehler im Klartext an. |
 | „config.php konnte nicht geschrieben werden“ | Der Ordner `newsletter/` ist schreibgeschützt. Per FTP die Rechte auf 755 setzen. |
 | Bild-Upload schlägt fehl | Der Ordner `newsletter/uploads/` fehlt oder ist schreibgeschützt – per FTP anlegen und auf 755 setzen. |
+| Hochgeladene Bilder erscheinen nicht (kaputtes Vorschaubild) | Eine ältere Fassung schrieb `php_flag engine off` in `uploads/.htaccess`. Läuft PHP als CGI – bei vielen Hostern der Normalfall – antwortet Apache für den ganzen Ordner mit Fehler 500. Ab Fassung 1.7.0 wird die Datei beim nächsten Upload automatisch ersetzt; der Systemcheck warnt davor. |
 | Bausteine oder Schritte lassen sich am Handy nicht ziehen | Touch-Geräte unterstützen kein Drag & Drop. Nutzen Sie die Pfeiltasten `↑ ↓` am Baustein bzw. am Schritt – oder tippen Sie den Baustein in der linken Leiste an, dann wird er unten angehängt. |
 | Automation verschickt nichts | Status steht auf „Pausiert“, dem Mail-Schritt fehlt der Betreff, oder der Cron-Job läuft nicht. Die Hinweisbox über dem Ablauf nennt fehlende Angaben. |
 | Bedingung „hat geöffnet“ trifft nie zu | In der vorangehenden Mail muss „Öffnungen messen“ angehakt sein, und es muss vorher eine Mail dieser Strecke zugestellt worden sein. |

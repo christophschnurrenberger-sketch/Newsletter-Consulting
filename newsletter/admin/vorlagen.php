@@ -54,6 +54,17 @@ if (Util::isPost()) {
             : 'Vorlage angelegt – ein schlanker Rahmen mit Kopfzeile, {{inhalt}} und den Pflichtangaben.');
         Util::redirect('vorlagen.php?id=' . $newId);
     }
+    // Der Baukasten speichert im Hintergrund – Antwort als JSON, keine Weiterleitung.
+    if (Util::post('autosave') === '1' && $id > 0) {
+        $template = Templates::byId($id);
+        if ($template === null) {
+            Util::json(['ok' => false, 'fehler' => 'Vorlage nicht gefunden.'], 404);
+        }
+        Templates::update($id, Util::post('name') ?: (string) $template['name'],
+            (string) $template['html'], Util::post('description'), Util::postRaw('blocks_json'));
+        Util::json(['ok' => true, 'zeit' => date('H:i')]);
+    }
+
     if ($action === 'marke' && $id > 0) {
         Templates::saveBrand($id, [
             'brand_name'   => Util::post('brand_name'),

@@ -44,6 +44,17 @@ if (Util::isPost()) {
     $id     = Util::postInt('id');
     $stepId = Util::postInt('schritt_id');
 
+    // Der Baukasten der Automations-Mail speichert im Hintergrund. Das muss
+    // vor allen anderen Zweigen stehen: Sein Formular führt dieselbe
+    // Kennung wie der Ablauf mit sich und liefe sonst in "speichern" –
+    // der Ablauf würde mit einem leeren Wert überschrieben.
+    if (Util::post('autosave') === '1') {
+        if ($stepId <= 0) {
+            Util::json(['ok' => false, 'fehler' => 'Kein Schritt gewählt.'], 400);
+        }
+        $action = 'schritt_speichern';
+    }
+
     if ($action === 'anlegen') {
         $newId = Automations::create(Util::post('name') ?: 'Willkommensstrecke', Util::postInt('list_id') ?: null);
         Automations::saveFlow($newId, (string) json_encode(Flow::starter()));
@@ -84,6 +95,9 @@ if (Util::isPost()) {
             $felder['content_text'] = Util::postRaw('content_text');
         }
         Automations::saveStep($stepId, $felder);
+        if (Util::post('autosave') === '1') {
+            Util::json(['ok' => true, 'zeit' => date('H:i')]);
+        }
         Util::flash('Inhalt gespeichert.');
         Util::redirect('automationen.php?id=' . $id . '&schritt=' . $stepId);
     }

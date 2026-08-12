@@ -468,7 +468,7 @@ welche Seite wie viele Anmeldungen bringt.
 2. Eine beliebige Seite aufrufen. Die Datenbank wird automatisch auf den neuen
    Stand gebracht (neue Spalten und Tabellen werden ergänzt).
 3. Prüfen: Im Admin-Bereich steht unten die Fassung, z. B.
-   `Fassung 1.6.1 (Vorlage aus Bausteinen) · Datenbank 5`. Dasselbe zeigt `systemcheck.php`.
+   `Fassung 1.6.2 (Vorlage aus Bausteinen) · Datenbank 5`. Dasselbe zeigt `systemcheck.php`.
 
 **Ändert sich nichts?** Dann sagt `systemcheck.php` genau, woran es liegt:
 
@@ -523,6 +523,7 @@ Die Seite hat keine Abhängigkeiten und funktioniert auch dann, wenn der Rest st
 | Bestätigungslinks führen ins Leere | `base_url` in `config.php` stimmt nicht mit der echten Adresse überein. |
 | Öffnungsraten wirken zu niedrig | Viele Programme laden Bilder nicht. Klicks sind die verlässlichere Kennzahl. |
 | „Dafür fehlt Ihnen die Berechtigung“ | Der Zugang hat die falsche Rolle. Ein Administrator ändert das unter Benutzer. |
+| Nach dem Speichern kommt eine leere Seite | Behoben ab Fassung 1.6.2. Der Server hatte keinen Ausgabepuffer, dadurch lief die Weiterleitung nach dem Speichern ins Leere. |
 | Im Newsletter steht das falsche Impressum | Die Vorlage gehört zu einem anderen Projekt: Vorlagen → „Marke dieser Vorlage“ ausfüllen (Abschnitt 6). Bereits versendete Ausgaben bleiben unverändert. |
 | Fehler im Protokoll | Admin → Protokoll → Fehler; dort steht die genaue Meldung. |
 

@@ -198,9 +198,34 @@ final class Util
         return is_numeric($v) ? (int) $v : $default;
     }
 
+    /**
+     * Weiterleitung – auch dann, wenn schon etwas ausgegeben wurde.
+     *
+     * Normalerweise verwirft der Ausgabepuffer die bisherige Ausgabe und der
+     * Header greift. Ist der Puffer abgeschaltet und die Seite schon
+     * unterwegs, bleibt als Ausweg eine Weiterleitung im HTML – besser als
+     * eine abgebrochene, leere Seite.
+     */
     public static function redirect(string $url): void
     {
-        header('Location: ' . $url);
+        while (ob_get_level() > 0 && ob_get_length() !== false) {
+            if (!@ob_end_clean()) {
+                break;
+            }
+        }
+        if (!headers_sent()) {
+            header('Location: ' . $url);
+            exit;
+        }
+
+        $ziel = self::e($url);
+        echo '<!DOCTYPE html><html lang="de"><head><meta charset="utf-8">'
+           . '<meta http-equiv="refresh" content="0;url=' . $ziel . '">'
+           . '<title>Weiter …</title></head><body>'
+           . '<p>Gespeichert. <a href="' . $ziel . '">Hier geht es weiter</a>, '
+           . 'falls die Seite nicht von selbst lädt.</p>'
+           . '<script>location.replace(' . json_encode($url) . ');</script>'
+           . '</body></html>';
         exit;
     }
 

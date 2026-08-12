@@ -17,10 +17,23 @@ if (!defined('NL_ROOT')) {
  * Systemcheck – so lässt sich sofort erkennen, welcher Stand auf dem
  * Server liegt.
  */
-define('NL_VERSION', '1.6.1 (Vorlage aus Bausteinen)');
+define('NL_VERSION', '1.6.2 (Vorlage aus Bausteinen)');
 
 mb_internal_encoding('UTF-8');
 date_default_timezone_set('Europe/Berlin');
+
+/*
+ * Ausgabe zwischenspeichern.
+ *
+ * Die Admin-Seiten geben ihren Seitenkopf aus, bevor sie ein abgeschicktes
+ * Formular verarbeiten. Ohne Puffer wäre danach kein "Location"-Header mehr
+ * möglich – die Weiterleitung nach dem Speichern liefe ins Leere und der
+ * Browser zeigte eine halbe, leere Seite. Viele Server haben den Puffer ab
+ * Werk aus, deshalb schalten wir ihn hier selbst ein.
+ */
+if (PHP_SAPI !== 'cli' && !headers_sent()) {
+    ob_start();
+}
 
 /* Klassen laden – bewusst ohne Composer, damit das System überall läuft. */
 foreach ([

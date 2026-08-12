@@ -1,7 +1,7 @@
 # Prüfsummen des Newslettersystems – erzeugt von cron/pruefsummen.php
-# Fassung: 1.6.1 (Vorlage aus Bausteinen)
+# Fassung: 1.6.2 (Vorlage aus Bausteinen)
 # systemcheck.php vergleicht damit die Dateien auf dem Server.
-2a888084d86c8775eb865cec603a9a92a01b15d3806c759d0b921fac3d87f75a  README.md
+1ade56db56e28140907469c467f7ca0fe53cabb2c2d7b72ceb27cf14df1b7b58  README.md
 6605e2f4278b7312a797aa6d5cd964f3b10233ff8f0098d9358bdfba310cea06  abmelden.php
 85f06af1a8d41fb8efd1882babcdb7029fc80a1e2acbb1fc000babc5bd9cf6bd  admin/assets/admin.css
 30c3c25e669852961f09595a12c7a105c8578ebb644e286b1756e00c60408fde  admin/assets/admin.js
@@ -61,8 +61,8 @@ add1f1062634e7a5e4c039699f31d3ab3435528bff89acadbe8a586618ca8e8b  lib/SystemMail
 724ffb815cdf0d53aec5c05d52f6232036c13a706403a08b722b2e7f08a5311c  lib/Templates.php
 1ff1590061ada92bfd11f5aaf2ca92281368bdfcd03e6a78f6068bd44d60bc95  lib/Tracking.php
 f16866caf47cafebdefeaafbb5569c51d8a403f81add5aaddb9ae9e1befeda43  lib/Urls.php
-be9888372f5179ec214d95eca7a5b11ec598d5982646e3e5ef66d87b166f6d38  lib/Util.php
-9b1ae048b3ffba539d9fa1ad0a8da599237bc2d7793afa8e05bd0286ab0ec507  lib/bootstrap.php
+006ec3e27797ac463f7a48bf20abfcf20d05bd03f4815f2e3405e51494d8cdb8  lib/Util.php
+bd14221cde1818167a4cdb9fac2958db327f0904337e6e6032b0b33cd2e3e869  lib/bootstrap.php
 364702df0599a93be7e0d92efedc6ceed2eb670e699c2a5eb6f04c080f946d09  partials/page.php
 ce1a83de309fad556bf61efbe3e8d5cc1fe6cecf6f99990d7685278995e49839  subscribe.php
 ed2b13c8f988b7cecef1941ecdeba3d26cf057ef7db0a626c61d98346cfad3ba  systemcheck.php

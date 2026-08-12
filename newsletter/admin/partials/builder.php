@@ -53,11 +53,23 @@ function builder_ui(array $blocks, string $mode = 'campaign', string $fieldName 
                 <?php endforeach; ?>
             </select>
 
+            <h3 style="margin-top:22px;">Textassistent</h3>
             <?php if (Ai::available()): ?>
-                <h3 style="margin-top:22px;">Textassistent</h3>
                 <p class="bk-hint">Formuliert auf Wunsch einen Vorschlag für das Textfeld,
                     in dem die Schreibmarke steht. Sie sehen ihn zuerst.</p>
                 <button type="button" class="bk-ki-open" data-ki-open>✨ Text vorschlagen</button>
+            <?php else: ?>
+                <?php /* Ohne Schlüssel bleibt der Assistent aus – aber man soll sehen,
+                          dass es ihn gibt, statt vergeblich nach einem Knopf zu suchen. */ ?>
+                <p class="bk-hint">Noch nicht eingerichtet. Mit einem eigenen Zugang formuliert
+                    er auf Klick Textvorschläge – umformulieren, kürzen, korrigieren.
+                    Bis dahin geht nichts nach außen.</p>
+                <?php if (Auth::can('einstellungen')): ?>
+                    <a class="bk-ki-open" href="einstellungen.php#ki">Textassistent einrichten</a>
+                <?php else: ?>
+                    <p class="bk-hint">Einrichten kann ihn eine Administratorin oder ein Administrator
+                        unter Einstellungen.</p>
+                <?php endif; ?>
             <?php endif; ?>
         </aside>
 

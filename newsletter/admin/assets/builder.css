@@ -414,8 +414,12 @@ body.bk-zieht .bk-drop { background: rgba(20, 36, 58, .05); border-radius: 4px; 
 }
 .bk-richbtn-ki:hover { background: #E7F1EA; }
 
-/* Knopf in der linken Spalte */
+/* Knopf in der linken Spalte – auch als Link, wenn noch nichts eingerichtet ist */
 .bk-ki-open {
+    display: block;
+    box-sizing: border-box;
+    text-align: center;
+    text-decoration: none;
     width: 100%;
     padding: 8px 10px;
     border: 1px solid var(--ad-border, #E0E6ED);

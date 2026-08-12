@@ -17,7 +17,7 @@ if (!defined('NL_ROOT')) {
  * Systemcheck – so lässt sich sofort erkennen, welcher Stand auf dem
  * Server liegt.
  */
-define('NL_VERSION', '1.8.1 (Textassistent)');
+define('NL_VERSION', '1.8.2 (Textassistent)');
 
 mb_internal_encoding('UTF-8');
 date_default_timezone_set('Europe/Berlin');

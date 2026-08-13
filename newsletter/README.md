@@ -666,7 +666,7 @@ per FTPS auf den Webspace.
 
 | Name | Inhalt |
 |---|---|
-| `IONOS_FTP_HOST` | der FTP-Server aus dem IONOS-Menü, z. B. `access-5017012345.webspace-data.io` (ohne `ftp://`) |
+| `IONOS_FTP_HOST` | der Server aus dem IONOS-Menü, z. B. `access-5017012345.webspace-data.io` – **ohne** `ftp://`. Gibt Ihr Paket nur SFTP her, schreiben Sie `sftp://access-…` davor. |
 | `IONOS_FTP_USER` | FTP-Benutzername |
 | `IONOS_FTP_PASS` | zugehöriges Passwort |
 | `IONOS_ZIEL` | Zielordner auf dem Server, z. B. `/newsletter` |
@@ -682,7 +682,10 @@ auch für Sie nicht mehr lesbar, nur ersetzbar.
    den ganzen Newsletter-Bereich lahmlegen.
 2. Er prüft, ob `pruefsummen.txt` zum Code passt (sonst meldet der Systemcheck
    hinterher lauter „geändert").
-3. Er lädt hoch – über FTPS, also verschlüsselt.
+3. Er lädt hoch – verschlüsselt. Ohne Präfix über **FTPS**, mit `sftp://`
+   davor über **SFTP** (SSH). Beides gibt es bei IONOS je nach Paket, beides
+   ist geprüft. Unverschlüsseltes `ftp://` weist der Ablauf ausdrücklich ab –
+   sonst gingen Passwort und Dateien im Klartext durchs Netz.
 
 **Was er bewusst NICHT anfasst:**
 

@@ -1,7 +1,7 @@
 # Prüfsummen des Newslettersystems – erzeugt von cron/pruefsummen.php
 # Fassung: 1.12.0 (Automationen: Ziehen und Inhalte)
 # systemcheck.php vergleicht damit die Dateien auf dem Server.
-bc4fb70a827e4f46e1f08f1bfe6c835e1bc377b79802e1836674373f8ef0f324  README.md
+84b19c81e4be4afee4fcd04e323940ac45758f66a880eee6d36a4570f98acfe6  README.md
 6605e2f4278b7312a797aa6d5cd964f3b10233ff8f0098d9358bdfba310cea06  abmelden.php
 52330966b22362c29737b6980fa109b68a955a0e503c3c9a306c2f19e6a9fdb4  admin/assets/admin.css
 30c3c25e669852961f09595a12c7a105c8578ebb644e286b1756e00c60408fde  admin/assets/admin.js

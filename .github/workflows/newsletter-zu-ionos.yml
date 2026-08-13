@@ -162,10 +162,30 @@ jobs:
           # uploads/     Die hochgeladenen Bilder.
           # install.php  Nach der Einrichtung überflüssig und besser gelöscht.
           #              Für eine ERSTE Einrichtung die Zeile entfernen.
+
+          # FTPS oder SFTP? IONOS gibt je nach Paket das eine oder das andere
+          # heraus. Steht im Feld IONOS_FTP_HOST ein "sftp://" davor, läuft es
+          # über SSH – sonst über FTP mit erzwungener Verschlüsselung.
+          # Unverschlüsselt ("ftp://") lassen wir bewusst nicht zu: Passwort
+          # und Dateien gingen sonst im Klartext durchs Netz.
+          case "$HOST" in
+            sftp://*)
+              echo "Verbindung über SFTP (SSH)."
+              EINSTELLUNG="set sftp:auto-confirm yes; set sftp:connect-program 'ssh -a -x -o StrictHostKeyChecking=accept-new';"
+              ;;
+            ftp://*)
+              echo "::error::IONOS_FTP_HOST beginnt mit 'ftp://' – unverschlüsselt wird nicht übertragen."
+              echo "Bitte das Präfix weglassen (dann FTPS) oder 'sftp://' verwenden."
+              exit 1
+              ;;
+            *)
+              echo "Verbindung über FTPS (verschlüsseltes FTP)."
+              EINSTELLUNG="set ftp:ssl-force true; set ftp:ssl-protect-data true; set ssl:verify-certificate true;"
+              ;;
+          esac
+
           lftp -c "
-            set ftp:ssl-force true;
-            set ftp:ssl-protect-data true;
-            set ssl:verify-certificate true;
+            $EINSTELLUNG
             set net:max-retries 3;
             set net:timeout 20;
             set cmd:fail-exit true;

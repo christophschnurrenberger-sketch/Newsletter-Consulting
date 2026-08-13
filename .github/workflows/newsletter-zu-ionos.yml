@@ -163,42 +163,80 @@ jobs:
           # install.php  Nach der Einrichtung überflüssig und besser gelöscht.
           #              Für eine ERSTE Einrichtung die Zeile entfernen.
 
+          # Der erste FTPS-Versuch bekommt nur einen Anlauf und ein kurzes
+          # Zeitlimit: Antwortet auf der Adresse gar kein FTP-Dienst, wären
+          # drei Versuche à 20 Sekunden eine Minute Warten für nichts.
+          FTPS_ART="set ftp:ssl-force true; set ftp:ssl-protect-data true; set ssl:verify-certificate true;
+                    set net:max-retries 1; set net:timeout 12;"
+          # ConnectTimeout und NumberOfPasswordPrompts sind wichtig: Ohne sie
+          # kann ssh auf eine Eingabe warten, die in einem Ablauf ohne Tastatur
+          # nie kommt – der Lauf hinge dann bis zum Zeitlimit.
+          SFTP_ART="set sftp:auto-confirm yes;
+                    set sftp:connect-program 'ssh -a -x -o StrictHostKeyChecking=accept-new -o ConnectTimeout=15 -o NumberOfPasswordPrompts=1';"
+
+          # Die eigentliche Übertragung – einmal geschrieben, zweimal nutzbar.
+          # $1 = Verbindungsart, $2 = Adresse
+          # Die Art steht bewusst NACH den allgemeinen Einstellungen, damit sie
+          # diese überschreiben kann (etwa die Zahl der Versuche).
+          uebertragen() {
+            lftp -c "
+              set net:max-retries 3;
+              set net:timeout 20;
+              set cmd:fail-exit true;
+              $1
+              open -u '$FTPUSER','$PASS' '$2';
+              mirror --reverse --no-perms --parallel=4 $TROCKEN \
+                -x '^config\.php$' \
+                -x '^install\.php$' \
+                -x '^data/' \
+                -x '^uploads/' \
+                --verbose=1 \
+                newsletter/ '$ZIEL';
+              bye;
+            "
+          }
+
           # FTPS oder SFTP? IONOS gibt je nach Paket das eine oder das andere
-          # heraus. Steht im Feld IONOS_FTP_HOST ein "sftp://" davor, läuft es
-          # über SSH – sonst über FTP mit erzwungener Verschlüsselung.
-          # Unverschlüsselt ("ftp://") lassen wir bewusst nicht zu: Passwort
-          # und Dateien gingen sonst im Klartext durchs Netz.
+          # heraus – neuere Pakete meist nur noch SFTP. Steht "sftp://" vor der
+          # Adresse, läuft es gleich über SSH. Ohne Präfix wird FTPS versucht;
+          # lehnt der Server das ab, hat er schlicht kein FTPS, und wir nehmen
+          # SFTP. Unverschlüsseltes "ftp://" lassen wir bewusst nicht zu:
+          # Passwort und Dateien gingen sonst im Klartext durchs Netz.
           case "$HOST" in
             sftp://*)
               echo "Verbindung über SFTP (SSH)."
-              EINSTELLUNG="set sftp:auto-confirm yes; set sftp:connect-program 'ssh -a -x -o StrictHostKeyChecking=accept-new';"
+              uebertragen "$SFTP_ART" "$HOST"
               ;;
+
             ftp://*)
               echo "::error::IONOS_FTP_HOST beginnt mit 'ftp://' – unverschlüsselt wird nicht übertragen."
-              echo "Bitte das Präfix weglassen (dann FTPS) oder 'sftp://' verwenden."
+              echo "Bitte das Präfix weglassen (dann FTPS) oder 'sftp://' davorsetzen."
               exit 1
               ;;
+
             *)
-              echo "Verbindung über FTPS (verschlüsseltes FTP)."
-              EINSTELLUNG="set ftp:ssl-force true; set ftp:ssl-protect-data true; set ssl:verify-certificate true;"
+              echo "Verbindung über FTPS (verschlüsseltes FTP) …"
+              set +e
+              AUSGABE=$(uebertragen "$FTPS_ART" "$HOST" 2>&1)
+              ERGEBNIS=$?
+              set -e
+              echo "$AUSGABE"
+
+              if [ $ERGEBNIS -eq 0 ]; then
+                exit 0
+              fi
+
+              # Genau dieser Wortlaut heißt: Der Server kann kein FTPS.
+              if echo "$AUSGABE" | grep -qi "does not support or allow SSL"; then
+                echo "::warning::Dieser Server bietet kein FTPS – zweiter Versuch über SFTP (SSH)."
+                echo "Dauerhaft sauberer: im Secret IONOS_FTP_HOST ein 'sftp://' voranstellen."
+                uebertragen "$SFTP_ART" "sftp://$HOST"
+                exit $?
+              fi
+
+              exit $ERGEBNIS
               ;;
           esac
-
-          lftp -c "
-            $EINSTELLUNG
-            set net:max-retries 3;
-            set net:timeout 20;
-            set cmd:fail-exit true;
-            open -u '$FTPUSER','$PASS' '$HOST';
-            mirror --reverse --no-perms --parallel=4 $TROCKEN \
-              -x '^config\.php$' \
-              -x '^install\.php$' \
-              -x '^data/' \
-              -x '^uploads/' \
-              --verbose=1 \
-              newsletter/ '$ZIEL';
-            bye;
-          "
 
       - name: Fertig
         if: success() && steps.zugang.outputs.bereit == 'ja'

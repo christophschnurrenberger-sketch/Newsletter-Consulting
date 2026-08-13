@@ -86,6 +86,18 @@ final class Util
                 return 'enc1:' . base64_encode($iv . $tag . $enc);
             }
         }
+        /*
+         * Notnagel ohne openssl: base64 ist KEINE Verschlüsselung, das Passwort
+         * liegt dann praktisch im Klartext in der Datenbank. Damit das niemand
+         * unbemerkt bleibt, wandert es ins Protokoll; der Systemcheck weist
+         * ebenfalls darauf hin.
+         */
+        try {
+            Log::warn('sicherheit', 'openssl fehlt – ein Passwort wurde UNVERSCHLÜSSELT gespeichert. '
+                . 'Bitte die PHP-Erweiterung "openssl" aktivieren und das Passwort neu eingeben.');
+        } catch (Throwable $e) {
+            error_log('[Newsletter] openssl fehlt – Passwort unverschlüsselt gespeichert.');
+        }
         return 'raw1:' . base64_encode($plain);
     }
 
@@ -272,8 +284,22 @@ final class Util
         if (session_status() === PHP_SESSION_ACTIVE) {
             return;
         }
+        /*
+         * Das Sitzungsplätzchen darf nur über HTTPS mitgehen, sonst könnte
+         * jemand im selben Netz die Anmeldung mitlesen. Maßgeblich ist auch
+         * die eingetragene Basis-URL: Läuft die Seite laut config.php über
+         * https, gilt das Plätzchen auch dann als "nur verschlüsselt", wenn
+         * gerade jemand versehentlich über http hereinkommt.
+         */
         $https = (($_SERVER['HTTPS'] ?? '') !== '' && ($_SERVER['HTTPS'] ?? '') !== 'off')
             || (($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '') === 'https');
+        if (!$https) {
+            try {
+                $https = str_starts_with(strtolower(Config::baseUrl()), 'https://');
+            } catch (Throwable $e) {
+                // Vor der Einrichtung gibt es noch keine Basis-URL.
+            }
+        }
         session_set_cookie_params([
             'lifetime' => 0,
             'path'     => '/',

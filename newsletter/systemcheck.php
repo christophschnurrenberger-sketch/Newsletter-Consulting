@@ -13,6 +13,66 @@
 @ini_set('display_errors', '1');
 @error_reporting(E_ALL);
 
+/* ---------------------------------------------------------------- Zugang
+ *
+ * Vor der Einrichtung ist die Seite frei: Da gibt es nichts zu schützen,
+ * und genau dann braucht man sie. Sobald das System steht, verrät sie
+ * einem Fremden zu viel (Fassung, PHP-Version, Erweiterungen, Grenzwerte)
+ * – so etwas ist der erste Schritt eines gezielten Angriffs. Deshalb ab
+ * dann nur noch für Angemeldete.
+ *
+ * Zusätzlich geht der Schlüssel aus der config.php als Parameter
+ * (?token=…). Denn wenn der Admin-Bereich selbst klemmt, ist diese Seite
+ * das einzige Werkzeug, das noch etwas sagen kann – dann darf sie nicht
+ * hinter genau der kaputten Anmeldung liegen.
+ */
+$sc_offen = true;
+// Auf zu altem PHP läuft der Programmkern gar nicht erst – dann bleibt die
+// Seite offen, denn genau dann muss sie sagen dürfen, woran es liegt.
+if (is_file(dirname(__FILE__) . '/config.php') && PHP_VERSION_ID >= 80000) {
+    $sc_erlaubt = false;
+    try {
+        require_once dirname(__FILE__) . '/lib/bootstrap.php';
+        $sc_token = (string) Config::get('cron_token', '');
+        $sc_frage = isset($_GET['token']) ? (string) $_GET['token'] : '';
+
+        if ($sc_token !== '' && $sc_frage !== '' && hash_equals($sc_token, $sc_frage)) {
+            $sc_erlaubt = true;
+        } elseif (Auth::check()) {
+            $sc_erlaubt = true;
+        } elseif (Auth::userCount() === 0) {
+            $sc_erlaubt = true;   // eingerichtet, aber noch ohne Zugang
+        }
+    } catch (Throwable $sc_fehler) {
+        // Datenbank kaputt: Dann ist die Seite das letzte Hilfsmittel und
+        // bleibt offen – ohne Datenbank steht hier ohnehin nichts Privates.
+        $sc_erlaubt = true;
+    }
+    // bootstrap.php schaltet die Fehleranzeige ab; hier soll sie an bleiben.
+    @ini_set('display_errors', '1');
+    @error_reporting(E_ALL);
+    if (function_exists('ob_get_level')) {
+        while (ob_get_level() > 0) { @ob_end_clean(); }
+    }
+
+    if (!$sc_erlaubt) {
+        header('HTTP/1.1 403 Forbidden');
+        header('Content-Type: text/html; charset=utf-8');
+        echo '<!DOCTYPE html><html lang="de"><head><meta charset="utf-8"><title>Systemcheck</title></head>'
+           . '<body style="font-family:-apple-system,Arial,sans-serif;padding:40px;color:#14243A;max-width:640px;">'
+           . '<h1 style="font-size:20px;">Systemcheck</h1>'
+           . '<p style="color:#4A5568;line-height:1.6;">Diese Seite zeigt technische Angaben zum Server. '
+           . 'Seit der Einrichtung ist sie nur noch nach der Anmeldung sichtbar.</p>'
+           . '<p style="color:#4A5568;line-height:1.6;">Klemmt der Admin-Bereich, hängen Sie den '
+           . 'Schlüssel aus Ihrer <code>config.php</code> an: '
+           . '<code>systemcheck.php?token=IHR_CRON_TOKEN</code></p>'
+           . '<p><a href="admin/login.php" style="color:#C8102E;font-weight:700;">Zur Anmeldung</a></p>'
+           . '</body></html>';
+        exit;
+    }
+    $sc_offen = false;
+}
+
 $MINDEST_PHP = 80000; // PHP 8.0.0
 $probleme    = array();
 $warnungen   = array();
@@ -47,7 +107,9 @@ foreach (array('mbstring', 'json', 'filter') as $pflicht) {
     }
 }
 if (!extension_loaded('openssl')) {
-    $warnungen[] = 'Ohne die Erweiterung "openssl" ist kein verschlüsselter SMTP-Versand möglich.';
+    $warnungen[] = 'Ohne die Erweiterung "openssl" ist kein verschlüsselter SMTP-Versand möglich – '
+        . 'und gespeicherte Passwörter (SMTP, Rücklaufpostfach) liegen dann UNVERSCHLÜSSELT in der '
+        . 'Datenbank. Bitte beim Hoster aktivieren lassen.';
 }
 
 /* ------------------------------------------------------------ Schreibrechte */
@@ -66,6 +128,65 @@ foreach ($ordner as $pfad => $zweck) {
     } elseif (!$beschreibbar) {
         $probleme[] = 'Der Ordner "' . basename($pfad) . '" ist nicht beschreibbar. '
             . 'Bitte per FTP die Rechte auf 755 (Ordner) setzen.';
+    }
+}
+
+/* ------------------------------------------- Ist der Datenordner dicht?
+ *
+ * Im Datenordner liegt die Datenbank – also sämtliche Empfängerdaten. Dass
+ * niemand sie herunterladen kann, hängt an der Datei data/.htaccess. Ob der
+ * Server die überhaupt beachtet, weiß man aber erst, wenn man es versucht:
+ * Apache tut es, nginx zum Beispiel nicht. Deshalb fragen wir die eigene
+ * Adresse hier tatsächlich einmal ab, statt es zu vermuten.
+ */
+$datenSchutz = 'unbekannt';   // dicht | offen | unbekannt
+$datenPfad   = '';
+if (!$sc_offen && class_exists('Config')) {
+    $datenDatei = basename((string) Config::get('db.path', ''));
+    $basis      = Config::baseUrl();
+
+    if ($basis !== '' && $datenDatei !== '' && Config::get('db.driver') === 'sqlite') {
+        $datenPfad = $basis . '/data/' . rawurlencode($datenDatei);
+        $anfang    = '';
+        $erreicht  = false;
+
+        /*
+         * Geholt werden nur die ersten Bytes – und entscheidend ist nicht der
+         * Statuscode, sondern ob wirklich eine Datenbank herauskommt: Jede
+         * SQLite-Datei beginnt mit "SQLite format 3". Manche Server antworten
+         * auf Unbekanntes mit einer freundlichen Seite und Status 200; ohne
+         * diese Prüfung gäbe das blinden Alarm.
+         */
+        if (function_exists('curl_init')) {
+            $ch = curl_init($datenPfad);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_TIMEOUT, 8);
+            curl_setopt($ch, CURLOPT_FOLLOWLOCATION, false);
+            curl_setopt($ch, CURLOPT_RANGE, '0-31');
+            $roh      = @curl_exec($ch);
+            $erreicht = $roh !== false && curl_errno($ch) === 0;
+            $anfang   = (string) $roh;
+            curl_close($ch);
+        } else {
+            $kontext = stream_context_create(array('http' => array(
+                'method' => 'GET', 'timeout' => 8, 'ignore_errors' => true,
+                'header' => "Range: bytes=0-31\r\n",
+            )));
+            $roh      = @file_get_contents($datenPfad, false, $kontext, 0, 32);
+            $erreicht = $roh !== false;
+            $anfang   = (string) $roh;
+        }
+
+        if ($erreicht && strpos($anfang, 'SQLite format 3') === 0) {
+            $datenSchutz = 'offen';
+            $probleme[]  = 'SCHWERWIEGEND: Die Datenbank ist aus dem Internet abrufbar – damit kommt '
+                . 'jeder an sämtliche Empfängerdaten. Ihr Server beachtet die Datei data/.htaccess '
+                . 'offenbar nicht. Sperren Sie den Ordner data/ sofort in der Serverkonfiguration, '
+                . 'oder legen Sie die Datenbank außerhalb des Web-Ordners ab.';
+        } elseif ($erreicht) {
+            // Antwort kam an, war aber keine Datenbank – also abgewiesen.
+            $datenSchutz = 'dicht';
+        }
     }
 }
 
@@ -190,6 +311,12 @@ if ($opcacheAn && function_exists('opcache_get_status')) {
 
 $geleert = '';
 if (isset($_POST['leeren']) && $_POST['leeren'] === 'opcache') {
+    // Den Zwischenspeicher zu leeren kostet Rechenzeit: Danach muss der
+    // Server jede Datei neu übersetzen. Ohne Schranke könnte das jeder
+    // beliebig oft auslösen – deshalb nur, wer die Seite auch sehen darf.
+    if (!$sc_offen && class_exists('Util')) {
+        Util::requireCsrf();
+    }
     if (function_exists('opcache_reset') && @opcache_reset()) {
         $geleert = 'Der Zwischenspeicher wurde geleert. Bitte die Seite neu laden.';
     } else {
@@ -421,7 +548,12 @@ function sc_e($wert)
                         <?php if ($geleert !== ''): ?>
                             <div class="klein" style="margin-top:8px;"><strong><?= sc_e($geleert) ?></strong></div>
                         <?php endif; ?>
-                        <form method="post" style="margin-top:8px;">
+                        <?php /* Beim Zugang über ?token=… muss der Schlüssel auch am Formular hängen. */ ?>
+                        <form method="post" style="margin-top:8px;" action="systemcheck.php<?=
+                            isset($_GET['token']) ? '?token=' . rawurlencode((string) $_GET['token']) : '' ?>">
+                            <?php if (!$sc_offen && class_exists('Util')): ?>
+                                <input type="hidden" name="_csrf" value="<?= sc_e(Util::csrfToken()) ?>">
+                            <?php endif; ?>
                             <input type="hidden" name="leeren" value="opcache">
                             <button type="submit">Zwischenspeicher jetzt leeren</button>
                         </form>
@@ -474,6 +606,27 @@ function sc_e($wert)
                 </tr>
             <?php endforeach; ?>
         </table>
+
+        <?php if ($datenSchutz !== 'unbekannt' || $datenPfad !== ''): ?>
+            <h2>Sind die Empfängerdaten geschützt?</h2>
+            <?php if ($datenSchutz === 'offen'): ?>
+                <span class="pille schlecht">die Datenbank ist öffentlich abrufbar</span>
+                <p class="klein">Wir haben <code><?= sc_e($datenPfad) ?></code> abgerufen und die Datei
+                    bekommen. Damit kann jeder sämtliche Namen, Adressen und Einwilligungen
+                    herunterladen. Der Ordner <code>data/</code> muss in der Serverkonfiguration
+                    gesperrt werden – oder die Datenbank gehört außerhalb des Web-Ordners.</p>
+            <?php elseif ($datenSchutz === 'dicht'): ?>
+                <span class="pille gut">von außen nicht erreichbar</span>
+                <p class="klein">Der Abruf der Datenbankdatei über das Internet wurde abgewiesen.
+                    Der Schutz liegt an <code>data/.htaccess</code>; bleibt diese Datei beim
+                    Hochladen liegen, bleibt der Schutz bestehen.</p>
+            <?php else: ?>
+                <span class="pille mittel">nicht prüfbar</span>
+                <p class="klein">Der Server durfte sich nicht selbst aufrufen. Prüfen Sie es von Hand:
+                    Rufen Sie <code><?= sc_e($datenPfad) ?></code> im Browser auf. Erscheint eine
+                    Fehlermeldung, ist alles in Ordnung – lädt eine Datei herunter, nicht.</p>
+            <?php endif; ?>
+        <?php endif; ?>
     </div>
 
     <div class="karte">
@@ -505,7 +658,9 @@ function sc_e($wert)
     <?php endif; ?>
 
     <p style="font-size:13px;color:#8A95A5;">
-        Diese Seite verrät nichts Vertrauliches, kann aber nach der Einrichtung gelöscht werden.
+        Hier stehen keine Zugangsdaten und keine Empfängerangaben – aber Fassung, PHP-Version und
+        Erweiterungen. Das ist genau das, was ein Angreifer zuerst wissen will, deshalb ist die Seite
+        seit der Einrichtung nur noch angemeldet erreichbar.
         Textfassung zum Kopieren: <a href="systemcheck.php?format=text">systemcheck.php?format=text</a>
     </p>
 </div>

@@ -8,6 +8,14 @@ final class Auth
 {
     private const MAX_ATTEMPTS = 8;
     private const WINDOW       = 900; // 15 Minuten
+    /*
+     * Zweite Bremse, diesmal am Konto statt an der Herkunft: Wer ein Passwort
+     * von vielen verschiedenen Adressen aus durchprobiert, umgeht die Sperre
+     * pro IP mühelos. Die Grenze liegt bewusst hoch genug, dass sich damit
+     * niemand mutwillig fremde Zugänge lahmlegen kann – und sie läuft nach
+     * einer Viertelstunde von selbst wieder ab.
+     */
+    private const MAX_PER_ACCOUNT = 25;
 
     /* ------------------------------------------------------------- Rollen */
 
@@ -120,7 +128,13 @@ final class Auth
             return 'Zu viele Anmeldeversuche. Bitte warten Sie 15 Minuten.';
         }
 
-        $user = DB::row('SELECT * FROM users WHERE email = ?', [Util::normalizeEmail($email)]);
+        $adresse = Util::normalizeEmail($email);
+        if (!Util::rateLimit('login_konto', $adresse, self::MAX_PER_ACCOUNT, self::WINDOW)) {
+            Log::warn('auth', 'Zu viele Anmeldeversuche für ' . $adresse . ' (von mehreren Adressen).');
+            return 'Zu viele Anmeldeversuche für diesen Zugang. Bitte warten Sie 15 Minuten.';
+        }
+
+        $user = DB::row('SELECT * FROM users WHERE email = ?', [$adresse]);
         if ($user === null || !password_verify($password, (string) $user['password_hash'])) {
             // Gleiche Meldung für falsche Adresse und falsches Passwort
             return 'E-Mail-Adresse oder Passwort ist falsch.';
@@ -143,6 +157,7 @@ final class Auth
 
         DB::update('users', ['last_login_at' => Util::now()], 'id = ?', [(int) $user['id']]);
         Util::clearRateLimit('login', $ip);
+        Util::clearRateLimit('login_konto', $adresse);
         Log::info('auth', 'Anmeldung: ' . $user['email']);
         return '';
     }

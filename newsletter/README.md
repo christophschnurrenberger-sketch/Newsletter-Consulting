@@ -402,7 +402,69 @@ Rechtsgrundlage, Speicherdauer, Widerruf – und den Hinweis auf die Messung von
 
 ---
 
-## 11. Aufbau
+## 11. Sicherheit
+
+In der Datenbank stehen Klarnamen, E-Mail-Adressen, Einwilligungsprotokolle und
+IP-Adressen – also personenbezogene Daten, für die Sie haften. Was das System
+dafür tut und was Sie selbst tun müssen:
+
+**Was eingebaut ist**
+
+| Bereich | Maßnahme |
+|---|---|
+| Passwörter der Zugänge | `password_hash()` (bcrypt), nie im Klartext, automatische Neuverschlüsselung bei stärkeren Verfahren |
+| Anmeldung | gleiche Fehlermeldung für falsche Adresse und falsches Passwort, Bremse pro IP (8 Versuche/15 Min.) **und** pro Konto (25/15 Min.), neue Sitzungskennung nach dem Login, Abmeldung nach 8 Stunden |
+| Sitzung | Cookie nur für den Server (HttpOnly), nicht seitenübergreifend (SameSite=Lax), nur über HTTPS, sobald die Basis-URL auf https lautet |
+| Formulare | CSRF-Zeichen bei **jedem** POST, zeitkonstanter Vergleich |
+| Datenbankzugriffe | ausschließlich vorbereitete Anweisungen (PDO), keine zusammengebauten Abfragen mit Benutzereingaben |
+| Ausgaben | alles maskiert; eingefügtes HTML läuft durch einen Filter mit fester Positivliste (script, iframe, Ereignis-Attribute und `javascript:` fliegen raus) |
+| Rechte | serverseitig geprüft, auch bei direktem Aufruf der Adresse und bei abgeschickten Formularen |
+| SMTP-Passwort, Rücklaufpostfach, KI-Schlüssel | verschlüsselt (AES-256-GCM) mit dem Schlüssel aus der `config.php`, in der Oberfläche nie wieder sichtbar |
+| Empfänger-Selbstverwaltung | zufälliges Kennzeichen (192 Bit) **plus** zweckgebundene Signatur – ein Kennzeichen aus einer Abmelde-Mail öffnet keine Datenansicht |
+| Bild-Upload | nur echte Bilder (Inhaltsprüfung, nicht die Endung), eigener Dateiname, Ausführung von Programmcode im Ordner gesperrt |
+| Cron-Adressen | nur mit dem Schlüssel aus der `config.php`, zeitkonstant verglichen |
+| Systemcheck | nach der Einrichtung nur noch angemeldet – oder mit dem Cron-Schlüssel, falls der Admin-Bereich klemmt |
+| Protokoll | Anmeldungen, Rechteänderungen, Versand und Fehler landen im Protokoll |
+
+**Was Sie selbst tun müssen**
+
+1. **`install.php` löschen**, sobald die Einrichtung steht. Das System weist
+   darauf hin und sperrt die Datei zusätzlich, sobald ein Zugang existiert.
+2. **HTTPS erzwingen.** Legen Sie im Hauptverzeichnis Ihrer Domain eine
+   `.htaccess` an:
+   ```apache
+   RewriteEngine On
+   RewriteCond %{HTTPS} !=on
+   RewriteRule ^(.*)$ https://%{HTTP_HOST}/$1 [R=301,L]
+   ```
+3. **Den Systemcheck ansehen.** Er ruft die Datenbankdatei einmal über das
+   Internet ab und sagt Ihnen, ob sie wirklich unerreichbar ist. Steht dort
+   „öffentlich abrufbar“, handeln Sie sofort: Dann kann jeder Ihre komplette
+   Empfängerliste herunterladen.
+4. **Starke Passwörter** und für jede Person ein eigener Zugang – keine
+   Sammelkonten. Ausgeschiedene Mitarbeiter sperren statt das Passwort zu teilen.
+5. **Sichern.** Die Datenbank (`data/`) gehört in Ihre Datensicherung – und die
+   Sicherung gehört genauso geschützt wie das Original, es sind dieselben Daten.
+6. **Aktuell halten:** PHP-Version im Hosting-Menü nicht veralten lassen.
+
+**Wo die Grenzen liegen – ehrlich**
+
+* Der Schutz des Ordners `data/` hängt an `data/.htaccess`. Apache beachtet
+  diese Datei (IONOS, die meisten Massenhoster), **nginx nicht**. Zusätzlich
+  trägt die Datenbank einen zufälligen Namen, und ein Angreifer müsste ihn
+  erraten – aber die eigentliche Sperre ist die `.htaccess`. Wer volle Kontrolle
+  über den Server hat, legt den Ordner besser ganz außerhalb des Web-Ordners ab.
+* **Keine Zwei-Faktor-Anmeldung.** Wer Passwort und Zugang hat, kommt hinein.
+* **Kein Passwort-vergessen-Weg** – bewusst: Das spart eine Angriffsfläche.
+  Ein zweiter Administrator kann jederzeit ein neues Passwort vergeben.
+* Ein **Redakteur** kann eigenes HTML in Newsletter einsetzen. Das ist gewollt,
+  bedeutet aber: Vergeben Sie diese Rolle nur an Menschen, denen Sie vertrauen.
+* Fehlt die PHP-Erweiterung **openssl**, werden hinterlegte Passwörter *nicht*
+  verschlüsselt. Der Systemcheck warnt davor, das Protokoll ebenfalls.
+
+---
+
+## 12. Aufbau
 
 ```
 newsletter/
@@ -471,7 +533,7 @@ newsletter/
 
 ---
 
-## 12. Anmeldeformular auf eigenen Seiten einbauen
+## 13. Anmeldeformular auf eigenen Seiten einbauen
 
 Auf der Startseite ist das Formular bereits eingebaut. Für weitere Seiten genügt
 dieses Minimalformular (funktioniert auch ohne JavaScript):
@@ -496,7 +558,7 @@ welche Seite wie viele Anmeldungen bringt.
 
 ---
 
-## 13. Aktualisieren (neue Fassung einspielen)
+## 14. Aktualisieren (neue Fassung einspielen)
 
 1. Den Ordner `newsletter/` per FTP **über** den bestehenden hochladen und dabei
    überschreiben lassen. `config.php` und den Ordner `data/` dabei **nicht**
@@ -528,7 +590,7 @@ Neu angelegte Ausgaben starten immer im Baukasten.
 
 ---
 
-## 14. Wartung und Sicherung
+## 15. Wartung und Sicherung
 
 * **Sichern:** `config.php` und den Ordner `data/` (bei MySQL: den
   Datenbank-Export). Ohne `secret` aus der `config.php` sind gespeicherte
@@ -539,7 +601,7 @@ Neu angelegte Ausgaben starten immer im Baukasten.
 
 ---
 
-## 15. Wenn etwas nicht klappt
+## 16. Wenn etwas nicht klappt
 
 **Erste Anlaufstelle bei jedem Problem:** `systemcheck.php` im Newsletter-Ordner.
 Die Seite hat keine Abhängigkeiten und funktioniert auch dann, wenn der Rest streikt.
@@ -566,7 +628,7 @@ Die Seite hat keine Abhängigkeiten und funktioniert auch dann, wenn der Rest st
 
 ---
 
-## 16. Größenordnung
+## 17. Größenordnung
 
 SQLite trägt problemlos einige zehntausend Empfänger. Für sehr große Verteiler
 oder mehrere gleichzeitige Redakteure ist MySQL die bessere Wahl – umstellen

@@ -605,13 +605,15 @@ welche Seite wie viele Anmeldungen bringt.
 
 ## 14. Aktualisieren (neue Fassung einspielen)
 
+### Von Hand
+
 1. Den Ordner `newsletter/` per FTP **über** den bestehenden hochladen und dabei
    überschreiben lassen. `config.php` und den Ordner `data/` dabei **nicht**
    löschen – dort stecken Zugangsdaten und Empfänger.
 2. Eine beliebige Seite aufrufen. Die Datenbank wird automatisch auf den neuen
    Stand gebracht (neue Spalten und Tabellen werden ergänzt).
 3. Prüfen: Im Admin-Bereich steht unten die Fassung, z. B.
-   `Fassung 1.7.1 (Automatisch speichern) · Datenbank 5`. Dasselbe zeigt `systemcheck.php`.
+   `Fassung 1.11.0 (…) · Datenbank 6`. Dasselbe zeigt `systemcheck.php`.
 
 **Ändert sich nichts?** Dann sagt `systemcheck.php` genau, woran es liegt:
 
@@ -633,6 +635,59 @@ Bestehende Newsletter bleiben im HTML-Modus, damit sich nichts unbemerkt
 verändert – über den Knopf „Baukasten“ im Editor stellen Sie einzelne Ausgaben um.
 Neu angelegte Ausgaben starten immer im Baukasten.
 
+
+### Automatisch aus GitHub (empfohlen)
+
+Wer den Code in GitHub liegen hat, muss nichts mehr von Hand hochladen: Im
+Repository liegt der Ablauf `.github/workflows/newsletter-zu-ionos.yml`. Er
+startet bei jedem Push, der etwas an `newsletter/` ändert, und legt die Dateien
+per FTPS auf den Webspace.
+
+**Einmalig einrichten** – auf github.com im Repository unter
+*Settings → Secrets and variables → Actions → New repository secret*:
+
+| Name | Inhalt |
+|---|---|
+| `IONOS_FTP_HOST` | der FTP-Server aus dem IONOS-Menü, z. B. `access-5017012345.webspace-data.io` (ohne `ftp://`) |
+| `IONOS_FTP_USER` | FTP-Benutzername |
+| `IONOS_FTP_PASS` | zugehöriges Passwort |
+| `IONOS_ZIEL` | Zielordner auf dem Server, z. B. `/newsletter` |
+
+Legen Sie dafür bei IONOS am besten einen **eigenen FTP-Zugang an, dessen
+Startordner der Newsletter-Ordner ist** (Hosting → FTP-Zugänge). Dann kann ein
+verlorenes Passwort nicht die ganze Website betreffen. Die Angaben sind danach
+auch für Sie nicht mehr lesbar, nur ersetzbar.
+
+**Was der Ablauf tut**
+
+1. Er prüft **jede** PHP-Datei auf Syntaxfehler – eine kaputte Datei würde sonst
+   den ganzen Newsletter-Bereich lahmlegen.
+2. Er prüft, ob `pruefsummen.txt` zum Code passt (sonst meldet der Systemcheck
+   hinterher lauter „geändert").
+3. Er lädt hoch – über FTPS, also verschlüsselt.
+
+**Was er bewusst NICHT anfasst:**
+
+* `config.php` – Ihre Zugangsdaten und der Schlüssel, mit dem die Passwörter
+  verschlüsselt sind. Die Datei gehört dem Server, nicht dem Git.
+* `data/` – die Datenbank mit **allen Empfängern**. Ein Überschreiben würde
+  sämtliche Anmeldungen vernichten.
+* `uploads/` – Ihre hochgeladenen Bilder.
+* `install.php` – nach der Einrichtung überflüssig. Für eine **erste**
+  Einrichtung die entsprechende Zeile im Ablauf entfernen.
+
+**Erst schauen, dann hochladen:** Unter *Actions → Newsletter zu IONOS →
+Run workflow* lässt sich der Haken „Nur anzeigen, nichts hochladen" setzen.
+Dann steht im Protokoll, welche Dateien übertragen **würden** – ohne dass etwas
+passiert. Für den ersten Lauf sehr zu empfehlen.
+
+**Gelöschtes bleibt stehen:** Wenn Sie eine Datei aus dem Git entfernen, bleibt
+sie auf dem Server liegen. Das ist Absicht – ein Ablauf, der löschen darf, ist
+ein Ablauf, der bei einem Tippfehler Ihre Empfängerdatenbank löschen kann.
+Aufräumen also weiterhin von Hand.
+
+Nach dem Hochladen einmal `systemcheck.php` aufrufen: Dort steht, ob alle
+Dateien vollständig angekommen sind und welche Fassung nun läuft.
 ---
 
 ## 15. Wartung und Sicherung

@@ -1,0 +1,152 @@
+# Lädt den Ordner newsletter/ nach jedem Push automatisch auf den IONOS-Webspace.
+#
+# Damit entfällt der Weg über den eigenen Rechner: Was hier im Git liegt,
+# steht kurz darauf auf dem Server. Nichts wird gelöscht, und die Dateien,
+# die dem Server gehören – Zugangsdaten, Datenbank, hochgeladene Bilder –
+# fasst der Ablauf nicht an.
+#
+# EINMALIG EINRICHTEN (auf github.com, in diesem Repository):
+#   Settings → Secrets and variables → Actions → New repository secret
+#     IONOS_FTP_HOST   z. B. access-5017012345.webspace-data.io   (ohne ftp:// )
+#     IONOS_FTP_USER   der FTP-Benutzername aus dem IONOS-Menü
+#     IONOS_FTP_PASS   das zugehörige Passwort
+#     IONOS_ZIEL       Zielordner auf dem Server, z. B. /newsletter
+#
+# Die Zugangsdaten sieht danach niemand mehr – auch Sie nicht. Sie lassen
+# sich nur ersetzen. Nehmen Sie am besten einen eigenen FTP-Zugang, der
+# ausschließlich auf den Newsletter-Ordner zeigt (IONOS: Hosting → FTP-Zugänge).
+
+name: Newsletter zu IONOS
+
+on:
+  push:
+    branches:
+      - claude/newsletter-system-build-bqqfm9
+    paths:
+      - 'newsletter/**'
+  # Von Hand starten – auch als Probelauf, der nur zeigt, was passieren würde
+  workflow_dispatch:
+    inputs:
+      probelauf:
+        description: 'Nur anzeigen, nichts hochladen'
+        type: boolean
+        default: false
+
+# Zwei Uploads gleichzeitig würden sich in die Quere kommen
+concurrency:
+  group: ionos-newsletter
+  cancel-in-progress: false
+
+jobs:
+  hochladen:
+    name: Prüfen und hochladen
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Stand holen
+        uses: actions/checkout@v4
+
+      - name: PHP bereitstellen
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+
+      # Lieber hier scheitern als auf dem Server: Eine Datei mit Tippfehler
+      # legt sonst den ganzen Newsletter-Bereich lahm.
+      - name: Alle PHP-Dateien auf Syntax prüfen
+        run: |
+          fehler=0
+          while IFS= read -r -d '' datei; do
+            php -l "$datei" > /dev/null || { echo "::error file=$datei::Syntaxfehler"; fehler=1; }
+          done < <(find newsletter -name '*.php' -print0)
+          exit $fehler
+
+      # Der Systemcheck vergleicht die Dateien auf dem Server mit dieser Liste.
+      # Passt sie nicht zum Code, meldet er hinterher lauter "geändert".
+      - name: Prüfsummenliste ist aktuell?
+        run: |
+          cd newsletter
+          php cron/pruefsummen.php > /dev/null
+          if ! git diff --quiet -- pruefsummen.txt; then
+            echo "::error::pruefsummen.txt passt nicht zum Code."
+            echo "Bitte lokal 'php newsletter/cron/pruefsummen.php' ausführen und mitschicken."
+            git --no-pager diff -- pruefsummen.txt | head -40
+            exit 1
+          fi
+          echo "Prüfsummenliste passt."
+
+      - name: lftp installieren
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq lftp
+
+      - name: Zugangsdaten vorhanden?
+        env:
+          HOST: ${{ secrets.IONOS_FTP_HOST }}
+          USER: ${{ secrets.IONOS_FTP_USER }}
+          PASS: ${{ secrets.IONOS_FTP_PASS }}
+          ZIEL: ${{ secrets.IONOS_ZIEL }}
+        run: |
+          fehlt=""
+          [ -n "$HOST" ] || fehlt="$fehlt IONOS_FTP_HOST"
+          [ -n "$USER" ] || fehlt="$fehlt IONOS_FTP_USER"
+          [ -n "$PASS" ] || fehlt="$fehlt IONOS_FTP_PASS"
+          [ -n "$ZIEL" ] || fehlt="$fehlt IONOS_ZIEL"
+          if [ -n "$fehlt" ]; then
+            echo "::error::Diese Angaben fehlen unter Settings → Secrets:$fehlt"
+            exit 1
+          fi
+
+      - name: Hochladen
+        env:
+          HOST: ${{ secrets.IONOS_FTP_HOST }}
+          USER: ${{ secrets.IONOS_FTP_USER }}
+          PASS: ${{ secrets.IONOS_FTP_PASS }}
+          ZIEL: ${{ secrets.IONOS_ZIEL }}
+          PROBE: ${{ inputs.probelauf }}
+        run: |
+          set -euo pipefail
+          [ "${PROBE:-false}" = "true" ] && TROCKEN="--dry-run" || TROCKEN=""
+          [ -n "$TROCKEN" ] && echo "PROBELAUF – es wird nichts übertragen."
+
+          # Bewusst OHNE "--only-newer": Das überspringt eine Datei, sobald die
+          # auf dem Server das jüngere Datum trägt – etwa weil dort jemand etwas
+          # angefasst hat oder die Uhr des Servers vorgeht. Die Übertragung
+          # meldete dann Erfolg, und der alte Stand bliebe stehen. Verglichen
+          # werden so Größe und Zeitstempel; übertragen wird, was abweicht.
+          #
+          # --- Was NICHT hochgeladen wird ------------------------------------
+          # config.php   Zugangsdaten und der Schlüssel, mit dem Passwörter
+          #              verschlüsselt sind. Gehört dem Server, nicht dem Git.
+          # data/        Die Datenbank mit allen Empfängern. Überschreiben
+          #              würde sämtliche Anmeldungen vernichten.
+          # uploads/     Die hochgeladenen Bilder.
+          # install.php  Nach der Einrichtung überflüssig und besser gelöscht.
+          #              Für eine ERSTE Einrichtung die Zeile entfernen.
+          lftp -c "
+            set ftp:ssl-force true;
+            set ftp:ssl-protect-data true;
+            set ssl:verify-certificate true;
+            set net:max-retries 3;
+            set net:timeout 20;
+            set cmd:fail-exit true;
+            open -u '$USER','$PASS' '$HOST';
+            mirror --reverse --no-perms --parallel=4 $TROCKEN \
+              -x '^config\.php$' \
+              -x '^install\.php$' \
+              -x '^data/' \
+              -x '^uploads/' \
+              --verbose=1 \
+              newsletter/ '$ZIEL';
+            bye;
+          "
+
+      - name: Fertig
+        if: success()
+        env:
+          ZIEL: ${{ secrets.IONOS_ZIEL }}
+        run: |
+          echo "### Newsletter hochgeladen" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Zielordner: \`$ZIEL\`" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Bitte einmal \`systemcheck.php\` aufrufen – dort steht, ob alle" >> $GITHUB_STEP_SUMMARY
+          echo "Dateien vollständig angekommen sind und welche Fassung nun läuft." >> $GITHUB_STEP_SUMMARY

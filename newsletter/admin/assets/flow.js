@@ -112,6 +112,9 @@
     /* ------------------------------------------------------------- Zeichnen */
 
     function render() {
+        // Die Ablageflächen werden bei jedem Zeichnen neu erzeugt – die alten
+        // Einträge zeigen sonst auf Elemente, die es nicht mehr gibt.
+        ablagen = [];
         canvas.innerHTML = '';
         canvas.appendChild(nodeList(state.nodes, true));
         renderInspector();
@@ -138,52 +141,142 @@
         return box;
     }
 
+    /* ------------------------------------------------------------- Ziehen
+     *
+     * Wie im Newsletter-Baukasten über Zeigerereignisse statt über
+     * HTML5-Drag-&-Drop: Letzteres läuft auf Touchgeräten gar nicht und in
+     * Firefox nicht an <button>-Elementen – man konnte einen Schritt also
+     * nur an dem winzigen Griff und nur mit der Maus bewegen.
+     */
+    var zug     = null;   // { art:'neu'|'move', wert, schatten, zone }
+    var ablagen = [];     // alle Ablageflächen samt Ziel-Liste und Position
+
     function dropZone(list, index, gross) {
         var zone = document.createElement('div');
         zone.className = 'fl-drop' + (gross ? ' fl-drop-large' : '');
         zone.innerHTML = '<span class="fl-drop-line"></span>';
-        zone.addEventListener('dragover', function (event) {
-            event.preventDefault();
-            event.dataTransfer.dropEffect = 'move';
-            zone.classList.add('is-over');
-        });
-        zone.addEventListener('dragleave', function () { zone.classList.remove('is-over'); });
-        zone.addEventListener('drop', function (event) {
-            event.preventDefault();
-            event.stopPropagation();
-            zone.classList.remove('is-over');
-            handleDrop(event, list, index);
-        });
+        ablagen.push({ el: zone, list: list, index: index });
         return zone;
     }
 
-    function handleDrop(event, list, index) {
-        var neuerTyp = event.dataTransfer.getData('nl/newnode');
-        var bewegen  = event.dataTransfer.getData('nl/movenode');
+    /**
+     * Die Ablagefläche, die dem Zeiger am nächsten liegt – großzügig
+     * gesucht, denn die Flächen sind nur wenige Pixel hoch.
+     */
+    function zoneUnterZeiger(x, y) {
+        var treffer  = null;
+        var naechste = 1e9;
+        ablagen.forEach(function (eintrag) {
+            if (!eintrag.el.isConnected) { return; }
+            var r = eintrag.el.getBoundingClientRect();
+            if (r.width === 0) { return; }
+            if (x < r.left - 40 || x > r.right + 40) { return; }
+            var abstand = Math.abs(y - (r.top + r.height / 2));
+            if (abstand < naechste) { naechste = abstand; treffer = eintrag; }
+        });
+        return naechste > 400 ? null : treffer;
+    }
 
-        if (neuerTyp) {
-            var node = makeNode(neuerTyp);
-            list.splice(index, 0, node);
+    function zugBeenden(abbruch) {
+        if (!zug) { return; }
+        if (zug.schatten && zug.schatten.parentNode) { zug.schatten.parentNode.removeChild(zug.schatten); }
+        if (zug.zone) { zug.zone.el.classList.remove('is-over'); }
+        document.body.classList.remove('bk-zieht');
+        var fertig = zug;
+        zug = null;
+
+        if (abbruch || !fertig.zone) { render(); return; }
+
+        if (fertig.art === 'neu') {
+            var node = makeNode(fertig.wert);
+            fertig.zone.list.splice(fertig.zone.index, 0, node);
             selected = node.id;
             render();
             return;
         }
-        if (bewegen) {
-            var found = locate(bewegen);
-            if (!found) { return; }
-            // Eine Bedingung darf nicht in den eigenen Zweig wandern
-            if (found.node.type === 'bedingung' && locate(bewegen, list) === null
-                && enthaelt(found.node, list)) {
-                toast('Eine Bedingung kann nicht in den eigenen Zweig verschoben werden.');
-                return;
-            }
-            var ziel = index;
-            if (found.list === list && found.index < index) { ziel--; }
-            found.list.splice(found.index, 1);
-            list.splice(ziel, 0, found.node);
-            selected = found.node.id;
+
+        var found = locate(fertig.wert);
+        if (!found) { render(); return; }
+        // Eine Bedingung darf nicht in den eigenen Zweig wandern
+        if (found.node.type === 'bedingung' && enthaelt(found.node, fertig.zone.list)) {
+            toast('Eine Bedingung kann nicht in den eigenen Zweig verschoben werden.');
             render();
+            return;
         }
+        var ziel = fertig.zone.index;
+        if (found.list === fertig.zone.list && found.index < ziel) { ziel--; }
+        found.list.splice(found.index, 1);
+        fertig.zone.list.splice(ziel, 0, found.node);
+        selected = found.node.id;
+        render();
+    }
+
+    /** Schluckt genau einen Klick – den, der auf ein Ziehen folgt. */
+    function klickSchlucken() {
+        function weg(event) {
+            event.stopPropagation();
+            event.preventDefault();
+            document.removeEventListener('click', weg, true);
+        }
+        document.addEventListener('click', weg, true);
+        window.setTimeout(function () { document.removeEventListener('click', weg, true); }, 400);
+    }
+
+    /** Macht ein Element ziehbar. `holen` liefert { art, wert, name }. */
+    function ziehbar(element, holen) {
+        element.addEventListener('pointerdown', function (event) {
+            if (event.button !== 0) { return; }
+            if (event.target.closest && event.target.closest('[data-act], a, input, select, textarea')) { return; }
+
+            var startX = event.clientX;
+            var startY = event.clientY;
+            var gestartet = false;
+            var zeiger = event.pointerId;
+
+            function bewegen(e) {
+                if (!gestartet) {
+                    if (Math.abs(e.clientX - startX) + Math.abs(e.clientY - startY) < 6) { return; }
+                    var daten = holen();
+                    if (!daten) { return; }
+                    gestartet = true;
+                    try { element.setPointerCapture(zeiger); } catch (err) { /* egal */ }
+
+                    var schatten = document.createElement('div');
+                    schatten.className = 'bk-ghost';
+                    schatten.textContent = daten.name || 'Schritt';
+                    document.body.appendChild(schatten);
+                    document.body.classList.add('bk-zieht');
+                    zug = { art: daten.art, wert: daten.wert, schatten: schatten, zone: null };
+                }
+                e.preventDefault();
+                zug.schatten.style.left = e.clientX + 'px';
+                zug.schatten.style.top  = e.clientY + 'px';
+
+                var ziel = zoneUnterZeiger(e.clientX, e.clientY);
+                if (zug.zone && zug.zone !== ziel) { zug.zone.el.classList.remove('is-over'); }
+                zug.zone = ziel;
+                if (ziel) { ziel.el.classList.add('is-over'); }
+            }
+
+            function loslassen() {
+                abmelden();
+                if (!gestartet) { return; }
+                // Nach dem Loslassen feuert der Browser noch einen Klick –
+                // der würde den Schritt ein zweites Mal anhängen.
+                klickSchlucken();
+                zugBeenden(false);
+            }
+            function abbrechen() { abmelden(); zugBeenden(true); }
+            function abmelden() {
+                document.removeEventListener('pointermove', bewegen);
+                document.removeEventListener('pointerup', loslassen);
+                document.removeEventListener('pointercancel', abbrechen);
+            }
+
+            document.addEventListener('pointermove', bewegen);
+            document.addEventListener('pointerup', loslassen);
+            document.addEventListener('pointercancel', abbrechen);
+        });
     }
 
     /** Steckt die Liste irgendwo unterhalb dieses Knotens? */
@@ -216,13 +309,10 @@
             '<button type="button" class="fl-icon fl-icon-danger" data-act="del" title="Entfernen">✕</button>' +
             '</span>';
 
-        var griff = kopf.querySelector('.fl-grip');
-        griff.addEventListener('dragstart', function (event) {
-            event.dataTransfer.setData('nl/movenode', node.id);
-            event.dataTransfer.effectAllowed = 'move';
-            card.classList.add('is-dragging');
+        // Der ganze Kopf ist Anfasser, nicht nur das Griffsymbol
+        ziehbar(kopf, function () {
+            return { art: 'move', wert: node.id, name: beschreibung(node) };
         });
-        griff.addEventListener('dragend', function () { card.classList.remove('is-dragging'); });
 
         kopf.addEventListener('click', function (event) {
             var knopf = event.target.closest('[data-act]');
@@ -240,16 +330,48 @@
 
         card.appendChild(kopf);
 
-        // E-Mail: Hinweis und Verweis auf den Inhalt
+        // E-Mail: Betreff zeigen und direkt zum Inhalt führen
         if (node.type === 'mail') {
             var info = document.createElement('div');
             info.className = 'fl-node-body';
             var betreff = STEPS[node.step_id] || '';
+
             if (!node.step_id) {
-                info.innerHTML = '<span class="fl-hint">Erst speichern – danach lässt sich der Inhalt schreiben.</span>';
+                /*
+                 * Ein frisch eingesetzter Schritt hat noch keine Kennung – die
+                 * vergibt der Server beim Speichern. Vorher stand hier nur der
+                 * Hinweis „erst speichern", und wer den übersah, kam nie zum
+                 * Inhalt. Jetzt erledigt ein Knopf beides auf einmal: speichern
+                 * und danach den Editor dieses Schrittes öffnen.
+                 */
+                var neu = document.createElement('button');
+                neu.type = 'button';
+                neu.className = 'fl-mailbtn';
+                neu.textContent = '✎ Inhalt schreiben';
+                neu.title = 'Ablauf speichern und die Mail dieses Schrittes bearbeiten';
+                neu.addEventListener('click', function (event) {
+                    event.stopPropagation();
+                    zumInhalt(node.id);
+                });
+                info.appendChild(neu);
+                var wink = document.createElement('span');
+                wink.className = 'fl-hint';
+                wink.textContent = ' – wird dabei gespeichert';
+                info.appendChild(wink);
             } else {
-                info.innerHTML = '<span class="fl-mailsubject">' + (betreff ? esc(betreff) : '<em>noch ohne Betreff</em>')
-                    + '</span> <a class="fl-link" href="' + esc(EDIT_URL + node.step_id) + '">Inhalt bearbeiten</a>';
+                var text = document.createElement('span');
+                text.className = 'fl-mailsubject';
+                if (betreff) {
+                    text.textContent = betreff;
+                } else {
+                    text.innerHTML = '<em>noch ohne Betreff</em>';
+                }
+                var hin = document.createElement('a');
+                hin.className = 'fl-mailbtn';
+                hin.href = EDIT_URL + node.step_id;
+                hin.textContent = '✎ Inhalt bearbeiten';
+                info.appendChild(text);
+                info.appendChild(hin);
             }
             card.appendChild(info);
         }
@@ -330,11 +452,25 @@
         if (node.type === 'mail') {
             var p = document.createElement('p');
             p.className = 'fl-hint';
-            p.innerHTML = node.step_id
-                ? 'Betreff und Inhalt schreiben Sie im Baukasten: '
-                  + '<a class="fl-link" href="' + esc(EDIT_URL + node.step_id) + '">Inhalt bearbeiten</a>'
-                : 'Speichern Sie den Ablauf – danach können Sie den Inhalt schreiben.';
+            p.textContent = 'Betreff und Inhalt dieser Mail schreiben Sie im Baukasten – '
+                + 'wahlweise von Grund auf oder aus einem vorhandenen Newsletter übernommen.';
             karte.appendChild(p);
+
+            var los = document.createElement('button');
+            los.type = 'button';
+            los.className = 'fl-mailbtn';
+            los.style.marginLeft = '0';
+            if (node.step_id) {
+                los.textContent = '✎ Inhalt bearbeiten';
+                los.addEventListener('click', function () {
+                    window.location.href = EDIT_URL + node.step_id;
+                });
+            } else {
+                los.textContent = '✎ Inhalt schreiben';
+                los.title = 'Ablauf speichern und die Mail dieses Schrittes bearbeiten';
+                los.addEventListener('click', function () { zumInhalt(node.id); });
+            }
+            karte.appendChild(los);
         }
 
         if (node.type === 'bedingung') {
@@ -444,23 +580,40 @@
 
     root.querySelectorAll('[data-addnode]').forEach(function (chip) {
         var typ = chip.getAttribute('data-addnode');
-        chip.addEventListener('dragstart', function (event) {
-            event.dataTransfer.setData('nl/newnode', typ);
-            event.dataTransfer.effectAllowed = 'copy';
+        chip.removeAttribute('draggable');
+        ziehbar(chip, function () {
+            return { art: 'neu', wert: typ, name: (LABELS.nodes && LABELS.nodes[typ]) || typ };
         });
         chip.addEventListener('click', function () {
             var node = makeNode(typ);
             state.nodes.push(node);
             selected = node.id;
             render();
+            var karte = canvas.querySelector('.fl-node[data-id="' + node.id + '"]');
+            if (karte) { karte.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
         });
     });
 
-    canvas.addEventListener('dragover', function (event) { event.preventDefault(); });
-    canvas.addEventListener('drop', function (event) {
-        event.preventDefault();
-        handleDrop(event, state.nodes, state.nodes.length);
-    });
+    /**
+     * Speichert den Ablauf und springt anschließend in den Inhalt dieses
+     * Schrittes. Die Kennung des Knotens geht mit; der Server sucht danach
+     * den zugehörigen Mailschritt heraus und leitet dorthin weiter.
+     */
+    function zumInhalt(nodeId) {
+        var form = root.closest('form');
+        if (!form) { return; }
+        save();
+        var merker = form.querySelector('[name="weiter_zu"]');
+        if (!merker) {
+            merker = document.createElement('input');
+            merker.type = 'hidden';
+            merker.name = 'weiter_zu';
+            form.appendChild(merker);
+        }
+        merker.value = nodeId;
+        var knopf = form.querySelector('button[value="speichern"]');
+        if (knopf) { knopf.click(); } else { form.submit(); }
+    }
 
     function toast(text) {
         var box = document.createElement('div');

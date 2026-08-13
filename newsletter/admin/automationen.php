@@ -69,6 +69,24 @@ if (Util::isPost()) {
             'status'  => Util::post('status') === Automations::ACTIVE ? Automations::ACTIVE : Automations::PAUSED,
         ]);
         Automations::saveFlow($id, Util::postRaw('flow_json'));
+
+        /*
+         * „Inhalt schreiben" an einem frisch eingesetzten Mailschritt: Die
+         * Kennung des Schrittes entsteht erst hier beim Speichern. Deshalb
+         * merkt sich der Baukasten den Knoten, und wir leiten anschließend
+         * gleich in dessen Editor – statt den Anwender raten zu lassen.
+         */
+        $weiter = Util::post('weiter_zu');
+        if ($weiter !== '') {
+            $frisch = Automations::byId($id);
+            $knoten = $frisch === null ? null
+                : (Flow::index(Automations::flow($frisch))['nodes'][$weiter] ?? null);
+            if ($knoten !== null && (int) ($knoten['step_id'] ?? 0) > 0) {
+                Util::flash('Ablauf gespeichert. Jetzt der Inhalt dieser Mail.');
+                Util::redirect('automationen.php?id=' . $id . '&schritt=' . (int) $knoten['step_id']);
+            }
+        }
+
         Util::flash('Ablauf gespeichert.');
         Util::redirect('automationen.php?id=' . $id);
     }
@@ -79,7 +97,38 @@ if (Util::isPost()) {
         Util::redirect('automationen.php');
     }
 
+    /*
+     * Inhalt eines vorhandenen Newsletters in diesen Schritt übernehmen.
+     * Kopiert wird – der Newsletter selbst bleibt unangetastet, sonst würde
+     * eine Änderung an der Strecke später den Newsletter mitverändern.
+     */
+    if ($action === 'schritt_uebernehmen' && $stepId > 0) {
+        $quelle = Campaigns::byId(Util::postInt('von_kampagne'));
+        $step   = Automations::step($stepId);
+        if ($quelle === null || $step === null) {
+            Util::flash('Diesen Newsletter gibt es nicht (mehr).', 'error');
+            Util::redirect('automationen.php?id=' . $id . '&schritt=' . $stepId);
+        }
+
+        $felder = [
+            'template_id' => (int) $quelle['template_id'] ?: null,
+            'editor_mode' => (string) $quelle['editor_mode'],
+            'blocks_json' => (string) $quelle['blocks_json'],
+            'content_html' => (string) $quelle['content_html'],
+            'content_text' => (string) $quelle['content_text'],
+        ];
+        // Einen schon geschriebenen Betreff nicht überbügeln
+        if (trim((string) $step['subject']) === '') {
+            $felder['subject'] = (string) $quelle['subject'];
+        }
+        Automations::saveStep($stepId, $felder);
+        Util::flash('Inhalt aus „' . Util::e((string) $quelle['name']) . '" übernommen. '
+            . 'Änderungen hier wirken sich nicht auf den Newsletter aus.');
+        Util::redirect('automationen.php?id=' . $id . '&schritt=' . $stepId);
+    }
+
     if ($action === 'schritt_speichern' && $stepId > 0) {
+        $vorher = Automations::step($stepId);
         $felder = [
             'subject'      => Util::post('subject'),
             'template_id'  => Util::postInt('template_id') ?: null,
@@ -89,6 +138,20 @@ if (Util::isPost()) {
         if (Util::post('editor_mode') === 'blocks') {
             $felder['editor_mode'] = 'blocks';
             $felder['blocks_json'] = Util::postRaw('blocks_json');
+
+            // Design gewechselt? Dann auch den Inhalt umstellen – wie beim
+            // Newsletter. Von Hand gesetzte Farben bleiben dabei erhalten.
+            $altId = (int) ($vorher['template_id'] ?? 0);
+            $neuId = (int) ($felder['template_id'] ?? 0);
+            if ($neuId !== $altId && $felder['blocks_json'] !== '') {
+                $stand = Blocks::switchDesign(
+                    Blocks::parse($felder['blocks_json']),
+                    Templates::byId($altId),
+                    Templates::byId($neuId)
+                );
+                $felder['blocks_json'] = (string) json_encode($stand,
+                    JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+            }
         } else {
             $felder['editor_mode']  = 'html';
             $felder['content_html'] = Util::postRaw('content_html');
@@ -310,6 +373,9 @@ if ($current !== null) {
                      'actions'    => Flow::ACTIONS,
                      'units'      => Flow::UNITS,
                      'units_one'  => Flow::UNITS_ONE,
+                     'nodes'      => ['warten' => 'Warten', 'mail' => 'E-Mail senden',
+                                      'bedingung' => 'Wenn … dann', 'aktion' => 'Aktion',
+                                      'ende' => 'Strecke beenden'],
                  ], JSON_UNESCAPED_UNICODE)) ?>'>
 
                 <aside class="fl-palette">
@@ -323,7 +389,7 @@ if ($current !== null) {
                         'aktion'    => ['⚙', 'Aktion'],
                         'ende'      => ['■', 'Strecke beenden'],
                     ] as $typ => $info): ?>
-                        <button type="button" class="fl-chip" draggable="true" data-addnode="<?= Util::e($typ) ?>">
+                        <button type="button" class="fl-chip" data-addnode="<?= Util::e($typ) ?>">
                             <span class="fl-chip-icon" aria-hidden="true"><?= $info[0] ?></span>
                             <?= Util::e($info[1]) ?>
                         </button>
@@ -377,6 +443,41 @@ if ($current !== null) {
                 </div>
             </div>
 
+            <?php
+            /*
+             * Eine Strecke wiederholt oft, was schon einmal geschrieben wurde.
+             * Statt es abzutippen, lässt sich der Inhalt eines vorhandenen
+             * Newsletters herüberholen – als Kopie, damit das eine das andere
+             * später nicht verändert.
+             */
+            $vorhandene = Campaigns::all();
+            ?>
+            <?php if ($vorhandene !== []): ?>
+                <form method="post" class="ad-uebernehmen">
+                    <?= Util::csrfField() ?>
+                    <input type="hidden" name="id" value="<?= (int) $current['id'] ?>">
+                    <input type="hidden" name="schritt_id" value="<?= (int) $currentStep['id'] ?>">
+                    <label for="von_kampagne">Inhalt aus einem vorhandenen Newsletter übernehmen</label>
+                    <div class="ad-uebernehmen-reihe">
+                        <select id="von_kampagne" name="von_kampagne" class="ad-select">
+                            <?php foreach ($vorhandene as $k): ?>
+                                <option value="<?= (int) $k['id'] ?>">
+                                    <?= Util::e((string) $k['name']) ?>
+                                    <?= trim((string) $k['subject']) !== ''
+                                        ? ' – ' . Util::e(Util::shorten((string) $k['subject'], 45)) : '' ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                        <button type="submit" name="aktion" value="schritt_uebernehmen"
+                                class="ad-btn ad-btn-secondary"
+                                data-confirm="Der jetzige Inhalt dieses Schrittes wird dabei ersetzt. Fortfahren?">
+                            Übernehmen
+                        </button>
+                    </div>
+                    <p class="ad-hint">Es wird kopiert – der Newsletter selbst bleibt, wie er ist.</p>
+                </form>
+            <?php endif; ?>
+
             <form method="post" data-warn-unsaved style="margin-top:14px;">
                 <?= Util::csrfField() ?>
                 <input type="hidden" name="id" value="<?= (int) $current['id'] ?>">
@@ -390,7 +491,7 @@ if ($current !== null) {
                                placeholder="Ohne Betreff wird dieser Schritt übersprungen">
                     </div>
                     <div class="ad-field">
-                        <label for="template_id">Vorlage</label>
+                        <label for="template_id">Design-Vorlage</label>
                         <select id="template_id" name="template_id">
                             <?php foreach (Templates::all() as $template): ?>
                                 <option value="<?= (int) $template['id'] ?>"
@@ -399,6 +500,7 @@ if ($current !== null) {
                                 </option>
                             <?php endforeach; ?>
                         </select>
+                        <p class="ad-hint">Umstellen wechselt auch Schriften und Farben im Inhalt.</p>
                     </div>
                     <div class="ad-field" style="flex:0;">
                         <label>&nbsp;</label>

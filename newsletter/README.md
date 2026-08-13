@@ -258,6 +258,24 @@ sich jemand ab, wird die Strecke für diese Person sofort beendet. Die Schritte
 selbst führt der Cron-Job aus (siehe nächster Abschnitt) – ohne ihn steht auch
 die Automation still.
 
+**Bedienung wie im Newsletter-Baukasten:** Schritte lassen sich ziehen – am
+ganzen Kopf des Schrittes, nicht nur am Griffsymbol – oder anklicken, dann
+hängen sie sich unten an. Das Ziehen läuft über Zeigerereignisse und
+funktioniert deshalb in jedem Browser und auch auf dem Handy.
+
+**Vom Schritt direkt zur Mail:** Ein frisch eingesetzter Mailschritt hat noch
+keinen Inhalt – die dafür nötige Kennung entsteht erst beim Speichern. Der Knopf
+**„Inhalt schreiben"** erledigt beides auf einmal: Er speichert den Ablauf und
+öffnet danach den Baukasten genau dieser Mail. Später steht dort der Betreff und
+ein Knopf „Inhalt bearbeiten".
+
+**Inhalt aus einem vorhandenen Newsletter übernehmen:** Im Schritt-Editor lässt
+sich oben ein bereits geschriebener Newsletter auswählen und sein Inhalt samt
+Betreff und Design herüberholen. Es wird **kopiert** – der Newsletter selbst
+bleibt unverändert, und spätere Änderungen an der Strecke wirken sich nicht auf
+ihn aus. Genauso lässt sich für jeden Schritt eine eigene Design-Vorlage wählen;
+ein Wechsel stellt auch Schriften und Farben im Inhalt um.
+
 Ältere Strecken (Schritte mit Verzögerung, ohne Ablauf) werden beim ersten
 Öffnen automatisch in einen Ablauf übersetzt; es geht nichts verloren.
 

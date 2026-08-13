@@ -122,6 +122,11 @@
 }
 
 .fl-drop.is-over { height: 46px; }
+/* Während des Ziehens nur hervorheben, nicht die Größe ändern:
+   sonst verschiebt sich die Fläche unter dem Zeiger weg. */
+body.bk-zieht .fl-drop.is-over { height: 12px; }
+body.bk-zieht .fl-drop.is-over .fl-drop-line { height: 100%; background: rgba(200, 16, 46, .28); }
+body.bk-zieht .fl-drop { background: rgba(20, 36, 58, .05); border-radius: 4px; }
 .fl-drop.is-over .fl-drop-line { width: 100%; height: 34px; background: rgba(200, 16, 46, .12); border: 1px dashed var(--ad-red); border-radius: 6px; }
 .fl-drop-large { height: 40px; }
 .fl-drop-large .fl-drop-line { width: 100%; height: 34px; background: transparent; border: 1px dashed var(--ad-border); border-radius: 6px; }
@@ -234,3 +239,54 @@
 
 .fl-runs { font-size: 13px; }
 .fl-runs td { padding: 6px 8px; border-bottom: 1px solid var(--ad-border); }
+
+/* Ziehen mit dem Zeiger – der ganze Kopf ist Anfasser */
+.fl-node-bar { cursor: grab; touch-action: none; }
+.fl-node-bar:active { cursor: grabbing; }
+.fl-chip { touch-action: none; }
+
+/* Inhalt aus einem vorhandenen Newsletter holen */
+.ad-uebernehmen {
+    margin-top: 14px;
+    padding: 12px 14px;
+    background: var(--ad-bg, #F2F5F8);
+    border: 1px solid var(--ad-border, #E0E6ED);
+    border-radius: 8px;
+}
+.ad-uebernehmen > label {
+    display: block;
+    font-size: 12.5px;
+    font-weight: 700;
+    color: var(--ad-navy, #14243A);
+    margin-bottom: 6px;
+}
+.ad-uebernehmen-reihe { display: flex; gap: 8px; flex-wrap: wrap; }
+.ad-uebernehmen-reihe .ad-select {
+    flex: 1 1 260px;
+    min-width: 0;
+    padding: 9px 11px;
+    border: 1px solid var(--ad-border, #E0E6ED);
+    border-radius: 6px;
+    background: #fff;
+    color: var(--ad-navy, #14243A);
+    font-family: inherit;
+    font-size: 14px;
+}
+.ad-uebernehmen .ad-hint { margin: 6px 0 0; }
+
+/* Knopf am Mailschritt, der zum Inhalt führt */
+.fl-mailbtn {
+    display: inline-block;
+    margin-left: 8px;
+    padding: 3px 10px;
+    border: 1px solid var(--ad-border, #E0E6ED);
+    border-radius: 20px;
+    background: #fff;
+    color: var(--ad-navy, #14243A);
+    font-family: inherit;
+    font-size: 11.5px;
+    font-weight: 700;
+    text-decoration: none;
+    cursor: pointer;
+}
+.fl-mailbtn:hover { border-color: var(--ad-red, #C8102E); color: var(--ad-red, #C8102E); }

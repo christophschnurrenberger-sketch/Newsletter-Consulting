@@ -44,12 +44,15 @@ jobs:
 
     steps:
       - name: Stand holen
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
+      # PHP bringt der Läufer schon mit – nur zur Sicherheit nachinstallieren.
+      # Bewusst ohne fertige Fremd-Action: je weniger fremder Code an diesem
+      # Ablauf beteiligt ist, desto weniger Wege gibt es zu den Zugangsdaten.
       - name: PHP bereitstellen
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: '8.2'
+        run: |
+          command -v php > /dev/null || sudo apt-get update -qq && sudo apt-get install -y -qq php-cli
+          php -v | head -1
 
       # Lieber hier scheitern als auf dem Server: Eine Datei mit Tippfehler
       # legt sonst den ganzen Newsletter-Bereich lahm.
@@ -75,30 +78,68 @@ jobs:
           fi
           echo "Prüfsummenliste passt."
 
-      - name: lftp installieren
-        run: sudo apt-get update -qq && sudo apt-get install -y -qq lftp
-
+      #
+      # Sind die Zugangsdaten hinterlegt?
+      #
+      # Fehlen sie, ist das KEIN Fehler, sondern schlicht "noch nicht
+      # eingerichtet". Früher brach der Ablauf hier ab – und schickte bei
+      # jedem einzelnen Push eine Alarmmail, obwohl am Code nichts falsch
+      # war. Jetzt wird das Hochladen übersprungen und im Bericht steht,
+      # was zu tun ist. Sobald die vier Angaben da sind, läuft es von selbst.
+      #
       - name: Zugangsdaten vorhanden?
+        id: zugang
         env:
           HOST: ${{ secrets.IONOS_FTP_HOST }}
-          USER: ${{ secrets.IONOS_FTP_USER }}
+          FTPUSER: ${{ secrets.IONOS_FTP_USER }}
           PASS: ${{ secrets.IONOS_FTP_PASS }}
           ZIEL: ${{ secrets.IONOS_ZIEL }}
         run: |
           fehlt=""
-          [ -n "$HOST" ] || fehlt="$fehlt IONOS_FTP_HOST"
-          [ -n "$USER" ] || fehlt="$fehlt IONOS_FTP_USER"
-          [ -n "$PASS" ] || fehlt="$fehlt IONOS_FTP_PASS"
-          [ -n "$ZIEL" ] || fehlt="$fehlt IONOS_ZIEL"
-          if [ -n "$fehlt" ]; then
-            echo "::error::Diese Angaben fehlen unter Settings → Secrets:$fehlt"
-            exit 1
+          [ -n "$HOST" ]    || fehlt="$fehlt IONOS_FTP_HOST"
+          [ -n "$FTPUSER" ] || fehlt="$fehlt IONOS_FTP_USER"
+          [ -n "$PASS" ]    || fehlt="$fehlt IONOS_FTP_PASS"
+          [ -n "$ZIEL" ]    || fehlt="$fehlt IONOS_ZIEL"
+
+          if [ -z "$fehlt" ]; then
+            echo "bereit=ja" >> "$GITHUB_OUTPUT"
+            echo "Zugangsdaten sind hinterlegt."
+            exit 0
           fi
 
+          echo "bereit=nein" >> "$GITHUB_OUTPUT"
+          echo "::notice::Hochladen übersprungen – es fehlen noch:$fehlt"
+          {
+            echo "### Hochladen übersprungen"
+            echo ""
+            echo "Der Code ist geprüft und in Ordnung – er wurde nur noch nicht"
+            echo "auf den Webspace übertragen, weil die Zugangsdaten fehlen:"
+            echo ""
+            for name in $fehlt; do echo "* \`$name\`"; done
+            echo ""
+            echo "**So richten Sie es ein:** In diesem Repository unter"
+            echo "*Settings → Secrets and variables → Actions → New repository secret*"
+            echo "die vier Angaben hinterlegen:"
+            echo ""
+            echo "| Name | Inhalt |"
+            echo "|---|---|"
+            echo "| \`IONOS_FTP_HOST\` | FTP-Server aus dem IONOS-Menü, ohne \`ftp://\` |"
+            echo "| \`IONOS_FTP_USER\` | FTP-Benutzername |"
+            echo "| \`IONOS_FTP_PASS\` | zugehöriges Passwort |"
+            echo "| \`IONOS_ZIEL\` | Zielordner, z. B. \`/newsletter\` |"
+            echo ""
+            echo "Danach läuft das Hochladen bei jedem Push von selbst."
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: lftp installieren
+        if: steps.zugang.outputs.bereit == 'ja'
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq lftp
+
       - name: Hochladen
+        if: steps.zugang.outputs.bereit == 'ja'
         env:
           HOST: ${{ secrets.IONOS_FTP_HOST }}
-          USER: ${{ secrets.IONOS_FTP_USER }}
+          FTPUSER: ${{ secrets.IONOS_FTP_USER }}
           PASS: ${{ secrets.IONOS_FTP_PASS }}
           ZIEL: ${{ secrets.IONOS_ZIEL }}
           PROBE: ${{ inputs.probelauf }}
@@ -128,7 +169,7 @@ jobs:
             set net:max-retries 3;
             set net:timeout 20;
             set cmd:fail-exit true;
-            open -u '$USER','$PASS' '$HOST';
+            open -u '$FTPUSER','$PASS' '$HOST';
             mirror --reverse --no-perms --parallel=4 $TROCKEN \
               -x '^config\.php$' \
               -x '^install\.php$' \
@@ -140,7 +181,7 @@ jobs:
           "
 
       - name: Fertig
-        if: success()
+        if: success() && steps.zugang.outputs.bereit == 'ja'
         env:
           ZIEL: ${{ secrets.IONOS_ZIEL }}
         run: |

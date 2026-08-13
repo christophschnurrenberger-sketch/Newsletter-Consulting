@@ -456,3 +456,30 @@ body.bk-zieht .bk-drop { background: rgba(20, 36, 58, .05); border-radius: 4px; 
 }
 
 .bk-ki-actions { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0 10px; }
+
+/* Zeigt unter einem Bild, ob es verlinkt ist */
+.bk-linkzeile {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    margin-top: 8px;
+    padding: 4px 9px;
+    border: 1px dashed var(--ad-border, #E0E6ED);
+    border-radius: 20px;
+    background: #fff;
+    color: var(--ad-muted, #6B7A8D);
+    font-family: inherit;
+    font-size: 11.5px;
+    cursor: pointer;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.bk-linkzeile:hover { border-color: var(--ad-navy, #14243A); color: var(--ad-navy, #14243A); }
+.bk-linkzeile.is-verlinkt {
+    border-style: solid;
+    border-color: #C9D8CD;
+    background: #F3F8F4;
+    color: #2E7D53;
+}

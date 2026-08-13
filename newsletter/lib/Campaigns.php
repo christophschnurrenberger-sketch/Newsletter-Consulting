@@ -44,10 +44,15 @@ final class Campaigns
         return DB::all('SELECT * FROM campaigns ORDER BY id DESC');
     }
 
-    public static function create(string $name): int
+    /**
+     * @param int|null $templateId gewünschtes Design, sonst die Standardvorlage
+     * @param bool     $leer       true = ohne Beispieltext anfangen
+     */
+    public static function create(string $name, ?int $templateId = null, bool $leer = false): int
     {
         $now      = Util::now();
-        $template = Templates::defaultTemplate();
+        $template = $templateId !== null ? Templates::byId($templateId) : null;
+        $template = $template ?? Templates::defaultTemplate();
         // Absender aus der Standardvorlage vorbelegen – bei mehreren Marken
         // stimmt so schon der Vorschlag. Änderbar bleibt er im Editor.
         $brand = Templates::brand($template);
@@ -61,7 +66,7 @@ final class Campaigns
             'reply_to'       => Settings::get('reply_to'),
             'template_id'    => $template !== null ? (int) $template['id'] : null,
             'list_id'        => Lists::defaultId() ?: null,
-            'content_html'   => Blocks::renderContent($start = Blocks::starterCampaign($template)),
+            'content_html'   => Blocks::renderContent($start = Blocks::starterCampaign($template, $leer)),
             'content_text'   => Blocks::toText($start),
             'blocks_json'    => (string) json_encode($start, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES),
             'editor_mode'    => 'blocks',

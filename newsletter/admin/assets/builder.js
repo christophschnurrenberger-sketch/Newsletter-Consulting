@@ -503,6 +503,9 @@
                 if (block.src) {
                     box.innerHTML = '<div style="text-align:' + esc(block.align) + '"><img src="' + esc(block.src)
                         + '" alt="" style="width:' + (block.width || 100) + '%;max-width:100%;border-radius:4px;"></div>';
+                    // Ein verlinktes Bild sieht aus wie ein unverlinktes – deshalb
+                    // steht der Zustand hier, statt nur rechts im Feld zu schlummern.
+                    box.appendChild(linkZeile(block));
                 } else {
                     box.innerHTML = '<div class="bk-placeholder">Noch kein Bild gewählt – rechts hochladen oder Adresse eintragen.</div>';
                 }
@@ -598,6 +601,41 @@
                 break;
         }
         return box;
+    }
+
+    /**
+     * Zeigt unter einem Bild, ob es verlinkt ist – und führt mit einem Klick
+     * zum passenden Feld. Ein Bild ohne Link ist in einem Newsletter fast
+     * immer eine verschenkte Gelegenheit.
+     */
+    function linkZeile(block) {
+        var zeile = document.createElement('button');
+        zeile.type = 'button';
+        zeile.className = 'bk-linkzeile' + (block.href ? ' is-verlinkt' : '');
+
+        if (block.href) {
+            var ziel = String(block.href);
+            var kurz = ziel.replace(/^https?:\/\//i, '').replace(/\/$/, '');
+            zeile.textContent = '🔗 verlinkt auf ' + (kurz.length > 34 ? kurz.slice(0, 33) + '…' : kurz);
+            zeile.title = 'Klicken, um den Link zu ändern';
+        } else {
+            zeile.textContent = '🔗 Bild verlinken';
+            zeile.title = 'Ein Ziel angeben, das beim Klick auf das Bild geöffnet wird';
+        }
+
+        zeile.addEventListener('click', function (event) {
+            event.stopPropagation();
+            selected = block.id;
+            markSelection();
+            renderInspector();
+            var feld = inspector.querySelector('[data-feld="href"]');
+            if (feld) {
+                feld.scrollIntoView({ block: 'center' });
+                feld.focus();
+                feld.select();
+            }
+        });
+        return zeile;
     }
 
     /**
@@ -1098,6 +1136,7 @@
     function fieldRow(block, feld) {
         var zeile = document.createElement('div');
         zeile.className = 'bk-field';
+        zeile.setAttribute('data-zeile', feld.k);
         var label = document.createElement('label');
         label.textContent = feld.l;
         zeile.appendChild(label);
@@ -1147,6 +1186,7 @@
             var text = document.createElement('input');
             text.type = 'text';
             text.className = 'bk-input';
+            text.setAttribute('data-feld', feld.k);
             text.value = block[feld.k] || '';
             text.placeholder = '#RRGGBB';
             farbe.addEventListener('input', function () {
@@ -1197,6 +1237,7 @@
             redrawBlock(block);
         });
         input.addEventListener('focus', function () { lastFocus = input; });
+        input.setAttribute('data-feld', feld.k);
         zeile.appendChild(input);
         return zeile;
     }
@@ -1222,6 +1263,7 @@
         url.className = 'bk-input';
         url.type = 'text';
         url.placeholder = 'https://… oder Bild hochladen';
+        url.setAttribute('data-feld', feld.k);
         url.value = block[feld.k] || '';
         url.addEventListener('input', function () { block[feld.k] = url.value.trim(); redrawBlock(block); });
         box.appendChild(url);

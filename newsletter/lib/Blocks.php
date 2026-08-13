@@ -80,10 +80,15 @@ final class Blocks
      *
      * @param array<string,mixed>|null $template Vorlage aus der Datenbank
      */
-    public static function starterCampaign(?array $template = null): array
+    public static function starterCampaign(?array $template = null, bool $leer = false): array
     {
         $meta   = self::metaFromTemplate($template);
         $akzent = (string) $meta['linkColor'];
+
+        if ($leer) {
+            // Design ja, Beispieltext nein – die Fläche gehört der Redaktion.
+            return ['meta' => $meta, 'blocks' => []];
+        }
 
         return [
             'meta'   => $meta,
@@ -107,6 +112,64 @@ final class Blocks
      * @param array<string,mixed>|null $template
      * @return array<string,mixed>
      */
+    /** Angaben, die das Aussehen des Inhalts ausmachen. */
+    private const DESIGN_KEYS = ['font', 'headFont', 'textColor', 'headColor', 'linkColor',
+        'accentColor', 'cardBg', 'bg', 'borderColor', 'width', 'padding', 'radius'];
+
+    /**
+     * Stellt eine Ausgabe auf ein anderes Design um.
+     *
+     * Die Gestaltungsangaben werden ersetzt – das ist der Sinn der Übung.
+     * Bei den einzelnen Bausteinen sind wir vorsichtiger: Dort wird eine
+     * Farbe nur dann angefasst, wenn sie noch genau die des alten Designs
+     * ist. Wer eine Überschrift von Hand rot gefärbt hat, behält sein Rot;
+     * wer nichts angerührt hat, bekommt durchgängig das neue Design.
+     *
+     * @param array      $stand Bausteine samt meta (Ergebnis von parse)
+     * @param array|null $alt   bisherige Vorlage
+     * @param array|null $neu   gewünschte Vorlage
+     */
+    public static function switchDesign(array $stand, ?array $alt, ?array $neu): array
+    {
+        $vorher  = self::metaFromTemplate($alt);
+        $nachher = self::metaFromTemplate($neu);
+
+        $stand['meta'] = is_array($stand['meta'] ?? null) ? $stand['meta'] : self::defaultMeta();
+        foreach (self::DESIGN_KEYS as $key) {
+            $stand['meta'][$key] = $nachher[$key];
+        }
+
+        // Baustein → welches Feld hängt an welcher Design-Angabe
+        $bindung = [
+            'heading' => ['color' => 'headColor'],
+            'text'    => ['color' => 'textColor'],
+            'button'  => ['bg' => 'linkColor'],
+            'divider' => ['color' => 'borderColor'],
+            'social'  => ['color' => 'linkColor'],
+        ];
+
+        $durch = static function (array $liste) use (&$durch, $bindung, $vorher, $nachher): array {
+            foreach ($liste as $i => $block) {
+                $typ = (string) ($block['type'] ?? '');
+                foreach ($bindung[$typ] ?? [] as $feld => $quelle) {
+                    $wert = (string) ($block[$feld] ?? '');
+                    if ($wert !== '' && strcasecmp($wert, (string) $vorher[$quelle]) === 0) {
+                        $liste[$i][$feld] = $nachher[$quelle];
+                    }
+                }
+                foreach (['left', 'right'] as $seite) {
+                    if (isset($block[$seite]) && is_array($block[$seite])) {
+                        $liste[$i][$seite] = $durch($block[$seite]);
+                    }
+                }
+            }
+            return $liste;
+        };
+
+        $stand['blocks'] = $durch(is_array($stand['blocks'] ?? null) ? $stand['blocks'] : []);
+        return $stand;
+    }
+
     public static function metaFromTemplate(?array $template): array
     {
         $meta = self::defaultMeta();
@@ -118,8 +181,7 @@ final class Blocks
 
         // Nur die Angaben übernehmen, die den Inhalt betreffen –
         // Kopfzeile und Footer gehören der Vorlage.
-        foreach (['font', 'headFont', 'textColor', 'headColor', 'linkColor', 'accentColor',
-                  'cardBg', 'bg', 'borderColor', 'width', 'padding', 'radius'] as $key) {
+        foreach (self::DESIGN_KEYS as $key) {
             $meta[$key] = $vorlage[$key];
         }
         return $meta;

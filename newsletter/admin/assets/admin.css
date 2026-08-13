@@ -249,3 +249,68 @@ h3 { font-size: 15px; color: var(--ad-navy); margin: 20px 0 8px; }
 .ad-login h1 { font-size: 21px; margin-bottom: 6px; }
 .ad-login .ad-sub { margin-bottom: 22px; }
 .ad-login .ad-btn { width: 100%; text-align: center; }
+
+/* ------------------------------------------------- Design aussuchen */
+
+.ad-designwahl {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+    gap: 16px;
+    margin-bottom: 18px;
+}
+
+.ad-design {
+    display: block;
+    border: 1px solid var(--ad-border);
+    border-radius: 10px;
+    background: #fff;
+    overflow: hidden;
+    text-decoration: none;
+    color: inherit;
+    transition: border-color .12s ease, box-shadow .12s ease;
+}
+
+.ad-design:hover {
+    border-color: var(--ad-red);
+    box-shadow: 0 4px 18px rgba(20, 36, 58, .12);
+}
+
+/* Der Rahmen zeigt die echte Vorlage, nur verkleinert. */
+.ad-design-bild {
+    display: block;
+    position: relative;
+    height: 240px;
+    overflow: hidden;
+    background: var(--ad-bg);
+    border-bottom: 1px solid var(--ad-border);
+}
+
+.ad-design-bild iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 700px;
+    height: 800px;
+    border: 0;
+    transform: scale(.34);
+    transform-origin: 0 0;
+    pointer-events: none;
+}
+
+.ad-design-nix {
+    position: absolute;
+    inset: 14px;
+    border: 2px dashed var(--ad-border);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--ad-muted);
+    font-size: 13px;
+    background: #fff;
+}
+
+.ad-design-fuss { display: block; padding: 11px 14px; }
+.ad-design-fuss strong { display: block; font-size: 14px; color: var(--ad-navy); }
+.ad-design-fuss em { display: block; font-style: normal; font-size: 12.5px; color: var(--ad-muted); margin-top: 2px; }
+.ad-design-fuss .ad-pill { margin-top: 5px; }

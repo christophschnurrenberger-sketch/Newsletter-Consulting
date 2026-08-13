@@ -32,11 +32,26 @@ if (Util::get('vorschau') === '1') {
 
 /* ------------------------------------------------------------ Anlegen */
 
+/*
+ * Erst das Design wählen, dann schreiben – wie man es von den großen
+ * Anbietern kennt. Wer nur eine Vorlage hat, soll aber nicht jedes Mal
+ * eine Auswahl mit einem einzigen Feld wegklicken müssen: Dann geht es
+ * direkt weiter.
+ */
 if (Util::get('neu') === '1') {
-    Auth::require('lesen');
-    $newId = Campaigns::create('Newsletter vom ' . date('d.m.Y'));
-    Util::flash('Neuer Newsletter angelegt. Betreff und Inhalt können Sie jetzt schreiben.');
-    Util::redirect('kampagne.php?id=' . $newId);
+    Auth::require('kampagnen');
+    $vorlagen = Templates::all();
+
+    $gewaehlt = Util::get('vorlage');
+    if ($gewaehlt === '' && count($vorlagen) > 1) {
+        $zeigeAuswahl = true;                 // weiter unten, nach dem Seitenkopf
+    } else {
+        $vorlageId = $gewaehlt === 'leer' ? 0 : (int) ($gewaehlt !== '' ? $gewaehlt : 0);
+        $newId = Campaigns::create('Newsletter vom ' . date('d.m.Y'),
+            $vorlageId > 0 ? $vorlageId : null, $gewaehlt === 'leer');
+        Util::flash('Neuer Newsletter angelegt. Betreff und Inhalt können Sie jetzt schreiben.');
+        Util::redirect('kampagne.php?id=' . $newId);
+    }
 }
 
 $pageTitle = 'Newsletter bearbeiten';
@@ -44,6 +59,55 @@ $extraCss  = ['assets/builder.css'];
 $extraJs   = ['assets/builder.js'];
 require __DIR__ . '/partials/header.php';
 require __DIR__ . '/partials/builder.php';
+
+/* --------------------------------------------------- Design aussuchen */
+
+if (!empty($zeigeAuswahl)) {
+    $pageTitle = 'Neuer Newsletter';
+    ?>
+    <div class="ad-page-head">
+        <div>
+            <h1>Womit soll der Newsletter aussehen?</h1>
+            <p class="ad-sub">Das Design lässt sich später jederzeit wechseln – der Inhalt bleibt erhalten.</p>
+        </div>
+        <a class="ad-btn ad-btn-secondary" href="kampagnen.php">Abbrechen</a>
+    </div>
+
+    <div class="ad-designwahl">
+        <?php foreach ($vorlagen as $vorlage): ?>
+            <a class="ad-design" href="kampagne.php?neu=1&amp;vorlage=<?= (int) $vorlage['id'] ?>">
+                <span class="ad-design-bild">
+                    <iframe src="vorlagen.php?id=<?= (int) $vorlage['id'] ?>&amp;vorschau=1"
+                            title="Vorschau" loading="lazy" scrolling="no" tabindex="-1"></iframe>
+                </span>
+                <span class="ad-design-fuss">
+                    <strong><?= Util::e((string) $vorlage['name']) ?></strong>
+                    <?php if ((int) $vorlage['is_default'] === 1): ?>
+                        <span class="ad-pill ad-pill-blue">Standard</span>
+                    <?php endif; ?>
+                    <?php $marke = Templates::brand($vorlage); ?>
+                    <?php if (Templates::hasOwnBrand($vorlage)): ?>
+                        <em><?= Util::e((string) $marke['brand_name']) ?></em>
+                    <?php endif; ?>
+                </span>
+            </a>
+        <?php endforeach; ?>
+
+        <a class="ad-design ad-design-leer" href="kampagne.php?neu=1&amp;vorlage=leer">
+            <span class="ad-design-bild"><span class="ad-design-nix">leer</span></span>
+            <span class="ad-design-fuss">
+                <strong>Ohne Beispieltext</strong>
+                <em>Standardvorlage, aber eine leere Fläche</em>
+            </span>
+        </a>
+    </div>
+
+    <p class="ad-hint">Ein Design bestimmt Kopfzeile, Footer, Schriften und Farben.
+        Neue Designs legen Sie unter <a href="vorlagen.php">Vorlagen</a> an.</p>
+    <?php
+    require __DIR__ . '/partials/footer.php';
+    exit;
+}
 
 $id       = Util::isPost() ? Util::postInt('id') : Util::getInt('id');
 $campaign = Campaigns::byId($id);
@@ -91,6 +155,25 @@ if (Util::isPost()) {
             if (Util::post('editor_mode') === 'blocks') {
                 $felder['editor_mode'] = 'blocks';
                 $felder['blocks_json'] = Util::postRaw('blocks_json');
+
+                /*
+                 * Design gewechselt? Dann soll auch der Inhalt anders aussehen.
+                 * Vorher kam nur ein neuer Rahmen um unveränderte Schriften und
+                 * Farben – ein halber Wechsel, der niemandem hilft. Von Hand
+                 * gesetzte Farben bleiben erhalten (siehe Blocks::switchDesign).
+                 */
+                $vorherId = (int) $campaign['template_id'];
+                $jetztId  = (int) ($felder['template_id'] ?? 0);
+                if ($jetztId !== $vorherId && $felder['blocks_json'] !== '') {
+                    $stand = Blocks::switchDesign(
+                        Blocks::parse($felder['blocks_json']),
+                        Templates::byId($vorherId),
+                        Templates::byId($jetztId)
+                    );
+                    $felder['blocks_json'] = (string) json_encode($stand,
+                        JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+                    $designGewechselt = true;
+                }
             } else {
                 $felder['editor_mode'] = 'html';
                 $felder['content_html'] = Util::postRaw('content_html');
@@ -110,7 +193,9 @@ if (Util::isPost()) {
     }
 
     if ($action === 'speichern' && $errors === []) {
-        Util::flash('Gespeichert.');
+        Util::flash(!empty($designGewechselt)
+            ? 'Gespeichert – der Newsletter steht jetzt im Design der gewählten Vorlage.'
+            : 'Gespeichert.');
         Util::redirect('kampagne.php?id=' . $id);
     }
 
@@ -455,6 +540,8 @@ $inhaltKarte = (string) ob_get_clean();
                             </option>
                         <?php endforeach; ?>
                     </select>
+                    <p class="ad-hint">Umstellen wechselt Kopfzeile, Footer, Schriften und Farben – auch im
+                        bereits geschriebenen Inhalt. Farben, die Sie selbst gesetzt haben, bleiben.</p>
                 </div>
                 <div class="ad-field">
                     <label for="list_id">Empfängerliste</label>

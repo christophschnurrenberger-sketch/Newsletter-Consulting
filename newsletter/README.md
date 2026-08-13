@@ -117,6 +117,21 @@ brauchen Sie nur noch für Sonderfälle.
   schreibt man direkt in der Spalte. Auf dem Handy brechen die Spalten
   automatisch untereinander um.
 
+**Der Weg zu einer neuen Ausgabe:** Newsletter → „Neuen Newsletter schreiben“ zeigt
+zuerst die vorhandenen Designs als Kacheln mit echter Vorschau. Ein Klick legt die
+Ausgabe in diesem Design an. Wer lieber mit leerer Fläche beginnt, wählt „Ohne
+Beispieltext“. Gibt es nur ein Design, entfällt die Auswahl.
+
+**Design später wechseln:** Im Editor rechts unter „Vorlage & Liste“. Der Wechsel
+betrifft nicht nur den Rahmen, sondern auch den geschriebenen Inhalt – Schriften,
+Text-, Link- und Knopffarben ziehen mit. Farben, die Sie an einem Baustein selbst
+gesetzt haben, bleiben unangetastet: Umgestellt wird nur, was noch auf dem alten
+Design stand.
+
+**Bilder verlinken:** Unter jedem Bild im Baukasten steht, wohin es verlinkt ist –
+oder „Bild verlinken“, wenn noch nichts hinterlegt ist. Ein Klick darauf führt
+direkt zum Feld. Verlinkte Bilder werden wie alle Links gezählt.
+
 **Eigene Vorlage bauen:** Vorlagen → „Neu im Baukasten“. Eine Vorlage ist der
 Rahmen um jede Ausgabe. Der Baustein **„Inhalt der Ausgabe“** markiert die
 Stelle, an der später der Text des jeweiligen Newsletters steht – er gehört in

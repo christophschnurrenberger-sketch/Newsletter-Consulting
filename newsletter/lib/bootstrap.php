@@ -17,7 +17,7 @@ if (!defined('NL_ROOT')) {
  * Systemcheck – so lässt sich sofort erkennen, welcher Stand auf dem
  * Server liegt.
  */
-define('NL_VERSION', '1.12.0 (Automationen: Ziehen und Inhalte)');
+define('NL_VERSION', '1.13.0 (Newsletter beginnt mit der Marke)');
 
 mb_internal_encoding('UTF-8');
 date_default_timezone_set('Europe/Berlin');

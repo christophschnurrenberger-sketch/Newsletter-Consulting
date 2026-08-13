@@ -33,25 +33,45 @@ if (Util::get('vorschau') === '1') {
 /* ------------------------------------------------------------ Anlegen */
 
 /*
- * Erst das Design wählen, dann schreiben – wie man es von den großen
- * Anbietern kennt. Wer nur eine Vorlage hat, soll aber nicht jedes Mal
- * eine Auswahl mit einem einzigen Feld wegklicken müssen: Dann geht es
- * direkt weiter.
+ * Erst die Marke, dann schreiben.
+ *
+ * Eine Vorlage ist ausdrücklich kein Muss: Wer nur die Marke wählt,
+ * bekommt eine leere Fläche – Kopfzeile und Footer stehen aber schon,
+ * und zwar die der gewählten Marke. Wer lieber mit fertigem Inhalt
+ * anfängt, nimmt eine Vorlage. Gibt es nur eine einzige Möglichkeit,
+ * wird die Auswahl übersprungen.
  */
 if (Util::get('neu') === '1') {
     Auth::require('kampagnen');
     $vorlagen = Templates::all();
+    $marken   = Templates::brands();
 
+    $marke    = Util::get('marke');
     $gewaehlt = Util::get('vorlage');
-    if ($gewaehlt === '' && count($vorlagen) > 1) {
-        $zeigeAuswahl = true;                 // weiter unten, nach dem Seitenkopf
-    } else {
-        $vorlageId = $gewaehlt === 'leer' ? 0 : (int) ($gewaehlt !== '' ? $gewaehlt : 0);
+
+    if ($marke === '' && $gewaehlt === '' && count($marken) <= 1 && count($vorlagen) <= 1) {
+        $marke = $marken[0]['schluessel'] ?? 'standard';
+    }
+
+    if ($marke !== '') {
+        // Marke gewählt: Kopf und Fuß stehen, die Fläche gehört der Redaktion
+        $vorlageId = Templates::brandTemplateId($marke);
+        $newId     = Campaigns::create('Newsletter vom ' . date('d.m.Y'), $vorlageId, true);
+        $name      = Templates::brand(Templates::byId($vorlageId))['brand_name'];
+        Util::flash('Neuer Newsletter angelegt – Kopfzeile und Footer von ' . $name
+            . ' stehen schon. Der Inhalt ist Ihre leere Fläche.');
+        Util::redirect('kampagne.php?id=' . $newId);
+    }
+
+    if ($gewaehlt !== '') {
+        $vorlageId = $gewaehlt === 'leer' ? 0 : (int) $gewaehlt;
         $newId = Campaigns::create('Newsletter vom ' . date('d.m.Y'),
             $vorlageId > 0 ? $vorlageId : null, $gewaehlt === 'leer');
         Util::flash('Neuer Newsletter angelegt. Betreff und Inhalt können Sie jetzt schreiben.');
         Util::redirect('kampagne.php?id=' . $newId);
     }
+
+    $zeigeAuswahl = true;                     // weiter unten, nach dem Seitenkopf
 }
 
 $pageTitle = 'Newsletter bearbeiten';
@@ -67,43 +87,59 @@ if (!empty($zeigeAuswahl)) {
     ?>
     <div class="ad-page-head">
         <div>
-            <h1>Womit soll der Newsletter aussehen?</h1>
-            <p class="ad-sub">Das Design lässt sich später jederzeit wechseln – der Inhalt bleibt erhalten.</p>
+            <h1>Unter welcher Marke erscheint der Newsletter?</h1>
+            <p class="ad-sub">Kopfzeile und Footer stehen damit schon – den Inhalt setzen Sie
+                danach auf einer leeren Fläche zusammen. Die Marke lässt sich später wechseln.</p>
         </div>
         <a class="ad-btn ad-btn-secondary" href="kampagnen.php">Abbrechen</a>
     </div>
 
     <div class="ad-designwahl">
-        <?php foreach ($vorlagen as $vorlage): ?>
-            <a class="ad-design" href="kampagne.php?neu=1&amp;vorlage=<?= (int) $vorlage['id'] ?>">
+        <?php foreach ($marken as $m): ?>
+            <a class="ad-design" href="kampagne.php?neu=1&amp;marke=<?= Util::e(urlencode($m['schluessel'])) ?>">
                 <span class="ad-design-bild">
-                    <iframe src="vorlagen.php?id=<?= (int) $vorlage['id'] ?>&amp;vorschau=1"
+                    <iframe src="vorlagen.php?vorschau=1<?= $m['datei'] !== ''
+                                ? '&amp;datei=' . Util::e(urlencode($m['datei']))
+                                : ($m['template'] !== null ? '&amp;id=' . (int) $m['template']['id'] : '') ?>"
                             title="Vorschau" loading="lazy" scrolling="no" tabindex="-1"></iframe>
                 </span>
                 <span class="ad-design-fuss">
-                    <strong><?= Util::e((string) $vorlage['name']) ?></strong>
-                    <?php if ((int) $vorlage['is_default'] === 1): ?>
-                        <span class="ad-pill ad-pill-blue">Standard</span>
-                    <?php endif; ?>
-                    <?php $marke = Templates::brand($vorlage); ?>
-                    <?php if (Templates::hasOwnBrand($vorlage)): ?>
-                        <em><?= Util::e((string) $marke['brand_name']) ?></em>
+                    <strong><?= Util::e((string) $m['name']) ?></strong>
+                    <em>Leere Fläche mit Kopfzeile und Footer von <?= Util::e((string) $m['name']) ?></em>
+                    <?php if ($m['neu']): ?>
+                        <span class="ad-pill ad-pill-grey">wird beim ersten Mal angelegt</span>
                     <?php endif; ?>
                 </span>
             </a>
         <?php endforeach; ?>
-
-        <a class="ad-design ad-design-leer" href="kampagne.php?neu=1&amp;vorlage=leer">
-            <span class="ad-design-bild"><span class="ad-design-nix">leer</span></span>
-            <span class="ad-design-fuss">
-                <strong>Ohne Beispieltext</strong>
-                <em>Standardvorlage, aber eine leere Fläche</em>
-            </span>
-        </a>
     </div>
 
-    <p class="ad-hint">Ein Design bestimmt Kopfzeile, Footer, Schriften und Farben.
-        Neue Designs legen Sie unter <a href="vorlagen.php">Vorlagen</a> an.</p>
+    <?php if ($vorlagen !== []): ?>
+        <h2 class="ad-wahl-titel">Oder gleich mit einer fertigen Vorlage anfangen</h2>
+        <p class="ad-sub">Muss nicht sein – eine Vorlage bringt zusätzlich einen Beispielinhalt mit,
+            den Sie überschreiben.</p>
+
+        <div class="ad-designwahl ad-designwahl-klein">
+            <?php foreach ($vorlagen as $vorlage): ?>
+                <a class="ad-design" href="kampagne.php?neu=1&amp;vorlage=<?= (int) $vorlage['id'] ?>">
+                    <span class="ad-design-bild">
+                        <iframe src="vorlagen.php?id=<?= (int) $vorlage['id'] ?>&amp;vorschau=1&amp;beispiel=1"
+                                title="Vorschau" loading="lazy" scrolling="no" tabindex="-1"></iframe>
+                    </span>
+                    <span class="ad-design-fuss">
+                        <strong><?= Util::e((string) $vorlage['name']) ?></strong>
+                        <em><?= Util::e((string) Templates::brand($vorlage)['brand_name']) ?></em>
+                        <?php if ((int) $vorlage['is_default'] === 1): ?>
+                            <span class="ad-pill ad-pill-blue">Standard</span>
+                        <?php endif; ?>
+                    </span>
+                </a>
+            <?php endforeach; ?>
+        </div>
+    <?php endif; ?>
+
+    <p class="ad-hint">Eine Marke bestimmt Kopfzeile, Footer, Schriften und Farben.
+        Marken und Vorlagen pflegen Sie unter <a href="vorlagen.php">Vorlagen</a>.</p>
     <?php
     require __DIR__ . '/partials/footer.php';
     exit;
@@ -541,17 +577,24 @@ $inhaltKarte = (string) ob_get_clean();
             <div class="ad-card">
                 <h2>Vorlage &amp; Liste</h2>
                 <div class="ad-field">
-                    <label for="template_id">Design-Vorlage</label>
+                    <label for="template_id">Marke &amp; Design</label>
+                    <?php /* Nach Marke gruppiert: So ist beim Wechseln zu sehen,
+                             unter welchem Namen der Newsletter erscheint. */ ?>
                     <select id="template_id" name="template_id" <?= $editable ? '' : 'disabled' ?>>
-                        <?php foreach (Templates::all() as $template): ?>
-                            <option value="<?= (int) $template['id'] ?>"
-                                <?= (int) $campaign['template_id'] === (int) $template['id'] ? 'selected' : '' ?>>
-                                <?= Util::e((string) $template['name']) ?>
-                            </option>
+                        <?php foreach (Templates::brands() as $marke): ?>
+                            <?php if ($marke['vorlagen'] === []) { continue; } ?>
+                            <optgroup label="<?= Util::e((string) $marke['name']) ?>">
+                                <?php foreach ($marke['vorlagen'] as $template): ?>
+                                    <option value="<?= (int) $template['id'] ?>"
+                                        <?= (int) $campaign['template_id'] === (int) $template['id'] ? 'selected' : '' ?>>
+                                        <?= Util::e((string) $template['name']) ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </optgroup>
                         <?php endforeach; ?>
                     </select>
-                    <p class="ad-hint">Umstellen wechselt Kopfzeile, Footer, Schriften und Farben – auch im
-                        bereits geschriebenen Inhalt. Farben, die Sie selbst gesetzt haben, bleiben.</p>
+                    <p class="ad-hint">Umstellen wechselt Marke, Kopfzeile, Footer, Schriften und Farben –
+                        auch im bereits geschriebenen Inhalt. Farben, die Sie selbst gesetzt haben, bleiben.</p>
                 </div>
                 <div class="ad-field">
                     <label for="list_id">Empfängerliste</label>

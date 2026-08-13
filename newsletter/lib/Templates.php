@@ -224,6 +224,51 @@ final class Templates
     }
 
     /**
+     * Eine mitgelieferte Datei als Vorlage – ohne sie anzulegen.
+     *
+     * Damit lässt sich eine Marke ansehen, bevor man sie zum ersten Mal
+     * benutzt: Das Ergebnis hat dieselbe Gestalt wie eine Zeile aus der
+     * Datenbank und passt deshalb in jede Vorschau.
+     *
+     * @return array<string,mixed>|null null, wenn es die Datei nicht gibt
+     */
+    public static function fromFile(string $schluessel): ?array
+    {
+        $schluessel = preg_replace('/[^a-z0-9_-]/i', '', $schluessel) ?? '';
+        $angaben    = self::files()[$schluessel] ?? null;
+        if ($angaben === null) {
+            return null;
+        }
+        $pfad = NL_ROOT . '/vorlagen/' . $schluessel . ($angaben['baukasten'] ? '.json' : '.html');
+        if (!is_file($pfad)) {
+            return null;
+        }
+
+        $json = null;
+        if ($angaben['baukasten']) {
+            $daten  = json_decode((string) file_get_contents($pfad), true);
+            $blocks = Blocks::parse((string) json_encode($daten['blocks'] ?? [],
+                JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
+            $json   = (string) json_encode($blocks, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+            $html   = Blocks::renderDocument($blocks);
+        } else {
+            $html = (string) file_get_contents($pfad);
+        }
+
+        return [
+            'id'          => 0,
+            'name'        => $angaben['name'],
+            'description' => $angaben['description'],
+            'html'        => $html,
+            'blocks_json' => $json,
+            'editor_mode' => $angaben['baukasten'] ? 'blocks' : 'html',
+            'is_default'  => 0,
+            'brand_name'  => $angaben['brand'],
+            'website_url' => $angaben['website'],
+        ];
+    }
+
+    /**
      * Legt eine Vorlage aus einer mitgelieferten Datei an – samt Marke,
      * damit Kopfzeile und Footer sofort stimmen.
      *
@@ -231,31 +276,126 @@ final class Templates
      */
     public static function createFromFile(string $schluessel): int
     {
-        $schluessel = preg_replace('/[^a-z0-9_-]/i', '', $schluessel) ?? '';
-        $angaben    = self::files()[$schluessel] ?? null;
-        if ($angaben === null) {
-            return 0;
-        }
-        $endung = $angaben['baukasten'] ? '.json' : '.html';
-        $pfad   = NL_ROOT . '/vorlagen/' . $schluessel . $endung;
-        if (!is_file($pfad)) {
+        $roh = self::fromFile($schluessel);
+        if ($roh === null) {
             return 0;
         }
 
-        if ($angaben['baukasten']) {
-            $daten = json_decode((string) file_get_contents($pfad), true);
-            $id    = self::create($angaben['name'], '', $angaben['description'], false,
-                (string) json_encode($daten['blocks'], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
-        } else {
-            $id = self::create($angaben['name'], (string) file_get_contents($pfad), $angaben['description']);
-        }
-        if ($angaben['brand'] !== '' || $angaben['website'] !== '') {
+        $id = $roh['blocks_json'] !== null
+            ? self::create($roh['name'], '', $roh['description'], false, (string) $roh['blocks_json'])
+            : self::create($roh['name'], (string) $roh['html'], $roh['description']);
+
+        if ($roh['brand_name'] !== '' || $roh['website_url'] !== '') {
             self::saveBrand($id, [
-                'brand_name'  => $angaben['brand'],
-                'website_url' => $angaben['website'],
+                'brand_name'  => $roh['brand_name'],
+                'website_url' => $roh['website_url'],
             ]);
         }
         return $id;
+    }
+
+    /* --------------------------------------------------------- Markenwahl */
+
+    /**
+     * Die Marken, unter denen ein Newsletter erscheinen kann.
+     *
+     * Für die Empfänger ist die Marke das Sichtbare: Kopfzeile, Footer,
+     * Name, Website, Impressum. Technisch steckt sie in einer Vorlage –
+     * beim Anlegen soll aber die Marke die Wahl sein, nicht die Vorlage.
+     * Deshalb werden die Vorlagen hier nach ihrer Marke gruppiert.
+     *
+     * Mitgelieferte Marken, die es hier noch nicht gibt, stehen ebenfalls
+     * in der Liste; ihre Vorlage entsteht beim ersten Benutzen.
+     *
+     * @return array<int,array{schluessel:string,name:string,template:?array,
+     *                         datei:string,neu:bool,vorlagen:array<int,array<string,mixed>>}>
+     */
+    public static function brands(): array
+    {
+        $standard = trim(Settings::get('brand_name'));
+        $gruppen  = [];
+
+        foreach (self::all() as $vorlage) {
+            $name = trim((string) self::brand($vorlage)['brand_name']);
+            if ($name === '') {
+                $name = $standard !== '' ? $standard : 'Ohne Markenname';
+            }
+            $key = mb_strtolower($name);
+
+            if (!isset($gruppen[$key])) {
+                $gruppen[$key] = ['schluessel' => 'vorlage:' . (int) $vorlage['id'], 'name' => $name,
+                                  'template' => $vorlage, 'datei' => '', 'neu' => false, 'vorlagen' => []];
+            }
+            // Die Standardvorlage vertritt ihre Marke – sie bestimmt Kopf und Fuß.
+            if ((int) $vorlage['is_default'] === 1) {
+                $gruppen[$key]['schluessel'] = 'vorlage:' . (int) $vorlage['id'];
+                $gruppen[$key]['template']   = $vorlage;
+            }
+            $gruppen[$key]['vorlagen'][] = $vorlage;
+        }
+
+        // Die Marke aus den Einstellungen gibt es immer – auch ohne Vorlage
+        if ($standard !== '' && !isset($gruppen[mb_strtolower($standard)])) {
+            $gruppen[mb_strtolower($standard)] = ['schluessel' => 'standard', 'name' => $standard,
+                'template' => null, 'datei' => '', 'neu' => false, 'vorlagen' => []];
+        }
+
+        // Mitgelieferte Marken, die hier noch nicht benutzt werden.
+        // Gibt es zu einer Marke mehrere Dateien, gewinnt die Baukasten-
+        // Fassung: Sie lässt sich hinterher im Baukasten weiterbearbeiten,
+        // die HTML-Fassung nur im Quelltext. Deshalb stehen sie hier vorn.
+        $dateien = self::files();
+        uasort($dateien, static fn(array $a, array $b): int => $b['baukasten'] <=> $a['baukasten']);
+
+        foreach ($dateien as $schluessel => $angaben) {
+            $name = trim((string) $angaben['brand']);
+            if ($name === '' || isset($gruppen[mb_strtolower($name)])) {
+                continue;
+            }
+            $gruppen[mb_strtolower($name)] = ['schluessel' => 'datei:' . $schluessel, 'name' => $name,
+                'template' => null, 'datei' => $schluessel, 'neu' => true, 'vorlagen' => []];
+        }
+
+        // Die eigene Marke zuerst, der Rest alphabetisch
+        uasort($gruppen, static function (array $a, array $b) use ($standard): int {
+            $eigen = static fn(array $m): int => strcasecmp($m['name'], $standard) === 0 ? 0 : 1;
+            return ($eigen($a) <=> $eigen($b)) ?: strcasecmp($a['name'], $b['name']);
+        });
+
+        return array_values($gruppen);
+    }
+
+    /**
+     * Löst die Auswahl beim Anlegen in eine Vorlage auf.
+     *
+     * "standard"  – keine Vorlage, es gelten die Einstellungen
+     * "vorlage:7" – diese Vorlage
+     * "datei:xyz" – aus der mitgelieferten Datei; sie wird beim ersten Mal
+     *               angelegt, danach die vorhandene Vorlage genommen.
+     */
+    public static function brandTemplateId(string $wahl): ?int
+    {
+        if (str_starts_with($wahl, 'vorlage:')) {
+            $id = (int) substr($wahl, 8);
+            return self::byId($id) !== null ? $id : null;
+        }
+
+        if (str_starts_with($wahl, 'datei:')) {
+            $angaben = self::files()[substr($wahl, 6)] ?? null;
+            if ($angaben === null || trim((string) $angaben['brand']) === '') {
+                return null;
+            }
+            // Schon einmal angelegt? Dann diese nehmen – keine zweite Vorlage.
+            foreach (self::all() as $vorlage) {
+                if (strcasecmp((string) $vorlage['brand_name'], (string) $angaben['brand']) === 0) {
+                    return (int) $vorlage['id'];
+                }
+            }
+            $id = self::createFromFile(substr($wahl, 6));
+            return $id > 0 ? $id : null;
+        }
+
+        return null;   // "standard" und alles Unbekannte
     }
 
     /** Legt beim ersten Start die mitgelieferten Vorlagen an. */

@@ -5,11 +5,20 @@
 
 require_once dirname(__DIR__) . '/lib/bootstrap.php';
 
-/* Vorschau einer Vorlage (wird im Rahmen angezeigt) */
+/*
+ * Vorschau einer Vorlage (wird im Rahmen angezeigt).
+ *
+ * Drei Fälle: eine angelegte Vorlage (id), eine mitgelieferte Datei, die
+ * noch niemand angelegt hat (datei) – damit sich eine Marke ansehen lässt,
+ * bevor man sie benutzt – und ganz ohne Angabe der schlichte Rahmen aus
+ * den Einstellungen.
+ */
 if (Util::get('vorschau') === '1') {
     Auth::require('lesen');
-    $template = Templates::byId(Util::getInt('id'));
-    if ($template === null) {
+    $datei    = Util::get('datei');
+    $id       = Util::getInt('id');
+    $template = $datei !== '' ? Templates::fromFile($datei) : ($id > 0 ? Templates::byId($id) : null);
+    if ($template === null && ($datei !== '' || $id > 0)) {
         http_response_code(404);
         exit('Vorlage nicht gefunden.');
     }

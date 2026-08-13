@@ -344,10 +344,26 @@ Der **Inhalt** einer Ausgabe entsteht weiterhin im Baukasten. Farben für Links
 und Knöpfe stellen Sie dort rechts unter „Gestaltung" ein – bei einer zweiten
 Marke also einmal auf deren Akzentfarbe setzen.
 
-Beim Schreiben eines Newsletters wählen Sie oben die passende **Vorlage** und
-die passende **Liste**; Absendername und -adresse stehen im Editor und lassen
-sich pro Ausgabe überschreiben. Automationen übernehmen den Absender aus der
-Vorlage des jeweiligen Schrittes.
+**Beim Anlegen entscheidet die Marke, nicht die Vorlage.** Newsletter → „Neuer
+Newsletter" fragt zuerst: *Unter welcher Marke erscheint der Newsletter?* Ein
+Klick auf die Marke – und Sie stehen auf einer leeren Fläche, bei der Kopfzeile
+und Footer dieser Marke aber schon stehen. Eine Vorlage ist ausdrücklich kein
+Muss; wer lieber mit einem Beispielinhalt anfängt, findet die Vorlagen darunter
+unter „Oder gleich mit einer fertigen Vorlage anfangen".
+
+Marken, die noch nicht benutzt wurden, aber als Datei im Ordner
+`newsletter/vorlagen/` liegen, stehen ebenfalls zur Wahl – markiert mit „wird
+beim ersten Mal angelegt". Die zugehörige Vorlage entsteht dann beim ersten
+Klick, ein zweiter Newsletter derselben Marke benutzt sie weiter.
+
+Später wechseln Sie die Marke im Editor rechts unter **„Marke & Design"**; die
+Auswahl ist nach Marken gruppiert. Kopfzeile, Footer, Schriften und Farben
+wechseln mit – selbst gesetzte Farben bleiben.
+
+Beim Schreiben eines Newsletters wählen Sie außerdem die passende **Liste**;
+Absendername und -adresse stehen im Editor und lassen sich pro Ausgabe
+überschreiben. Automationen übernehmen den Absender aus der Vorlage des
+jeweiligen Schrittes.
 
 > **Wichtig:** Die Absenderadresse muss zu einer Domain gehören, für die Ihr
 > Versandweg senden darf. Bei SMTP über ein Postfach von Domain A können Sie

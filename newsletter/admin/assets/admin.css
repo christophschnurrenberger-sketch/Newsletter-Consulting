@@ -310,6 +310,15 @@ h3 { font-size: 15px; color: var(--ad-navy); margin: 20px 0 8px; }
     background: #fff;
 }
 
+/* Die Vorlagen unter den Marken: dieselbe Kachel, nur kleiner. Die
+   Markenwahl bleibt dadurch das Erste, was ins Auge fällt. */
+.ad-designwahl-klein { grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); }
+.ad-designwahl-klein .ad-design-bild { height: 170px; }
+.ad-designwahl-klein .ad-design-bild iframe { transform: scale(.25); }
+
+.ad-wahl-titel { margin: 26px 0 4px; font-size: 16px; color: var(--ad-navy); }
+.ad-wahl-titel + .ad-sub { margin: 0 0 14px; }
+
 .ad-design-fuss { display: block; padding: 11px 14px; }
 .ad-design-fuss strong { display: block; font-size: 14px; color: var(--ad-navy); }
 .ad-design-fuss em { display: block; font-style: normal; font-size: 12.5px; color: var(--ad-muted); margin-top: 2px; }

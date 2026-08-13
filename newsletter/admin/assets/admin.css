@@ -314,3 +314,36 @@ h3 { font-size: 15px; color: var(--ad-navy); margin: 20px 0 8px; }
 .ad-design-fuss strong { display: block; font-size: 14px; color: var(--ad-navy); }
 .ad-design-fuss em { display: block; font-style: normal; font-size: 12.5px; color: var(--ad-muted); margin-top: 2px; }
 .ad-design-fuss .ad-pill { margin-top: 5px; }
+
+/* ------------------------------------------- Vorschau: Rechner oder Handy */
+
+.ad-geraete { display: flex; align-items: center; gap: 6px; margin-bottom: 10px; }
+
+.ad-geraet {
+    padding: 5px 12px;
+    border: 1px solid var(--ad-border);
+    border-radius: 20px;
+    background: #fff;
+    color: var(--ad-navy);
+    font-family: inherit;
+    font-size: 12.5px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.ad-geraet:hover { border-color: var(--ad-navy); }
+.ad-geraet.is-aktiv { background: var(--ad-navy); border-color: var(--ad-navy); color: #fff; }
+.ad-geraet-breite { font-size: 12px; color: var(--ad-muted); margin-left: 4px; }
+
+.ad-preview-buehne { background: var(--ad-bg); border-radius: 8px; padding: 0; transition: padding .15s ease; }
+
+/* Am Handy: schmaler Streifen in der Mitte, mit etwas Luft drumherum */
+.ad-preview-buehne.ist-handy { padding: 14px 0; }
+.ad-preview-buehne.ist-handy .ad-preview-frame {
+    width: 375px;
+    max-width: 100%;
+    margin: 0 auto;
+    display: block;
+    height: 660px;
+    box-shadow: 0 4px 20px rgba(20, 36, 58, .16);
+}

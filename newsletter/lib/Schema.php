@@ -17,7 +17,7 @@
 final class Schema
 {
     /** Version des Schemas – wird in settings gespeichert. */
-    public const VERSION = 5;
+    public const VERSION = 6;
 
     public static function migrate(): void
     {
@@ -366,6 +366,17 @@ final class Schema
                 channel    %STR(40)% NOT NULL DEFAULT \'app\',
                 message    %TEXT%,
                 created_at %DT%
+            )%ENGINE%',
+
+            // Selbst gesicherte Bausteine, die sich wiederverwenden lassen
+            'CREATE TABLE IF NOT EXISTS snippets (
+                id          %PK%,
+                name        %STR(190)% NOT NULL,
+                kind        %STR(20)% NOT NULL DEFAULT \'block\',
+                blocks_json %TEXT%,
+                created_by  %STR(190)%,
+                created_at  %DT%,
+                used_at     %DT%
             )%ENGINE%',
 
             // Rate-Limits (Anmeldeformular, Admin-Login)

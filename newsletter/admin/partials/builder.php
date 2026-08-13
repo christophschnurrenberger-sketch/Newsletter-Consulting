@@ -43,6 +43,9 @@ function builder_ui(array $blocks, string $mode = 'campaign', string $fieldName 
                 </button>
             <?php endforeach; ?>
 
+            <h3 style="margin-top:22px;">Eigene Bausteine</h3>
+            <div class="bk-eigene" data-eigene></div>
+
             <h3 style="margin-top:22px;">Platzhalter</h3>
             <p class="bk-hint">Setzt den Platzhalter an der Schreibmarke ein.</p>
             <select class="bk-select" data-placeholder-picker>
@@ -65,6 +68,12 @@ function builder_ui(array $blocks, string $mode = 'campaign', string $fieldName 
         <div class="bk-stage">
             <div class="bk-stage-bar">
                 <span class="bk-stage-title"><?= $mode === 'template' ? 'Vorlage' : 'Ausgabe' ?> zusammenstellen</span>
+                <span class="bk-verlauf">
+                    <button type="button" class="bk-icon" data-zurueck disabled
+                            title="Rückgängig (Strg+Z)" aria-label="Rückgängig">↶</button>
+                    <button type="button" class="bk-icon" data-vor disabled
+                            title="Wiederherstellen (Strg+Umschalt+Z)" aria-label="Wiederherstellen">↷</button>
+                </span>
                 <span class="bk-autosave" data-autosave-status></span>
                 <span class="bk-stage-info" data-count></span>
             </div>

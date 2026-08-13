@@ -36,8 +36,8 @@ Newsletter schreiben, Testmail verschicken, senden.
 |---|---|
 | Anmeldung | Formular auf der Startseite und eigene Landingpage, Double-Opt-in, Honeypot, Zeit- und Rate-Limits, MX-Prüfung der Domain |
 | Empfänger | Suche, Filter, Sammelaktionen, Listen, CSV-Import/-Export, Einwilligungs-Protokoll, Sperrliste |
-| Redaktion | **Baukasten mit Drag & Drop**, Platzhalter (`{{vorname}}` …), Live-Vorschau, Testversand, Textfassung automatisch – wahlweise auch direkt in HTML |
-| Gestaltung | Eigene Vorlagen per Drag & Drop: Kopfzeile, Farben, Schrift, Breite, Footer; Bild-Upload mit Galerie |
+| Redaktion | **Baukasten mit Drag & Drop**, Rückgängig (Strg+Z), Vorschau für Rechner und Handy, Platzhalter (`{{vorname}}` …), Testversand, Textfassung automatisch – wahlweise auch direkt in HTML |
+| Gestaltung | Eigene Vorlagen per Drag & Drop: Kopfzeile, Farben, Schrift, Breite, Footer; Bild-Upload mit Galerie, Zuschneiden im Browser, eigene Bausteine zum Wiederverwenden |
 | Versand | Eigener SMTP-Client, portionsweiser Versand über Cron, Tempolimits, Wiederholungen, Pause/Fortsetzen/Abbrechen, Planung |
 | Messung | Öffnungen, Klicks je Link, Abmeldungen, Bounces, Verlaufsgrafik |
 | Automation | **Ablauf-Baukasten mit Drag & Drop**: warten, senden, Bedingungen („hat geöffnet?“) mit Ja-/Nein-Zweigen, Aktionen |
@@ -116,6 +116,34 @@ brauchen Sie nur noch für Sonderfälle.
   Abstand. Man muss also nichts hineinziehen – ein Klick genügt, danach
   schreibt man direkt in der Spalte. Auf dem Handy brechen die Spalten
   automatisch untereinander um.
+
+**Rückgängig:** `Strg+Z` nimmt den letzten Schritt zurück, `Strg+Umschalt+Z`
+stellt ihn wieder her – oder die Pfeile ↶ ↷ oben am Baukasten. Beim Schreiben
+wird nicht jeder Buchstabe zu einem Schritt: Erst nach einer kurzen Pause
+wandert der Stand in den Verlauf, ein Rückgängig nimmt also einen Satz zurück
+und nicht ein Zeichen. Gemerkt werden die letzten 60 Schritte; nach dem
+Neuladen der Seite fängt der Verlauf von vorn an.
+
+**Rechner oder Handy:** Über der Vorschau schalten Sie zwischen beiden um. Am
+Handy wird die Vorschau auf 375 Pixel gestellt – die Mail greift dann auf
+dieselben Regeln zurück wie später im Postfach, Spalten brechen also wirklich
+um. Die Wahl bleibt über Seitenwechsel hinweg bestehen.
+
+**Eigene Bausteine:** Der Stern ☆ am Baustein sichert ihn unter einem Namen.
+Danach steht er links unter „Eigene Bausteine" und lässt sich mit einem Klick
+in jeden Newsletter einsetzen – praktisch für eine Grußformel, einen
+Produktkasten oder einen Hinweis, den Sie immer wieder brauchen. Gesichert wird
+auf dem Server, also für das ganze Team und über jeden Rechnerwechsel hinweg.
+Zwei Spalten samt Inhalt lassen sich als Ganzes sichern.
+
+**Bilder zuschneiden:** „Zuschneiden" öffnet den Ausschnitt direkt im Browser –
+Rechteck aufziehen, wahlweise mit festem Seitenverhältnis (1:1, 4:3, 3:2, 16:9),
+und auf eine Zielbreite verkleinern. Das Ergebnis wird als **neue** Datei
+gespeichert; das Ausgangsbild bleibt, wie es war. Beim Hochladen werden zu
+große Bilder automatisch auf 1400 Pixel Breite gebracht – ein Handyfoto mit
+4000 Pixeln läuft sonst in die 3-MB-Grenze und macht die Mail unnötig schwer.
+Bilder von fremden Servern lassen sich nicht zuschneiden, das verbietet der
+Browser; laden Sie sie vorher hoch.
 
 **Der Weg zu einer neuen Ausgabe:** Newsletter → „Neuen Newsletter schreiben“ zeigt
 zuerst die vorhandenen Designs als Kacheln mit echter Vorschau. Ein Klick legt die
@@ -508,6 +536,7 @@ newsletter/
 │   ├── vorlagen.php         Design-Vorlagen samt Marke (Baukasten oder HTML)
 │   ├── upload.php           Bild-Upload für den Baukasten
 │   ├── ki.php               holt Textvorschläge (nur wenn eingerichtet)
+│   ├── bausteine.php        gesicherte Bausteine zum Wiederverwenden
 │   ├── versand.php          Warteschlange steuern
 │   ├── protokoll.php        Ereignisse, Rückläufer, Sperrliste
 │   ├── benutzer.php         Zugänge, Rollen, eigenes Passwort
@@ -544,6 +573,7 @@ newsletter/
 | `Bounces.php` | Rückläufer inkl. kleinem POP3-Client |
 | `Tracking.php` / `Events.php` | Öffnungen, Klicks, Ereignisse |
 | `Ai.php` | Textassistent: Anweisung, Anfrage an den Anbieter, lesbare Fehler |
+| `Snippets.php` | Gesicherte Bausteine: prüfen, ablegen, mit frischen Kennungen zurückgeben |
 | `Auth.php` / `Util.php` / `Log.php` | Anmeldung, Rollen und Rechte, Helfer, Protokoll |
 
 ---

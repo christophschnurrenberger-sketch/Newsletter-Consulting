@@ -105,13 +105,6 @@ final class Blocks
         ];
     }
 
-    /**
-     * Die Gestaltung einer Vorlage als Grundlage für den Inhalt.
-     * Ohne Vorlage gelten die Vorgaben.
-     *
-     * @param array<string,mixed>|null $template
-     * @return array<string,mixed>
-     */
     /** Angaben, die das Aussehen des Inhalts ausmachen. */
     private const DESIGN_KEYS = ['font', 'headFont', 'textColor', 'headColor', 'linkColor',
         'accentColor', 'cardBg', 'bg', 'borderColor', 'width', 'padding', 'radius'];
@@ -170,6 +163,13 @@ final class Blocks
         return $stand;
     }
 
+    /**
+     * Die Gestaltung einer Vorlage als Grundlage für den Inhalt.
+     * Ohne Vorlage gelten die Vorgaben.
+     *
+     * @param array<string,mixed>|null $template
+     * @return array<string,mixed>
+     */
     public static function metaFromTemplate(?array $template): array
     {
         $meta = self::defaultMeta();
@@ -212,6 +212,12 @@ final class Blocks
      * @param array<string,mixed> $data
      * @return array<string,mixed>
      */
+    /** Kennung für einen Baustein – kurz, aber nicht zu erraten. */
+    public static function newId(): string
+    {
+        return 'b' . bin2hex(random_bytes(4));
+    }
+
     public static function block(string $type, array $data = []): array
     {
         $defaults = [
@@ -230,7 +236,7 @@ final class Blocks
                           'wortmarke' => '', 'akzentTeil' => '', 'akzentFarbe' => '#C8102E', 'claim' => ''],
             'fuss'    => ['bg' => '', 'farbe' => '#8A95A5', 'hinweis' => ''],
         ];
-        $block = ['id' => 'b' . bin2hex(random_bytes(4)), 'type' => $type];
+        $block = ['id' => self::newId(), 'type' => $type];
         return $block + $data + ($defaults[$type] ?? []);
     }
 

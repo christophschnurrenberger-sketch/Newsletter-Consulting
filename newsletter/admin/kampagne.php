@@ -445,8 +445,18 @@ $inhaltKarte = (string) ob_get_clean();
                     <a class="ad-btn ad-btn-secondary ad-btn-small" target="_blank" rel="noopener"
                        href="kampagne.php?id=<?= $id ?>&amp;vorschau=1">In neuem Tab öffnen</a>
                 </div>
-                <iframe id="preview-frame" class="ad-preview-frame"
-                        src="kampagne.php?id=<?= $id ?>&amp;vorschau=1" title="Vorschau des Newsletters"></iframe>
+
+                <?php /* Mehr als die Hälfte liest am Handy – das muss man beim Bauen sehen. */ ?>
+                <div class="ad-geraete" data-geraetewahl>
+                    <button type="button" class="ad-geraet is-aktiv" data-geraet="desktop">🖥 Rechner</button>
+                    <button type="button" class="ad-geraet" data-geraet="handy">📱 Handy</button>
+                    <span class="ad-geraet-breite" data-geraet-breite></span>
+                </div>
+
+                <div class="ad-preview-buehne" data-vorschau-buehne>
+                    <iframe id="preview-frame" class="ad-preview-frame"
+                            src="kampagne.php?id=<?= $id ?>&amp;vorschau=1" title="Vorschau des Newsletters"></iframe>
+                </div>
             </div>
         </div>
 

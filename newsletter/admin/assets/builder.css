@@ -483,3 +483,114 @@ body.bk-zieht .bk-drop { background: rgba(20, 36, 58, .05); border-radius: 4px; 
     background: #F3F8F4;
     color: #2E7D53;
 }
+
+/* Rückgängig / Wiederherstellen in der Kopfleiste */
+.bk-verlauf { display: flex; gap: 2px; margin-left: 10px; }
+.bk-verlauf .bk-icon { font-size: 15px; line-height: 1; }
+.bk-verlauf .bk-icon[disabled] { opacity: .3; cursor: default; }
+.bk-verlauf .bk-icon[disabled]:hover { background: transparent; border-color: transparent; }
+
+/* Eigene, gesicherte Bausteine in der linken Leiste */
+.bk-eigene { margin-bottom: 4px; }
+
+.bk-eigen {
+    display: flex;
+    align-items: stretch;
+    gap: 3px;
+    margin-bottom: 5px;
+}
+
+.bk-eigen-name {
+    flex: 1;
+    min-width: 0;
+    padding: 7px 9px;
+    border: 1px solid var(--ad-border, #E0E6ED);
+    border-radius: 6px;
+    background: #FCFDFE;
+    color: var(--ad-navy, #14243A);
+    font-family: inherit;
+    font-size: 12.5px;
+    text-align: left;
+    cursor: pointer;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.bk-eigen-name:hover { border-color: var(--ad-red, #C8102E); background: #fff; }
+
+.bk-eigen-weg {
+    width: 26px;
+    border: 1px solid transparent;
+    border-radius: 6px;
+    background: transparent;
+    color: var(--ad-muted, #6B7A8D);
+    font-family: inherit;
+    font-size: 12px;
+    cursor: pointer;
+}
+.bk-eigen-weg:hover { border-color: #F3C6CF; background: #FDECEF; color: var(--ad-red, #C8102E); }
+
+/* -------------------------------------------------- Bild zuschneiden */
+
+.bk-schnitt-box { max-width: 760px; }
+
+.bk-schnitt-buehne {
+    position: relative;
+    display: inline-block;
+    max-width: 100%;
+    line-height: 0;
+    background: #F2F5F8;
+    border-radius: 6px;
+    overflow: hidden;
+    touch-action: none;
+    user-select: none;
+}
+
+.bk-schnitt-bild {
+    display: block;
+    max-width: 100%;
+    max-height: 52vh;
+    width: auto;
+    height: auto;
+    pointer-events: none;
+}
+
+/* Der gewählte Ausschnitt: außen abgedunkelt durch einen riesigen Schatten */
+.bk-schnitt-rahmen {
+    position: absolute;
+    border: 1px solid #fff;
+    box-shadow: 0 0 0 9999px rgba(20, 36, 58, .48);
+    cursor: move;
+    box-sizing: border-box;
+}
+
+.bk-schnitt-griff {
+    position: absolute;
+    width: 14px;
+    height: 14px;
+    background: #fff;
+    border: 1px solid var(--ad-navy, #14243A);
+    border-radius: 2px;
+}
+.bk-griff-nw { top: -7px; left: -7px; cursor: nwse-resize; }
+.bk-griff-no { top: -7px; right: -7px; cursor: nesw-resize; }
+.bk-griff-sw { bottom: -7px; left: -7px; cursor: nesw-resize; }
+.bk-griff-so { bottom: -7px; right: -7px; cursor: nwse-resize; }
+
+.bk-schnitt-leiste { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin: 10px 0 4px; }
+
+.bk-schnitt-wahl {
+    padding: 5px 12px;
+    border: 1px solid var(--ad-border, #E0E6ED);
+    border-radius: 20px;
+    background: #fff;
+    color: var(--ad-navy, #14243A);
+    font-family: inherit;
+    font-size: 12.5px;
+    font-weight: 600;
+    cursor: pointer;
+}
+.bk-schnitt-wahl:hover { border-color: var(--ad-navy, #14243A); }
+.bk-schnitt-wahl.is-aktiv { background: var(--ad-navy, #14243A); border-color: var(--ad-navy, #14243A); color: #fff; }
+
+.bk-schnitt-breite { width: auto; margin-left: auto; }

@@ -17,7 +17,7 @@ if (!defined('NL_ROOT')) {
  * Systemcheck – so lässt sich sofort erkennen, welcher Stand auf dem
  * Server liegt.
  */
-define('NL_VERSION', '1.10.0 (Design wählen und wechseln)');
+define('NL_VERSION', '1.11.0 (Rückgängig, Handy-Vorschau, eigene Bausteine, Zuschneiden)');
 
 mb_internal_encoding('UTF-8');
 date_default_timezone_set('Europe/Berlin');
@@ -39,7 +39,7 @@ if (PHP_SAPI !== 'cli' && !headers_sent()) {
 foreach ([
     'Config', 'Util', 'DB', 'Schema', 'Settings', 'Log', 'Mailer', 'Urls',
     'Lists', 'Events', 'Subscribers', 'Templates', 'Blocks', 'Renderer', 'Campaigns',
-    'Queue', 'Flow', 'Automations', 'SystemMails', 'Auth', 'Tracking', 'Bounces', 'Ai',
+    'Queue', 'Flow', 'Automations', 'SystemMails', 'Auth', 'Tracking', 'Bounces', 'Ai', 'Snippets',
 ] as $class) {
     require_once NL_ROOT . '/lib/' . $class . '.php';
 }

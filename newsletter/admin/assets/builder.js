@@ -41,10 +41,107 @@
     }
 
     function save() {
+        merkeVerlauf();
         field.value = JSON.stringify(state);
         field.dispatchEvent(new Event('input', { bubbles: true }));
         autoSpeichern();
     }
+
+    /* ------------------------------------------------------------ Rückgängig
+     *
+     * Der Verlauf merkt sich ganze Stände als JSON – bei der Größe eines
+     * Newsletters ist das ein paar Kilobyte und damit billiger als jede
+     * Buchführung über einzelne Änderungen.
+     *
+     * Beim Tippen wird nicht jeder Buchstabe zu einem Schritt: Erst wenn
+     * eine Dreiviertelsekunde Ruhe ist, wandert der Stand von vorher in den
+     * Verlauf. Ein Strg+Z nimmt damit einen Satz zurück, nicht ein Zeichen.
+     * Alles Strukturelle – Baustein einfügen, löschen, verschieben – wird
+     * dagegen sofort festgehalten.
+     */
+    var verlauf     = [];
+    var zukunft     = [];
+    // Bewusst der geparste Stand und nicht field.value: Sonst wäre schon beim
+    // Öffnen ein Unterschied da (andere Reihenfolge, andere Schreibweise) und
+    // der erste Strg+Z täte scheinbar nichts.
+    var letzterStand = JSON.stringify(state);
+    var merkUhr     = null;
+    var imRuecklauf = false;
+    var VERLAUF_MAX = 60;
+
+    function merkeVerlauf(sofort) {
+        if (imRuecklauf) { return; }
+        window.clearTimeout(merkUhr);
+        var vorher = letzterStand;
+
+        var schreiben = function () {
+            var jetzt = JSON.stringify(state);
+            if (jetzt === vorher) { return; }
+            verlauf.push(vorher);
+            if (verlauf.length > VERLAUF_MAX) { verlauf.shift(); }
+            zukunft = [];
+            letzterStand = jetzt;
+            verlaufKnoepfe();
+        };
+
+        if (sofort === true) { schreiben(); } else { merkUhr = window.setTimeout(schreiben, 750); }
+    }
+
+    /** Übernimmt einen Stand aus dem Verlauf, ohne ihn erneut aufzuzeichnen. */
+    function standSetzen(json) {
+        imRuecklauf = true;
+        state    = parseState(json);
+        selected = null;
+        lastFocus = null;
+        lastRange = null;
+        letzterStand = json;
+        render();
+        imRuecklauf = false;
+        field.value = json;
+        autoSpeichern();
+        verlaufKnoepfe();
+    }
+
+    function zurueck() {
+        window.clearTimeout(merkUhr);
+        // Eine noch nicht festgehaltene Änderung zählt als eigener Schritt.
+        var jetzt = JSON.stringify(state);
+        if (jetzt !== letzterStand) { verlauf.push(letzterStand); letzterStand = jetzt; }
+        if (verlauf.length === 0) { hinweis('Es gibt nichts mehr zurückzunehmen.'); return; }
+        zukunft.push(jetzt);
+        standSetzen(verlauf.pop());
+    }
+
+    function nachVorn() {
+        if (zukunft.length === 0) { hinweis('Es gibt nichts wiederherzustellen.'); return; }
+        verlauf.push(JSON.stringify(state));
+        standSetzen(zukunft.pop());
+    }
+
+    function verlaufKnoepfe() {
+        var zurueckKnopf = root.querySelector('[data-zurueck]');
+        var vorKnopf     = root.querySelector('[data-vor]');
+        if (zurueckKnopf) { zurueckKnopf.disabled = verlauf.length === 0; }
+        if (vorKnopf)     { vorKnopf.disabled     = zukunft.length === 0; }
+    }
+
+    (function () {
+        var z = root.querySelector('[data-zurueck]');
+        var v = root.querySelector('[data-vor]');
+        if (z) { z.addEventListener('click', zurueck); }
+        if (v) { v.addEventListener('click', nachVorn); }
+    })();
+
+    document.addEventListener('keydown', function (event) {
+        if (!(event.ctrlKey || event.metaKey) || event.altKey) { return; }
+        var taste = (event.key || '').toLowerCase();
+        if (taste !== 'z' && taste !== 'y') { return; }
+        // Nur zuständig, solange man im Baukasten arbeitet
+        if (!root.contains(document.activeElement) && document.activeElement !== document.body) { return; }
+
+        event.preventDefault();
+        if (taste === 'y' || event.shiftKey) { nachVorn(); } else { zurueck(); }
+    });
 
     /* ------------------------------------------------------ Automatisch speichern
      * Jede Änderung geht kurz darauf von selbst zum Server. So stimmt die
@@ -238,6 +335,10 @@
         }
         renderInspector();
         save();
+        // render() läuft bei den strukturellen Änderungen – Baustein einfügen,
+        // löschen, verschieben. Die gehören sofort in den Verlauf, nicht erst
+        // nach der Tipp-Pause.
+        merkeVerlauf(true);
     }
 
     /** Ablagefläche zwischen zwei Bausteinen. */
@@ -418,6 +519,8 @@
             '<button type="button" class="bk-icon" data-act="up" title="Nach oben">↑</button>' +
             '<button type="button" class="bk-icon" data-act="down" title="Nach unten">↓</button>' +
             '<button type="button" class="bk-icon" data-act="copy" title="Duplizieren">⧉</button>' +
+            '<button type="button" class="bk-icon" data-act="merken" ' +
+            'title="Als eigenen Baustein sichern und später wiederverwenden">☆</button>' +
             '<button type="button" class="bk-icon bk-icon-danger" data-act="del" title="Löschen">✕</button>' +
             '</span>';
 
@@ -432,6 +535,7 @@
             if (!button) { return; }
             event.stopPropagation();
             var act = button.getAttribute('data-act');
+            if (act === 'merken') { bausteinSichern(block); return; }
             if (act === 'up')   { moveBlock(block.id, -1); }
             if (act === 'down') { moveBlock(block.id, 1); }
             if (act === 'copy') { duplicateBlock(block.id); }
@@ -1291,33 +1395,391 @@
         var status = document.createElement('div');
         status.className = 'bk-hint';
 
+        var bearbeiten = document.createElement('button');
+        bearbeiten.type = 'button';
+        bearbeiten.className = 'bk-btn bk-btn-light';
+        bearbeiten.textContent = 'Zuschneiden';
+        bearbeiten.addEventListener('click', function () {
+            if (!block[feld.k]) { hinweis('Wählen Sie zuerst ein Bild aus.'); return; }
+            bildEditor(block[feld.k], function (neueUrl, breite, hoehe) {
+                block[feld.k] = neueUrl;
+                url.value = neueUrl;
+                status.textContent = 'Zugeschnitten (' + breite + '×' + hoehe + ' Pixel).';
+                redrawBlock(block);
+            }, status);
+        });
+
         datei.addEventListener('change', function () {
             if (!datei.files || !datei.files[0]) { return; }
-            status.textContent = 'Wird hochgeladen …';
-            var daten = new FormData();
-            daten.append('datei', datei.files[0]);
-            daten.append('_csrf', CSRF);
-            fetch(UPLOAD, { method: 'POST', body: daten, credentials: 'same-origin' })
-                .then(function (r) { return r.json(); })
-                .then(function (antwort) {
-                    if (antwort && antwort.ok) {
-                        block[feld.k] = antwort.url;
-                        url.value = antwort.url;
-                        status.textContent = 'Hochgeladen (' + antwort.breite + '×' + antwort.hoehe + ' Pixel).';
-                        redrawBlock(block);
-                    } else {
-                        status.textContent = (antwort && antwort.fehler) || 'Upload fehlgeschlagen.';
-                    }
-                })
-                .catch(function () { status.textContent = 'Upload fehlgeschlagen.'; });
+            status.textContent = 'Wird vorbereitet …';
+            // Fotos aus der Kamera haben oft 4000 Pixel Breite. In einer Mail
+            // sind höchstens 1200 sinnvoll – alles andere kostet nur Ladezeit
+            // und läuft in die 3-MB-Grenze. Deshalb wird vorher verkleinert.
+            verkleinern(datei.files[0], 1400).then(function (fertig) {
+                status.textContent = fertig.verkleinert
+                    ? 'Wird hochgeladen (auf ' + fertig.breite + ' Pixel verkleinert) …'
+                    : 'Wird hochgeladen …';
+                return hochladen(fertig.datei);
+            }).then(function (antwort) {
+                if (antwort && antwort.ok) {
+                    block[feld.k] = antwort.url;
+                    url.value = antwort.url;
+                    status.textContent = 'Hochgeladen (' + antwort.breite + '×' + antwort.hoehe + ' Pixel).';
+                    redrawBlock(block);
+                } else {
+                    status.textContent = (antwort && antwort.fehler) || 'Upload fehlgeschlagen.';
+                }
+            }).catch(function () { status.textContent = 'Upload fehlgeschlagen.'; });
         });
 
         reihe.appendChild(hoch);
         reihe.appendChild(galerie);
+        reihe.appendChild(bearbeiten);
         box.appendChild(reihe);
         box.appendChild(datei);
         box.appendChild(status);
         return box;
+    }
+
+    /* ------------------------------------------------- Bilder zurechtlegen */
+
+    /** Schickt eine Datei oder einen Blob an den Upload und liefert die Antwort. */
+    function hochladen(datei, name) {
+        var daten = new FormData();
+        daten.append('datei', datei, name || datei.name || 'bild.jpg');
+        daten.append('_csrf', CSRF);
+        return fetch(UPLOAD, { method: 'POST', body: daten, credentials: 'same-origin' })
+            .then(function (r) { return r.json(); });
+    }
+
+    /**
+     * Verkleinert ein Bild vor dem Hochladen, wenn es breiter ist als nötig.
+     * Bleibt das Bild klein genug, geht es unverändert durch – umgerechnet
+     * wird nur, was es wirklich braucht.
+     */
+    function verkleinern(datei, maxBreite) {
+        return new Promise(function (fertig) {
+            if (!window.FileReader || !datei.type || datei.type.indexOf('image/') !== 0
+                || datei.type === 'image/gif') {
+                // GIFs können bewegt sein – die würden beim Umzeichnen zum Standbild.
+                fertig({ datei: datei, verkleinert: false, breite: 0 });
+                return;
+            }
+            var leser = new FileReader();
+            leser.onload = function () {
+                var bild = new Image();
+                bild.onload = function () {
+                    if (bild.naturalWidth <= maxBreite) {
+                        fertig({ datei: datei, verkleinert: false, breite: bild.naturalWidth });
+                        return;
+                    }
+                    var breite = maxBreite;
+                    var hoehe  = Math.round(bild.naturalHeight * (maxBreite / bild.naturalWidth));
+                    var typ    = datei.type === 'image/png' ? 'image/png' : 'image/jpeg';
+                    zeichneUndMache(bild, 0, 0, bild.naturalWidth, bild.naturalHeight, breite, hoehe, typ)
+                        .then(function (blob) {
+                            fertig({ datei: blob || datei, verkleinert: !!blob, breite: breite });
+                        });
+                };
+                bild.onerror = function () { fertig({ datei: datei, verkleinert: false, breite: 0 }); };
+                bild.src = leser.result;
+            };
+            leser.onerror = function () { fertig({ datei: datei, verkleinert: false, breite: 0 }); };
+            leser.readAsDataURL(datei);
+        });
+    }
+
+    /** Schneidet einen Ausschnitt heraus und liefert ihn als Blob. */
+    function zeichneUndMache(bild, sx, sy, sw, sh, zielB, zielH, typ) {
+        return new Promise(function (fertig) {
+            try {
+                var flaeche = document.createElement('canvas');
+                flaeche.width  = Math.max(1, Math.round(zielB));
+                flaeche.height = Math.max(1, Math.round(zielH));
+                var stift = flaeche.getContext('2d');
+                if (typ === 'image/jpeg') {
+                    // JPEG kennt keine Durchsichtigkeit – sonst würde sie schwarz.
+                    stift.fillStyle = '#FFFFFF';
+                    stift.fillRect(0, 0, flaeche.width, flaeche.height);
+                }
+                stift.imageSmoothingQuality = 'high';
+                stift.drawImage(bild, sx, sy, sw, sh, 0, 0, flaeche.width, flaeche.height);
+                flaeche.toBlob(function (blob) { fertig(blob); }, typ, 0.86);
+            } catch (e) {
+                fertig(null);   // z. B. Bild von einem fremden Server
+            }
+        });
+    }
+
+    /**
+     * Bild zuschneiden und verkleinern – ohne Bildbearbeitungsprogramm.
+     *
+     * Der Ausschnitt wird auf dem Bild aufgezogen, das Ergebnis landet als
+     * neue Datei im Bildordner. Das Ausgangsbild bleibt unangetastet: So
+     * lässt sich ein Schnitt jederzeit verwerfen, und andere Newsletter,
+     * die dasselbe Bild verwenden, ändern sich nicht mit.
+     *
+     * @param string   quelle Adresse des Bildes
+     * @param function fertig bekommt (neueUrl, breite, hoehe)
+     */
+    function bildEditor(quelle, fertig, status) {
+        var hof = document.createElement('div');
+        hof.className = 'bk-modal';
+        var kasten = document.createElement('div');
+        kasten.className = 'bk-modal-box bk-schnitt-box';
+        hof.appendChild(kasten);
+
+        var titel = document.createElement('h3');
+        titel.textContent = 'Bild zuschneiden';
+        kasten.appendChild(titel);
+
+        var buehne = document.createElement('div');
+        buehne.className = 'bk-schnitt-buehne';
+        var bild = new Image();
+        var rahmen = document.createElement('div');
+        rahmen.className = 'bk-schnitt-rahmen';
+        ['no', 'nw', 'so', 'sw'].forEach(function (ecke) {
+            var griff = document.createElement('span');
+            griff.className = 'bk-schnitt-griff bk-griff-' + ecke;
+            griff.setAttribute('data-ecke', ecke);
+            rahmen.appendChild(griff);
+        });
+        buehne.appendChild(bild);
+        buehne.appendChild(rahmen);
+        kasten.appendChild(buehne);
+
+        var meldung = document.createElement('p');
+        meldung.className = 'bk-hint';
+        meldung.textContent = 'Wird geladen …';
+        kasten.appendChild(meldung);
+
+        /* Seitenverhältnis und Zielbreite */
+        var leiste = document.createElement('div');
+        leiste.className = 'bk-schnitt-leiste';
+
+        var verhaeltnis = 0;    // 0 = frei
+        [['Frei', 0], ['1:1', 1], ['4:3', 4 / 3], ['3:2', 3 / 2], ['16:9', 16 / 9]].forEach(function (paar) {
+            var k = document.createElement('button');
+            k.type = 'button';
+            k.className = 'bk-schnitt-wahl' + (paar[1] === 0 ? ' is-aktiv' : '');
+            k.textContent = paar[0];
+            k.addEventListener('click', function () {
+                verhaeltnis = paar[1];
+                leiste.querySelectorAll('.bk-schnitt-wahl').forEach(function (x) {
+                    x.classList.toggle('is-aktiv', x === k);
+                });
+                if (verhaeltnis > 0) { anpassen(); }
+            });
+            leiste.appendChild(k);
+        });
+
+        var breiteWahl = document.createElement('select');
+        breiteWahl.className = 'bk-select bk-schnitt-breite';
+        [['Volle Größe', 0], ['1200 px', 1200], ['800 px', 800], ['600 px', 600], ['400 px', 400]]
+            .forEach(function (paar) {
+                var o = document.createElement('option');
+                o.value = String(paar[1]);
+                o.textContent = paar[0];
+                breiteWahl.appendChild(o);
+            });
+        leiste.appendChild(breiteWahl);
+        kasten.appendChild(leiste);
+
+        /* Knöpfe */
+        var knoepfe = document.createElement('div');
+        knoepfe.className = 'bk-ki-actions';
+        var uebernehmen = document.createElement('button');
+        uebernehmen.type = 'button';
+        uebernehmen.className = 'ad-btn';
+        uebernehmen.textContent = 'Zuschneiden und übernehmen';
+        uebernehmen.disabled = true;
+        var ganz = document.createElement('button');
+        ganz.type = 'button';
+        ganz.className = 'ad-btn ad-btn-secondary';
+        ganz.textContent = 'Ganzes Bild';
+        var zu = document.createElement('button');
+        zu.type = 'button';
+        zu.className = 'ad-btn ad-btn-secondary';
+        zu.textContent = 'Abbrechen';
+        knoepfe.appendChild(uebernehmen);
+        knoepfe.appendChild(ganz);
+        knoepfe.appendChild(zu);
+        kasten.appendChild(knoepfe);
+
+        function schliessen() { if (hof.parentNode) { hof.parentNode.removeChild(hof); } }
+        zu.addEventListener('click', schliessen);
+        hof.addEventListener('click', function (e) { if (e.target === hof) { schliessen(); } });
+
+        /* --- Auswahlrechteck, gerechnet in Anzeigepixeln --- */
+        var aus = { x: 0, y: 0, b: 0, h: 0 };
+
+        function zeichnen() {
+            rahmen.style.left   = aus.x + 'px';
+            rahmen.style.top    = aus.y + 'px';
+            rahmen.style.width  = aus.b + 'px';
+            rahmen.style.height = aus.h + 'px';
+            var faktor = bild.naturalWidth / bild.clientWidth;
+            var zielB  = Math.round(aus.b * faktor);
+            var zielH  = Math.round(aus.h * faktor);
+            var gewuenscht = parseInt(breiteWahl.value, 10) || 0;
+            if (gewuenscht > 0 && gewuenscht < zielB) {
+                zielH = Math.round(zielH * (gewuenscht / zielB));
+                zielB = gewuenscht;
+            }
+            meldung.textContent = 'Ausschnitt: ' + zielB + ' × ' + zielH + ' Pixel'
+                + ' (Vorlage: ' + bild.naturalWidth + ' × ' + bild.naturalHeight + ')';
+        }
+
+        function begrenzen() {
+            var maxB = bild.clientWidth, maxH = bild.clientHeight;
+            aus.b = Math.max(20, Math.min(aus.b, maxB));
+            aus.h = Math.max(20, Math.min(aus.h, maxH));
+            aus.x = Math.max(0, Math.min(aus.x, maxB - aus.b));
+            aus.y = Math.max(0, Math.min(aus.y, maxH - aus.h));
+        }
+
+        /**
+         * Hält das gewählte Seitenverhältnis ein.
+         *
+         * Passt die errechnete Höhe nicht mehr aufs Bild, wird die Breite
+         * zurückgenommen – sonst würde die Höhe beim Begrenzen gekappt und
+         * aus einem Quadrat still und leise ein Rechteck.
+         */
+        function verhaeltnisWahren() {
+            if (verhaeltnis <= 0) { return; }
+            var maxB = bild.clientWidth, maxH = bild.clientHeight;
+            var b = Math.min(Math.max(20, aus.b), maxB);
+            var h = b / verhaeltnis;
+            if (h > maxH) { h = maxH; b = h * verhaeltnis; }
+            aus.b = b;
+            aus.h = h;
+        }
+
+        function anpassen() {
+            verhaeltnisWahren();
+            begrenzen();
+            zeichnen();
+        }
+
+        breiteWahl.addEventListener('change', zeichnen);
+
+        ganz.addEventListener('click', function () {
+            aus = { x: 0, y: 0, b: bild.clientWidth, h: bild.clientHeight };
+            verhaeltnis = 0;
+            leiste.querySelectorAll('.bk-schnitt-wahl').forEach(function (x, i) {
+                x.classList.toggle('is-aktiv', i === 0);
+            });
+            zeichnen();
+        });
+
+        /* Ziehen: innen verschieben, an den Ecken aufziehen */
+        buehne.addEventListener('pointerdown', function (event) {
+            if (!bild.clientWidth) { return; }
+            event.preventDefault();
+            var kachel = buehne.getBoundingClientRect();
+            var startX = event.clientX - kachel.left;
+            var startY = event.clientY - kachel.top;
+            var ecke   = event.target.getAttribute && event.target.getAttribute('data-ecke');
+            var innen  = event.target === rahmen;
+            var start  = { x: aus.x, y: aus.y, b: aus.b, h: aus.h };
+
+            if (!ecke && !innen) {
+                // Auf freier Fläche: neues Rechteck aufziehen
+                aus = { x: startX, y: startY, b: 0, h: 0 };
+                start = { x: startX, y: startY, b: 0, h: 0 };
+                ecke = 'so';
+            }
+
+            function bewegen(e) {
+                var dx = (e.clientX - kachel.left) - startX;
+                var dy = (e.clientY - kachel.top) - startY;
+
+                if (innen) {
+                    aus.x = start.x + dx;
+                    aus.y = start.y + dy;
+                } else {
+                    if (ecke.indexOf('o') !== -1 && ecke !== 'no' && ecke !== 'so') { /* egal */ }
+                    // Ecken: n = oben, s = unten, w = links, o = rechts
+                    if (ecke === 'so') { aus.b = start.b + dx; aus.h = start.h + dy; }
+                    if (ecke === 'no') { aus.b = start.b + dx; aus.h = start.h - dy; aus.y = start.y + dy; }
+                    if (ecke === 'sw') { aus.b = start.b - dx; aus.h = start.h + dy; aus.x = start.x + dx; }
+                    if (ecke === 'nw') { aus.b = start.b - dx; aus.h = start.h - dy;
+                                         aus.x = start.x + dx; aus.y = start.y + dy; }
+                    if (aus.b < 20) { aus.b = 20; }
+                    if (aus.h < 20) { aus.h = 20; }
+                    verhaeltnisWahren();
+                }
+                begrenzen();
+                zeichnen();
+            }
+
+            function loslassen() {
+                window.removeEventListener('pointermove', bewegen);
+                window.removeEventListener('pointerup', loslassen);
+            }
+            window.addEventListener('pointermove', bewegen);
+            window.addEventListener('pointerup', loslassen);
+        });
+
+        uebernehmen.addEventListener('click', function () {
+            var faktor = bild.naturalWidth / bild.clientWidth;
+            var sx = Math.round(aus.x * faktor);
+            var sy = Math.round(aus.y * faktor);
+            var sw = Math.round(aus.b * faktor);
+            var sh = Math.round(aus.h * faktor);
+
+            var zielB = sw, zielH = sh;
+            var gewuenscht = parseInt(breiteWahl.value, 10) || 0;
+            if (gewuenscht > 0 && gewuenscht < zielB) {
+                zielH = Math.round(zielH * (gewuenscht / zielB));
+                zielB = gewuenscht;
+            }
+
+            uebernehmen.disabled = true;
+            meldung.textContent = 'Wird zugeschnitten …';
+            var typ = /\.png($|\?)/i.test(quelle) ? 'image/png' : 'image/jpeg';
+
+            zeichneUndMache(bild, sx, sy, sw, sh, zielB, zielH, typ).then(function (blob) {
+                if (!blob) {
+                    meldung.textContent = 'Dieses Bild lässt sich nicht zuschneiden. '
+                        + 'Bei Bildern von fremden Servern verbietet der Browser das – '
+                        + 'laden Sie es zuerst hoch.';
+                    uebernehmen.disabled = false;
+                    return null;
+                }
+                return hochladen(blob, 'ausschnitt.' + (typ === 'image/png' ? 'png' : 'jpg'));
+            }).then(function (antwort) {
+                if (!antwort) { return; }
+                if (!antwort.ok) {
+                    meldung.textContent = antwort.fehler || 'Speichern fehlgeschlagen.';
+                    uebernehmen.disabled = false;
+                    return;
+                }
+                fertig(antwort.url, antwort.breite, antwort.hoehe);
+                schliessen();
+            }).catch(function () {
+                meldung.textContent = 'Speichern fehlgeschlagen.';
+                uebernehmen.disabled = false;
+            });
+        });
+
+        bild.onload = function () {
+            // Mit etwas Verzug, damit clientWidth schon steht
+            window.setTimeout(function () {
+                aus = { x: 0, y: 0, b: bild.clientWidth, h: bild.clientHeight };
+                uebernehmen.disabled = false;
+                zeichnen();
+            }, 30);
+        };
+        bild.onerror = function () {
+            meldung.textContent = 'Das Bild ließ sich nicht laden.';
+        };
+        bild.alt = '';
+        bild.className = 'bk-schnitt-bild';
+        bild.src = quelle;
+
+        document.body.appendChild(hof);
+        if (status) { status.textContent = ''; }
     }
 
     function openGallery(block, feld, urlInput) {
@@ -1598,6 +2060,157 @@
         zeile.appendChild(input);
         return zeile;
     }
+
+    /* ------------------------------------------------ Eigene Bausteine
+     *
+     * Was einmal gebaut ist – ein Absender-Gruß, ein Produktkasten – lässt
+     * sich unter einem Namen sichern und in jedem Newsletter wieder
+     * einsetzen. Gespeichert wird auf dem Server, damit es allen im Team
+     * zur Verfügung steht und einen Rechnerwechsel übersteht.
+     */
+
+    function bausteinSichern(block) {
+        var vorschlag = window.NL_BLOCK_LABELS[block.type] || 'Baustein';
+        var name = window.prompt('Unter welchem Namen soll der Baustein gesichert werden?', vorschlag);
+        if (name === null || name.trim() === '') { return; }
+
+        var daten = new FormData();
+        daten.set('_csrf', CSRF);
+        daten.set('name', name.trim());
+        daten.set('sichern', JSON.stringify(block));
+
+        fetch('bausteine.php', { method: 'POST', body: daten, credentials: 'same-origin' })
+            .then(function (a) { return a.json(); })
+            .then(function (antwort) {
+                if (!antwort || !antwort.ok) {
+                    throw new Error((antwort && antwort.fehler) || 'Sichern fehlgeschlagen.');
+                }
+                zeigeBausteine(antwort.bausteine);
+                hinweis('Baustein „' + name.trim() + '" gesichert – links unter „Eigene Bausteine".');
+            })
+            .catch(function (fehler) { hinweis(String(fehler.message || fehler)); });
+    }
+
+    function bausteinEinsetzen(id, name) {
+        var daten = new FormData();
+        daten.set('_csrf', CSRF);
+        daten.set('einsetzen', String(id));
+
+        fetch('bausteine.php', { method: 'POST', body: daten, credentials: 'same-origin' })
+            .then(function (a) { return a.json(); })
+            .then(function (antwort) {
+                if (!antwort || !antwort.ok || !antwort.blocks || !antwort.blocks.length) {
+                    throw new Error((antwort && antwort.fehler) || 'Einsetzen fehlgeschlagen.');
+                }
+                antwort.blocks.forEach(function (b) { state.blocks.push(b); });
+                selected = antwort.blocks[antwort.blocks.length - 1].id;
+                render();
+                var karte = canvas.querySelector('.bk-block[data-id="' + selected + '"]');
+                if (karte) { karte.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
+                hinweis('„' + name + '" eingesetzt.');
+            })
+            .catch(function (fehler) { hinweis(String(fehler.message || fehler)); });
+    }
+
+    function bausteinLoeschen(id, name, danach) {
+        if (!window.confirm('Den gesicherten Baustein „' + name + '" löschen? '
+            + 'Bereits eingesetzte Bausteine bleiben, wo sie sind.')) { return; }
+        var daten = new FormData();
+        daten.set('_csrf', CSRF);
+        daten.set('loeschen', String(id));
+        fetch('bausteine.php', { method: 'POST', body: daten, credentials: 'same-origin' })
+            .then(function (a) { return a.json(); })
+            .then(function (antwort) {
+                if (antwort && antwort.ok) { danach(antwort.bausteine); }
+            });
+    }
+
+    /** Zeichnet die Liste der gesicherten Bausteine in der linken Leiste. */
+    function zeigeBausteine(liste) {
+        var kasten = root.querySelector('[data-eigene]');
+        if (!kasten) { return; }
+        kasten.innerHTML = '';
+
+        if (!liste || liste.length === 0) {
+            var leer = document.createElement('p');
+            leer.className = 'bk-hint';
+            leer.style.margin = '0';
+            leer.textContent = 'Noch keine. Mit dem Stern ☆ am Baustein sichern Sie einen – '
+                + 'er steht dann in jedem Newsletter zur Verfügung.';
+            kasten.appendChild(leer);
+            return;
+        }
+
+        liste.forEach(function (eintrag) {
+            var zeile = document.createElement('div');
+            zeile.className = 'bk-eigen';
+
+            var nehmen = document.createElement('button');
+            nehmen.type = 'button';
+            nehmen.className = 'bk-eigen-name';
+            nehmen.textContent = eintrag.name;
+            nehmen.title = 'Einsetzen';
+            nehmen.addEventListener('click', function () {
+                bausteinEinsetzen(eintrag.id, eintrag.name);
+            });
+
+            var weg = document.createElement('button');
+            weg.type = 'button';
+            weg.className = 'bk-eigen-weg';
+            weg.textContent = '✕';
+            weg.title = 'Gesicherten Baustein löschen';
+            weg.addEventListener('click', function (event) {
+                event.stopPropagation();
+                bausteinLoeschen(eintrag.id, eintrag.name, zeigeBausteine);
+            });
+
+            zeile.appendChild(nehmen);
+            zeile.appendChild(weg);
+            kasten.appendChild(zeile);
+        });
+    }
+
+    if (root.querySelector('[data-eigene]')) {
+        fetch('bausteine.php', { credentials: 'same-origin' })
+            .then(function (a) { return a.json(); })
+            .then(function (antwort) { zeigeBausteine(antwort && antwort.bausteine); })
+            .catch(function () { /* dann bleibt die Liste eben leer */ });
+    }
+
+    /* ------------------------------------- Vorschau: Rechner oder Handy
+     *
+     * Der Rahmen wird schmal gestellt, statt das Gerät nachzubauen: Die Mail
+     * im Rahmen greift dann von selbst auf ihre Handy-Regeln zurück
+     * (@media max-width). Genau das passiert später im Postfach auch.
+     */
+    (function () {
+        var wahl = document.querySelector('[data-geraetewahl]');
+        var buehne = document.querySelector('[data-vorschau-buehne]');
+        if (!wahl || !buehne) { return; }
+        var anzeige = wahl.querySelector('[data-geraet-breite]');
+
+        function stellen(art) {
+            buehne.classList.toggle('ist-handy', art === 'handy');
+            wahl.querySelectorAll('[data-geraet]').forEach(function (k) {
+                k.classList.toggle('is-aktiv', k.getAttribute('data-geraet') === art);
+            });
+            if (anzeige) {
+                anzeige.textContent = art === 'handy' ? '375 px breit' : '';
+            }
+            try { window.localStorage.setItem('nl_vorschau_geraet', art); } catch (e) { /* egal */ }
+        }
+
+        wahl.querySelectorAll('[data-geraet]').forEach(function (knopf) {
+            knopf.addEventListener('click', function () {
+                stellen(knopf.getAttribute('data-geraet'));
+            });
+        });
+
+        // Die Wahl bleibt über Seitenwechsel hinweg bestehen
+        var gemerkt = null;
+        try { gemerkt = window.localStorage.getItem('nl_vorschau_geraet'); } catch (e) { /* egal */ }
+        if (gemerkt === 'handy') { stellen('handy'); }
+    })();
 
     /* ------------------------------------------------------------- Palette */
 

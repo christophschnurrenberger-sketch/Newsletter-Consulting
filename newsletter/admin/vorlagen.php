@@ -22,6 +22,16 @@ if (Util::get('vorschau') === '1') {
         http_response_code(404);
         exit('Vorlage nicht gefunden.');
     }
+    /*
+     * Bei einer Baukasten-Vorlage entsteht die Vorschau aus den Bausteinen,
+     * nicht aus dem zuletzt gespeicherten HTML. So stimmt sie auch dann,
+     * wenn in der Datenbank noch eine ältere Fassung liegt – etwa mit einem
+     * Baustein unter dem Footer, wie es früher passieren konnte.
+     */
+    if (Templates::usesBuilder($template)) {
+        $template['html'] = Blocks::renderDocument(Templates::blocks($template));
+    }
+
     $mitBeispiel = Util::get('beispiel') === '1';
     $html = Renderer::wrap($template, Templates::starterContent($template, $mitBeispiel),
         'Beispiel-Betreff', 'Beispiel-Vorschautext');

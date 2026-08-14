@@ -38,7 +38,7 @@ if (Util::isPost()) {
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
 <title>Anmelden · Newsletter-Verwaltung</title>
-<link rel="stylesheet" href="assets/admin.css">
+<link rel="stylesheet" href="<?= Util::e(Util::asset('assets/admin.css', __DIR__)) ?>">
 </head>
 <body>
 <div class="ad-login-wrap">

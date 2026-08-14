@@ -8,9 +8,9 @@
         · Letzter Cron-Lauf: <?= Util::e(Util::dt(Settings::get('last_cron_at'))) ?></span>
 </footer>
 
-<script src="assets/admin.js"></script>
+<script src="<?= Util::e(Util::asset('assets/admin.js', __DIR__ . '/..')) ?>"></script>
 <?php foreach (($extraJs ?? []) as $js): ?>
-<script src="<?= Util::e($js) ?>"></script>
+<script src="<?= Util::e(Util::asset($js, __DIR__ . '/..')) ?>"></script>
 <?php endforeach; ?>
 </body>
 </html>

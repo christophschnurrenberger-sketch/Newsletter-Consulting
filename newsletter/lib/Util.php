@@ -6,6 +6,28 @@
  */
 final class Util
 {
+    /* -------------------------------------------------------------- Dateien */
+
+    /**
+     * Adresse einer Stil- oder Skriptdatei mit Fassungskennung.
+     *
+     * Ohne diesen Anhang liefert der Browser nach einer neuen Fassung
+     * weiter die Datei aus seinem Zwischenspeicher aus. Eine behobene
+     * Sache bliebe für die Anwender also so lange kaputt, bis sie von
+     * sich aus mit Strg+F5 neu laden – worauf niemand kommt. Die Kennung
+     * ist die Änderungszeit der Datei; nach jedem Hochladen ist sie neu.
+     *
+     * @param string $href   Adresse, wie sie in der Seite steht
+     * @param string $wurzel Verzeichnis, auf das sich die Adresse bezieht
+     */
+    public static function asset(string $href, string $wurzel): string
+    {
+        $datei = rtrim($wurzel, '/') . '/' . ltrim($href, '/');
+        $stand = is_file($datei) ? (string) filemtime($datei)
+                                 : (defined('NL_VERSION') ? NL_VERSION : '1');
+        return $href . '?v=' . substr(md5($stand), 0, 8);
+    }
+
     /* ---------------------------------------------------------------- Text */
 
     /** HTML-sicher ausgeben. */

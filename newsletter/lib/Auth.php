@@ -231,7 +231,8 @@ final class Auth
         http_response_code(403);
         header('Content-Type: text/html; charset=utf-8');
         echo '<!DOCTYPE html><html lang="de"><head><meta charset="utf-8"><title>Kein Zugriff</title>'
-            . '<link rel="stylesheet" href="assets/admin.css"></head><body>'
+            . '<link rel="stylesheet" href="'
+            . Util::e(Util::asset('assets/admin.css', NL_ROOT . '/admin')) . '"></head><body>'
             . '<div class="ad-login-wrap"><div class="ad-login">'
             . '<h1>Dafür fehlt Ihnen die Berechtigung</h1>'
             . '<p class="ad-sub">Nötig wäre: ' . Util::e(self::RIGHT_LABELS[$right] ?? $right) . '</p>'

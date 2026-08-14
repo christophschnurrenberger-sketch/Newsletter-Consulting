@@ -28,7 +28,7 @@ function nl_page(string $title, string $bodyHtml, array $options = []): void
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
 <title><?= Util::e($title) ?> | <?= Util::e($brand) ?></title>
-<link rel="stylesheet" href="assets/newsletter.css">
+<link rel="stylesheet" href="<?= Util::e(Util::asset('assets/newsletter.css', NL_ROOT)) ?>">
 </head>
 <body>
 <header class="nl-header">

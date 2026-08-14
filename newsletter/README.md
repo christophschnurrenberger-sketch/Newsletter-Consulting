@@ -69,9 +69,13 @@ Die Vorschau zeigt deshalb an der Stelle des Inhalts eine gestrichelte Fläche.
 einblenden, wenn Sie Schrift und Farben beurteilen wollen.
 
 **Die drei Bausteine einer Vorlage:** Kopfzeile, „Inhalt der Ausgabe“
-und Footer. Alle drei lassen sich verschieben, einstellen und durch eigene
-Bausteine ergänzen – Sie können also auch etwas über die Kopfzeile setzen oder
-zwischen Inhalt und Footer eine feste Grußformel legen.
+und Footer. Sie lassen sich einstellen und durch eigene Bausteine ergänzen –
+etwa eine feste Grußformel zwischen Inhalt und Footer.
+
+**Kopfzeile bleibt oben, Footer bleibt unten.** Alles, was Sie hinzufügen,
+liegt dazwischen – egal ob angeklickt oder hineingezogen. Ein Baustein unter
+den Pflichtangaben wäre auch in der fertigen Mail unter dem Abmeldelink
+gelandet; das ist nie gewollt.
 
 * **Kopfzeile:** Logo-Quadrat mit Kürzel oder **Wortmarke als Text**, bei der ein
   Teil farblich hervorgehoben wird (etwa die „54“ in „Fairway54“), dazu ein Claim.

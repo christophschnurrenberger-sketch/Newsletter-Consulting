@@ -327,7 +327,33 @@
 
     /* ------------------------------------------------------------- Zeichnen */
 
+    /**
+     * Kopfzeile oben, Footer unten – alles andere dazwischen.
+     *
+     * In einer Vorlage sind Kopf und Fuß der Rahmen der Mail. Ein Baustein,
+     * der unter dem Footer landet, erscheint auch in der fertigen Mail unter
+     * den Pflichtangaben; das ist nie gewollt. Deshalb wird die Reihenfolge
+     * nach jeder Änderung geradegezogen, egal wie der Baustein hereinkam –
+     * gezogen, angeklickt, aus den gesicherten Bausteinen eingesetzt.
+     *
+     * @return {boolean} true, wenn dabei etwas umsortiert wurde
+     */
+    function ordnung() {
+        if (MODE !== 'template') { return false; }
+        var kopf = [], mitte = [], fuss = [];
+        state.blocks.forEach(function (block) {
+            if (block.type === 'kopf')      { kopf.push(block); }
+            else if (block.type === 'fuss') { fuss.push(block); }
+            else                            { mitte.push(block); }
+        });
+        var neu = kopf.concat(mitte, fuss);
+        var anders = neu.some(function (block, i) { return state.blocks[i] !== block; });
+        if (anders) { state.blocks = neu; }
+        return anders;
+    }
+
     function render() {
+        var geordnet = ordnung();
         ablagen = [];
         canvas.innerHTML = '';
         if (state.blocks.length === 0) {
@@ -337,17 +363,25 @@
             leer.textContent = 'Noch nichts drin. Ziehen Sie links einen Baustein hierher.';
             canvas.appendChild(leer);
         } else {
-            canvas.appendChild(dropZone(state.blocks, 0));
+            // In einer Vorlage gibt es über der Kopfzeile und unter dem Footer
+            // keine Ablagefläche – dort darf ohnehin nichts liegen.
+            var ersteFrei = !(MODE === 'template' && state.blocks[0].type === 'kopf');
+            if (ersteFrei) { canvas.appendChild(dropZone(state.blocks, 0)); }
             state.blocks.forEach(function (block, index) {
                 canvas.appendChild(blockCard(block, state.blocks, index));
-                canvas.appendChild(dropZone(state.blocks, index + 1));
+                var naechster = state.blocks[index + 1];
+                var letzteFrei = !(MODE === 'template' && block.type === 'fuss')
+                    && !(MODE === 'template' && naechster && naechster.type === 'kopf');
+                if (letzteFrei) { canvas.appendChild(dropZone(state.blocks, index + 1)); }
             });
         }
         if (counter) {
             counter.textContent = state.blocks.length + (state.blocks.length === 1 ? ' Baustein' : ' Bausteine');
         }
         renderInspector();
-        save(ersterAufbau);
+        // Musste die Reihenfolge geradegezogen werden, ist das eine echte
+        // Änderung – die gehört gespeichert, auch beim ersten Aufbau.
+        save(ersterAufbau && !geordnet);
         // render() läuft bei den strukturellen Änderungen – Baustein einfügen,
         // löschen, verschieben. Die gehören sofort in den Verlauf, nicht erst
         // nach der Tipp-Pause.

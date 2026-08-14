@@ -339,7 +339,31 @@ final class Blocks
                 $blocks[] = $block;
             }
         }
-        return ['meta' => $meta, 'blocks' => $blocks];
+        return ['meta' => $meta, 'blocks' => self::sortiert($blocks)];
+    }
+
+    /**
+     * Kopfzeile nach oben, Footer nach unten.
+     *
+     * Sonst kann ein Baustein unter den Pflichtangaben landen – in der
+     * Vorschau wie in der fertigen Mail. Der Baukasten hält sich schon
+     * daran; hier steht es noch einmal, damit es auch für Vorlagen aus
+     * einer Datei und für ältere Bestände gilt.
+     *
+     * @param array<int,array<string,mixed>> $blocks
+     * @return array<int,array<string,mixed>>
+     */
+    private static function sortiert(array $blocks): array
+    {
+        $kopf = []; $mitte = []; $fuss = [];
+        foreach ($blocks as $block) {
+            match ($block['type'] ?? '') {
+                'kopf'  => $kopf[]  = $block,
+                'fuss'  => $fuss[]  = $block,
+                default => $mitte[] = $block,
+            };
+        }
+        return array_merge($kopf, $mitte, $fuss);
     }
 
     /** @param array<string,mixed> $meta */

@@ -188,6 +188,82 @@ final class Blocks
     }
 
     /**
+     * Zerlegt einen Markennamen in Grundwort und hervorgehobenen Teil.
+     *
+     * Die Wortmarke setzt sich aus beidem zusammen: „Fairway" plus ein
+     * farbiges „54". Ohne diese Zerlegung müsste man beim Designwechsel
+     * von Hand nacharbeiten – oder es stünde die falsche Marke im Kopf.
+     *
+     * @return array{0:string,1:string} Grundwort, Akzent
+     */
+    public static function markenTeile(string $name): array
+    {
+        $name = trim($name);
+        if ($name === '') {
+            return ['', ''];
+        }
+        // Zahl am Ende: „Fairway54" → Fairway | 54
+        if (preg_match('/^(.*\D)(\d+)$/u', $name, $t)) {
+            return [$t[1], $t[2]];
+        }
+        // Großbuchstabe in der Mitte: „AcumenMail" → Acumen | Mail
+        if (preg_match('/^(\p{Lu}[\p{Ll}\d]+)(\p{Lu}[\p{Ll}\d]+)$/u', $name, $t)) {
+            return [$t[1], $t[2]];
+        }
+        /*
+         * Alles andere bleibt ungeteilt. Beide Teile stoßen beim Darstellen
+         * direkt aneinander – ein Name aus mehreren Wörtern („Golfclub Süd")
+         * stünde sonst als „GolfclubSüd" im Kopf.
+         */
+        return [$name, ''];
+    }
+
+    /**
+     * Setzt einen Markennamen in Kopfzeile und Vorgaben ein.
+     *
+     * Wird beim Wechsel des Aussehens gebraucht: Das Design kommt von
+     * woanders her, die Marke bleibt die eigene. Käme die Wortmarke
+     * einfach mit, stünde nach dem Wechsel eine fremde Marke im Kopf.
+     *
+     * @param bool $fremd Design einer anderen Marke – dann werden auch
+     *        Claim und Footer-Hinweis geleert. Beides ist Text einer
+     *        bestimmten Marke (etwa eine Partnerlink-Pflichtangabe) und
+     *        hat bei einer anderen nichts zu suchen.
+     */
+    public static function applyBrandName(array $stand, string $name, bool $fremd = true): array
+    {
+        [$grund, $akzent] = self::markenTeile($name);
+        $kuerzel = mb_strtoupper(mb_substr(trim($name), 0, 1));
+
+        $meta = is_array($stand['meta'] ?? null) ? $stand['meta'] : self::defaultMeta();
+        if ($name !== '') {
+            $meta['wordmark']       = $grund;
+            $meta['wordmarkAccent'] = $akzent;
+            $meta['logoText']       = $kuerzel;
+        }
+        if ($fremd) {
+            $meta['claim'] = '';
+            $meta['note']  = '';
+        }
+        $stand['meta'] = $meta;
+
+        foreach (($stand['blocks'] ?? []) as $i => $block) {
+            if (($block['type'] ?? '') === 'kopf' && $name !== '') {
+                $stand['blocks'][$i]['wortmarke']  = $grund;
+                $stand['blocks'][$i]['akzentTeil'] = $akzent;
+                $stand['blocks'][$i]['logoText']   = $kuerzel;
+                if ($fremd) {
+                    $stand['blocks'][$i]['claim'] = '';
+                }
+            }
+            if (($block['type'] ?? '') === 'fuss' && $fremd) {
+                $stand['blocks'][$i]['hinweis'] = '';
+            }
+        }
+        return $stand;
+    }
+
+    /**
      * Startaufbau für eine neue Vorlage: Kopfzeile, Inhalt, Footer.
      *
      * Alle drei sind Bausteine – die Vorlage lässt sich also vollständig

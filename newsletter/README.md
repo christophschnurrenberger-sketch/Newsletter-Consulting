@@ -347,6 +347,22 @@ Technisch hängt eine Marke an einer Vorlage – der Reiter **Vorlagen** bleibt
 deshalb für das Aussehen zuständig. Hat eine Marke mehrere Designs, gelten die
 Angaben unter „Marken" für alle davon.
 
+**Das Aussehen einer Marke lässt sich jederzeit austauschen:** Vorlagen →
+Abschnitt „Aussehen wechseln" (oder Marken → „Anderes Design"). Dort stehen die
+mitgelieferten Designs und Ihre eigenen Vorlagen als Kacheln mit Vorschau; ein
+Klick übernimmt Farben, Schriften, Kopfzeile und Footer.
+
+Dabei bleibt die Marke die eigene: Name, Website, Impressum und Absender werden
+nicht angefasst, und die **Wortmarke im Kopf wird umgeschrieben** – aus dem
+Namen der Marke wird der hervorgehobene Teil abgeleitet („Fairway54" → Fairway
+mit farbiger 54, „AcumenMail" → Acumen mit farbigem Mail). Stammt das Design von
+einer anderen Marke, werden außerdem deren Claim und deren Footer-Hinweis
+geleert – ein Partnerlink-Hinweis der einen Marke hat im Footer der anderen
+nichts zu suchen.
+
+Ein reiner HTML-Rahmen lässt sich ebenfalls übernehmen; dort kann das System die
+Texte aber nicht anpassen und sagt das auch. Prüfen Sie danach den Footer.
+
 **Abkürzung:** Unter Vorlagen → „Fertige Vorlage übernehmen" liegen fertig
 gestaltete Entwürfe aus dem Ordner `newsletter/vorlagen/`. Sie bringen Name und
 Website schon mit; Impressum und Absender tragen Sie danach unter „Marke dieser

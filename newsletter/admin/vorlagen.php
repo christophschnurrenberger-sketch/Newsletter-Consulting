@@ -131,6 +131,23 @@ if (Util::isPost()) {
         Util::redirect('vorlagen.php?id=' . $id);
     }
 
+    if ($action === 'design' && $id > 0) {
+        if (Templates::applyDesign($id, Util::post('quelle'))) {
+            $meldung = 'Aussehen gewechselt. Ihre Markenangaben sind unverändert – '
+                . 'die Wortmarke im Kopf steht auf Ihre Marke.';
+            if ((string) (Templates::byId($id)['editor_mode'] ?? '') === 'html') {
+                // Ein HTML-Rahmen bringt seine Texte mit; die kann niemand
+                // automatisch auf die eigene Marke umschreiben.
+                $meldung .= ' Achtung: Das ist ein HTML-Rahmen – bitte prüfen Sie den Footer '
+                    . 'auf Texte, die zur anderen Marke gehören.';
+            }
+            Util::flash($meldung);
+        } else {
+            Util::flash('Dieses Design gibt es nicht.', 'error');
+        }
+        Util::redirect('vorlagen.php?id=' . $id);
+    }
+
     if ($action === 'speichern' && $id > 0) {
         $html = Util::postRaw('html');
         if (!str_contains($html, '{{inhalt}}')) {
@@ -348,6 +365,44 @@ $current   = Templates::byId(Util::getInt('id')) ?? Templates::defaultTemplate()
                    target="_blank" rel="noopener">Mit Beispieltext ansehen</a></p>
         </div>
     </div>
+    <?php endif; ?>
+
+    <!-- -------------------------------------------------- Aussehen wechseln -->
+    <?php $designs = Templates::designs((int) $current['id']); ?>
+    <?php if ($designs !== []): ?>
+        <div class="ad-card" id="design">
+            <h2 style="margin-top:0;">Aussehen wechseln</h2>
+            <p class="ad-hint">Übernimmt Farben, Schriften, Kopfzeile und Footer eines anderen Designs –
+                <strong>Ihre Markenangaben bleiben</strong>, und die Wortmarke im Kopf wird auf
+                „<?= Util::e((string) Templates::brand($current)['brand_name']) ?>“ umgeschrieben.
+                Geschriebene Newsletter behalten ihren Text.</p>
+
+            <div class="ad-designwahl ad-designwahl-klein">
+                <?php foreach ($designs as $d): ?>
+                    <form method="post">
+                        <?= Util::csrfField() ?>
+                        <input type="hidden" name="aktion" value="design">
+                        <input type="hidden" name="id" value="<?= (int) $current['id'] ?>">
+                        <input type="hidden" name="quelle" value="<?= Util::e($d['schluessel']) ?>">
+                        <button type="submit" class="ad-design ad-design-knopf"
+                                data-confirm="Aussehen dieser Vorlage durch „<?= Util::e($d['name']) ?>“ ersetzen?">
+                            <span class="ad-design-bild">
+                                <iframe src="vorlagen.php?vorschau=1<?= $d['datei'] !== ''
+                                            ? '&amp;datei=' . Util::e(urlencode($d['datei']))
+                                            : '&amp;id=' . (int) substr($d['schluessel'], 8) ?>"
+                                        title="Vorschau" loading="lazy" scrolling="no" tabindex="-1"></iframe>
+                            </span>
+                            <span class="ad-design-fuss">
+                                <strong><?= Util::e($d['name']) ?></strong>
+                                <?php if ($d['marke'] !== ''): ?>
+                                    <em>Marke <?= Util::e($d['marke']) ?></em>
+                                <?php endif; ?>
+                            </span>
+                        </button>
+                    </form>
+                <?php endforeach; ?>
+            </div>
+        </div>
     <?php endif; ?>
 
     <!-- ---------------------------------------------------------- Marke -->

@@ -174,6 +174,7 @@ $standard = Templates::defaultId();
                     <div class="ad-actions">
                         <button type="submit" class="ad-btn" <?= Auth::can('kampagnen') ? '' : 'disabled' ?>>Angaben speichern</button>
                         <a class="ad-btn ad-btn-secondary ad-btn-small" href="vorlagen.php?id=<?= $id ?>">Aussehen bearbeiten</a>
+                        <a class="ad-btn ad-btn-secondary ad-btn-small" href="vorlagen.php?id=<?= $id ?>#design">Anderes Design</a>
                         <a class="ad-btn ad-btn-secondary ad-btn-small" href="systemmails.php?marke=<?= $id ?>">Systemmails</a>
                     </div>
                 </form>

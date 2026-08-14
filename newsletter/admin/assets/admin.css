@@ -337,6 +337,13 @@ h3 { font-size: 15px; color: var(--ad-navy); margin: 20px 0 8px; }
 .ad-marke-knopf:hover { border-color: var(--ad-red); }
 .ad-marke-knopf.is-current { background: var(--ad-navy); border-color: var(--ad-navy); color: #fff; }
 
+/* Eine Design-Kachel als Knopf: sieht aus wie die anderen Kacheln,
+   löst aber ein Formular aus (Aussehen wechseln). */
+.ad-design-knopf {
+    padding: 0; margin: 0; width: 100%; text-align: left;
+    font: inherit; cursor: pointer; appearance: none;
+}
+
 /* Eine Marke: links, wie sie aussieht – rechts, wer sie ist */
 .ad-marke { display: flex; gap: 24px; align-items: flex-start; flex-wrap: wrap; }
 .ad-marke-bild {

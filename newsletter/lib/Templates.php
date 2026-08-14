@@ -412,6 +412,116 @@ final class Templates
     }
 
     /**
+     * Gibt einer Vorlage ein anderes Aussehen.
+     *
+     * Das Design kommt von woanders – aus einer mitgelieferten Datei oder
+     * von einer anderen Vorlage –, die Marke bleibt die eigene: Name,
+     * Website, Impressum und Absender werden nicht angefasst, und die
+     * Wortmarke im Kopf wird auf die eigene Marke umgeschrieben. Sonst
+     * stünde nach dem Wechsel eine fremde Marke in der Kopfzeile.
+     *
+     * @param string $quelle 'datei:<name>' oder 'vorlage:<id>'
+     * @return bool false, wenn es die Quelle nicht gibt
+     */
+    public static function applyDesign(int $zielId, string $quelle): bool
+    {
+        $ziel = self::byId($zielId);
+        if ($ziel === null) {
+            return false;
+        }
+
+        if (str_starts_with($quelle, 'datei:')) {
+            $vorbild = self::fromFile(substr($quelle, 6));
+        } elseif (str_starts_with($quelle, 'vorlage:')) {
+            $vorbild = self::byId((int) substr($quelle, 8));
+        } else {
+            $vorbild = null;
+        }
+        if ($vorbild === null || (int) ($vorbild['id'] ?? 0) === $zielId) {
+            return false;
+        }
+
+        $marke = trim((string) self::brand($ziel)['brand_name']);
+        // Stammen Ziel und Vorbild von derselben Marke, darf alles bleiben –
+        // sonst werden markenspezifische Texte (Claim, Footer-Hinweis) geleert.
+        $fremd = strcasecmp($marke, trim((string) self::brand($vorbild)['brand_name'])) !== 0;
+
+        $json = trim((string) ($vorbild['blocks_json'] ?? ''));
+        if ($json !== '') {
+            $stand = Blocks::applyBrandName(Blocks::parse($json), $marke, $fremd);
+            self::update($zielId, (string) $ziel['name'], '', (string) $ziel['description'],
+                (string) json_encode($stand, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
+            return true;
+        }
+
+        /*
+         * Reine HTML-Vorlage: Da gibt es keine Bausteine zum Anpassen, der
+         * Rahmen wird übernommen, wie er ist. Damit im Kopf nicht die fremde
+         * Marke stehen bleibt, wird ihr Name durch den Platzhalter ersetzt –
+         * der füllt sich beim Versand mit der eigenen Marke.
+         */
+        $html    = (string) $vorbild['html'];
+        $fremdeM = trim((string) self::brand($vorbild)['brand_name']);
+        if ($fremd && $fremdeM !== '') {
+            $html = str_replace($fremdeM, '{{marke}}', $html);
+        }
+        self::update($zielId, (string) $ziel['name'], $html, (string) $ziel['description']);
+        DB::update('templates', ['editor_mode' => 'html', 'blocks_json' => null], 'id = ?', [$zielId]);
+        return true;
+    }
+
+    /**
+     * Die Designs, unter denen man wählen kann: mitgelieferte Dateien und
+     * die anderen vorhandenen Vorlagen.
+     *
+     * @return array<int,array{schluessel:string,name:string,marke:string,datei:string}>
+     */
+    public static function designs(int $ausser = 0): array
+    {
+        $out = [];
+
+        /*
+         * Von den mitgelieferten Dateien nur eine je Marke, und zwar die
+         * Baukasten-Fassung: Nur bei ihr lässt sich die Kopfzeile auf die
+         * eigene Marke umschreiben. Bei einer HTML-Fassung derselben Marke
+         * stünde sonst zweimal fast dasselbe zur Wahl.
+         */
+        $dateien = self::files();
+        uasort($dateien, static fn(array $a, array $b): int => $b['baukasten'] <=> $a['baukasten']);
+        $gesehen = [];
+        // Ist eine Datei bereits als Vorlage angelegt, steht sie unten ohnehin
+        // in der Liste – sonst stünde dasselbe Design zweimal zur Wahl.
+        $angelegt = array_map(
+            static fn(array $v): string => mb_strtolower(trim((string) $v['name'])),
+            self::all()
+        );
+
+        foreach ($dateien as $schluessel => $angaben) {
+            $marke = mb_strtolower(trim((string) $angaben['brand']));
+            if ($marke !== '' && isset($gesehen[$marke])) {
+                continue;
+            }
+            // Die Marke ist vergeben, sobald ihre bevorzugte Datei dran war –
+            // auch wenn diese gleich darauf übersprungen wird. Sonst käme die
+            // schwächere Fassung derselben Marke doch noch in die Liste.
+            $gesehen[$marke] = true;
+            if (in_array(mb_strtolower(trim((string) $angaben['name'])), $angelegt, true)) {
+                continue;
+            }
+            $out[] = ['schluessel' => 'datei:' . $schluessel, 'name' => (string) $angaben['name'],
+                      'marke' => (string) $angaben['brand'], 'datei' => $schluessel];
+        }
+        foreach (self::all() as $vorlage) {
+            if ((int) $vorlage['id'] === $ausser) {
+                continue;
+            }
+            $out[] = ['schluessel' => 'vorlage:' . (int) $vorlage['id'], 'name' => (string) $vorlage['name'],
+                      'marke' => (string) self::brand($vorlage)['brand_name'], 'datei' => ''];
+        }
+        return $out;
+    }
+
+    /**
      * Speichert die Markenangaben für alle Designs einer Marke.
      *
      * Zwei Designs derselben Marke sollen nicht verschiedene Impressen

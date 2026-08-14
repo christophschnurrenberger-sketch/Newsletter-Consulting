@@ -56,6 +56,34 @@ final class Lists
         ], 'id = ?', [$id]);
     }
 
+    /* ------------------------------------------------------------- Marke */
+
+    /**
+     * Legt fest, unter welcher Marke diese Liste geführt wird.
+     *
+     * Daran hängen die automatischen Einzelmails: Wer sich für die Liste
+     * einer zweiten Marke anmeldet, bekommt die Bestätigung auch in deren
+     * Aufmachung – mit deren Impressum, nicht dem der Hauptmarke.
+     */
+    public static function saveTemplate(int $id, ?int $templateId): void
+    {
+        DB::update('lists', [
+            'template_id' => $templateId !== null && $templateId > 0 ? $templateId : null,
+        ], 'id = ?', [$id]);
+    }
+
+    /** Die Vorlage dieser Liste – null, wenn keine hinterlegt ist. */
+    public static function template(?int $id): ?array
+    {
+        if ($id === null || $id <= 0) {
+            return null;
+        }
+        $list = self::byId($id);
+        return $list === null ? null : Templates::byId(
+            $list['template_id'] !== null ? (int) $list['template_id'] : null
+        );
+    }
+
     public static function makeDefault(int $id): void
     {
         DB::run('UPDATE lists SET is_default = 0');

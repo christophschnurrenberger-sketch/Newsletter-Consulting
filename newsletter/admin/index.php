@@ -29,7 +29,7 @@ $maxGrowth = max(1, max($growth));
         <p class="ad-sub">Stand: <?= Util::e(date('d.m.Y, H:i')) ?> Uhr</p>
     </div>
     <div class="ad-actions-inline">
-        <a class="ad-btn" href="kampagne.php?neu=1">Newsletter schreiben</a>
+        <a class="ad-btn" href="neu.php">Newsletter schreiben</a>
         <a class="ad-btn ad-btn-secondary" href="empfaenger.php?neu=1">Empfänger hinzufügen</a>
     </div>
 </div>
@@ -115,7 +115,7 @@ $maxGrowth = max(1, max($growth));
 <h2>Letzte Newsletter</h2>
 <?php if ($campaigns === []): ?>
     <div class="ad-empty">
-        Noch kein Newsletter angelegt. <a href="kampagne.php?neu=1">Jetzt den ersten schreiben</a>
+        Noch kein Newsletter angelegt. <a href="neu.php">Jetzt den ersten schreiben</a>
     </div>
 <?php else: ?>
     <div class="ad-table-wrap">

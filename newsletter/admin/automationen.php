@@ -25,6 +25,20 @@ if (Util::get('vorschau') === '1') {
     exit;
 }
 
+/*
+ * Aus dem Assistenten: Marke steht fest, Strecke anlegen und hinein.
+ * Die Schritte der Strecke erben die Marke, ihre Mails erscheinen also
+ * gleich in der richtigen Aufmachung.
+ */
+if (Util::get('neu') === '1') {
+    Auth::require('kampagnen');
+    $vorlageId = Templates::brandTemplateId(Util::get('marke'));
+    $neuId     = Automations::create('Neue Strecke', Lists::defaultId() ?: null, $vorlageId);
+    Automations::saveFlow($neuId, (string) json_encode(Flow::starter()));
+    Util::flash('Strecke angelegt. Ziehen Sie jetzt die Schritte in den Ablauf.');
+    Util::redirect('automationen.php?id=' . $neuId);
+}
+
 $pageTitle = 'Automationen';
 $extraCss  = ['assets/flow.css', 'assets/builder.css'];
 $extraJs   = ['assets/flow.js', 'assets/builder.js'];

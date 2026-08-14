@@ -27,6 +27,7 @@ if (Util::isPost()) {
     }
     if ($action === 'speichern' && $id > 0) {
         Lists::update($id, Util::post('name'), Util::post('description'));
+        Lists::saveTemplate($id, Util::postInt('template_id') ?: null);
         Util::flash('Gespeichert.');
         Util::redirect('listen.php');
     }
@@ -95,6 +96,21 @@ $counts = Lists::activeCounts();
                     <div class="ad-field" style="flex:2 1 320px;">
                         <label>Beschreibung</label>
                         <input type="text" name="description" value="<?= Util::e((string) $list['description']) ?>">
+                    </div>
+                    <div class="ad-field">
+                        <label>Marke</label>
+                        <?php /* Danach richten sich Bestätigungs-, Willkommens- und
+                                 Abmeldemail dieser Liste – samt Impressum. */ ?>
+                        <select name="template_id">
+                            <option value="0">Standardvorlage</option>
+                            <?php foreach (Templates::brands() as $marke): ?>
+                                <?php if ($marke['template'] === null) { continue; } ?>
+                                <option value="<?= (int) $marke['template']['id'] ?>"
+                                    <?= (int) ($list['template_id'] ?? 0) === (int) $marke['template']['id'] ? 'selected' : '' ?>>
+                                    <?= Util::e((string) $marke['name']) ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
                     </div>
                     <div class="ad-field" style="flex:0;">
                         <label>Aktive Empfänger</label>

@@ -30,24 +30,38 @@ final class Automations
         return DB::row('SELECT * FROM automations WHERE id = ?', [$id]);
     }
 
-    public static function create(string $name, ?int $listId = null): int
+    /**
+     * @param int|null $templateId Marke der Strecke; neue Schritte erben sie
+     */
+    public static function create(string $name, ?int $listId = null, ?int $templateId = null): int
     {
         $now = Util::now();
         return DB::insert('automations', [
             'name'         => mb_substr(trim($name), 0, 190) ?: 'Neue Strecke',
             'trigger_type' => self::TRIGGER_CONFIRM,
             'list_id'      => $listId,
+            'template_id'  => $templateId !== null && $templateId > 0 ? $templateId : null,
             'status'       => self::PAUSED,
             'created_at'   => $now,
             'updated_at'   => $now,
         ]);
     }
 
+    /** Die Vorlage (Marke) einer Strecke – sonst die Standardvorlage. */
+    public static function template(int $automationId): ?array
+    {
+        $row = DB::row('SELECT template_id FROM automations WHERE id = ?', [$automationId]);
+        $eigen = $row !== null && $row['template_id'] !== null
+            ? Templates::byId((int) $row['template_id'])
+            : null;
+        return $eigen ?? Templates::defaultTemplate();
+    }
+
     /** @param array<string,mixed> $data */
     public static function save(int $id, array $data): void
     {
         $update = [];
-        foreach (['name', 'list_id', 'status'] as $field) {
+        foreach (['name', 'list_id', 'status', 'template_id'] as $field) {
             if (array_key_exists($field, $data)) {
                 $update[$field] = $data[$field];
             }
@@ -177,8 +191,8 @@ final class Automations
             [$automationId]
         );
         $now = Util::now();
-        // Der Schritt erbt Schriften und Farben der Standardvorlage
-        $template = Templates::defaultTemplate();
+        // Der Schritt erbt Marke, Schriften und Farben der Strecke
+        $template = self::template($automationId);
         $start    = Blocks::starterCampaign($template);
         return DB::insert('automation_steps', [
             'automation_id' => $automationId,

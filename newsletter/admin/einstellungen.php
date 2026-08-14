@@ -352,6 +352,9 @@ $cronUrl   = Config::url('cron/send.php') . '?token=' . $cronToken;
 <!-- --------------------------------------------------------------- Texte -->
 <div class="ad-card">
     <h2>Texte der Systemmails</h2>
+    <p class="ad-hint" style="margin-bottom:14px;">Das sind die allgemeinen Vorgaben. Wie die drei Mails
+        aussehen – und wie sie je Marke abweichen – sehen Sie unter
+        <a href="systemmails.php">Systemmails</a>.</p>
     <form method="post">
         <?= Util::csrfField() ?>
         <input type="hidden" name="aktion" value="texte">

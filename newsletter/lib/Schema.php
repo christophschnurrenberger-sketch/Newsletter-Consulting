@@ -17,7 +17,7 @@
 final class Schema
 {
     /** Version des Schemas – wird in settings gespeichert. */
-    public const VERSION = 6;
+    public const VERSION = 7;
 
     public static function migrate(): void
     {
@@ -60,6 +60,16 @@ final class Schema
         self::ensureColumn('templates', 'sender_email', "%STR(190)% NOT NULL DEFAULT ''");
         // Sicherungskopie beim Wechsel von HTML in den Baukasten
         self::ensureColumn('templates', 'html_backup', '%TEXT%');
+        /*
+         * Marke einer Liste und einer Automation.
+         *
+         * Damit erscheinen auch Bestätigungs-, Willkommens- und
+         * Abmeldemail in der Marke, für die sich jemand angemeldet hat –
+         * vorher kam dort immer die Standardvorlage, also bei zwei Marken
+         * die falsche Anschrift im Footer.
+         */
+        self::ensureColumn('lists', 'template_id', '%INT% NULL');
+        self::ensureColumn('automations', 'template_id', '%INT% NULL');
 
         Settings::set('schema_version', (string) self::VERSION);
     }

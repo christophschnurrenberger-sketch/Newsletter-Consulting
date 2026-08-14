@@ -36,7 +36,7 @@ $campaigns = Campaigns::all(in_array($filter, array_keys(Campaigns::statusLabels
         <h1>Newsletter</h1>
         <p class="ad-sub">Entwürfe, geplante und versendete Ausgaben</p>
     </div>
-    <a class="ad-btn" href="kampagne.php?neu=1">Neuen Newsletter schreiben</a>
+    <a class="ad-btn" href="neu.php">Neue E-Mail anlegen</a>
 </div>
 
 <div class="ad-card ad-card-tight">
@@ -58,7 +58,7 @@ $campaigns = Campaigns::all(in_array($filter, array_keys(Campaigns::statusLabels
 
 <?php if ($campaigns === []): ?>
     <div class="ad-empty">
-        Kein Newsletter gefunden. <a href="kampagne.php?neu=1">Jetzt den ersten schreiben</a>
+        Kein Newsletter gefunden. <a href="neu.php">Jetzt den ersten schreiben</a>
     </div>
 <?php else: ?>
     <div class="ad-table-wrap">

@@ -316,7 +316,9 @@ Pro Projekt brauchen Sie drei Dinge:
 1. **Eine Liste** (Listen → „Neue Liste"), damit die Empfänger getrennt
    bleiben. Wer sich für Projekt A angemeldet hat, darf keine Post von
    Projekt B bekommen – die Einwilligung gilt immer nur für das Projekt,
-   bei dem sie erteilt wurde.
+   bei dem sie erteilt wurde. **Stellen Sie bei der Liste die Marke ein**
+   (Listen → Spalte „Marke"): Danach richten sich Bestätigungs-,
+   Begrüßungs- und Abmeldemail dieser Liste, samt Impressum.
 2. **Eine Vorlage** im Design des Projekts (Vorlagen → „Neu im Baukasten").
 3. **Die Marke der Vorlage** (Vorlagen → Abschnitt „Marke dieser Vorlage"):
 
@@ -344,12 +346,16 @@ Der **Inhalt** einer Ausgabe entsteht weiterhin im Baukasten. Farben für Links
 und Knöpfe stellen Sie dort rechts unter „Gestaltung" ein – bei einer zweiten
 Marke also einmal auf deren Akzentfarbe setzen.
 
-**Beim Anlegen entscheidet die Marke, nicht die Vorlage.** Newsletter → „Neuer
-Newsletter" fragt zuerst: *Unter welcher Marke erscheint der Newsletter?* Ein
-Klick auf die Marke – und Sie stehen auf einer leeren Fläche, bei der Kopfzeile
-und Footer dieser Marke aber schon stehen. Eine Vorlage ist ausdrücklich kein
-Muss; wer lieber mit einem Beispielinhalt anfängt, findet die Vorlagen darunter
-unter „Oder gleich mit einer fertigen Vorlage anfangen".
+**Beim Anlegen führt ein Assistent durch zwei Fragen.** Newsletter → „Neue
+E-Mail anlegen" fragt zuerst *Um welche E-Mail geht es?* – Newsletter,
+Automation oder eine der Systemmails; jede Möglichkeit mit einer kleinen
+Zeichnung daneben. Danach kommt *Unter welcher Marke?* mit einer echten
+Vorschau je Marke. Dann sind Sie im Baukasten. Mehr Fragen gibt es nicht.
+
+Ein Klick auf die Marke – und Sie stehen auf einer leeren Fläche, bei der
+Kopfzeile und Footer dieser Marke aber schon stehen. Eine Vorlage ist
+ausdrücklich kein Muss; wer lieber mit einem Beispielinhalt anfängt, findet die
+Vorlagen darunter unter „Oder gleich mit einer fertigen Vorlage anfangen".
 
 Marken, die noch nicht benutzt wurden, aber als Datei im Ordner
 `newsletter/vorlagen/` liegen, stehen ebenfalls zur Wahl – markiert mit „wird
@@ -359,6 +365,17 @@ Klick, ein zweiter Newsletter derselben Marke benutzt sie weiter.
 Später wechseln Sie die Marke im Editor rechts unter **„Marke & Design"**; die
 Auswahl ist nach Marken gruppiert. Kopfzeile, Footer, Schriften und Farben
 wechseln mit – selbst gesetzte Farben bleiben.
+
+**Die drei Systemmails gibt es ebenfalls je Marke.** Unter „Systemmails"
+(erreichbar über den Assistenten oder über Einstellungen) stehen
+Anmeldebestätigung, Begrüßung und Abmeldebestätigung als echte Vorschau –
+in der Marke, unter der sie beim Empfänger ankommen. Welche Marke das ist,
+entscheidet die Liste, für die sich jemand angemeldet hat. Die Texte lassen
+sich je Marke abweichen lassen; ein leeres Feld heißt „nimm den allgemeinen
+Text aus den Einstellungen", eine einzelne Marke muss also nichts pflegen.
+
+Ebenso erben die Mails einer **Automation** deren Marke: Legen Sie die Strecke
+über den Assistenten an, bekommen alle ihre Schritte die gewählte Marke.
 
 Beim Schreiben eines Newsletters wählen Sie außerdem die passende **Liste**;
 Absendername und -adresse stehen im Editor und lassen sich pro Ausgabe

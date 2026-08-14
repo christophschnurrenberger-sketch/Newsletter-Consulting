@@ -77,6 +77,18 @@ function builder_ui(array $blocks, string $mode = 'campaign', string $fieldName 
                 <span class="bk-autosave" data-autosave-status></span>
                 <span class="bk-stage-info" data-count></span>
             </div>
+            <?php if ($mode === 'template'): ?>
+                <?php /* Fehlt der Inhaltsbaustein, setzt das System ihn beim
+                         Versand selbst ein – ohne Hinweis wäre unerklärlich,
+                         warum in der Vorschau plötzlich eine Fläche steht. */ ?>
+                <p class="bk-fehlt" data-fehlt-inhalt hidden>
+                    Der Baustein <strong>„Inhalt der Ausgabe“</strong> fehlt. Er markiert die Stelle,
+                    an der später der Text des Newsletters steht – ohne ihn setzt das System ihn
+                    von selbst über den Footer.
+                    <button type="button" class="ad-btn ad-btn-secondary ad-btn-small"
+                            data-add="content">Jetzt einsetzen</button>
+                </p>
+            <?php endif; ?>
             <div class="bk-canvas" data-canvas></div>
             <p class="bk-hint bk-canvas-hint">Tipp: Bausteine lassen sich am Griff <span aria-hidden="true">⠿</span>
                 verschieben. Auf dem Handy nutzen Sie die Pfeiltasten am Baustein.</p>

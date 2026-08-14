@@ -91,6 +91,23 @@
 .bk-stage-title { font-size: 13px; font-weight: 700; color: var(--ad-navy); text-transform: uppercase; letter-spacing: .5px; }
 .bk-stage-info { font-size: 12.5px; color: var(--ad-muted); }
 
+/* „Der Inhaltsbaustein fehlt" – auffällig, aber nicht als Fehler */
+.bk-fehlt {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin: 0 0 12px;
+    padding: 11px 14px;
+    border: 1px solid #EBD6AE;
+    border-radius: 8px;
+    background: #FCF3E3;
+    color: #7A5312;
+    font-size: 13.5px;
+    line-height: 1.5;
+}
+.bk-fehlt[hidden] { display: none; }
+
 .bk-canvas {
     background: #fff;
     border-radius: 8px;

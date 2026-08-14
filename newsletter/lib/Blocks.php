@@ -578,22 +578,36 @@ final class Blocks
      */
     public static function renderDocument(array $data): string
     {
-        $meta  = $data['meta'] ?? self::defaultMeta();
-        $inner = '';
+        $meta       = $data['meta'] ?? self::defaultMeta();
+        $vorFuss    = '';
+        $fussHtml   = '';
         $hasContent = false;
-        $hatKopf = false;
-        $hatFuss = false;
+        $hatKopf    = false;
+        $hatFuss    = false;
 
         foreach ($data['blocks'] ?? [] as $block) {
+            $html = self::renderBlock($block, $meta);
+            // Der Footer wird getrennt gesammelt: Er gehört ans Ende, und
+            // was fehlt, wird davor ergänzt.
+            if ($block['type'] === 'fuss') {
+                $hatFuss   = true;
+                $fussHtml .= $html;
+                continue;
+            }
             if ($block['type'] === 'content') { $hasContent = true; }
             if ($block['type'] === 'kopf')    { $hatKopf = true; }
-            if ($block['type'] === 'fuss')    { $hatFuss = true; }
-            $inner .= self::renderBlock($block, $meta);
+            $vorFuss .= $html;
         }
-        // Ohne Inhaltsbaustein bliebe die Vorlage leer – deshalb anhängen.
+
+        /*
+         * Ohne Inhaltsbaustein bliebe die Vorlage leer – deshalb ergänzen
+         * wir ihn. Er muss über den Footer: Vorher hing er hinten dran und
+         * stand damit unter Impressum und Abmeldelink.
+         */
         if (!$hasContent) {
-            $inner .= self::renderBlock(['type' => 'content'], $meta);
+            $vorFuss .= self::renderBlock(['type' => 'content'], $meta);
         }
+        $inner = $vorFuss . $fussHtml;
 
         $font  = $meta['font'];
         $width = (int) $meta['width'];

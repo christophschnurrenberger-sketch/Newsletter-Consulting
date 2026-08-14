@@ -378,6 +378,12 @@
         if (counter) {
             counter.textContent = state.blocks.length + (state.blocks.length === 1 ? ' Baustein' : ' Bausteine');
         }
+
+        // Hinweis, solange der Inhaltsbaustein fehlt
+        var fehlt = document.querySelector('[data-fehlt-inhalt]');
+        if (fehlt) {
+            fehlt.hidden = state.blocks.some(function (b) { return b.type === 'content'; });
+        }
         renderInspector();
         // Musste die Reihenfolge geradegezogen werden, ist das eine echte
         // Änderung – die gehört gespeichert, auch beim ersten Aufbau.

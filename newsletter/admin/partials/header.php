@@ -85,6 +85,7 @@ function subscriber_status_pill(string $status): string
         <?= admin_nav('empfaenger.php', 'Empfänger') ?>
         <?= admin_nav('listen.php', 'Listen') ?>
         <?= admin_nav('automationen.php', 'Automationen') ?>
+        <?= admin_nav('marken.php', 'Marken') ?>
         <?= admin_nav('vorlagen.php', 'Vorlagen') ?>
         <?= admin_nav('versand.php', 'Versand', $pendingMail > 0 ? (string) $pendingMail : '') ?>
         <?php if (Auth::can('einstellungen')): ?>

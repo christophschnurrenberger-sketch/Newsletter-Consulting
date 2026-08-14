@@ -78,9 +78,10 @@ if (Util::isPost()) {
 
     if ($action === 'speichern' && $id > 0) {
         Automations::save($id, [
-            'name'    => Util::post('name'),
-            'list_id' => Util::postInt('list_id') ?: null,
-            'status'  => Util::post('status') === Automations::ACTIVE ? Automations::ACTIVE : Automations::PAUSED,
+            'name'        => Util::post('name'),
+            'list_id'     => Util::postInt('list_id') ?: null,
+            'template_id' => Util::postInt('template_id') ?: null,
+            'status'      => Util::post('status') === Automations::ACTIVE ? Automations::ACTIVE : Automations::PAUSED,
         ]);
         Automations::saveFlow($id, Util::postRaw('flow_json'));
 
@@ -353,6 +354,19 @@ if ($current !== null) {
                             <option value="<?= (int) $list['id'] ?>"
                                 <?= (int) $current['list_id'] === (int) $list['id'] ? 'selected' : '' ?>>
                                 <?= Util::e((string) $list['name']) ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+                <div class="ad-field">
+                    <?php /* Neue Schritte erben diese Marke; vorhandene behalten ihre. */ ?>
+                    <label for="a_marke">Marke</label>
+                    <select id="a_marke" name="template_id">
+                        <?php foreach (Templates::brands() as $marke): ?>
+                            <?php if ($marke['template'] === null) { continue; } ?>
+                            <option value="<?= (int) $marke['template']['id'] ?>"
+                                <?= (int) ($current['template_id'] ?? 0) === (int) $marke['template']['id'] ? 'selected' : '' ?>>
+                                <?= Util::e((string) $marke['name']) ?>
                             </option>
                         <?php endforeach; ?>
                     </select>

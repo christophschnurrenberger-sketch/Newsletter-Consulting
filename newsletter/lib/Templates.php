@@ -366,6 +366,91 @@ final class Templates
     }
 
     /**
+     * Legt eine neue Marke an.
+     *
+     * Eine Marke ist technisch eine Vorlage mit eigenen Markenangaben.
+     * Damit man dafür nicht erst eine Vorlage anlegen und dann Felder
+     * ausfüllen muss, macht diese Methode beides in einem Zug.
+     *
+     * @param string $start 'datei:<name>' aus dem Ordner vorlagen/,
+     *                      'kopie:<id>' einer vorhandenen Marke,
+     *                      sonst ein leeres Design zum Selbstbauen
+     * @param array<string,string> $angaben Markenfelder (siehe BRAND_FIELDS)
+     * @return int Kennung der neuen Vorlage
+     */
+    public static function createBrand(string $name, array $angaben = [], string $start = 'leer'): int
+    {
+        $name = mb_substr(trim($name), 0, 190);
+        if ($name === '') {
+            throw new InvalidArgumentException('Bitte geben Sie der Marke einen Namen.');
+        }
+        foreach (self::brands() as $marke) {
+            if (strcasecmp((string) $marke['name'], $name) === 0 && !$marke['neu']) {
+                throw new InvalidArgumentException('Eine Marke mit diesem Namen gibt es schon.');
+            }
+        }
+
+        if (str_starts_with($start, 'datei:')) {
+            $id = self::createFromFile(substr($start, 6));
+        } elseif (str_starts_with($start, 'kopie:')) {
+            $quelle = self::byId((int) substr($start, 6));
+            $id = $quelle === null ? 0 : self::create($name, (string) $quelle['html'], '', false,
+                trim((string) $quelle['blocks_json']) !== '' ? (string) $quelle['blocks_json'] : null);
+        } else {
+            $id = self::create($name, '', '', false,
+                (string) json_encode(Blocks::starterTemplate(), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
+        }
+        if ($id === 0) {
+            // Die gewünschte Grundlage gibt es nicht – dann eben leer
+            $id = self::create($name, '', '', false,
+                (string) json_encode(Blocks::starterTemplate(), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
+        }
+
+        DB::update('templates', ['name' => $name, 'updated_at' => Util::now()], 'id = ?', [$id]);
+        self::saveBrand($id, ['brand_name' => $name] + $angaben);
+        return $id;
+    }
+
+    /**
+     * Speichert die Markenangaben für alle Designs einer Marke.
+     *
+     * Zwei Designs derselben Marke sollen nicht verschiedene Impressen
+     * haben – wer die Angaben ändert, meint die Marke, nicht ein Design.
+     *
+     * @param array<int,array<string,mixed>> $vorlagen Designs dieser Marke
+     * @param array<string,string> $werte
+     */
+    public static function saveBrandGroup(array $vorlagen, array $werte): void
+    {
+        foreach ($vorlagen as $vorlage) {
+            self::saveBrand((int) $vorlage['id'], $werte);
+        }
+    }
+
+    /**
+     * Wo eine Marke überall benutzt wird – damit vor dem Löschen klar ist,
+     * was daran hängt.
+     *
+     * @param array<int,array<string,mixed>> $vorlagen Designs dieser Marke
+     * @return array{listen:int,kampagnen:int,automationen:int,schritte:int}
+     */
+    public static function brandUsage(array $vorlagen): array
+    {
+        $ids = array_map(static fn(array $v): int => (int) $v['id'], $vorlagen);
+        if ($ids === []) {
+            return ['listen' => 0, 'kampagnen' => 0, 'automationen' => 0, 'schritte' => 0];
+        }
+        $platz = implode(',', array_fill(0, count($ids), '?'));
+
+        return [
+            'listen'       => (int) DB::value("SELECT COUNT(*) FROM lists WHERE template_id IN ($platz)", $ids),
+            'kampagnen'    => (int) DB::value("SELECT COUNT(*) FROM campaigns WHERE template_id IN ($platz)", $ids),
+            'automationen' => (int) DB::value("SELECT COUNT(*) FROM automations WHERE template_id IN ($platz)", $ids),
+            'schritte'     => (int) DB::value("SELECT COUNT(*) FROM automation_steps WHERE template_id IN ($platz)", $ids),
+        ];
+    }
+
+    /**
      * Löst die Auswahl beim Anlegen in eine Vorlage auf.
      *
      * "standard"  – keine Vorlage, es gelten die Einstellungen

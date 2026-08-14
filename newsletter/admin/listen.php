@@ -50,7 +50,9 @@ $counts = Lists::activeCounts();
 <div class="ad-page-head">
     <div>
         <h1>Listen</h1>
-        <p class="ad-sub">Verteiler für unterschiedliche Themen oder Zielgruppen</p>
+        <p class="ad-sub">Verteiler für unterschiedliche Themen oder Zielgruppen.
+            Die <a href="marken.php">Marke</a> einer Liste bestimmt, wie Bestätigungs-,
+            Begrüßungs- und Abmeldemail ihrer Empfänger aussehen.</p>
     </div>
 </div>
 
@@ -98,7 +100,7 @@ $counts = Lists::activeCounts();
                         <input type="text" name="description" value="<?= Util::e((string) $list['description']) ?>">
                     </div>
                     <div class="ad-field">
-                        <label>Marke</label>
+                        <label>Marke <span class="ad-hint">(für die Systemmails)</span></label>
                         <?php /* Danach richten sich Bestätigungs-, Willkommens- und
                                  Abmeldemail dieser Liste – samt Impressum. */ ?>
                         <select name="template_id">

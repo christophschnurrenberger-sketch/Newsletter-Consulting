@@ -174,6 +174,7 @@ h3 { font-size: 15px; color: var(--ad-navy); margin: 20px 0 8px; }
 .ad-field label, .ad-label { display: block; font-size: 13.5px; font-weight: 700; color: var(--ad-navy); margin-bottom: 5px; }
 
 .ad-field input[type="text"], .ad-field input[type="email"], .ad-field input[type="password"],
+.ad-field input[type="url"], .ad-field input[type="file"],
 .ad-field input[type="number"], .ad-field input[type="datetime-local"], .ad-field select, .ad-field textarea,
 .ad-input {
     width: 100%;
@@ -335,6 +336,21 @@ h3 { font-size: 15px; color: var(--ad-navy); margin: 20px 0 8px; }
 }
 .ad-marke-knopf:hover { border-color: var(--ad-red); }
 .ad-marke-knopf.is-current { background: var(--ad-navy); border-color: var(--ad-navy); color: #fff; }
+
+/* Eine Marke: links, wie sie aussieht – rechts, wer sie ist */
+.ad-marke { display: flex; gap: 24px; align-items: flex-start; flex-wrap: wrap; }
+.ad-marke-bild {
+    flex: 0 0 220px; height: 260px; position: relative; overflow: hidden;
+    border: 1px solid var(--ad-border); border-radius: 8px; background: var(--ad-bg);
+}
+.ad-marke-bild iframe {
+    position: absolute; top: 0; left: 0; width: 700px; height: 830px;
+    border: 0; transform: scale(.315); transform-origin: 0 0; pointer-events: none;
+}
+.ad-marke-inhalt { flex: 1 1 420px; }
+.ad-marke-inhalt h2 { margin-top: 0; }
+.ad-marke-nutzung { font-size: 13px; color: var(--ad-muted); margin: 14px 0 0; }
+.ad-marke-nutzung a { color: var(--ad-muted); }
 
 /* Systemmail: links die Vorschau, rechts die Felder */
 .ad-systemmail { display: flex; gap: 22px; align-items: flex-start; flex-wrap: wrap; }

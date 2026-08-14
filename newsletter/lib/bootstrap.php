@@ -17,7 +17,7 @@ if (!defined('NL_ROOT')) {
  * Systemcheck – so lässt sich sofort erkennen, welcher Stand auf dem
  * Server liegt.
  */
-define('NL_VERSION', '1.14.0 (Assistent zum Anlegen, Systemmails je Marke)');
+define('NL_VERSION', '1.15.0 (Marken als eigener Bereich)');
 
 mb_internal_encoding('UTF-8');
 date_default_timezone_set('Europe/Berlin');

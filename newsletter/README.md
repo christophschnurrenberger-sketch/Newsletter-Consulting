@@ -311,16 +311,15 @@ verschicken – jedes mit eigenem Namen, eigener Website, eigenem Impressum und
 eigener Absenderadresse. Das spart eine zweite Datenbank, einen zweiten
 Cron-Job und doppelte Updates.
 
-Pro Projekt brauchen Sie drei Dinge:
+**Der Reiter „Marken" ist die Schaltzentrale.** Dort steht jede Marke mit
+ihrem Aussehen, ihren Angaben und der Zeile, wo sie überall benutzt wird.
 
-1. **Eine Liste** (Listen → „Neue Liste"), damit die Empfänger getrennt
-   bleiben. Wer sich für Projekt A angemeldet hat, darf keine Post von
-   Projekt B bekommen – die Einwilligung gilt immer nur für das Projekt,
-   bei dem sie erteilt wurde. **Stellen Sie bei der Liste die Marke ein**
-   (Listen → Spalte „Marke"): Danach richten sich Bestätigungs-,
-   Begrüßungs- und Abmeldemail dieser Liste, samt Impressum.
-2. **Eine Vorlage** im Design des Projekts (Vorlagen → „Neu im Baukasten").
-3. **Die Marke der Vorlage** (Vorlagen → Abschnitt „Marke dieser Vorlage"):
+Pro Projekt brauchen Sie zwei Dinge:
+
+1. **Eine Marke** (Marken → „Neue Marke"): Name, Website, Impressum,
+   Absender – und die Angabe, womit das Design anfangen soll (leer, eine
+   mitgelieferte Vorlage oder eine Kopie einer bestehenden Marke). Das
+   Design bearbeiten Sie danach über „Aussehen bearbeiten".
 
 | Feld | Wirkung |
 |---|---|
@@ -328,10 +327,25 @@ Pro Projekt brauchen Sie drei Dinge:
 | Website | Footer-Zeile „Sie erhalten diese E-Mail, weil Sie sich unter … angemeldet haben" |
 | Impressum im Footer | die Pflichtangaben dieses Projekts (`{{impressum}}`) |
 | Impressum-Seite / Datenschutz-Seite | die Links im Footer |
-| Absendername / Absenderadresse | Absender für Automationen mit dieser Vorlage und Vorschlag für neue Newsletter |
+| Absendername / Absenderadresse | Absender für Automationen dieser Marke und Vorschlag für neue Newsletter |
+
+2. **Eine Liste** (Listen → „Neue Liste"), damit die Empfänger getrennt
+   bleiben. Wer sich für Projekt A angemeldet hat, darf keine Post von
+   Projekt B bekommen – die Einwilligung gilt immer nur für das Projekt,
+   bei dem sie erteilt wurde. **Stellen Sie bei der Liste die Marke ein**
+   (Listen → Spalte „Marke"): Danach richten sich Bestätigungs-,
+   Begrüßungs- und Abmeldemail dieser Liste, samt Impressum.
 
 **Leere Felder greifen auf die Einstellungen zurück.** Die Hauptmarke braucht
 also nichts einzutragen – für sie bleibt alles wie bisher.
+
+**Wo die Marke jeweils gewählt wird:** beim Newsletter rechts unter „Marke &
+Design", bei der Automation in den Angaben der Strecke, bei der Liste in der
+Spalte „Marke". Beim Anlegen fragt der Assistent ohnehin danach.
+
+Technisch hängt eine Marke an einer Vorlage – der Reiter **Vorlagen** bleibt
+deshalb für das Aussehen zuständig. Hat eine Marke mehrere Designs, gelten die
+Angaben unter „Marken" für alle davon.
 
 **Abkürzung:** Unter Vorlagen → „Fertige Vorlage übernehmen" liegen fertig
 gestaltete Entwürfe aus dem Ordner `newsletter/vorlagen/`. Sie bringen Name und

@@ -594,7 +594,8 @@ $inhaltKarte = (string) ob_get_clean();
                         <?php endforeach; ?>
                     </select>
                     <p class="ad-hint">Umstellen wechselt Marke, Kopfzeile, Footer, Schriften und Farben –
-                        auch im bereits geschriebenen Inhalt. Farben, die Sie selbst gesetzt haben, bleiben.</p>
+                        auch im bereits geschriebenen Inhalt. Farben, die Sie selbst gesetzt haben, bleiben.
+                        Marken anlegen und pflegen: <a href="marken.php">Marken</a>.</p>
                 </div>
                 <div class="ad-field">
                     <label for="list_id">Empfängerliste</label>

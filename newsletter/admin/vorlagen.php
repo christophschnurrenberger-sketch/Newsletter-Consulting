@@ -179,7 +179,9 @@ $current   = Templates::byId(Util::getInt('id')) ?? Templates::defaultTemplate()
 <div class="ad-page-head">
     <div>
         <h1>Vorlagen</h1>
-        <p class="ad-sub">Der HTML-Rahmen um Ihre Newsletter-Inhalte</p>
+        <p class="ad-sub">Das Aussehen: der Rahmen um Ihre Newsletter-Inhalte.
+            Wer der Absender ist – Name, Website, Impressum – steht unter
+            <a href="marken.php">Marken</a>.</p>
     </div>
     <form method="post" class="ad-actions-inline">
         <?= Util::csrfField() ?>
@@ -352,10 +354,11 @@ $current   = Templates::byId(Util::getInt('id')) ?? Templates::defaultTemplate()
     <?php $marke = Templates::brand($current); ?>
     <div class="ad-card" id="marke">
         <h2 style="margin-top:0;">Marke dieser Vorlage</h2>
-        <p class="ad-hint">Nur ausfüllen, wenn diese Vorlage zu einer <strong>anderen Website</strong> gehört –
-            etwa einem zweiten Projekt mit eigenem Impressum. Leere Felder verwenden automatisch die Angaben
-            aus den <a href="einstellungen.php">Einstellungen</a>. Kopfzeile und Footer der Vorlage übernehmen
-            die Werte beim nächsten Speichern des Newsletters.</p>
+        <p class="ad-hint">Dieselben Angaben stehen übersichtlicher unter <a href="marken.php">Marken</a> –
+            dort gelten sie für alle Designs einer Marke auf einmal. Hier ändern Sie sie nur für
+            <strong>diese eine Vorlage</strong>. Leere Felder verwenden automatisch die Angaben aus den
+            <a href="einstellungen.php">Einstellungen</a>. Kopfzeile und Footer übernehmen die Werte beim
+            nächsten Speichern des Newsletters.</p>
 
         <form method="post">
             <?= Util::csrfField() ?>

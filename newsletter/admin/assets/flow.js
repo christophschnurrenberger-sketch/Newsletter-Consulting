@@ -35,8 +35,16 @@
         return { nodes: [] };
     }
 
-    function save() {
+    /*
+     * Beim ersten Zeichnen ist nichts geändert – das Feld muss nur zum
+     * Stand passen. Ohne diese Unterscheidung galt der Ablauf schon beim
+     * Öffnen als geändert, und der Browser fragte beim Weggehen nach.
+     */
+    var ersterAufbau = true;
+
+    function save(nurFeld) {
         field.value = JSON.stringify(state);
+        if (nurFeld) { return; }
         field.dispatchEvent(new Event('input', { bubbles: true }));
     }
 
@@ -118,7 +126,7 @@
         canvas.innerHTML = '';
         canvas.appendChild(nodeList(state.nodes, true));
         renderInspector();
-        save();
+        save(ersterAufbau);
     }
 
     /** Eine Kette von Knoten samt Ablageflächen dazwischen. */
@@ -626,7 +634,8 @@
     }
 
     var form = root.closest('form');
-    if (form) { form.addEventListener('submit', save); }
+    if (form) { form.addEventListener('submit', function () { save(); }); }
 
     render();
+    ersterAufbau = false;
 })();

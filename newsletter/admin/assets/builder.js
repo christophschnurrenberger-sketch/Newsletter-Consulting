@@ -40,9 +40,18 @@
         return { meta: {}, blocks: [] };
     }
 
-    function save() {
+    /*
+     * Beim ersten Aufbau der Seite ist noch nichts geändert: Das Feld muss
+     * nur zum Stand passen, gespeichert werden darf nichts. Sonst schrieb
+     * schon das bloße Öffnen eines Newsletters in die Datenbank – und das
+     * Formular galt als geändert, sodass der Browser beim Weggehen fragte.
+     */
+    var ersterAufbau = true;
+
+    function save(nurFeld) {
         merkeVerlauf();
         field.value = JSON.stringify(state);
+        if (nurFeld) { return; }
         field.dispatchEvent(new Event('input', { bubbles: true }));
         autoSpeichern();
     }
@@ -193,6 +202,10 @@
 
     /** Zeigt oben am Baukasten, woran man ist. */
     function merkeStand(art) {
+        // Auch die Seite selbst soll es wissen: Solange der Baukasten von
+        // selbst speichert, braucht der Browser beim Weggehen nicht zu fragen.
+        document.dispatchEvent(new CustomEvent('nl:speicherstand', { detail: { stand: art } }));
+
         var anzeige = document.querySelector('[data-autosave-status]');
         if (!anzeige) { return; }
         var texte = {
@@ -334,7 +347,7 @@
             counter.textContent = state.blocks.length + (state.blocks.length === 1 ? ' Baustein' : ' Bausteine');
         }
         renderInspector();
-        save();
+        save(ersterAufbau);
         // render() läuft bei den strukturellen Änderungen – Baustein einfügen,
         // löschen, verschieben. Die gehören sofort in den Verlauf, nicht erst
         // nach der Tipp-Pause.
@@ -2341,8 +2354,25 @@
     /* Vor dem Absenden noch einmal sichern (z. B. nach Textänderungen). */
     var form = root.closest('form');
     if (form) {
-        form.addEventListener('submit', save);
+        form.addEventListener('submit', function () { save(); });
+
+        /*
+         * Auch Betreff, Absender, Liste und die anderen Felder daneben
+         * speichern von selbst: Die Hintergrundspeicherung schickt ohnehin
+         * das ganze Formular. Vorher war nur der Baukasten selbst gesichert –
+         * wer den Betreff tippte und wegging, verlor ihn.
+         *
+         * Die Felder im Baukasten selbst lösen bereits save() aus und
+         * brauchen hier nichts.
+         */
+        ['input', 'change'].forEach(function (art) {
+            form.addEventListener(art, function (ereignis) {
+                if (ereignis.target === field || root.contains(ereignis.target)) { return; }
+                autoSpeichern();
+            });
+        });
     }
 
     render();
+    ersterAufbau = false;
 })();

@@ -17,7 +17,7 @@ if (!defined('NL_ROOT')) {
  * Systemcheck – so lässt sich sofort erkennen, welcher Stand auf dem
  * Server liegt.
  */
-define('NL_VERSION', '1.16.0 (Aussehen einer Marke wechseln)');
+define('NL_VERSION', '1.16.1 (Speichert von selbst, fragt nur bei offenen Änderungen)');
 
 mb_internal_encoding('UTF-8');
 date_default_timezone_set('Europe/Berlin');

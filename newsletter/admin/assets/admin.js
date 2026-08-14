@@ -35,12 +35,24 @@
         });
     }
 
-    /* Warnung bei ungespeicherten Änderungen */
+    /*
+     * Warnung bei ungespeicherten Änderungen.
+     *
+     * Wo der Baukasten von selbst speichert, meldet er seinen Stand. Nach
+     * einer geglückten Speicherung ist nichts mehr offen – dann darf der
+     * Browser beim Weggehen auch nicht fragen. Vorher gab es die Rückfrage
+     * selbst dann, wenn oben schon „Gespeichert um …“ stand.
+     */
     var form = document.querySelector('form[data-warn-unsaved]');
     if (form) {
         var dirty = false;
         form.addEventListener('input', function () { dirty = true; });
         form.addEventListener('submit', function () { dirty = false; });
+        document.addEventListener('nl:speicherstand', function (event) {
+            var stand = (event.detail || {}).stand;
+            if (stand === 'gespeichert') { dirty = false; }
+            if (stand === 'ungespeichert' || stand === 'fehler') { dirty = true; }
+        });
         window.addEventListener('beforeunload', function (event) {
             if (dirty) {
                 event.preventDefault();

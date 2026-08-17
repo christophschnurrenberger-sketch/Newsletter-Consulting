@@ -92,13 +92,21 @@ springen, gespeichert wird dabei automatisch:
 
 | Schritt | Was Sie hier tun |
 |---|---|
-| **1. Inhalt** | Bausteine anordnen und Texte schreiben |
+| **1. Inhalt** | Bausteine anordnen und Texte schreiben – Kopfzeile und Footer der Vorlage stehen fest darum herum |
 | **2. Angaben** | Betreff, Vorschautext, Absender, Marke & Design, Empfängerliste, Messung |
 | **3. Prüfen & Senden** | Vorschau für Rechner und Handy, Testmail, senden oder planen |
 
 Der dritte Reiter trägt die Ampel: Solange etwas fehlt (kein Betreff, keine
 Empfänger), steht dort „n offen", der Grund ist im Schritt selbst genannt und
 „Jetzt senden" bleibt gesperrt. Ist alles beisammen, steht dort „bereit".
+
+**Kopfzeile und Footer sieht man beim Schreiben.** Über und unter der
+Arbeitsfläche steht die echte Kopfzeile bzw. der echte Footer der gewählten
+Vorlage – so, wie die Mail später ankommt, samt Farben, Wortmarke, Impressum
+und Abmeldelink. Beides gehört zur Vorlage: Es lässt sich hier weder
+verschieben noch anklicken noch löschen. Ändern können Sie es unter
+**Marken** („Aussehen bearbeiten") oder **Vorlagen**; ein Wechsel der Marke im
+Schritt „Angaben" tauscht auch den Rahmen aus.
 
 ### Bausteine
 

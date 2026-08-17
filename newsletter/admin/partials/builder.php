@@ -8,11 +8,16 @@
  */
 
 /**
- * @param array  $blocks    Bausteine (Ergebnis von Blocks::parse)
- * @param string $mode      'campaign' oder 'template'
- * @param string $fieldName Name des versteckten Formularfelds
+ * @param array       $blocks    Bausteine (Ergebnis von Blocks::parse)
+ * @param string      $mode      'campaign' oder 'template'
+ * @param string      $fieldName Name des versteckten Formularfelds
+ * @param string|null $rahmenUrl Adresse, die dieselbe Mail mit einer Marke
+ *                               an der Inhaltsstelle liefert. Damit zeigt
+ *                               die Arbeitsfläche Kopfzeile und Footer der
+ *                               Vorlage fest an – nur zum Ansehen.
  */
-function builder_ui(array $blocks, string $mode = 'campaign', string $fieldName = 'blocks_json'): void
+function builder_ui(array $blocks, string $mode = 'campaign', string $fieldName = 'blocks_json',
+                    ?string $rahmenUrl = null): void
 {
     $typen = Blocks::TYPES;
     if ($mode !== 'template') {
@@ -89,7 +94,30 @@ function builder_ui(array $blocks, string $mode = 'campaign', string $fieldName 
                             data-add="content">Jetzt einsetzen</button>
                 </p>
             <?php endif; ?>
+            <?php if ($rahmenUrl !== null): ?>
+                <?php /* Kopfzeile und Footer gehören zur Vorlage: fest, nicht
+                         verschiebbar, nicht anklickbar – aber sichtbar, damit
+                         niemand ins Leere schreibt. */ ?>
+                <div class="bk-rahmen bk-rahmen-kopf" data-rahmen="kopf" hidden>
+                    <span class="bk-rahmen-schild">Kopfzeile der Vorlage</span>
+                    <div class="bk-rahmen-fenster">
+                        <iframe src="<?= Util::e($rahmenUrl) ?>" title="Kopfzeile der Vorlage"
+                                scrolling="no" tabindex="-1" aria-hidden="true" loading="eager"></iframe>
+                    </div>
+                </div>
+            <?php endif; ?>
+
             <div class="bk-canvas" data-canvas></div>
+
+            <?php if ($rahmenUrl !== null): ?>
+                <div class="bk-rahmen bk-rahmen-fuss" data-rahmen="fuss" hidden>
+                    <div class="bk-rahmen-fenster">
+                        <iframe src="<?= Util::e($rahmenUrl) ?>" title="Footer der Vorlage"
+                                scrolling="no" tabindex="-1" aria-hidden="true" loading="eager"></iframe>
+                    </div>
+                    <span class="bk-rahmen-schild">Footer der Vorlage – Impressum und Abmeldelink stehen fest drin</span>
+                </div>
+            <?php endif; ?>
             <p class="bk-hint bk-canvas-hint">Tipp: Bausteine lassen sich am Griff <span aria-hidden="true">⠿</span>
                 verschieben. Auf dem Handy nutzen Sie die Pfeiltasten am Baustein.</p>
         </div>

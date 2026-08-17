@@ -17,7 +17,7 @@ if (!defined('NL_ROOT')) {
  * Systemcheck – so lässt sich sofort erkennen, welcher Stand auf dem
  * Server liegt.
  */
-define('NL_VERSION', '1.19.0 (Newsletter-Editor in drei Schritten)');
+define('NL_VERSION', '1.20.0 (Kopfzeile und Footer stehen im Baukasten)');
 
 mb_internal_encoding('UTF-8');
 date_default_timezone_set('Europe/Berlin');

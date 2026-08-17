@@ -26,6 +26,35 @@ if (Util::get('vorschau') === '1') {
 }
 
 /*
+ * Rahmen einer Automations-Mail: dieselbe Mail, nur mit einer Marke an der
+ * Stelle des Inhalts. Der Baukasten zeigt damit Kopfzeile und Footer fest an
+ * (siehe kampagne.php, dort steht die ausführliche Begründung).
+ */
+if (Util::get('rahmen') === '1') {
+    Auth::require('kampagnen');
+    $quelle = Automations::stepAsCampaign(Util::getInt('schritt'));
+    if ($quelle === null) {
+        http_response_code(404);
+        exit('Schritt nicht gefunden.');
+    }
+    $template = Templates::byId((int) $quelle['template_id']);
+    if ($template !== null && Templates::usesBuilder($template)) {
+        $template['html'] = Blocks::renderDocument(Templates::blocks($template));
+    }
+    $html = Renderer::wrap($template, '<div id="nl-inhalt" style="height:1px;line-height:1px;">&nbsp;</div>',
+        (string) $quelle['subject'], (string) ($quelle['preheader'] ?? ''));
+    $html = Renderer::applyBrand($html, $template, true);
+    $html = Renderer::personalize($html, Renderer::sampleSubscriber(), [
+        'abmelden_url'     => '#',
+        'praeferenzen_url' => '#',
+        'webansicht_url'   => '#',
+    ], true);
+    header('Content-Type: text/html; charset=utf-8');
+    echo $html;
+    exit;
+}
+
+/*
  * Aus dem Assistenten: Marke steht fest, Strecke anlegen und hinein.
  * Die Schritte der Strecke erben die Marke, ihre Mails erscheinen also
  * gleich in der richtigen Aufmachung.
@@ -569,7 +598,8 @@ if ($current !== null) {
 
                 <?php if ($stepBuilder): ?>
                     <input type="hidden" name="editor_mode" value="blocks">
-                    <?php builder_ui(Automations::stepBlocks($currentStep), 'campaign'); ?>
+                    <?php builder_ui(Automations::stepBlocks($currentStep), 'campaign', 'blocks_json',
+                        'automationen.php?rahmen=1&schritt=' . (int) $currentStep['id']); ?>
                 <?php else: ?>
                     <input type="hidden" name="editor_mode" value="html">
                     <div class="ad-field">

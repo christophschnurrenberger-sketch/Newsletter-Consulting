@@ -2413,6 +2413,99 @@
         });
     }
 
+    /* ------------------------------------------------------------ Rahmen
+     *
+     * Kopfzeile und Footer gehören zur Vorlage, nicht zur Ausgabe. Trotzdem
+     * soll man beim Schreiben sehen, was oben und unten dranhängt – sonst
+     * schreibt man in eine Fläche und weiß nicht, wie das Ganze wirkt.
+     *
+     * Beide Rahmen laden dieselbe Adresse: die fertige Mail mit einer Marke
+     * (#nl-inhalt) an der Stelle des Inhalts. Der obere zeigt alles bis zur
+     * Marke, der untere alles danach. Weil beide Fenster dieselbe Herkunft
+     * haben, lässt sich die Marke direkt im Rahmen ausmessen – ohne Botschaft
+     * hin und her.
+     */
+    function rahmenAufbauen() {
+        var kaesten = root.querySelectorAll('[data-rahmen]');
+        if (kaesten.length === 0) { return; }
+
+        kaesten.forEach(function (kasten) {
+            var teil   = kasten.getAttribute('data-rahmen');
+            var fenster = kasten.querySelector('.bk-rahmen-fenster');
+            var rahmen  = kasten.querySelector('iframe');
+            if (!fenster || !rahmen) { return; }
+
+            var versuche = 0;
+            var messen = function () {
+                var dok = rahmen.contentDocument;
+                var marke = dok && dok.getElementById('nl-inhalt');
+                if (!dok || !marke) { kasten.hidden = true; return; }
+
+                /*
+                 * Erst sichtbar machen, dann messen: In einem Kasten mit
+                 * „hidden" wird gar nichts gesetzt, und die Marke läge bei
+                 * null. Genau das passierte, wenn der zweite Rahmen aus dem
+                 * Zwischenspeicher kam und sein „load" schon durch war.
+                 */
+                kasten.hidden = false;
+
+                var oben = marke.getBoundingClientRect().top + (dok.documentElement.scrollTop || 0);
+
+                /*
+                 * Unterkante der Mail, nicht des Dokuments: Unter dem Blatt
+                 * steht oft noch der Seitenhintergrund der Vorlage. Der wäre
+                 * hier nur toter Raum unter dem Footer.
+                 */
+                var ganz = Math.max(dok.documentElement.scrollHeight, dok.body.scrollHeight);
+                var letzter = dok.body.lastElementChild;
+                if (letzter) {
+                    var kante = letzter.getBoundingClientRect().bottom + (dok.documentElement.scrollTop || 0);
+                    if (kante > oben) { ganz = Math.min(ganz, Math.round(kante) + 8); }
+                }
+                if (oben <= 0 && versuche < 12) {
+                    versuche++;
+                    window.setTimeout(messen, 120);
+                    return;
+                }
+                if (oben <= 0) { kasten.hidden = true; return; }   // nichts darüber
+
+                // Breite der Mail, wie sie der Rahmen selbst sieht
+                var breiteInnen  = Math.max(dok.documentElement.scrollWidth, 600);
+                var breiteAussen = fenster.clientWidth || root.querySelector('[data-canvas]').clientWidth;
+                var faktor = Math.min(1, breiteAussen / breiteInnen);
+                var unten  = Math.max(0, ganz - oben);
+
+                rahmen.style.width  = breiteInnen + 'px';
+                rahmen.style.height = ganz + 'px';
+                rahmen.style.transform = 'scale(' + faktor + ')';
+
+                if (teil === 'kopf') {
+                    rahmen.style.top = '0';
+                    fenster.style.height = Math.round(oben * faktor) + 'px';
+                } else {
+                    rahmen.style.top = Math.round(-oben * faktor) + 'px';
+                    fenster.style.height = Math.round(unten * faktor) + 'px';
+                }
+            };
+
+            var anstossen = function () {
+                versuche = 0;
+                messen();
+                // Bilder und Schriften im Rahmen können später fertig werden
+                window.setTimeout(messen, 500);
+            };
+            rahmen.addEventListener('load', anstossen);
+            if (rahmen.contentDocument && rahmen.contentDocument.readyState === 'complete') { anstossen(); }
+
+            var bremse = null;
+            window.addEventListener('resize', function () {
+                window.clearTimeout(bremse);
+                bremse = window.setTimeout(messen, 150);
+            });
+        });
+    }
+
     render();
     ersterAufbau = false;
+    rahmenAufbauen();
 })();

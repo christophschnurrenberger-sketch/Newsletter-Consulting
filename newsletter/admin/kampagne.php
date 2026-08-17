@@ -30,6 +30,44 @@ if (Util::get('vorschau') === '1') {
     exit;
 }
 
+/* ------------------------------------------------- Rahmen der Ausgabe */
+
+/*
+ * ?rahmen=1 liefert dieselbe Mail wie die Vorschau – nur steht an der
+ * Stelle des Inhalts eine Marke statt Text. Der Baukasten lädt das zweimal
+ * in einen Rahmen: einmal bis zur Marke (das ist die Kopfzeile) und einmal
+ * ab der Marke (der Footer). So sieht man beim Schreiben, was oben und
+ * unten fest dranhängt – und zwar wirklich so, wie es später ankommt, statt
+ * als nachgebaute Annäherung.
+ */
+if (Util::get('rahmen') === '1') {
+    Auth::require('lesen');
+    $campaign = Campaigns::byId(Util::getInt('id'));
+    if ($campaign === null) {
+        http_response_code(404);
+        exit('Newsletter nicht gefunden.');
+    }
+    $template = Templates::byId((int) $campaign['template_id']);
+    if ($template !== null && Templates::usesBuilder($template)) {
+        // Bei einer Baukasten-Vorlage entsteht der Rahmen aus den Bausteinen,
+        // nicht aus dem zuletzt gespeicherten HTML (siehe vorlagen.php).
+        $template['html'] = Blocks::renderDocument(Templates::blocks($template));
+    }
+
+    $html = Renderer::wrap($template, '<div id="nl-inhalt" style="height:1px;line-height:1px;">&nbsp;</div>',
+        (string) $campaign['subject'], (string) $campaign['preheader']);
+    $html = Renderer::applyBrand($html, $template, true);
+    $html = Renderer::personalize($html, Renderer::sampleSubscriber(), [
+        'abmelden_url'     => '#',
+        'praeferenzen_url' => '#',
+        'webansicht_url'   => '#',
+    ], true);
+
+    header('Content-Type: text/html; charset=utf-8');
+    echo $html;
+    exit;
+}
+
 /* ------------------------------------------------------------ Anlegen */
 
 /*
@@ -427,7 +465,8 @@ ob_start();
                 <?php elseif ($useBuilder): ?>
                     <p class="ad-hint" style="margin:6px 0 14px;">Bausteine per Drag &amp; Drop anordnen.
                         Texte lassen sich direkt in der Vorschau schreiben; Platzhalter setzen Sie links ein.</p>
-                    <?php builder_ui(Campaigns::blocks($campaign), 'campaign'); ?>
+                    <?php builder_ui(Campaigns::blocks($campaign), 'campaign', 'blocks_json',
+                                     'kampagne.php?id=' . $id . '&rahmen=1'); ?>
                     <input type="hidden" name="editor_mode" value="blocks">
                 <?php else: ?>
                     <input type="hidden" name="editor_mode" value="html">

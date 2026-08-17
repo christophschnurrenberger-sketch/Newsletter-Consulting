@@ -95,20 +95,27 @@
     /*
      * Warnung bei ungespeicherten Änderungen.
      *
-     * Wo der Baukasten von selbst speichert, meldet er seinen Stand. Nach
-     * einer geglückten Speicherung ist nichts mehr offen – dann darf der
-     * Browser beim Weggehen auch nicht fragen. Vorher gab es die Rückfrage
-     * selbst dann, wenn oben schon „Gespeichert um …“ stand.
+     * Wo von selbst gespeichert wird, hat die Rückfrage nichts zu suchen:
+     * Zwischen dem Tippen und dem Sichern liegt rund eine Sekunde, und wer
+     * in dieser Sekunde weiterklickt, bekam bisher „Website verlassen?“ –
+     * obwohl gleich darauf gespeichert worden wäre. Deshalb fragt der
+     * Browser bei diesen Formularen nur noch, wenn eine Speicherung
+     * tatsächlich fehlgeschlagen ist. Formulare ohne Selbstspeicherung
+     * (etwa der Ablauf einer Strecke) fragen weiterhin bei jeder Änderung.
      */
     var form = document.querySelector('form[data-warn-unsaved]');
     if (form) {
+        var selbstSichernd = !!form.querySelector('[data-builder][data-autosave]');
         var dirty = false;
-        form.addEventListener('input', function () { dirty = true; });
+        form.addEventListener('input', function () {
+            if (!selbstSichernd) { dirty = true; }
+        });
         form.addEventListener('submit', function () { dirty = false; });
         document.addEventListener('nl:speicherstand', function (event) {
             var stand = (event.detail || {}).stand;
             if (stand === 'gespeichert') { dirty = false; }
-            if (stand === 'ungespeichert' || stand === 'fehler') { dirty = true; }
+            if (stand === 'fehler') { dirty = true; }
+            if (stand === 'ungespeichert' && !selbstSichernd) { dirty = true; }
         });
         window.addEventListener('beforeunload', function (event) {
             if (dirty) {

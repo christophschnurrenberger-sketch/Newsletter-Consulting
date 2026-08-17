@@ -393,9 +393,11 @@ $editable   = in_array($campaign['status'], [Campaigns::DRAFT, Campaigns::SCHEDU
 $recipient  = Campaigns::recipientCount($campaign);
 $useBuilder = Campaigns::usesBuilder($campaign);
 
-/* Welcher Schritt kommt nach diesem? */
+/* Welcher Schritt kommt vor und nach diesem? */
 $folge     = ['inhalt' => 'angaben', 'angaben' => 'senden', 'senden' => null];
+$zurueck   = ['inhalt' => null, 'angaben' => 'inhalt', 'senden' => 'angaben'];
 $naechster = $folge[$schritt] ?? null;
+$vorheriger = $zurueck[$schritt] ?? null;
 
 /*
  * „Weiter" sichert und geht dann einen Schritt vor. Ist die Ausgabe nicht
@@ -429,6 +431,11 @@ $weiterKnopf = static function (string $zielSchritt, string $beschriftung, bool 
     </div>
     <div class="ad-actions-inline">
         <a class="ad-btn ad-btn-secondary" href="kampagnen.php">Zurück zur Liste</a>
+        <?php if ($vorheriger !== null): ?>
+            <?php /* Vor und zurück gehören zusammen – sonst kommt man oben nur
+                     vorwärts und muss zum Zurückgehen ans Seitenende. */ ?>
+            <a class="ad-btn ad-btn-secondary" href="<?= Util::e($adr($vorheriger)) ?>">&larr; <?= Util::e($schritte[$vorheriger]) ?></a>
+        <?php endif; ?>
         <?php if ((int) $stats['sent'] > 0): ?>
             <a class="ad-btn ad-btn-secondary" href="statistik.php?id=<?= $id ?>">Auswertung</a>
         <?php endif; ?>

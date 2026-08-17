@@ -36,7 +36,7 @@ Newsletter schreiben, Testmail verschicken, senden.
 |---|---|
 | Anmeldung | Formular auf der Startseite und eigene Landingpage, Double-Opt-in, Honeypot, Zeit- und Rate-Limits, MX-Prüfung der Domain |
 | Empfänger | Suche, Filter, Sammelaktionen, Listen, CSV-Import/-Export, Einwilligungs-Protokoll, Sperrliste |
-| Redaktion | **Baukasten mit Drag & Drop**, Rückgängig (Strg+Z), Vorschau für Rechner und Handy, Platzhalter (`{{vorname}}` …), Testversand, Textfassung automatisch – wahlweise auch direkt in HTML |
+| Redaktion | **Baukasten mit Drag & Drop** in drei Schritten (Inhalt → Angaben → Prüfen & Senden), Rückgängig (Strg+Z), Vorschau für Rechner und Handy, Platzhalter (`{{vorname}}` …), Testversand, Textfassung automatisch – wahlweise auch direkt in HTML |
 | Gestaltung | Eigene Vorlagen per Drag & Drop: Kopfzeile, Farben, Schrift, Breite, Footer; Bild-Upload mit Galerie, Zuschneiden im Browser, eigene Bausteine zum Wiederverwenden |
 | Versand | Eigener SMTP-Client, portionsweiser Versand über Cron, Tempolimits, Wiederholungen, Pause/Fortsetzen/Abbrechen, Planung |
 | Messung | Öffnungen, Klicks je Link, Abmeldungen, Bounces, Verlaufsgrafik |
@@ -76,10 +76,31 @@ Innerhalb der Seiten gilt überall dasselbe Muster:
 * **Speichern steht oben.** Im Editor und im Ablauf sitzt „Speichern“ im
   Seitenkopf. Der Baukasten sichert ohnehin von selbst; der Knopf ist für
   alle da, die sichergehen wollen.
+* **Lange Seiten sind Schritte.** Der Newsletter-Editor ist in Inhalt,
+  Angaben und „Prüfen & Senden“ geteilt. Alle drei gehören zu einem
+  Formular – „Weiter“ sichert und blättert, und was Sie in einem Schritt
+  eintragen, bleibt beim Wechsel in den nächsten erhalten.
 
 ---
 
 ## 3. Der Baukasten: Newsletter und Vorlagen selbst gestalten
+
+### Ein Newsletter entsteht in drei Schritten
+
+Der Editor führt Sie durch drei Reiter – Sie können jederzeit zwischen ihnen
+springen, gespeichert wird dabei automatisch:
+
+| Schritt | Was Sie hier tun |
+|---|---|
+| **1. Inhalt** | Bausteine anordnen und Texte schreiben |
+| **2. Angaben** | Betreff, Vorschautext, Absender, Marke & Design, Empfängerliste, Messung |
+| **3. Prüfen & Senden** | Vorschau für Rechner und Handy, Testmail, senden oder planen |
+
+Der dritte Reiter trägt die Ampel: Solange etwas fehlt (kein Betreff, keine
+Empfänger), steht dort „n offen", der Grund ist im Schritt selbst genannt und
+„Jetzt senden" bleibt gesperrt. Ist alles beisammen, steht dort „bereit".
+
+### Bausteine
 
 Newsletter und Vorlagen stellen Sie per Drag & Drop aus Bausteinen zusammen –
 ohne HTML-Kenntnisse. Aus den Bausteinen erzeugt das System anschließend

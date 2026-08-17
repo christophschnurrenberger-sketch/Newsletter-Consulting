@@ -154,6 +154,29 @@ if ($campaign === null) {
 
 $errors = [];
 
+/*
+ * Drei Schritte statt einer sehr langen Seite: erst schreiben, dann die
+ * Angaben rundherum, dann prüfen und senden. Alle drei stehen im selben
+ * Formular – die gerade nicht sichtbaren tragen nur ein „hidden". Das ist
+ * wichtig, weil der Baukasten im Hintergrund das ganze Formular abschickt:
+ * Fehlten die Felder der anderen Schritte im Dokument, würde das
+ * Zwischenspeichern Betreff, Liste und Zählung leeren.
+ */
+$schritte = [
+    'inhalt'  => 'Inhalt',
+    'angaben' => 'Angaben',
+    'senden'  => 'Prüfen & Senden',
+];
+$schritt = Util::isPost() ? Util::post('schritt') : Util::get('schritt');
+if (!isset($schritte[$schritt])) {
+    $schritt = 'inhalt';
+}
+
+/** Adresse dieser Ausgabe, wahlweise bei einem bestimmten Schritt. */
+$adr = static function (?string $wohin = null) use ($id, &$schritt): string {
+    return 'kampagne.php?id=' . $id . '&schritt=' . ($wohin ?? $schritt);
+};
+
 /* ------------------------------------------------------------ Aktionen */
 
 if (Util::isPost()) {
@@ -232,14 +255,16 @@ if (Util::isPost()) {
         Util::flash(!empty($designGewechselt)
             ? 'Gespeichert – der Newsletter steht jetzt im Design der gewählten Vorlage.'
             : 'Gespeichert.');
-        Util::redirect('kampagne.php?id=' . $id);
+        // „Weiter" sichert erst und geht dann einen Schritt vor.
+        $weiter = Util::post('weiter');
+        Util::redirect($adr(isset($schritte[$weiter]) ? $weiter : null));
     }
 
     if ($action === 'test' && $errors === []) {
         try {
             Campaigns::sendTest($id, Util::post('test_email'));
             Util::flash('Testmail an <strong>' . Util::e(Util::post('test_email')) . '</strong> verschickt.');
-            Util::redirect('kampagne.php?id=' . $id);
+            Util::redirect($adr('senden'));
         } catch (Throwable $e) {
             $errors[] = 'Testversand fehlgeschlagen: ' . $e->getMessage();
         }
@@ -266,7 +291,7 @@ if (Util::isPost()) {
                 $count = Campaigns::start($id, date('Y-m-d H:i:s', $ts));
                 Util::flash('Versand geplant für <strong>' . Util::e(date('d.m.Y, H:i', $ts)) . '</strong> Uhr ('
                     . Util::num($count) . ' Empfänger).');
-                Util::redirect('kampagne.php?id=' . $id);
+                Util::redirect($adr('senden'));
             } catch (Throwable $e) {
                 $errors[] = $e->getMessage();
             }
@@ -302,23 +327,23 @@ if (Util::isPost()) {
             Campaigns::save($id, ['editor_mode' => 'html']);
             Util::flash('HTML-Modus aktiviert. Die im Baukasten erzeugte Fassung können Sie hier weiterbearbeiten.');
         }
-        Util::redirect('kampagne.php?id=' . $id);
+        Util::redirect($adr('inhalt'));
     }
 
     if ($action === 'pause') {
         Campaigns::pause($id);
         Util::flash('Versand pausiert.');
-        Util::redirect('kampagne.php?id=' . $id);
+        Util::redirect($adr('senden'));
     }
     if ($action === 'fortsetzen') {
         Campaigns::resume($id);
         Util::flash('Versand fortgesetzt.');
-        Util::redirect('kampagne.php?id=' . $id);
+        Util::redirect($adr('senden'));
     }
     if ($action === 'abbrechen') {
         Campaigns::cancel($id);
         Util::flash('Versand abgebrochen. Bereits versendete Mails lassen sich nicht zurückholen.', 'warning');
-        Util::redirect('kampagne.php?id=' . $id);
+        Util::redirect($adr('senden'));
     }
 
     $campaign = Campaigns::byId($id);
@@ -362,6 +387,20 @@ $useBuilder = Campaigns::usesBuilder($campaign);
         und kann nicht mehr verändert werden. Für eine neue Ausgabe können Sie ihn kopieren.
     </div>
 <?php endif; ?>
+
+<?php /* Die drei Schritte als Reiter – man sieht, wo man ist und was noch kommt. */ ?>
+<nav class="ad-reiter" aria-label="Schritte">
+    <?php $nr = 0; foreach ($schritte as $key => $label): $nr++; ?>
+        <a class="ad-reiter-tab <?= $schritt === $key ? 'is-aktiv' : '' ?>" href="<?= Util::e($adr($key)) ?>">
+            <?= $nr ?>. <?= Util::e($label) ?>
+            <?php if ($key === 'senden' && $problems !== []): ?>
+                <span class="ad-pill ad-pill-amber"><?= count($problems) ?> offen</span>
+            <?php elseif ($key === 'senden' && $editable): ?>
+                <span class="ad-pill ad-pill-green">bereit</span>
+            <?php endif; ?>
+        </a>
+    <?php endforeach; ?>
+</nav>
 
 <?php
 // Die Inhaltskarte wird einmal aufgebaut und je nach Modus an anderer Stelle
@@ -475,204 +514,234 @@ ob_start();
 $betreffKarte = (string) ob_get_clean();
 ?>
 
+<?php
+/*
+ * „Weiter" sichert und geht dann einen Schritt vor. Ist die Ausgabe nicht
+ * mehr zu ändern (versendet, laufender Versand), bleibt nur das Blättern.
+ */
+$weiterKnopf = static function (string $zielSchritt, string $beschriftung) use ($editable, $adr): string {
+    if (!$editable) {
+        return '<a class="ad-btn" href="' . Util::e($adr($zielSchritt)) . '">' . $beschriftung . '</a>';
+    }
+    return '<button type="submit" name="aktion" value="speichern" class="ad-btn"'
+         . ' onclick="this.form.weiter.value=\'' . $zielSchritt . '\'">' . $beschriftung . '</button>';
+};
+?>
+
 <form method="post" id="ausgabe" data-warn-unsaved>
     <?= Util::csrfField() ?>
     <input type="hidden" name="id" value="<?= $id ?>">
+    <input type="hidden" name="schritt" value="<?= Util::e($schritt) ?>">
+    <input type="hidden" name="weiter" value="">
 
-    <?php if ($useBuilder): ?>
-        <?= $betreffKarte ?>
+    <?php /* ------------------------------------------------ 1. Inhalt */ ?>
+    <section class="ad-schritt" data-schritt="inhalt" <?= $schritt === 'inhalt' ? '' : 'hidden' ?>>
         <?= $inhaltKarte ?>
-    <?php endif; ?>
 
-    <?php /*
-     * Im Baukasten steht der Inhalt schon oben über die volle Breite. Darunter
-     * eine schmale linke Spalte mit nur einer zugeklappten Vorschau zu lassen
-     * hieße: halbe Seite leer. Deshalb liegen die Karten hier nebeneinander,
-     * im HTML-Modus dagegen weiterhin Editor links / Einstellungen rechts.
-     */ ?>
-    <div class="<?= $useBuilder ? 'ad-editor-unten' : 'ad-editor-grid' ?>">
-        <!-- ------------------------------------------------ linke Spalte -->
-        <div>
-            <?php if (!$useBuilder): ?>
+        <?php if (!$useBuilder): ?>
+            <p class="ad-hint">Wie die fertige Mail aussieht, sehen Sie im Schritt
+                „Prüfen &amp; Senden“ – oder gleich
+                <a href="kampagne.php?id=<?= $id ?>&amp;vorschau=1" target="_blank" rel="noopener">in einem neuen Tab</a>.</p>
+        <?php endif; ?>
+
+        <div class="ad-schritt-fuss">
+            <span class="ad-hint">Der Baukasten sichert von selbst – Sie können jederzeit weiter.</span>
+            <?= $weiterKnopf('angaben', 'Weiter: Angaben &rarr;') ?>
+        </div>
+    </section>
+
+    <?php /* ------------------------------------------------ 2. Angaben */ ?>
+    <section class="ad-schritt" data-schritt="angaben" <?= $schritt === 'angaben' ? '' : 'hidden' ?>>
+        <div class="ad-editor-grid">
+            <div>
                 <?= $betreffKarte ?>
-                <?= $inhaltKarte ?>
-            <?php endif; ?>
+            </div>
+            <div>
+                <div class="ad-card">
+                                <h2>Vorlage &amp; Liste</h2>
+                                <div class="ad-field">
+                                    <label for="template_id">Marke &amp; Design</label>
+                                    <?php /* Nach Marke gruppiert: So ist beim Wechseln zu sehen,
+                                             unter welchem Namen der Newsletter erscheint. */ ?>
+                                    <select id="template_id" name="template_id" <?= $editable ? '' : 'disabled' ?>>
+                                        <?php foreach (Templates::brands() as $marke): ?>
+                                            <?php if ($marke['vorlagen'] === []) { continue; } ?>
+                                            <optgroup label="<?= Util::e((string) $marke['name']) ?>">
+                                                <?php foreach ($marke['vorlagen'] as $template): ?>
+                                                    <option value="<?= (int) $template['id'] ?>"
+                                                        <?= (int) $campaign['template_id'] === (int) $template['id'] ? 'selected' : '' ?>>
+                                                        <?= Util::e((string) $template['name']) ?>
+                                                    </option>
+                                                <?php endforeach; ?>
+                                            </optgroup>
+                                        <?php endforeach; ?>
+                                    </select>
+                                    <p class="ad-hint">Umstellen wechselt Marke, Kopfzeile, Footer, Schriften und Farben –
+                                        auch im bereits geschriebenen Inhalt. Farben, die Sie selbst gesetzt haben, bleiben.
+                                        Marken anlegen und pflegen: <a href="marken.php">Marken</a>.</p>
+                                </div>
+                                <div class="ad-field">
+                                    <label for="list_id">Empfängerliste</label>
+                                    <select id="list_id" name="list_id" <?= $editable ? '' : 'disabled' ?>>
+                                        <option value="0">Alle aktiven Empfänger</option>
+                                        <?php foreach (Lists::all() as $list): ?>
+                                            <option value="<?= (int) $list['id'] ?>"
+                                                <?= (int) $campaign['list_id'] === (int) $list['id'] ? 'selected' : '' ?>>
+                                                <?= Util::e((string) $list['name']) ?>
+                                                (<?= Util::num(Subscribers::countActiveForList((int) $list['id'])) ?>)
+                                            </option>
+                                        <?php endforeach; ?>
+                                    </select>
+                                </div>
 
-            <?php /* Aufklappbar, aber offen: Die Handy-Ansicht ist der wichtigste
-                     Prüfschritt vor dem Versand – sie darf nicht hinter einem
-                     zugeklappten Kasten verschwinden. Wer sie zuklappt, findet
-                     sie beim nächsten Mal zugeklappt vor (siehe admin.js). */ ?>
+                                <label class="ad-check">
+                                    <input type="checkbox" name="track_opens" value="1" <?= (int) $campaign['track_opens'] === 1 ? 'checked' : '' ?>
+                                        <?= $editable ? '' : 'disabled' ?>>
+                                    <span>Öffnungen messen <em class="ad-hint">(unsichtbares Zählpixel)</em></span>
+                                </label>
+                                <label class="ad-check">
+                                    <input type="checkbox" name="track_clicks" value="1" <?= (int) $campaign['track_clicks'] === 1 ? 'checked' : '' ?>
+                                        <?= $editable ? '' : 'disabled' ?>>
+                                    <span>Klicks messen <em class="ad-hint">(Links laufen über einen Zähler)</em></span>
+                                </label>
+                                <label class="ad-check">
+                                    <input type="checkbox" name="archive_public" value="1" <?= (int) $campaign['archive_public'] === 1 ? 'checked' : '' ?>
+                                        <?= $editable ? '' : 'disabled' ?>>
+                                    <span>Im öffentlichen Archiv zeigen</span>
+                                </label>
+
+                                <?php /* Kein eigener Speichern-Knopf mehr: Alles auf dieser
+                                         Seite gehört zu einem Formular und geht gemeinsam raus –
+                                         der Knopf steht oben, wo man ihn sucht. */ ?>
+                                <p class="ad-hint">Änderungen werden automatisch gesichert; oben rechts steht
+                                    „Speichern“ für den Fall, dass Sie sichergehen wollen.</p>
+                            </div>
+
+                <details class="ad-card ad-klapp" data-merken="platzhalter">
+                                <summary><h2>Platzhalter</h2><span class="ad-klapp-zeichen" aria-hidden="true"></span></summary>
+                                <ul class="ad-placeholder-list">
+                                    <?php foreach (Renderer::placeholderHelp() as $code => $meaning): ?>
+                                        <li><code><?= Util::e($code) ?></code><br><span class="ad-hint"><?= Util::e($meaning) ?></span></li>
+                                    <?php endforeach; ?>
+                                </ul>
+                            </details>
+            </div>
+        </div>
+
+        <div class="ad-schritt-fuss">
+            <a class="ad-btn ad-btn-secondary" href="<?= Util::e($adr('inhalt')) ?>">&larr; Zurück: Inhalt</a>
+            <?= $weiterKnopf('senden', 'Weiter: Prüfen &amp; Senden &rarr;') ?>
+        </div>
+    </section>
+
+    <?php /* ------------------------------------- 3. Prüfen und senden */ ?>
+    <section class="ad-schritt" data-schritt="senden" <?= $schritt === 'senden' ? '' : 'hidden' ?>>
+        <div class="ad-editor-unten">
             <details class="ad-card ad-klapp" data-merken="vorschau" open>
-                <summary><h2>Vorschau</h2><span class="ad-klapp-zeichen" aria-hidden="true"></span></summary>
-                <div class="ad-actions" style="margin-top:0;margin-bottom:12px;">
-                    <button type="submit" name="aktion" value="speichern" class="ad-btn ad-btn-secondary ad-btn-small"
-                        <?= $editable ? '' : 'disabled' ?>>Speichern &amp; Vorschau aktualisieren</button>
-                    <a class="ad-btn ad-btn-secondary ad-btn-small" target="_blank" rel="noopener"
-                       href="kampagne.php?id=<?= $id ?>&amp;vorschau=1">In neuem Tab öffnen</a>
-                </div>
+                            <summary><h2>Vorschau</h2><span class="ad-klapp-zeichen" aria-hidden="true"></span></summary>
+                            <div class="ad-actions" style="margin-top:0;margin-bottom:12px;">
+                                <button type="submit" name="aktion" value="speichern" class="ad-btn ad-btn-secondary ad-btn-small"
+                                    <?= $editable ? '' : 'disabled' ?>>Speichern &amp; Vorschau aktualisieren</button>
+                                <a class="ad-btn ad-btn-secondary ad-btn-small" target="_blank" rel="noopener"
+                                   href="kampagne.php?id=<?= $id ?>&amp;vorschau=1">In neuem Tab öffnen</a>
+                            </div>
 
-                <?php /* Mehr als die Hälfte liest am Handy – das muss man beim Bauen sehen. */ ?>
-                <div class="ad-geraete" data-geraetewahl>
-                    <button type="button" class="ad-geraet is-aktiv" data-geraet="desktop">🖥 Rechner</button>
-                    <button type="button" class="ad-geraet" data-geraet="handy">📱 Handy</button>
-                    <span class="ad-geraet-breite" data-geraet-breite></span>
-                </div>
+                            <?php /* Mehr als die Hälfte liest am Handy – das muss man beim Bauen sehen. */ ?>
+                            <div class="ad-geraete" data-geraetewahl>
+                                <button type="button" class="ad-geraet is-aktiv" data-geraet="desktop">🖥 Rechner</button>
+                                <button type="button" class="ad-geraet" data-geraet="handy">📱 Handy</button>
+                                <span class="ad-geraet-breite" data-geraet-breite></span>
+                            </div>
 
-                <div class="ad-preview-buehne" data-vorschau-buehne>
-                    <iframe id="preview-frame" class="ad-preview-frame"
-                            src="kampagne.php?id=<?= $id ?>&amp;vorschau=1" title="Vorschau des Newsletters"></iframe>
-                </div>
-            </details>
+                            <div class="ad-preview-buehne" data-vorschau-buehne>
+                                <iframe id="preview-frame" class="ad-preview-frame"
+                                        src="kampagne.php?id=<?= $id ?>&amp;vorschau=1" title="Vorschau des Newsletters"></iframe>
+                            </div>
+                        </details>
+
+            <div class="ad-editor-seite">
+                <div class="ad-card">
+                                <h2>Versand</h2>
+
+                                <?php if ($problems !== []): ?>
+                                    <div class="ad-flash ad-flash-warning" style="margin-bottom:14px;">
+                                        <strong>Noch zu klären:</strong>
+                                        <ul style="margin:8px 0 0 18px;padding:0;">
+                                            <?php foreach ($problems as $problem): ?>
+                                                <li><?= Util::e($problem) ?></li>
+                                            <?php endforeach; ?>
+                                        </ul>
+                                    </div>
+                                <?php else: ?>
+                                    <div class="ad-flash ad-flash-success" style="margin-bottom:14px;">
+                                        Versandbereit: <strong><?= Util::num($recipient) ?></strong> Empfänger.
+                                    </div>
+                                <?php endif; ?>
+
+                                <?php if ($campaign['status'] === Campaigns::SENDING): ?>
+                                    <p>Der Versand läuft. Fortschritt:
+                                        <strong><?= Util::num((int) $stats['sent']) ?></strong> von
+                                        <?= Util::num((int) $stats['total']) ?></p>
+                                    <div class="ad-progress">
+                                        <span style="width:<?= (int) $stats['total'] > 0 ? round((int) $stats['sent'] / (int) $stats['total'] * 100) : 0 ?>%"></span>
+                                    </div>
+                                    <div class="ad-actions">
+                                        <button type="submit" name="aktion" value="pause" class="ad-btn ad-btn-secondary">Pausieren</button>
+                                        <button type="submit" name="aktion" value="abbrechen" class="ad-btn ad-btn-danger"
+                                                data-confirm="Versand wirklich abbrechen? Noch nicht versendete Mails werden verworfen.">Abbrechen</button>
+                                    </div>
+                                <?php elseif ($campaign['status'] === Campaigns::PAUSED): ?>
+                                    <p>Der Versand ist pausiert. Es warten
+                                        <strong><?= Util::num((int) $stats['pending']) ?></strong> Mails.</p>
+                                    <div class="ad-actions">
+                                        <button type="submit" name="aktion" value="fortsetzen" class="ad-btn">Fortsetzen</button>
+                                        <button type="submit" name="aktion" value="abbrechen" class="ad-btn ad-btn-danger"
+                                                data-confirm="Versand wirklich abbrechen?">Abbrechen</button>
+                                    </div>
+                                <?php elseif ($campaign['status'] === Campaigns::SCHEDULED): ?>
+                                    <p>Geplant für <strong><?= Util::e(Util::dt((string) $campaign['scheduled_at'])) ?></strong> Uhr.</p>
+                                    <div class="ad-actions">
+                                        <button type="submit" name="aktion" value="abbrechen" class="ad-btn ad-btn-danger"
+                                                data-confirm="Geplanten Versand abbrechen?">Planung aufheben</button>
+                                    </div>
+                                <?php elseif ($campaign['status'] === Campaigns::SENT): ?>
+                                    <p>Versendet an <strong><?= Util::num((int) $stats['sent']) ?></strong> Empfänger.</p>
+                                    <div class="ad-actions">
+                                        <a class="ad-btn ad-btn-secondary" href="statistik.php?id=<?= $id ?>">Zur Auswertung</a>
+                                    </div>
+                                <?php else: ?>
+                                    <div class="ad-actions" style="margin-top:0;">
+                                        <button type="submit" name="aktion" value="senden" class="ad-btn"
+                                                data-confirm="Newsletter jetzt an <?= Util::num($recipient) ?> Empfänger senden?"
+                                            <?= $problems === [] ? '' : 'disabled' ?>>Jetzt senden</button>
+                                    </div>
+                                    <div class="ad-field" style="margin-top:16px;">
+                                        <label for="scheduled_at">…oder später senden</label>
+                                        <input type="datetime-local" id="scheduled_at" name="scheduled_at"
+                                               value="<?= Util::e($campaign['scheduled_at'] !== null ? date('Y-m-d\TH:i', strtotime((string) $campaign['scheduled_at'])) : '') ?>">
+                                        <button type="submit" name="aktion" value="planen" class="ad-btn ad-btn-secondary ad-btn-small"
+                                                style="margin-top:8px;" <?= $problems === [] ? '' : 'disabled' ?>>Versand planen</button>
+                                    </div>
+                                <?php endif; ?>
+                            </div>
+
+                <div class="ad-card">
+                                <h2>Testversand</h2>
+                                <div class="ad-field">
+                                    <label for="test_email">Testadresse</label>
+                                    <input type="email" id="test_email" name="test_email" value="<?= Util::e((string) ($currentUser['email'] ?? '')) ?>">
+                                </div>
+                                <button type="submit" name="aktion" value="test" class="ad-btn ad-btn-secondary"
+                                    <?= $editable ? '' : 'disabled' ?>>Testmail senden</button>
+                                <p class="ad-hint">Prüfen Sie die Testmail in mindestens zwei Programmen (z. B. Outlook und Handy).</p>
+                            </div>
+            </div>
         </div>
 
-        <!-- ------------------------------------------------ rechte Spalte -->
-        <div class="ad-editor-seite">
-            <div class="ad-card">
-                <h2>Versand</h2>
-
-                <?php if ($problems !== []): ?>
-                    <div class="ad-flash ad-flash-warning" style="margin-bottom:14px;">
-                        <strong>Noch zu klären:</strong>
-                        <ul style="margin:8px 0 0 18px;padding:0;">
-                            <?php foreach ($problems as $problem): ?>
-                                <li><?= Util::e($problem) ?></li>
-                            <?php endforeach; ?>
-                        </ul>
-                    </div>
-                <?php else: ?>
-                    <div class="ad-flash ad-flash-success" style="margin-bottom:14px;">
-                        Versandbereit: <strong><?= Util::num($recipient) ?></strong> Empfänger.
-                    </div>
-                <?php endif; ?>
-
-                <?php if ($campaign['status'] === Campaigns::SENDING): ?>
-                    <p>Der Versand läuft. Fortschritt:
-                        <strong><?= Util::num((int) $stats['sent']) ?></strong> von
-                        <?= Util::num((int) $stats['total']) ?></p>
-                    <div class="ad-progress">
-                        <span style="width:<?= (int) $stats['total'] > 0 ? round((int) $stats['sent'] / (int) $stats['total'] * 100) : 0 ?>%"></span>
-                    </div>
-                    <div class="ad-actions">
-                        <button type="submit" name="aktion" value="pause" class="ad-btn ad-btn-secondary">Pausieren</button>
-                        <button type="submit" name="aktion" value="abbrechen" class="ad-btn ad-btn-danger"
-                                data-confirm="Versand wirklich abbrechen? Noch nicht versendete Mails werden verworfen.">Abbrechen</button>
-                    </div>
-                <?php elseif ($campaign['status'] === Campaigns::PAUSED): ?>
-                    <p>Der Versand ist pausiert. Es warten
-                        <strong><?= Util::num((int) $stats['pending']) ?></strong> Mails.</p>
-                    <div class="ad-actions">
-                        <button type="submit" name="aktion" value="fortsetzen" class="ad-btn">Fortsetzen</button>
-                        <button type="submit" name="aktion" value="abbrechen" class="ad-btn ad-btn-danger"
-                                data-confirm="Versand wirklich abbrechen?">Abbrechen</button>
-                    </div>
-                <?php elseif ($campaign['status'] === Campaigns::SCHEDULED): ?>
-                    <p>Geplant für <strong><?= Util::e(Util::dt((string) $campaign['scheduled_at'])) ?></strong> Uhr.</p>
-                    <div class="ad-actions">
-                        <button type="submit" name="aktion" value="abbrechen" class="ad-btn ad-btn-danger"
-                                data-confirm="Geplanten Versand abbrechen?">Planung aufheben</button>
-                    </div>
-                <?php elseif ($campaign['status'] === Campaigns::SENT): ?>
-                    <p>Versendet an <strong><?= Util::num((int) $stats['sent']) ?></strong> Empfänger.</p>
-                    <div class="ad-actions">
-                        <a class="ad-btn ad-btn-secondary" href="statistik.php?id=<?= $id ?>">Zur Auswertung</a>
-                    </div>
-                <?php else: ?>
-                    <div class="ad-actions" style="margin-top:0;">
-                        <button type="submit" name="aktion" value="senden" class="ad-btn"
-                                data-confirm="Newsletter jetzt an <?= Util::num($recipient) ?> Empfänger senden?"
-                            <?= $problems === [] ? '' : 'disabled' ?>>Jetzt senden</button>
-                    </div>
-                    <div class="ad-field" style="margin-top:16px;">
-                        <label for="scheduled_at">…oder später senden</label>
-                        <input type="datetime-local" id="scheduled_at" name="scheduled_at"
-                               value="<?= Util::e($campaign['scheduled_at'] !== null ? date('Y-m-d\TH:i', strtotime((string) $campaign['scheduled_at'])) : '') ?>">
-                        <button type="submit" name="aktion" value="planen" class="ad-btn ad-btn-secondary ad-btn-small"
-                                style="margin-top:8px;" <?= $problems === [] ? '' : 'disabled' ?>>Versand planen</button>
-                    </div>
-                <?php endif; ?>
-            </div>
-
-            <div class="ad-card">
-                <h2>Testversand</h2>
-                <div class="ad-field">
-                    <label for="test_email">Testadresse</label>
-                    <input type="email" id="test_email" name="test_email" value="<?= Util::e((string) ($currentUser['email'] ?? '')) ?>">
-                </div>
-                <button type="submit" name="aktion" value="test" class="ad-btn ad-btn-secondary"
-                    <?= $editable ? '' : 'disabled' ?>>Testmail senden</button>
-                <p class="ad-hint">Prüfen Sie die Testmail in mindestens zwei Programmen (z. B. Outlook und Handy).</p>
-            </div>
-
-            <div class="ad-card">
-                <h2>Vorlage &amp; Liste</h2>
-                <div class="ad-field">
-                    <label for="template_id">Marke &amp; Design</label>
-                    <?php /* Nach Marke gruppiert: So ist beim Wechseln zu sehen,
-                             unter welchem Namen der Newsletter erscheint. */ ?>
-                    <select id="template_id" name="template_id" <?= $editable ? '' : 'disabled' ?>>
-                        <?php foreach (Templates::brands() as $marke): ?>
-                            <?php if ($marke['vorlagen'] === []) { continue; } ?>
-                            <optgroup label="<?= Util::e((string) $marke['name']) ?>">
-                                <?php foreach ($marke['vorlagen'] as $template): ?>
-                                    <option value="<?= (int) $template['id'] ?>"
-                                        <?= (int) $campaign['template_id'] === (int) $template['id'] ? 'selected' : '' ?>>
-                                        <?= Util::e((string) $template['name']) ?>
-                                    </option>
-                                <?php endforeach; ?>
-                            </optgroup>
-                        <?php endforeach; ?>
-                    </select>
-                    <p class="ad-hint">Umstellen wechselt Marke, Kopfzeile, Footer, Schriften und Farben –
-                        auch im bereits geschriebenen Inhalt. Farben, die Sie selbst gesetzt haben, bleiben.
-                        Marken anlegen und pflegen: <a href="marken.php">Marken</a>.</p>
-                </div>
-                <div class="ad-field">
-                    <label for="list_id">Empfängerliste</label>
-                    <select id="list_id" name="list_id" <?= $editable ? '' : 'disabled' ?>>
-                        <option value="0">Alle aktiven Empfänger</option>
-                        <?php foreach (Lists::all() as $list): ?>
-                            <option value="<?= (int) $list['id'] ?>"
-                                <?= (int) $campaign['list_id'] === (int) $list['id'] ? 'selected' : '' ?>>
-                                <?= Util::e((string) $list['name']) ?>
-                                (<?= Util::num(Subscribers::countActiveForList((int) $list['id'])) ?>)
-                            </option>
-                        <?php endforeach; ?>
-                    </select>
-                </div>
-
-                <label class="ad-check">
-                    <input type="checkbox" name="track_opens" value="1" <?= (int) $campaign['track_opens'] === 1 ? 'checked' : '' ?>
-                        <?= $editable ? '' : 'disabled' ?>>
-                    <span>Öffnungen messen <em class="ad-hint">(unsichtbares Zählpixel)</em></span>
-                </label>
-                <label class="ad-check">
-                    <input type="checkbox" name="track_clicks" value="1" <?= (int) $campaign['track_clicks'] === 1 ? 'checked' : '' ?>
-                        <?= $editable ? '' : 'disabled' ?>>
-                    <span>Klicks messen <em class="ad-hint">(Links laufen über einen Zähler)</em></span>
-                </label>
-                <label class="ad-check">
-                    <input type="checkbox" name="archive_public" value="1" <?= (int) $campaign['archive_public'] === 1 ? 'checked' : '' ?>
-                        <?= $editable ? '' : 'disabled' ?>>
-                    <span>Im öffentlichen Archiv zeigen</span>
-                </label>
-
-                <?php /* Kein eigener Speichern-Knopf mehr: Alles auf dieser
-                         Seite gehört zu einem Formular und geht gemeinsam raus –
-                         der Knopf steht oben, wo man ihn sucht. */ ?>
-                <p class="ad-hint">Änderungen werden automatisch gesichert; oben rechts steht
-                    „Speichern“ für den Fall, dass Sie sichergehen wollen.</p>
-            </div>
-
-            <details class="ad-card ad-klapp" data-merken="platzhalter">
-                <summary><h2>Platzhalter</h2><span class="ad-klapp-zeichen" aria-hidden="true"></span></summary>
-                <ul class="ad-placeholder-list">
-                    <?php foreach (Renderer::placeholderHelp() as $code => $meaning): ?>
-                        <li><code><?= Util::e($code) ?></code><br><span class="ad-hint"><?= Util::e($meaning) ?></span></li>
-                    <?php endforeach; ?>
-                </ul>
-            </details>
+        <div class="ad-schritt-fuss">
+            <a class="ad-btn ad-btn-secondary" href="<?= Util::e($adr('angaben')) ?>">&larr; Zurück: Angaben</a>
         </div>
-    </div>
+    </section>
 </form>
 
 <?php require __DIR__ . '/partials/footer.php';

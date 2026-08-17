@@ -176,8 +176,27 @@ $standard = Templates::defaultId();
                         <a class="ad-btn ad-btn-secondary ad-btn-small" href="vorlagen.php?id=<?= $id ?>">Aussehen bearbeiten</a>
                         <a class="ad-btn ad-btn-secondary ad-btn-small" href="vorlagen.php?id=<?= $id ?>#design">Anderes Design</a>
                         <a class="ad-btn ad-btn-secondary ad-btn-small" href="systemmails.php?marke=<?= $id ?>">Systemmails</a>
+                        <?php if ($id !== $standard): ?>
+                            <?php /* Der Knopf gehört zum zweiten Formular weiter unten –
+                                     „form“ verbindet ihn damit, ohne Formulare zu schachteln. */ ?>
+                            <details class="ad-menue">
+                                <summary class="ad-btn ad-btn-secondary ad-btn-small" title="Weitere Aktionen">…</summary>
+                                <div class="ad-menue-liste">
+                                    <button type="submit" form="marke-standard-<?= $id ?>"
+                                        <?= Auth::can('kampagnen') ? '' : 'disabled' ?>>Als Standardmarke festlegen</button>
+                                </div>
+                            </details>
+                        <?php endif; ?>
                     </div>
                 </form>
+
+                <?php if ($id !== $standard): ?>
+                    <form method="post" id="marke-standard-<?= $id ?>" hidden>
+                        <?= Util::csrfField() ?>
+                        <input type="hidden" name="aktion" value="standard">
+                        <input type="hidden" name="id" value="<?= $id ?>">
+                    </form>
+                <?php endif; ?>
 
                 <p class="ad-marke-nutzung">
                     Wird benutzt von
@@ -187,17 +206,10 @@ $standard = Templates::defaultId();
                     <?php if (count($m['vorlagen']) > 1): ?>
                         Dazu gehören <?= count($m['vorlagen']) ?> Designs – die Angaben oben gelten für alle.
                     <?php endif; ?>
-                    <?php if ($id !== $standard): ?>
-                </p>
-                <form method="post" class="ad-actions-inline">
-                    <?= Util::csrfField() ?>
-                    <input type="hidden" name="aktion" value="standard">
-                    <input type="hidden" name="id" value="<?= $id ?>">
-                    <button type="submit" class="ad-btn ad-btn-secondary ad-btn-small">Als Standardmarke festlegen</button>
-                </form>
-                    <?php else: ?>
-                        Das ist die Standardmarke: Sie gilt überall dort, wo nichts anderes gewählt ist.</p>
+                    <?php if ($id === $standard): ?>
+                        Das ist die Standardmarke: Sie gilt überall dort, wo nichts anderes gewählt ist.
                     <?php endif; ?>
+                </p>
             <?php endif; ?>
         </div>
     </div>

@@ -345,6 +345,10 @@ $useBuilder = Campaigns::usesBuilder($campaign);
         <?php if ((int) $stats['sent'] > 0): ?>
             <a class="ad-btn ad-btn-secondary" href="statistik.php?id=<?= $id ?>">Auswertung</a>
         <?php endif; ?>
+        <?php /* Speichern gehört dorthin, wo man es sucht: nach oben. Über das
+                 form-Attribut wirkt der Knopf auf das Formular weiter unten. */ ?>
+        <button type="submit" form="ausgabe" name="aktion" value="speichern" class="ad-btn"
+            <?= $editable ? '' : 'disabled' ?>>Speichern</button>
     </div>
 </div>
 
@@ -410,17 +414,15 @@ ob_start();
 $inhaltKarte = (string) ob_get_clean();
 ?>
 
-<form method="post" data-warn-unsaved>
-    <?= Util::csrfField() ?>
-    <input type="hidden" name="id" value="<?= $id ?>">
-
-    <?php if ($useBuilder): ?>
-        <?= $inhaltKarte ?>
-    <?php endif; ?>
-
-    <div class="ad-editor-grid">
-        <!-- ------------------------------------------------ linke Spalte -->
-        <div>
+<?php
+/*
+ * Betreff, Absender und Vorschautext stehen im Baukasten-Modus über dem
+ * Inhalt: Der Betreff ist das Erste, was die Empfängerin sieht, und das
+ * Erste, was man schreibt. Vorher lag er unter dem ganzen Baukasten und
+ * war nur durch Scrollen zu finden.
+ */
+ob_start();
+?>
             <div class="ad-card">
                 <h2>Betreff und Absender</h2>
 
@@ -469,12 +471,39 @@ $inhaltKarte = (string) ob_get_clean();
                 </div>
             </div>
 
+<?php
+$betreffKarte = (string) ob_get_clean();
+?>
+
+<form method="post" id="ausgabe" data-warn-unsaved>
+    <?= Util::csrfField() ?>
+    <input type="hidden" name="id" value="<?= $id ?>">
+
+    <?php if ($useBuilder): ?>
+        <?= $betreffKarte ?>
+        <?= $inhaltKarte ?>
+    <?php endif; ?>
+
+    <?php /*
+     * Im Baukasten steht der Inhalt schon oben über die volle Breite. Darunter
+     * eine schmale linke Spalte mit nur einer zugeklappten Vorschau zu lassen
+     * hieße: halbe Seite leer. Deshalb liegen die Karten hier nebeneinander,
+     * im HTML-Modus dagegen weiterhin Editor links / Einstellungen rechts.
+     */ ?>
+    <div class="<?= $useBuilder ? 'ad-editor-unten' : 'ad-editor-grid' ?>">
+        <!-- ------------------------------------------------ linke Spalte -->
+        <div>
             <?php if (!$useBuilder): ?>
+                <?= $betreffKarte ?>
                 <?= $inhaltKarte ?>
             <?php endif; ?>
 
-            <div class="ad-card">
-                <h2>Vorschau</h2>
+            <?php /* Aufklappbar, aber offen: Die Handy-Ansicht ist der wichtigste
+                     Prüfschritt vor dem Versand – sie darf nicht hinter einem
+                     zugeklappten Kasten verschwinden. Wer sie zuklappt, findet
+                     sie beim nächsten Mal zugeklappt vor (siehe admin.js). */ ?>
+            <details class="ad-card ad-klapp" data-merken="vorschau" open>
+                <summary><h2>Vorschau</h2><span class="ad-klapp-zeichen" aria-hidden="true"></span></summary>
                 <div class="ad-actions" style="margin-top:0;margin-bottom:12px;">
                     <button type="submit" name="aktion" value="speichern" class="ad-btn ad-btn-secondary ad-btn-small"
                         <?= $editable ? '' : 'disabled' ?>>Speichern &amp; Vorschau aktualisieren</button>
@@ -493,11 +522,11 @@ $inhaltKarte = (string) ob_get_clean();
                     <iframe id="preview-frame" class="ad-preview-frame"
                             src="kampagne.php?id=<?= $id ?>&amp;vorschau=1" title="Vorschau des Newsletters"></iframe>
                 </div>
-            </div>
+            </details>
         </div>
 
         <!-- ------------------------------------------------ rechte Spalte -->
-        <div>
+        <div class="ad-editor-seite">
             <div class="ad-card">
                 <h2>Versand</h2>
 
@@ -627,20 +656,21 @@ $inhaltKarte = (string) ob_get_clean();
                     <span>Im öffentlichen Archiv zeigen</span>
                 </label>
 
-                <div class="ad-actions">
-                    <button type="submit" name="aktion" value="speichern" class="ad-btn ad-btn-secondary"
-                        <?= $editable ? '' : 'disabled' ?>>Speichern</button>
-                </div>
+                <?php /* Kein eigener Speichern-Knopf mehr: Alles auf dieser
+                         Seite gehört zu einem Formular und geht gemeinsam raus –
+                         der Knopf steht oben, wo man ihn sucht. */ ?>
+                <p class="ad-hint">Änderungen werden automatisch gesichert; oben rechts steht
+                    „Speichern“ für den Fall, dass Sie sichergehen wollen.</p>
             </div>
 
-            <div class="ad-card">
-                <h2>Platzhalter</h2>
+            <details class="ad-card ad-klapp" data-merken="platzhalter">
+                <summary><h2>Platzhalter</h2><span class="ad-klapp-zeichen" aria-hidden="true"></span></summary>
                 <ul class="ad-placeholder-list">
                     <?php foreach (Renderer::placeholderHelp() as $code => $meaning): ?>
                         <li><code><?= Util::e($code) ?></code><br><span class="ad-hint"><?= Util::e($meaning) ?></span></li>
                     <?php endforeach; ?>
                 </ul>
-            </div>
+            </details>
         </div>
     </div>
 </form>

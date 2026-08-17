@@ -45,6 +45,25 @@ final class Campaigns
     }
 
     /**
+     * Anzahl je Status – für die Filterreiter der Übersicht.
+     * Der leere Schlüssel '' hält die Gesamtzahl.
+     *
+     * @return array<string,int>
+     */
+    public static function statusCounts(): array
+    {
+        $out = ['' => 0];
+        foreach (array_keys(self::statusLabels()) as $key) {
+            $out[$key] = 0;
+        }
+        foreach (DB::all('SELECT status, COUNT(*) AS anzahl FROM campaigns GROUP BY status') as $row) {
+            $out[(string) $row['status']] = (int) $row['anzahl'];
+            $out['']                     += (int) $row['anzahl'];
+        }
+        return $out;
+    }
+
+    /**
      * @param int|null $templateId gewünschtes Design, sonst die Standardvorlage
      * @param bool     $leer       true = ohne Beispieltext anfangen
      */

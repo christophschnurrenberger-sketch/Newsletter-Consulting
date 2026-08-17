@@ -28,7 +28,9 @@ if (Util::isPost()) {
 }
 
 $filter    = Util::get('status');
-$campaigns = Campaigns::all(in_array($filter, array_keys(Campaigns::statusLabels()), true) ? $filter : '');
+$filter    = in_array($filter, array_keys(Campaigns::statusLabels()), true) ? $filter : '';
+$campaigns = Campaigns::all($filter);
+$anzahl    = Campaigns::statusCounts();
 ?>
 
 <div class="ad-page-head">
@@ -36,29 +38,34 @@ $campaigns = Campaigns::all(in_array($filter, array_keys(Campaigns::statusLabels
         <h1>Newsletter</h1>
         <p class="ad-sub">Entwürfe, geplante und versendete Ausgaben</p>
     </div>
-    <a class="ad-btn" href="neu.php">Neue E-Mail anlegen</a>
+    <a class="ad-btn" href="neu.php">Newsletter schreiben</a>
 </div>
 
-<div class="ad-card ad-card-tight">
-    <form method="get" class="ad-row" style="align-items:flex-end;margin:0;">
-        <div class="ad-field" style="margin:0;max-width:240px;">
-            <label for="status">Status</label>
-            <select id="status" name="status" onchange="this.form.submit()">
-                <option value="">Alle anzeigen</option>
-                <?php foreach (Campaigns::statusLabels() as $key => $label): ?>
-                    <option value="<?= Util::e($key) ?>" <?= $filter === $key ? 'selected' : '' ?>>
-                        <?= Util::e($label) ?>
-                    </option>
-                <?php endforeach; ?>
-            </select>
-        </div>
-        <noscript><button type="submit" class="ad-btn ad-btn-secondary ad-btn-small">Filtern</button></noscript>
-    </form>
-</div>
+<?php /*
+ * Filter als Reiter statt Auswahlfeld: Man sieht auf einen Blick, wie viele
+ * Entwürfe offen sind, und ist mit einem Klick dort. Leere Stapel werden
+ * gar nicht erst angeboten.
+ */ ?>
+<nav class="ad-reiter" aria-label="Filter">
+    <a class="ad-reiter-tab <?= $filter === '' ? 'is-aktiv' : '' ?>" href="kampagnen.php">
+        Alle <span class="ad-reiter-zahl"><?= Util::num($anzahl['']) ?></span>
+    </a>
+    <?php foreach (Campaigns::statusLabels() as $key => $label):
+        if ($anzahl[$key] === 0 && $filter !== $key) { continue; } ?>
+        <a class="ad-reiter-tab <?= $filter === $key ? 'is-aktiv' : '' ?>"
+           href="kampagnen.php?status=<?= Util::e($key) ?>">
+            <?= Util::e($label) ?> <span class="ad-reiter-zahl"><?= Util::num($anzahl[$key]) ?></span>
+        </a>
+    <?php endforeach; ?>
+</nav>
 
 <?php if ($campaigns === []): ?>
     <div class="ad-empty">
-        Kein Newsletter gefunden. <a href="neu.php">Jetzt den ersten schreiben</a>
+        <?php if ($filter !== '' && $anzahl[''] > 0): ?>
+            Hier liegt gerade nichts. <a href="kampagnen.php">Alle Newsletter anzeigen</a>
+        <?php else: ?>
+            Noch kein Newsletter angelegt. <a href="neu.php">Jetzt den ersten schreiben</a>
+        <?php endif; ?>
     </div>
 <?php else: ?>
     <div class="ad-table-wrap">
@@ -94,25 +101,43 @@ $campaigns = Campaigns::all(in_array($filter, array_keys(Campaigns::statusLabels
                     <td class="ad-num"><?= Util::e((string) $stats['click_rate']) ?></td>
                     <td><?= Util::e(Util::dt((string) ($campaign['started_at'] ?: $campaign['created_at']), 'd.m.Y')) ?></td>
                     <td>
+                        <?php /*
+                         * Eine sichtbare Haupt-Aktion, der Rest im Menü. Vorher
+                         * stand in jeder Zeile ein roter „Löschen“-Knopf – das
+                         * zieht den Blick genau auf die Aktion, die man am
+                         * seltensten will.
+                         */ ?>
                         <div class="ad-actions-inline">
                             <?php if ((int) $stats['sent'] > 0): ?>
                                 <a class="ad-btn ad-btn-secondary ad-btn-small" href="statistik.php?id=<?= (int) $campaign['id'] ?>">Auswertung</a>
+                            <?php else: ?>
+                                <a class="ad-btn ad-btn-secondary ad-btn-small" href="kampagne.php?id=<?= (int) $campaign['id'] ?>">Bearbeiten</a>
                             <?php endif; ?>
-                            <form method="post" style="display:inline;">
-                                <?= Util::csrfField() ?>
-                                <input type="hidden" name="id" value="<?= (int) $campaign['id'] ?>">
-                                <input type="hidden" name="aktion" value="kopieren">
-                                <button type="submit" class="ad-btn ad-btn-secondary ad-btn-small">Kopieren</button>
-                            </form>
-                            <?php if (in_array($campaign['status'], [Campaigns::DRAFT, Campaigns::CANCELLED], true)): ?>
-                                <form method="post" style="display:inline;">
-                                    <?= Util::csrfField() ?>
-                                    <input type="hidden" name="id" value="<?= (int) $campaign['id'] ?>">
-                                    <input type="hidden" name="aktion" value="loeschen">
-                                    <button type="submit" class="ad-btn ad-btn-danger ad-btn-small"
-                                            data-confirm="Diesen Newsletter wirklich löschen?">Löschen</button>
-                                </form>
-                            <?php endif; ?>
+                            <details class="ad-menue">
+                                <summary class="ad-btn ad-btn-secondary ad-btn-small" aria-label="Weitere Aktionen"
+                                         title="Weitere Aktionen">…</summary>
+                                <div class="ad-menue-liste">
+                                    <a href="kampagne.php?id=<?= (int) $campaign['id'] ?>">Bearbeiten</a>
+                                    <?php if ((int) $stats['sent'] > 0): ?>
+                                        <a href="statistik.php?id=<?= (int) $campaign['id'] ?>">Auswertung</a>
+                                    <?php endif; ?>
+                                    <form method="post">
+                                        <?= Util::csrfField() ?>
+                                        <input type="hidden" name="id" value="<?= (int) $campaign['id'] ?>">
+                                        <input type="hidden" name="aktion" value="kopieren">
+                                        <button type="submit">Kopieren</button>
+                                    </form>
+                                    <?php if (in_array($campaign['status'], [Campaigns::DRAFT, Campaigns::CANCELLED], true)): ?>
+                                        <form method="post">
+                                            <?= Util::csrfField() ?>
+                                            <input type="hidden" name="id" value="<?= (int) $campaign['id'] ?>">
+                                            <input type="hidden" name="aktion" value="loeschen">
+                                            <button type="submit" class="ist-gefahr"
+                                                    data-confirm="Diesen Newsletter wirklich löschen?">Löschen</button>
+                                        </form>
+                                    <?php endif; ?>
+                                </div>
+                            </details>
                         </div>
                     </td>
                 </tr>

@@ -79,15 +79,29 @@ function subscriber_status_pill(string $status): string
 </header>
 
 <div class="ad-layout">
+    <?php /*
+     * Die Navigation ist gruppiert: elf Einträge in einer Reihe liest
+     * niemand. „Systemmails“ hatte vorher gar keinen Platz und war nur
+     * über Umwege erreichbar.
+     */ ?>
     <nav class="ad-nav" aria-label="Hauptnavigation">
         <?= admin_nav('index.php', 'Übersicht') ?>
+
+        <span class="ad-nav-gruppe">Versenden</span>
         <?= admin_nav('kampagnen.php', 'Newsletter') ?>
+        <?= admin_nav('automationen.php', 'Automationen') ?>
+        <?= admin_nav('versand.php', 'Versand', $pendingMail > 0 ? (string) $pendingMail : '') ?>
+
+        <span class="ad-nav-gruppe">Empfänger</span>
         <?= admin_nav('empfaenger.php', 'Empfänger') ?>
         <?= admin_nav('listen.php', 'Listen') ?>
-        <?= admin_nav('automationen.php', 'Automationen') ?>
+
+        <span class="ad-nav-gruppe">Gestaltung</span>
         <?= admin_nav('marken.php', 'Marken') ?>
         <?= admin_nav('vorlagen.php', 'Vorlagen') ?>
-        <?= admin_nav('versand.php', 'Versand', $pendingMail > 0 ? (string) $pendingMail : '') ?>
+        <?= admin_nav('systemmails.php', 'Systemmails') ?>
+
+        <span class="ad-nav-gruppe">System</span>
         <?php if (Auth::can('einstellungen')): ?>
             <?= admin_nav('protokoll.php', 'Protokoll') ?>
             <?= admin_nav('einstellungen.php', 'Einstellungen') ?>

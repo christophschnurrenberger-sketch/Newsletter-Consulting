@@ -86,6 +86,17 @@ a:hover { color: var(--ad-red-dark); }
     font-size: 11px; font-weight: 700; padding: 1px 8px; min-width: 22px; text-align: center;
 }
 
+/* Zwischenüberschrift in der Navigation – ordnet die Einträge in Gruppen. */
+.ad-nav-gruppe {
+    display: block;
+    padding: 16px 22px 4px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .6px;
+    text-transform: uppercase;
+    color: var(--ad-muted);
+}
+
 .ad-main { flex: 1; padding: 26px 30px 60px; min-width: 0; }
 
 @media (max-width: 860px) {
@@ -96,6 +107,8 @@ a:hover { color: var(--ad-red-dark); }
     }
     .ad-nav-link { border-left: none; border-bottom: 3px solid transparent; white-space: nowrap; padding: 12px 16px; }
     .ad-nav-link.is-current { border-left: none; border-bottom-color: var(--ad-red); }
+    /* Am Handy ist die Navigation ein Streifen – Gruppentitel stören dort nur. */
+    .ad-nav-gruppe { display: none; }
     .ad-main { padding: 20px 16px 50px; width: 100%; }
 }
 
@@ -232,6 +245,17 @@ h3 { font-size: 15px; color: var(--ad-navy); margin: 20px 0 8px; }
 
 .ad-editor-grid { display: grid; grid-template-columns: minmax(0, 2fr) minmax(260px, 1fr); gap: 22px; align-items: start; }
 @media (max-width: 1000px) { .ad-editor-grid { grid-template-columns: 1fr; } }
+
+/* Baukasten-Modus: Vorschau über die ganze Breite, Einstellungskarten
+   nebeneinander. Sonst stünde links eine fast leere Spalte. */
+.ad-editor-unten > .ad-editor-seite {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 22px;
+    align-items: start;
+}
+/* Nachschlagewerk (Platzhalter) läuft über die ganze Breite. */
+.ad-editor-unten > .ad-editor-seite > .ad-klapp { grid-column: 1 / -1; }
 
 .ad-preview-frame { width: 100%; height: 620px; border: 1px solid var(--ad-border); border-radius: 8px; background: #fff; }
 
@@ -412,4 +436,160 @@ h3 { font-size: 15px; color: var(--ad-navy); margin: 20px 0 8px; }
     display: block;
     height: 660px;
     box-shadow: 0 4px 20px rgba(20, 36, 58, .16);
+}
+
+/* --------------------------------------------- Aufklappbare Karten
+   Nachschlagewerk und Zweitansichten (Vorschau, Platzhalterliste) sollen
+   nicht dauerhaft Platz nehmen. <details> braucht dafür kein Javascript –
+   gemerkt wird der Zustand trotzdem, siehe admin.js. */
+
+.ad-klapp > summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    cursor: pointer;
+    list-style: none;
+}
+.ad-klapp > summary::-webkit-details-marker { display: none; }
+.ad-klapp > summary h2 { margin: 0; }
+.ad-klapp > summary:hover h2 { color: var(--ad-red); }
+
+.ad-klapp-zeichen {
+    width: 10px; height: 10px;
+    border-right: 2px solid var(--ad-muted);
+    border-bottom: 2px solid var(--ad-muted);
+    transform: rotate(45deg);
+    transition: transform .15s ease;
+    flex: 0 0 auto;
+    margin-right: 4px;
+}
+.ad-klapp[open] > summary .ad-klapp-zeichen { transform: rotate(-135deg); }
+
+/* --------------------------------------------- Sammelaktionen
+   Erscheint über der Tabelle, sobald Zeilen angekreuzt sind, und bleibt
+   beim Scrollen oben stehen. Früher stand die Leiste unter der Liste –
+   man hakte oben an und musste unten den Knopf suchen. */
+
+.ad-sammelleiste {
+    position: sticky;
+    top: 0;
+    z-index: 5;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+    padding: 10px 14px;
+    background: var(--ad-navy);
+    border-radius: 8px;
+    color: #fff;
+    box-shadow: 0 2px 10px rgba(20, 36, 58, .18);
+}
+.ad-sammelleiste[hidden] { display: none; }
+.ad-sammelleiste strong { font-size: 14px; margin-right: 4px; }
+.ad-sammelleiste select {
+    padding: 7px 10px;
+    border: 1px solid rgba(255, 255, 255, .35);
+    border-radius: 6px;
+    background: #fff;
+    color: var(--ad-navy);
+    font: inherit;
+    font-size: 14px;
+}
+.ad-sammelleiste select[hidden] { display: none; }
+.ad-sammelleiste .ad-btn-secondary {
+    background: transparent;
+    border-color: rgba(255, 255, 255, .5);
+    color: #fff;
+}
+.ad-sammelleiste .ad-btn-secondary:hover { background: rgba(255, 255, 255, .12); }
+.ad-sammelleiste .ad-btn[disabled] { opacity: .5; cursor: not-allowed; }
+
+/* --------------------------------------------- Filterreiter
+   Statt eines Auswahlfelds: man sieht die Stapel samt Anzahl und ist mit
+   einem Klick dort. */
+
+.ad-reiter {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-bottom: 16px;
+    border-bottom: 1px solid var(--ad-border);
+}
+.ad-reiter-tab {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 9px 14px;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    color: var(--ad-muted);
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    white-space: nowrap;
+}
+.ad-reiter-tab:hover { color: var(--ad-navy); text-decoration: none; }
+.ad-reiter-tab.is-aktiv { color: var(--ad-navy); border-bottom-color: var(--ad-red); }
+.ad-reiter-zahl {
+    background: var(--ad-bg);
+    border-radius: 10px;
+    padding: 1px 7px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--ad-muted);
+}
+.ad-reiter-tab.is-aktiv .ad-reiter-zahl { background: var(--ad-navy); color: #fff; }
+
+/* --------------------------------------------- Zeilenmenü
+   Seltene Aktionen (kopieren, löschen) hinter „…“, damit in jeder Zeile
+   nur die Haupt-Aktion sichtbar ist. */
+
+.ad-menue { position: relative; display: inline-block; }
+.ad-menue > summary { list-style: none; cursor: pointer; padding-left: 10px; padding-right: 10px; }
+.ad-menue > summary::-webkit-details-marker { display: none; }
+.ad-menue-liste {
+    position: absolute;
+    right: 0;
+    top: calc(100% + 4px);
+    z-index: 20;
+    min-width: 170px;
+    padding: 6px;
+    background: #fff;
+    border: 1px solid var(--ad-border);
+    border-radius: 8px;
+    box-shadow: 0 8px 24px rgba(20, 36, 58, .16);
+    text-align: left;
+}
+.ad-menue-liste a,
+.ad-menue-liste button {
+    display: block;
+    width: 100%;
+    padding: 8px 10px;
+    border: 0;
+    border-radius: 6px;
+    background: none;
+    color: var(--ad-navy);
+    font: inherit;
+    font-size: 14px;
+    text-align: left;
+    text-decoration: none;
+    cursor: pointer;
+}
+.ad-menue-liste a:hover,
+.ad-menue-liste button:hover { background: var(--ad-bg); text-decoration: none; }
+.ad-menue-liste button.ist-gefahr { color: var(--ad-red); }
+.ad-menue-liste form { margin: 0; }
+
+/* Beschriftung nur für Screenreader – in der Leiste ist der Platz knapp,
+   die Auswahlfelder sollen trotzdem einen Namen haben. */
+.ad-sr-only {
+    position: absolute;
+    width: 1px; height: 1px;
+    padding: 0; margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
 }

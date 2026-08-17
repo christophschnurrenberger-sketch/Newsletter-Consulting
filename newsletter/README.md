@@ -49,6 +49,36 @@ Newsletter schreiben, Testmail verschicken, senden.
 
 ---
 
+### Wie die Verwaltung aufgebaut ist
+
+Die Navigation links ist in vier Gruppen geteilt, damit man nicht elf
+gleichrangige Einträge lesen muss:
+
+| Gruppe | Einträge | Wofür |
+|---|---|---|
+| **Versenden** | Newsletter, Automationen, Versand | alles, was hinausgeht |
+| **Empfänger** | Empfänger, Listen | wer es bekommt |
+| **Gestaltung** | Marken, Vorlagen, Systemmails | wie es aussieht und klingt |
+| **System** | Protokoll, Einstellungen, Benutzer | Technik und Zugänge |
+
+Innerhalb der Seiten gilt überall dasselbe Muster:
+
+* **Reiter statt Auswahlfelder.** Newsletter, Automationen und Vorlagen zeigen
+  ihren Bestand als Reiter mit Anzahl bzw. Status. Der letzte Reiter heißt
+  „+ Neue …“ und führt zum Anlegen – so steht kein Anlegen-Formular mehr über
+  dem, was Sie gerade bearbeiten.
+* **Eine sichtbare Hauptaktion.** Seltenes (kopieren, zurücksetzen, löschen)
+  liegt hinter dem Menü „…“ neben dem Knopf. „Löschen“ steht damit nie direkt
+  neben „Speichern“.
+* **Sammelaktionen erscheinen bei Bedarf.** In der Empfängerliste taucht die
+  Leiste erst auf, wenn Zeilen angekreuzt sind – oberhalb der Tabelle, mit der
+  Anzahl der ausgewählten Empfänger.
+* **Speichern steht oben.** Im Editor und im Ablauf sitzt „Speichern“ im
+  Seitenkopf. Der Baukasten sichert ohnehin von selbst; der Knopf ist für
+  alle da, die sichergehen wollen.
+
+---
+
 ## 3. Der Baukasten: Newsletter und Vorlagen selbst gestalten
 
 Newsletter und Vorlagen stellen Sie per Drag & Drop aus Bausteinen zusammen –
@@ -62,7 +92,8 @@ Linkleiste · eigenes HTML · Inhaltsplatzhalter (nur in Vorlagen).
 **Eine neue Vorlage enthält nur Kopfzeile und Footer** – dazwischen steht der
 Baustein „Inhalt der Ausgabe“, der die Stelle für den späteren Newsletter-Text
 markiert. Kein Beispieltext, keine vorgefertigte Gestaltung: Alles dazwischen
-bauen Sie selbst. Das gilt für beide Wege, „Neu im Baukasten“ und „Neu als HTML“.
+bauen Sie selbst. Das gilt für beide Wege, „Im Baukasten“ und „Als HTML“
+(Vorlagen → Reiter „+ Neue Vorlage“).
 
 Die Vorschau zeigt deshalb an der Stelle des Inhalts eine gestrichelte Fläche.
 Über „Mit Beispieltext ansehen“ lässt sich einmalig ein Musternewsletter
@@ -164,7 +195,7 @@ Design stand.
 oder „Bild verlinken“, wenn noch nichts hinterlegt ist. Ein Klick darauf führt
 direkt zum Feld. Verlinkte Bilder werden wie alle Links gezählt.
 
-**Eigene Vorlage bauen:** Vorlagen → „Neu im Baukasten“. Eine Vorlage ist der
+**Eigene Vorlage bauen:** Vorlagen → „+ Neue Vorlage“ → „Im Baukasten“. Eine Vorlage ist der
 Rahmen um jede Ausgabe. Der Baustein **„Inhalt der Ausgabe“** markiert die
 Stelle, an der später der Text des jeweiligen Newsletters steht – er gehört in
 jede Vorlage (fehlt er, wird er automatisch ergänzt). Kopfzeile, Farben,
@@ -610,6 +641,7 @@ newsletter/
 │
 ├── admin/                   Verwaltung (Anmeldung erforderlich)
 │   ├── index.php            Übersicht
+│   ├── neu.php              Assistent: Art der E-Mail, dann Marke wählen
 │   ├── kampagnen.php        Liste der Ausgaben
 │   ├── kampagne.php         Editor mit Vorschau, Test und Versand
 │   ├── statistik.php        Auswertung einer Ausgabe
@@ -618,7 +650,9 @@ newsletter/
 │   ├── import.php           CSV-Import
 │   ├── listen.php           Verteiler
 │   ├── automationen.php     Automationen: Ablauf-Baukasten und Mailinhalte
+│   ├── marken.php           Marken: Absender, Impressum, Aussehen, Systemmails
 │   ├── vorlagen.php         Design-Vorlagen samt Marke (Baukasten oder HTML)
+│   ├── systemmails.php      Texte für Bestätigungs-, Willkommens- und Abmeldemail
 │   ├── upload.php           Bild-Upload für den Baukasten
 │   ├── ki.php               holt Textvorschläge (nur wenn eingerichtet)
 │   ├── bausteine.php        gesicherte Bausteine zum Wiederverwenden

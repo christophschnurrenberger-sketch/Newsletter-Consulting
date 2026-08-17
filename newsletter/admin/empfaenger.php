@@ -286,11 +286,38 @@ $queryBase = array_filter(['q' => $search, 'status' => $status, 'liste' => $list
 <?php if ($rows === []): ?>
     <div class="ad-empty">Keine Empfänger gefunden.</div>
 <?php else: ?>
-    <form method="post">
+    <form method="post" data-sammelform>
         <?= Util::csrfField() ?>
         <input type="hidden" name="f_status" value="<?= Util::e($status) ?>">
         <input type="hidden" name="f_liste" value="<?= (int) $listId ?>">
         <input type="hidden" name="f_q" value="<?= Util::e($search) ?>">
+
+        <?php /*
+         * Sammelaktionen stehen über der Tabelle und tauchen erst auf, wenn
+         * etwas ausgewählt ist. Vorher waren sie unter einer langen Liste
+         * versteckt – man hakte oben an und suchte unten nach dem Knopf.
+         */ ?>
+        <div class="ad-sammelleiste" data-sammelleiste hidden>
+            <strong data-sammelzahl>0 ausgewählt</strong>
+            <label class="ad-sr-only" for="aktion">Aktion</label>
+            <select id="aktion" name="aktion" data-sammelaktion>
+                <option value="">— Aktion wählen —</option>
+                <option value="aktivieren">Als aktiv markieren</option>
+                <option value="abmelden">Abmelden</option>
+                <option value="liste_zu">Zu Liste hinzufügen</option>
+                <option value="liste_weg">Aus Liste entfernen</option>
+                <option value="loeschen">Endgültig löschen</option>
+            </select>
+            <label class="ad-sr-only" for="ziel_liste">Liste</label>
+            <select id="ziel_liste" name="ziel_liste" data-sammelliste hidden>
+                <?php foreach (Lists::all() as $list): ?>
+                    <option value="<?= (int) $list['id'] ?>"><?= Util::e((string) $list['name']) ?></option>
+                <?php endforeach; ?>
+            </select>
+            <button type="submit" class="ad-btn ad-btn-small"
+                    data-confirm="Aktion für die ausgewählten Empfänger wirklich ausführen?">Ausführen</button>
+            <button type="button" class="ad-btn ad-btn-secondary ad-btn-small" data-sammelweg>Auswahl aufheben</button>
+        </div>
 
         <div class="ad-table-wrap">
             <table class="ad-table">
@@ -329,33 +356,7 @@ $queryBase = array_filter(['q' => $search, 'status' => $status, 'liste' => $list
             </table>
         </div>
 
-        <div class="ad-card ad-card-tight">
-            <div class="ad-row" style="align-items:flex-end;">
-                <div class="ad-field" style="margin:0;">
-                    <label for="aktion">Mit ausgewählten Empfängern …</label>
-                    <select id="aktion" name="aktion">
-                        <option value="">— Aktion wählen —</option>
-                        <option value="aktivieren">Als aktiv markieren</option>
-                        <option value="abmelden">Abmelden</option>
-                        <option value="liste_zu">Zu Liste hinzufügen</option>
-                        <option value="liste_weg">Aus Liste entfernen</option>
-                        <option value="loeschen">Endgültig löschen</option>
-                    </select>
-                </div>
-                <div class="ad-field" style="margin:0;">
-                    <label for="ziel_liste">Liste (für Listen-Aktionen)</label>
-                    <select id="ziel_liste" name="ziel_liste">
-                        <?php foreach (Lists::all() as $list): ?>
-                            <option value="<?= (int) $list['id'] ?>"><?= Util::e((string) $list['name']) ?></option>
-                        <?php endforeach; ?>
-                    </select>
-                </div>
-                <div class="ad-field" style="margin:0;">
-                    <button type="submit" class="ad-btn ad-btn-secondary"
-                            data-confirm="Aktion für die ausgewählten Empfänger wirklich ausführen?">Ausführen</button>
-                </div>
-            </div>
-        </div>
+        <p class="ad-hint" data-sammelhinweis>Zeilen ankreuzen, um mehrere Empfänger auf einmal zu bearbeiten.</p>
     </form>
 
     <?php if ($pages > 1): ?>

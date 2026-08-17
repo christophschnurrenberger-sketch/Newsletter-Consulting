@@ -17,7 +17,7 @@ if (!defined('NL_ROOT')) {
  * Systemcheck – so lässt sich sofort erkennen, welcher Stand auf dem
  * Server liegt.
  */
-define('NL_VERSION', '1.16.5 (Bausteinliste läuft auch auf MySQL)');
+define('NL_VERSION', '1.17.0 (Bedienung aufgeräumt: Reiter, Sammelaktionen, Zeilenmenüs)');
 
 mb_internal_encoding('UTF-8');
 date_default_timezone_set('Europe/Berlin');

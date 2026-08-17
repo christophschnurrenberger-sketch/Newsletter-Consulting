@@ -54,32 +54,11 @@ $counts = Lists::activeCounts();
             Die <a href="marken.php">Marke</a> einer Liste bestimmt, wie Bestätigungs-,
             Begrüßungs- und Abmeldemail ihrer Empfänger aussehen.</p>
     </div>
-</div>
-
-<div class="ad-card">
-    <h2>Neue Liste</h2>
-    <form method="post">
-        <?= Util::csrfField() ?>
-        <input type="hidden" name="aktion" value="anlegen">
-        <div class="ad-row">
-            <div class="ad-field">
-                <label for="name">Name</label>
-                <input type="text" id="name" name="name" required placeholder="z. B. Praxis-Impulse">
-            </div>
-            <div class="ad-field" style="flex:2 1 320px;">
-                <label for="description">Beschreibung <span class="ad-hint">(erscheint im Anmeldeformular)</span></label>
-                <input type="text" id="description" name="description" placeholder="Monatliche Tipps rund um E-Mail-Marketing">
-            </div>
-            <div class="ad-field" style="flex:0;">
-                <label>&nbsp;</label>
-                <button type="submit" class="ad-btn">Anlegen</button>
-            </div>
-        </div>
-    </form>
+    <a class="ad-btn" href="#neue-liste">Neue Liste</a>
 </div>
 
 <?php if ($lists === []): ?>
-    <div class="ad-empty">Noch keine Liste vorhanden.</div>
+    <div class="ad-empty">Noch keine Liste vorhanden – legen Sie unten die erste an.</div>
 <?php else: ?>
     <?php foreach ($lists as $list): ?>
         <div class="ad-card">
@@ -123,16 +102,45 @@ $counts = Lists::activeCounts();
                 </div>
                 <div class="ad-actions">
                     <button type="submit" name="aktion" value="speichern" class="ad-btn ad-btn-secondary ad-btn-small">Speichern</button>
-                    <?php if ((int) $list['is_default'] !== 1): ?>
-                        <button type="submit" name="aktion" value="standard" class="ad-btn ad-btn-secondary ad-btn-small">Als Standard festlegen</button>
-                        <button type="submit" name="aktion" value="loeschen" class="ad-btn ad-btn-danger ad-btn-small"
-                                data-confirm="Liste wirklich löschen? Die Empfänger bleiben erhalten.">Löschen</button>
-                    <?php endif; ?>
                     <a class="ad-btn ad-btn-secondary ad-btn-small" href="empfaenger.php?liste=<?= (int) $list['id'] ?>">Empfänger anzeigen</a>
+                    <?php if ((int) $list['is_default'] !== 1): ?>
+                        <details class="ad-menue">
+                            <summary class="ad-btn ad-btn-secondary ad-btn-small" title="Weitere Aktionen">…</summary>
+                            <div class="ad-menue-liste">
+                                <button type="submit" name="aktion" value="standard">Als Standard festlegen</button>
+                                <button type="submit" name="aktion" value="loeschen" class="ist-gefahr"
+                                        data-confirm="Liste wirklich löschen? Die Empfänger bleiben erhalten.">Liste löschen</button>
+                            </div>
+                        </details>
+                    <?php endif; ?>
                 </div>
             </form>
         </div>
     <?php endforeach; ?>
 <?php endif; ?>
+
+<?php /* Anlegen steht unten: Wer die Seite öffnet, will meistens eine
+         vorhandene Liste ansehen, nicht eine neue anlegen. */ ?>
+<div class="ad-card" id="neue-liste">
+    <h2 style="margin-top:0;">Neue Liste anlegen</h2>
+    <form method="post">
+        <?= Util::csrfField() ?>
+        <input type="hidden" name="aktion" value="anlegen">
+        <div class="ad-row">
+            <div class="ad-field">
+                <label for="name">Name</label>
+                <input type="text" id="name" name="name" required placeholder="z. B. Praxis-Impulse">
+            </div>
+            <div class="ad-field" style="flex:2 1 320px;">
+                <label for="description">Beschreibung <span class="ad-hint">(erscheint im Anmeldeformular)</span></label>
+                <input type="text" id="description" name="description" placeholder="Monatliche Tipps rund um E-Mail-Marketing">
+            </div>
+            <div class="ad-field" style="flex:0;">
+                <label>&nbsp;</label>
+                <button type="submit" class="ad-btn">Anlegen</button>
+            </div>
+        </div>
+    </form>
+</div>
 
 <?php require __DIR__ . '/partials/footer.php';

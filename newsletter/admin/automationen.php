@@ -30,7 +30,7 @@ if (Util::get('vorschau') === '1') {
  * Die Schritte der Strecke erben die Marke, ihre Mails erscheinen also
  * gleich in der richtigen Aufmachung.
  */
-if (Util::get('neu') === '1') {
+if (Util::get('neu') === '1' && Util::get('marke') !== '') {
     Auth::require('kampagnen');
     $vorlageId = Templates::brandTemplateId(Util::get('marke'));
     $neuId     = Automations::create('Neue Strecke', Lists::defaultId() ?: null, $vorlageId);
@@ -233,6 +233,16 @@ if ($current === null && $automations !== []) {
     $current = $automations[0];
 }
 
+/*
+ * „Neue Strecke“ ist ein eigener Reiter, kein Formular über dem Ablauf.
+ * Wer eine Strecke ansieht, will sie bearbeiten – und nicht zuerst an
+ * einem Anlegen-Kasten vorbeiscrollen.
+ */
+$neu = Util::get('anlegen') !== '' || $automations === [];
+if ($neu) {
+    $current = null;
+}
+
 $flow        = $current !== null ? Automations::flow($current) : ['nodes' => []];
 $currentStep = null;
 if ($current !== null && Util::getInt('schritt') > 0) {
@@ -256,50 +266,64 @@ if ($current !== null) {
         <h1>Automationen</h1>
         <p class="ad-sub">Mailstrecken, die nach der Anmeldung von selbst laufen</p>
     </div>
+    <?php if ($current !== null): ?>
+        <?php /* Speichern gehört dorthin, wo man es sucht: oben, immer sichtbar. */ ?>
+        <button type="submit" form="strecke" name="aktion" value="speichern" class="ad-btn">Ablauf speichern</button>
+    <?php endif; ?>
 </div>
 
-<div class="ad-card">
-    <h2>Neue Strecke</h2>
-    <form method="post">
-        <?= Util::csrfField() ?>
-        <input type="hidden" name="aktion" value="anlegen">
-        <div class="ad-row" style="align-items:flex-end;">
-            <div class="ad-field">
-                <label for="name">Name</label>
-                <input type="text" id="name" name="name" placeholder="Willkommensstrecke">
-            </div>
-            <div class="ad-field">
-                <label for="list_id">Nur für Anmeldungen dieser Liste</label>
-                <select id="list_id" name="list_id">
-                    <option value="0">Alle Listen</option>
-                    <?php foreach (Lists::all() as $list): ?>
-                        <option value="<?= (int) $list['id'] ?>"><?= Util::e((string) $list['name']) ?></option>
-                    <?php endforeach; ?>
-                </select>
-            </div>
-            <div class="ad-field" style="flex:0;">
-                <label>&nbsp;</label>
-                <button type="submit" class="ad-btn">Anlegen</button>
-            </div>
-        </div>
-    </form>
-</div>
+<?php /*
+ * Die Strecken stehen als Reiter oben – so sieht man sofort, was es gibt
+ * und welche gerade läuft. Vorher war das eine Reihe roter Knöpfe, die
+ * aussahen, als würde ein Klick etwas auslösen.
+ */ ?>
+<nav class="ad-reiter" aria-label="Strecken">
+    <?php foreach ($automations as $automation):
+        $aktiv = $current !== null && (int) $current['id'] === (int) $automation['id']; ?>
+        <a class="ad-reiter-tab <?= $aktiv ? 'is-aktiv' : '' ?>"
+           href="automationen.php?id=<?= (int) $automation['id'] ?>">
+            <?= Util::e((string) $automation['name']) ?>
+            <span class="ad-pill <?= $automation['status'] === Automations::ACTIVE ? 'ad-pill-green' : 'ad-pill-grey' ?>">
+                <?= $automation['status'] === Automations::ACTIVE ? 'aktiv' : 'pausiert' ?>
+            </span>
+        </a>
+    <?php endforeach; ?>
+    <a class="ad-reiter-tab <?= $neu ? 'is-aktiv' : '' ?>" href="automationen.php?anlegen=1">+ Neue Strecke</a>
+</nav>
 
-<?php if ($automations === []): ?>
-    <div class="ad-empty">Noch keine Strecke angelegt.</div>
-<?php else: ?>
-    <div class="ad-card ad-card-tight">
-        <div class="ad-actions" style="margin-top:0;">
-            <?php foreach ($automations as $automation):
-                $stats = Automations::stats((int) $automation['id']); ?>
-                <a class="ad-btn ad-btn-small <?= $current !== null && (int) $current['id'] === (int) $automation['id'] ? '' : 'ad-btn-secondary' ?>"
-                   href="automationen.php?id=<?= (int) $automation['id'] ?>">
-                    <?= Util::e((string) $automation['name']) ?>
-                    (<?= $automation['status'] === Automations::ACTIVE ? 'aktiv' : 'pausiert' ?>,
-                    <?= Util::num($stats['sent']) ?> Mails)
-                </a>
-            <?php endforeach; ?>
-        </div>
+<?php if ($neu): ?>
+    <div class="ad-card" id="neue-strecke">
+        <h2>Neue Strecke anlegen</h2>
+        <p class="ad-hint" style="margin-bottom:14px;">Eine Strecke startet, sobald jemand seine Anmeldung
+            bestätigt hat. Die Schritte legen Sie gleich danach fest.</p>
+        <form method="post">
+            <?= Util::csrfField() ?>
+            <input type="hidden" name="aktion" value="anlegen">
+            <div class="ad-row" style="align-items:flex-end;">
+                <div class="ad-field">
+                    <label for="name">Name</label>
+                    <input type="text" id="name" name="name" placeholder="Willkommensstrecke" autofocus>
+                </div>
+                <div class="ad-field">
+                    <label for="list_id">Nur für Anmeldungen dieser Liste</label>
+                    <select id="list_id" name="list_id">
+                        <option value="0">Alle Listen</option>
+                        <?php foreach (Lists::all() as $list): ?>
+                            <option value="<?= (int) $list['id'] ?>"><?= Util::e((string) $list['name']) ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+                <div class="ad-field" style="flex:0;">
+                    <label>&nbsp;</label>
+                    <div class="ad-actions-inline">
+                        <button type="submit" class="ad-btn">Anlegen</button>
+                        <?php if ($automations !== []): ?>
+                            <a class="ad-btn ad-btn-secondary" href="automationen.php">Abbrechen</a>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            </div>
+        </form>
     </div>
 <?php endif; ?>
 
@@ -337,7 +361,7 @@ if ($current !== null) {
     <?php endif; ?>
 
     <div class="ad-card">
-        <form method="post" data-warn-unsaved>
+        <form method="post" id="strecke" data-warn-unsaved>
             <?= Util::csrfField() ?>
             <input type="hidden" name="id" value="<?= (int) $current['id'] ?>">
 
@@ -380,11 +404,16 @@ if ($current !== null) {
                 </div>
                 <div class="ad-field" style="flex:0;">
                     <label>&nbsp;</label>
-                    <div class="ad-actions-inline">
-                        <button type="submit" name="aktion" value="speichern" class="ad-btn">Ablauf speichern</button>
-                        <button type="submit" name="aktion" value="loeschen" class="ad-btn ad-btn-danger"
-                                data-confirm="Strecke mit allen Schritten löschen?">Löschen</button>
-                    </div>
+                    <?php /* Gespeichert wird oben im Seitenkopf und unten am Ablauf – hier
+                             stehen nur die selteneren Aktionen. */ ?>
+                    <details class="ad-menue">
+                        <summary class="ad-btn ad-btn-secondary" aria-label="Weitere Aktionen"
+                                 title="Weitere Aktionen">…</summary>
+                        <div class="ad-menue-liste">
+                            <button type="submit" name="aktion" value="loeschen" class="ist-gefahr"
+                                    data-confirm="Strecke mit allen Schritten löschen?">Strecke löschen</button>
+                        </div>
+                    </details>
                 </div>
             </div>
 

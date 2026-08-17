@@ -201,6 +201,17 @@ if (Util::isPost()) {
 
 $templates = Templates::all();
 $current   = Templates::byId(Util::getInt('id')) ?? Templates::defaultTemplate();
+$fertige   = Templates::files();
+
+/*
+ * Anlegen ist ein eigener Reiter, kein Dauerformular über der Vorlage.
+ * Vorher standen drei Wege zum Anlegen über der Vorlage, die man gerade
+ * bearbeitete – man scrollte jedes Mal daran vorbei.
+ */
+$neu = Util::get('anlegen') !== '' || $templates === [];
+if ($neu) {
+    $current = null;
+}
 ?>
 
 <div class="ad-page-head">
@@ -210,55 +221,68 @@ $current   = Templates::byId(Util::getInt('id')) ?? Templates::defaultTemplate()
             Wer der Absender ist – Name, Website, Impressum – steht unter
             <a href="marken.php">Marken</a>.</p>
     </div>
-    <form method="post" class="ad-actions-inline">
-        <?= Util::csrfField() ?>
-        <input type="hidden" name="aktion" value="anlegen">
-        <input type="text" name="name" class="ad-input" style="width:200px;" placeholder="Name der Vorlage">
-        <button type="submit" name="baukasten" value="1" class="ad-btn">Neu im Baukasten</button>
-        <button type="submit" name="baukasten" value="0" class="ad-btn ad-btn-secondary">Neu als HTML</button>
-    </form>
 </div>
 
-<?php $fertige = Templates::files(); ?>
-<?php if ($fertige !== []): ?>
+<nav class="ad-reiter" aria-label="Vorlagen">
+    <?php foreach ($templates as $template): ?>
+        <a class="ad-reiter-tab <?= $current !== null && (int) $current['id'] === (int) $template['id'] ? 'is-aktiv' : '' ?>"
+           href="vorlagen.php?id=<?= (int) $template['id'] ?>">
+            <?= Util::e((string) $template['name']) ?>
+            <?php if ((int) $template['is_default'] === 1): ?>
+                <span class="ad-pill ad-pill-blue">Standard</span>
+            <?php endif; ?>
+        </a>
+    <?php endforeach; ?>
+    <a class="ad-reiter-tab <?= $neu ? 'is-aktiv' : '' ?>" href="vorlagen.php?anlegen=1">+ Neue Vorlage</a>
+</nav>
+
+<?php if ($neu): ?>
     <div class="ad-card">
-        <h2 style="margin-top:0;">Fertige Vorlage übernehmen</h2>
-        <p class="ad-hint">Mitgelieferte Entwürfe aus dem Ordner <code>newsletter/vorlagen/</code> –
-            fertig gestaltet, danach beliebig änderbar.</p>
+        <h2 style="margin-top:0;">Neue Vorlage anlegen</h2>
+
+        <?php if ($fertige !== []): ?>
+            <h3 style="margin-top:18px;">Fertiges Design übernehmen</h3>
+            <p class="ad-hint">Mitgelieferte Entwürfe aus dem Ordner <code>newsletter/vorlagen/</code> –
+                fertig gestaltet, danach beliebig änderbar. Das ist der schnellste Weg.</p>
+            <form method="post" class="ad-actions-inline" style="margin-top:10px;">
+                <?= Util::csrfField() ?>
+                <input type="hidden" name="aktion" value="aus_datei">
+                <select name="datei" class="ad-input" style="width:auto;min-width:240px;">
+                    <?php foreach ($fertige as $schluessel => $angaben): ?>
+                        <option value="<?= Util::e($schluessel) ?>"><?= Util::e($angaben['name']) ?></option>
+                    <?php endforeach; ?>
+                </select>
+                <button type="submit" class="ad-btn">Übernehmen</button>
+            </form>
+            <ul class="ad-hint" style="margin:12px 0 0 18px;padding:0;">
+                <?php foreach ($fertige as $angaben): ?>
+                    <li><strong><?= Util::e($angaben['name']) ?></strong><?= $angaben['description'] !== ''
+                        ? ' – ' . Util::e($angaben['description']) : '' ?></li>
+                <?php endforeach; ?>
+            </ul>
+        <?php endif; ?>
+
+        <h3 style="margin-top:26px;">Oder leer beginnen</h3>
+        <p class="ad-hint">Sie bekommen Kopfzeile, Inhaltsfläche und Footer – der Rest ist Ihrer.</p>
         <form method="post" class="ad-actions-inline" style="margin-top:10px;">
             <?= Util::csrfField() ?>
-            <input type="hidden" name="aktion" value="aus_datei">
-            <select name="datei" class="ad-input" style="width:auto;min-width:240px;">
-                <?php foreach ($fertige as $schluessel => $angaben): ?>
-                    <option value="<?= Util::e($schluessel) ?>"><?= Util::e($angaben['name']) ?></option>
-                <?php endforeach; ?>
-            </select>
-            <button type="submit" class="ad-btn ad-btn-secondary">Übernehmen</button>
+            <input type="hidden" name="aktion" value="anlegen">
+            <input type="text" name="name" class="ad-input" style="width:220px;" placeholder="Name der Vorlage">
+            <button type="submit" name="baukasten" value="1" class="ad-btn ad-btn-secondary">Im Baukasten</button>
+            <button type="submit" name="baukasten" value="0" class="ad-btn ad-btn-secondary">Als HTML</button>
         </form>
-        <ul class="ad-hint" style="margin:12px 0 0 18px;padding:0;">
-            <?php foreach ($fertige as $angaben): ?>
-                <li><strong><?= Util::e($angaben['name']) ?></strong><?= $angaben['description'] !== ''
-                    ? ' – ' . Util::e($angaben['description']) : '' ?></li>
-            <?php endforeach; ?>
-        </ul>
+        <p class="ad-hint">Im Baukasten setzen Sie die Vorlage aus Bausteinen zusammen; „Als HTML“ ist für
+            fertigen Code aus einer anderen Quelle.</p>
+
+        <?php if ($templates !== []): ?>
+            <p style="margin-top:20px;"><a href="vorlagen.php">Abbrechen</a></p>
+        <?php endif; ?>
     </div>
 <?php endif; ?>
 
-<div class="ad-card ad-card-tight">
-    <div class="ad-actions" style="margin-top:0;">
-        <?php foreach ($templates as $template): ?>
-            <a class="ad-btn ad-btn-small <?= $current !== null && (int) $current['id'] === (int) $template['id'] ? '' : 'ad-btn-secondary' ?>"
-               href="vorlagen.php?id=<?= (int) $template['id'] ?>">
-                <?= Util::e((string) $template['name']) ?>
-                <?= (int) $template['is_default'] === 1 ? ' ★' : '' ?>
-            </a>
-        <?php endforeach; ?>
-    </div>
-</div>
-
-<?php if ($current === null): ?>
+<?php if ($current === null && !$neu): ?>
     <div class="ad-empty">Noch keine Vorlage vorhanden.</div>
-<?php else: ?>
+<?php elseif ($current !== null): ?>
     <?php $tplBuilder = Templates::usesBuilder($current); ?>
 
     <?php if ($tplBuilder): ?>
@@ -292,21 +316,28 @@ $current   = Templates::byId(Util::getInt('id')) ?? Templates::defaultTemplate()
 
                 <?php builder_ui(Templates::blocks($current), 'template'); ?>
 
+                <?php /* Häufiges sichtbar, Seltenes im Menü – und „Löschen“ nicht
+                         als roter Knopf neben „Speichern“. */ ?>
                 <div class="ad-actions">
                     <button type="submit" name="aktion" value="speichern_baukasten" class="ad-btn">Vorlage speichern</button>
-                    <?php if (trim((string) ($current['html_backup'] ?? '')) !== ''): ?>
-                        <button type="submit" name="aktion" value="html_zurueck" class="ad-btn ad-btn-secondary"
-                                data-confirm="Die gesicherte HTML-Fassung wiederherstellen? Die Bausteine dieser Vorlage gehen dabei verloren.">HTML zurückholen</button>
-                    <?php endif; ?>
-                    <?php if ((int) $current['is_default'] !== 1): ?>
-                        <button type="submit" name="aktion" value="standard" class="ad-btn ad-btn-secondary">Als Standard</button>
-                    <?php endif; ?>
-                    <?php if (count($templates) > 1): ?>
-                        <button type="submit" name="aktion" value="loeschen" class="ad-btn ad-btn-danger"
-                                data-confirm="Vorlage wirklich löschen?">Löschen</button>
-                    <?php endif; ?>
                     <a class="ad-btn ad-btn-secondary" target="_blank" rel="noopener"
                        href="vorlagen.php?id=<?= (int) $current['id'] ?>&amp;vorschau=1">Vorschau in neuem Tab</a>
+                    <details class="ad-menue">
+                        <summary class="ad-btn ad-btn-secondary" title="Weitere Aktionen">…</summary>
+                        <div class="ad-menue-liste">
+                            <?php if ((int) $current['is_default'] !== 1): ?>
+                                <button type="submit" name="aktion" value="standard">Als Standard festlegen</button>
+                            <?php endif; ?>
+                            <?php if (trim((string) ($current['html_backup'] ?? '')) !== ''): ?>
+                                <button type="submit" name="aktion" value="html_zurueck"
+                                        data-confirm="Die gesicherte HTML-Fassung wiederherstellen? Die Bausteine dieser Vorlage gehen dabei verloren.">HTML zurückholen</button>
+                            <?php endif; ?>
+                            <?php if (count($templates) > 1): ?>
+                                <button type="submit" name="aktion" value="loeschen" class="ist-gefahr"
+                                        data-confirm="Vorlage wirklich löschen?">Vorlage löschen</button>
+                            <?php endif; ?>
+                        </div>
+                    </details>
                 </div>
             </form>
         </div>
@@ -352,15 +383,20 @@ $current   = Templates::byId(Util::getInt('id')) ?? Templates::defaultTemplate()
                     <button type="submit" name="aktion" value="speichern" class="ad-btn">Speichern</button>
                     <button type="submit" name="aktion" value="modus" class="ad-btn ad-btn-secondary"
                             data-confirm="Zum Baukasten wechseln? Ein von Hand geschriebener HTML-Rahmen lässt sich nicht in Bausteine zerlegen – er wird durch einen Standardrahmen ersetzt. Die bisherige Fassung wird gesichert und lässt sich zurückholen.">Im Baukasten gestalten</button>
-                    <?php if ((int) $current['is_default'] !== 1): ?>
-                        <button type="submit" name="aktion" value="standard" class="ad-btn ad-btn-secondary">Als Standard</button>
-                    <?php endif; ?>
-                    <button type="submit" name="aktion" value="zuruecksetzen" class="ad-btn ad-btn-secondary"
-                            data-confirm="Vorlage auf die Auslieferungsfassung zurücksetzen?">Zurücksetzen</button>
-                    <?php if (count($templates) > 1): ?>
-                        <button type="submit" name="aktion" value="loeschen" class="ad-btn ad-btn-danger"
-                                data-confirm="Vorlage wirklich löschen?">Löschen</button>
-                    <?php endif; ?>
+                    <details class="ad-menue">
+                        <summary class="ad-btn ad-btn-secondary" title="Weitere Aktionen">…</summary>
+                        <div class="ad-menue-liste">
+                            <?php if ((int) $current['is_default'] !== 1): ?>
+                                <button type="submit" name="aktion" value="standard">Als Standard festlegen</button>
+                            <?php endif; ?>
+                            <button type="submit" name="aktion" value="zuruecksetzen"
+                                    data-confirm="Vorlage auf die Auslieferungsfassung zurücksetzen?">Auf Auslieferungsfassung zurücksetzen</button>
+                            <?php if (count($templates) > 1): ?>
+                                <button type="submit" name="aktion" value="loeschen" class="ist-gefahr"
+                                        data-confirm="Vorlage wirklich löschen?">Vorlage löschen</button>
+                            <?php endif; ?>
+                        </div>
+                    </details>
                 </div>
             </form>
         </div>

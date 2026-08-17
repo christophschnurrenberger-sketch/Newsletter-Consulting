@@ -1,7 +1,7 @@
 # Prüfsummen des Newslettersystems – erzeugt von cron/pruefsummen.php
-# Fassung: 1.20.0 (Kopfzeile und Footer stehen im Baukasten)
+# Fassung: 1.20.1 (Weiter-Knopf auch oben rechts)
 # systemcheck.php vergleicht damit die Dateien auf dem Server.
-71c1ac7342aff8c3844f2bc344726de9158e70a89f6d11c615a75b416cf6a8ea  README.md
+727bc46e8c65842c4a2bedbd919f77f0411e9650cae39b04b8a7abe55a023e14  README.md
 6605e2f4278b7312a797aa6d5cd964f3b10233ff8f0098d9358bdfba310cea06  abmelden.php
 81f0a9577008b9c4c65c2c245940be7418fad7b36be27059b9d0b5e47c045d8c  admin/assets/admin.css
 00aac6e71d356abf6af2ce8b99e62ef981d848fec8c2ec31007c19e07e74b49b  admin/assets/admin.js
@@ -17,7 +17,7 @@ d20832f202d12ec5cbbeb15322cfe705df7afc357a344a27368ac9c3d1b85c3a  admin/assets/f
 09f16a0690090396d568f5ab82f1dba1ae2de826e0c2692a43ae8a35850ee82a  admin/empfaenger.php
 374c4ab88e11ed77f76096780b79bd907cb3efba04103e9e04d1a16fa6d53c84  admin/import.php
 5366897f2688872417dbb27965d0bec6fdda049466e01cbbfea8ea0fe1c46450  admin/index.php
-adad83b8043f96b1bb031f8d57043c9ecdd2a3426f0d00964a437158d04776b4  admin/kampagne.php
+5cd1006035411c65eda1ad39bed699a5244aba431aa12ff7ff371d77b0528403  admin/kampagne.php
 315052963cf279c2c7bf36ec3deab2242067fd01bbd0114ac6517818bbe5c008  admin/kampagnen.php
 b6e9c67aea86c51606e45ce9f098c30f5fd8daa87ada04331df2c0feb7a84227  admin/ki.php
 40a004231a7d005a454fb8b49894c3c3ca704506c01813bf65d682dee074f49c  admin/listen.php
@@ -69,7 +69,7 @@ d2cc8f3f9a4ce49fd649000d900831b5d21749413fcaf7563d0f60652976569e  lib/SystemMail
 1ff1590061ada92bfd11f5aaf2ca92281368bdfcd03e6a78f6068bd44d60bc95  lib/Tracking.php
 f16866caf47cafebdefeaafbb5569c51d8a403f81add5aaddb9ae9e1befeda43  lib/Urls.php
 3385c0525855de44e1b358d3f9fc74fd9b429f285d372d83255a443573faa423  lib/Util.php
-8836787a514ad1a3e6f59bd95be33307c1d7ad2a9ae086eab350347314ad1253  lib/bootstrap.php
+2d23882db2ee6a425c1f1604e41637a12f879ba986bc6007fbdb253048e5a2d7  lib/bootstrap.php
 688d9bd5dbea09f88e9cae351240c9864749e377f49e43f6af41ba6162cbd963  partials/page.php
 ce1a83de309fad556bf61efbe3e8d5cc1fe6cecf6f99990d7685278995e49839  subscribe.php
 495b38ef80cd9f192ef802b43b4d50082e322a2e5db9a87ec72c9b50ce3f84e6  systemcheck.php

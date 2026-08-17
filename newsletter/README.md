@@ -73,9 +73,11 @@ Innerhalb der Seiten gilt überall dasselbe Muster:
 * **Sammelaktionen erscheinen bei Bedarf.** In der Empfängerliste taucht die
   Leiste erst auf, wenn Zeilen angekreuzt sind – oberhalb der Tabelle, mit der
   Anzahl der ausgewählten Empfänger.
-* **Speichern steht oben.** Im Editor und im Ablauf sitzt „Speichern“ im
-  Seitenkopf. Der Baukasten sichert ohnehin von selbst; der Knopf ist für
-  alle da, die sichergehen wollen.
+* **Speichern und Weiter stehen oben.** Im Editor und im Ablauf sitzen sie
+  im Seitenkopf, immer sichtbar. Der Baukasten sichert ohnehin von selbst;
+  „Speichern“ ist für alle da, die sichergehen wollen, und „Weiter“ sichert
+  und blättert zugleich. Am Ende jedes Schrittes steht derselbe Knopf noch
+  einmal – dort, wo man ankommt.
 * **Lange Seiten sind Schritte.** Der Newsletter-Editor ist in Inhalt,
   Angaben und „Prüfen & Senden“ geteilt. Alle drei gehören zu einem
   Formular – „Weiter“ sichert und blättert, und was Sie in einem Schritt

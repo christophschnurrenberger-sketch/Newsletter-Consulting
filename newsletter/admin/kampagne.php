@@ -392,6 +392,30 @@ $problems  = Campaigns::validate($campaign);
 $editable   = in_array($campaign['status'], [Campaigns::DRAFT, Campaigns::SCHEDULED], true);
 $recipient  = Campaigns::recipientCount($campaign);
 $useBuilder = Campaigns::usesBuilder($campaign);
+
+/* Welcher Schritt kommt nach diesem? */
+$folge     = ['inhalt' => 'angaben', 'angaben' => 'senden', 'senden' => null];
+$naechster = $folge[$schritt] ?? null;
+
+/*
+ * „Weiter" sichert und geht dann einen Schritt vor. Ist die Ausgabe nicht
+ * mehr zu ändern (versendet, laufender Versand), bleibt nur das Blättern.
+ *
+ * Der Knopf steht zweimal: oben rechts, wo er immer sichtbar ist, und unten
+ * am Ende des Schrittes, wo man ankommt. Oben liegt er außerhalb des
+ * Formulars – „form" verbindet ihn damit, und das Ziel wird über die
+ * Kennung gesetzt statt über this.form.
+ */
+$weiterKnopf = static function (string $zielSchritt, string $beschriftung, bool $imKopf = false)
+        use ($editable, $adr): string {
+    if (!$editable) {
+        return '<a class="ad-btn" href="' . Util::e($adr($zielSchritt)) . '">' . $beschriftung . '</a>';
+    }
+    return '<button type="submit" name="aktion" value="speichern" class="ad-btn"'
+         . ($imKopf ? ' form="ausgabe"' : '')
+         . ' onclick="document.getElementById(\'ausgabe\').weiter.value=\'' . $zielSchritt . '\'">'
+         . $beschriftung . '</button>';
+};
 ?>
 
 <div class="ad-page-head">
@@ -408,10 +432,16 @@ $useBuilder = Campaigns::usesBuilder($campaign);
         <?php if ((int) $stats['sent'] > 0): ?>
             <a class="ad-btn ad-btn-secondary" href="statistik.php?id=<?= $id ?>">Auswertung</a>
         <?php endif; ?>
-        <?php /* Speichern gehört dorthin, wo man es sucht: nach oben. Über das
-                 form-Attribut wirkt der Knopf auf das Formular weiter unten. */ ?>
-        <button type="submit" form="ausgabe" name="aktion" value="speichern" class="ad-btn"
+        <?php /* Speichern und Weiter gehören dorthin, wo man sie sucht: nach oben.
+                 Über das form-Attribut wirken die Knöpfe auf das Formular weiter
+                 unten. Beim letzten Schritt gibt es kein Weiter mehr – dort ist
+                 „Jetzt senden" die Hauptaktion. */ ?>
+        <button type="submit" form="ausgabe" name="aktion" value="speichern"
+                class="ad-btn <?= $naechster === null ? '' : 'ad-btn-secondary' ?>"
             <?= $editable ? '' : 'disabled' ?>>Speichern</button>
+        <?php if ($naechster !== null): ?>
+            <?= $weiterKnopf($naechster, 'Weiter: ' . Util::e($schritte[$naechster]) . ' &rarr;', true) ?>
+        <?php endif; ?>
     </div>
 </div>
 
@@ -551,20 +581,6 @@ ob_start();
 
 <?php
 $betreffKarte = (string) ob_get_clean();
-?>
-
-<?php
-/*
- * „Weiter" sichert und geht dann einen Schritt vor. Ist die Ausgabe nicht
- * mehr zu ändern (versendet, laufender Versand), bleibt nur das Blättern.
- */
-$weiterKnopf = static function (string $zielSchritt, string $beschriftung) use ($editable, $adr): string {
-    if (!$editable) {
-        return '<a class="ad-btn" href="' . Util::e($adr($zielSchritt)) . '">' . $beschriftung . '</a>';
-    }
-    return '<button type="submit" name="aktion" value="speichern" class="ad-btn"'
-         . ' onclick="this.form.weiter.value=\'' . $zielSchritt . '\'">' . $beschriftung . '</button>';
-};
 ?>
 
 <form method="post" id="ausgabe" data-warn-unsaved>

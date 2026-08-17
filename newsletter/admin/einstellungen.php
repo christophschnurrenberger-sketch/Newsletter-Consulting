@@ -155,6 +155,12 @@ $cronUrl   = Config::url('cron/send.php') . '?token=' . $cronToken;
 <!-- ------------------------------------------------------------ Absender -->
 <div class="ad-card">
     <h2>Absender &amp; Pflichtangaben</h2>
+    <?php /* Dieselben Felder gibt es je Marke. Ohne diesen Hinweis sah es aus,
+             als gäbe es zwei konkurrierende Stellen für dieselbe Angabe. */ ?>
+    <p class="ad-hint" style="margin-top:0;margin-bottom:16px;">Das ist die <strong>Grundeinstellung</strong>:
+        Sie gilt überall dort, wo eine <a href="marken.php">Marke</a> nichts Eigenes hinterlegt hat, und für
+        die Anmeldeseite. Wenn Sie mehrere Projekte verschicken, pflegen Sie Absender, Impressum und Links
+        besser je Marke – dann brauchen Sie hier nichts zu ändern.</p>
     <form method="post">
         <?= Util::csrfField() ?>
         <input type="hidden" name="aktion" value="absender">

@@ -84,6 +84,17 @@ if (Util::isPost()) {
         Util::json(['ok' => true, 'zeit' => date('H:i')]);
     }
 
+    if ($action === 'marke_zuordnen' && $id > 0) {
+        // Neuer Name schlägt die Auswahl – wer tippt, meint das auch so.
+        $wunsch = Util::post('marke_neu') !== '' ? Util::post('marke_neu') : Util::post('marke_wahl');
+        if (Templates::assignBrand($id, $wunsch)) {
+            Util::flash('Vorlage gehört jetzt zur Marke „' . Util::e(trim($wunsch)) . '".');
+        } else {
+            Util::flash('Bitte geben Sie einen Markennamen an.', 'error');
+        }
+        Util::redirect('vorlagen.php?id=' . $id . '#marke');
+    }
+
     if ($action === 'marke' && $id > 0) {
         Templates::saveBrand($id, [
             'brand_name'   => Util::post('brand_name'),
@@ -452,82 +463,74 @@ if ($neu) {
     <?php endif; ?>
 
     <!-- ---------------------------------------------------------- Marke -->
-    <?php $marke = Templates::brand($current); ?>
+    <?php
+    /*
+     * Hier standen bis zur UX-Durchsicht dieselben sieben Felder wie unter
+     * „Marken" – die Angaben ließen sich an drei Stellen ändern (Vorlage,
+     * Marke, Einstellungen), und niemand wusste, welche gilt. Jetzt sagt
+     * die Seite nur noch, zu welcher Marke die Vorlage gehört, und verweist
+     * zum Pflegen dorthin. Das Umhängen bleibt möglich, ist aber selten.
+     */
+    $marke   = Templates::brand($current);
+    $eigene  = Templates::hasOwnBrand($current);
+    $zurMarke = 'marken.php';
+    foreach (Templates::brands() as $eintrag) {
+        foreach ($eintrag['vorlagen'] as $v) {
+            if ((int) $v['id'] === (int) $current['id']) {
+                $zurMarke = 'marken.php?m=' . urlencode((string) $eintrag['schluessel']);
+                break 2;
+            }
+        }
+    }
+    ?>
     <div class="ad-card" id="marke">
         <h2 style="margin-top:0;">Marke dieser Vorlage</h2>
-        <p class="ad-hint">Dieselben Angaben stehen übersichtlicher unter <a href="marken.php">Marken</a> –
-            dort gelten sie für alle Designs einer Marke auf einmal. Hier ändern Sie sie nur für
-            <strong>diese eine Vorlage</strong>. Leere Felder verwenden automatisch die Angaben aus den
-            <a href="einstellungen.php">Einstellungen</a>. Kopfzeile und Footer übernehmen die Werte beim
-            nächsten Speichern des Newsletters.</p>
+        <p>Diese Vorlage gehört zur Marke <strong><?= Util::e((string) $marke['brand_name']) ?></strong>.
+            Absender, Impressum und die Links im Footer stehen unter <a href="marken.php">Marken</a> –
+            dort gelten sie für alle Designs dieser Marke auf einmal.</p>
+        <?php if (!$eigene): ?>
+            <p class="ad-hint">Für diese Vorlage ist noch nichts Eigenes hinterlegt; es gelten die
+                Angaben aus den <a href="einstellungen.php">Einstellungen</a>.</p>
+        <?php endif; ?>
 
-        <form method="post">
-            <?= Util::csrfField() ?>
-            <input type="hidden" name="id" value="<?= (int) $current['id'] ?>">
-            <input type="hidden" name="aktion" value="marke">
+        <div class="ad-actions">
+            <a class="ad-btn ad-btn-secondary" href="<?= Util::e($zurMarke) ?>">Marke öffnen</a>
+        </div>
 
-            <div class="ad-row">
-                <div class="ad-field">
-                    <label for="brand_name">Name der Marke <span class="ad-hint">({{marke}})</span></label>
-                    <input type="text" id="brand_name" name="brand_name" maxlength="190"
-                           value="<?= Util::e((string) $current['brand_name']) ?>"
-                           placeholder="<?= Util::e(Settings::get('brand_name')) ?>">
+        <details class="ad-klapp" style="margin-top:18px;border-top:1px solid var(--ad-border);padding-top:14px;">
+            <summary style="font-size:14px;font-weight:700;color:var(--ad-navy);">
+                Diese Vorlage einer anderen Marke zuordnen
+                <span class="ad-klapp-zeichen" aria-hidden="true"></span>
+            </summary>
+            <p class="ad-hint" style="margin-top:10px;">Nur nötig, wenn dieses Design zu einem anderen
+                Projekt gehören soll. Bei einer vorhandenen Marke übernimmt die Vorlage deren Absender
+                und Impressum; ein neuer Name legt eine weitere Marke an.</p>
+            <form method="post" class="ad-row" style="align-items:flex-end;">
+                <?= Util::csrfField() ?>
+                <input type="hidden" name="id" value="<?= (int) $current['id'] ?>">
+                <input type="hidden" name="aktion" value="marke_zuordnen">
+                <div class="ad-field" style="margin:0;">
+                    <label for="marke_wahl">Vorhandene Marke</label>
+                    <select id="marke_wahl" name="marke_wahl">
+                        <?php foreach (Templates::brands() as $eintrag): ?>
+                            <?php if ($eintrag['template'] === null) { continue; } ?>
+                            <option value="<?= Util::e((string) $eintrag['name']) ?>"
+                                <?= strcasecmp((string) $eintrag['name'], (string) $marke['brand_name']) === 0 ? 'selected' : '' ?>>
+                                <?= Util::e((string) $eintrag['name']) ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
                 </div>
-                <div class="ad-field">
-                    <label for="brand_website_url">Website <span class="ad-hint">({{website}})</span></label>
-                    <input type="url" id="brand_website_url" name="brand_website_url" maxlength="190"
-                           value="<?= Util::e((string) $current['website_url']) ?>"
-                           placeholder="<?= Util::e(Settings::get('website_url')) ?>">
+                <div class="ad-field" style="margin:0;">
+                    <label for="marke_neu">… oder neuer Markenname</label>
+                    <input type="text" id="marke_neu" name="marke_neu" maxlength="190" placeholder="z. B. Fairway54">
                 </div>
-            </div>
-
-            <div class="ad-field">
-                <label for="brand_imprint">Impressum im Footer <span class="ad-hint">({{impressum}} – Pflichtangaben)</span></label>
-                <textarea id="brand_imprint" name="brand_imprint" rows="3"
-                          placeholder="<?= Util::e(Settings::get('imprint')) ?>"><?= Util::e((string) $current['imprint']) ?></textarea>
-            </div>
-
-            <div class="ad-row">
-                <div class="ad-field">
-                    <label for="brand_imprint_url">Impressum-Seite <span class="ad-hint">({{impressum_url}})</span></label>
-                    <input type="url" id="brand_imprint_url" name="brand_imprint_url" maxlength="190"
-                           value="<?= Util::e((string) $current['imprint_url']) ?>"
-                           placeholder="<?= Util::e(Settings::get('imprint_url')) ?>">
+                <div class="ad-field" style="margin:0;flex:0;">
+                    <label>&nbsp;</label>
+                    <button type="submit" class="ad-btn ad-btn-secondary">Zuordnen</button>
                 </div>
-                <div class="ad-field">
-                    <label for="brand_privacy_url">Datenschutz-Seite <span class="ad-hint">({{datenschutz_url}})</span></label>
-                    <input type="url" id="brand_privacy_url" name="brand_privacy_url" maxlength="190"
-                           value="<?= Util::e((string) $current['privacy_url']) ?>"
-                           placeholder="<?= Util::e(Settings::get('privacy_url')) ?>">
-                </div>
-            </div>
-
-            <div class="ad-row">
-                <div class="ad-field">
-                    <label for="brand_sender_name">Absendername</label>
-                    <input type="text" id="brand_sender_name" name="brand_sender_name" maxlength="190"
-                           value="<?= Util::e((string) $current['sender_name']) ?>"
-                           placeholder="<?= Util::e(Settings::get('sender_name')) ?>">
-                </div>
-                <div class="ad-field">
-                    <label for="brand_sender_email">Absenderadresse</label>
-                    <input type="email" id="brand_sender_email" name="brand_sender_email" maxlength="190"
-                           value="<?= Util::e((string) $current['sender_email']) ?>"
-                           placeholder="<?= Util::e(Settings::get('sender_email')) ?>">
-                    <p class="ad-hint">Gilt für Automationen mit dieser Vorlage und als Vorschlag für neue
-                        Newsletter. Die Adresse muss zu einer Domain gehören, für die Ihr Versandweg senden darf.</p>
-                </div>
-            </div>
-
-            <div class="ad-actions">
-                <button type="submit" class="ad-btn">Marke speichern</button>
-                <?php if (Templates::hasOwnBrand($current)): ?>
-                    <span class="ad-pill ad-pill-blue">eigene Marke: <?= Util::e($marke['brand_name']) ?></span>
-                <?php else: ?>
-                    <span class="ad-hint">Zurzeit gelten die Einstellungen (<?= Util::e($marke['brand_name']) ?>).</span>
-                <?php endif; ?>
-            </div>
-        </form>
+            </form>
+        </details>
     </div>
 <?php endif; ?>
 

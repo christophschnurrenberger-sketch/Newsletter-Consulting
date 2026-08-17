@@ -346,23 +346,24 @@ verschicken – jedes mit eigenem Namen, eigener Website, eigenem Impressum und
 eigener Absenderadresse. Das spart eine zweite Datenbank, einen zweiten
 Cron-Job und doppelte Updates.
 
-**Der Reiter „Marken" ist die Schaltzentrale.** Dort steht jede Marke mit
-ihrem Aussehen, ihren Angaben und der Zeile, wo sie überall benutzt wird.
+**Der Reiter „Marken" ist die einzige Stelle, an der Absender, Kopfzeilenname
+und Footer gepflegt werden.** Oben stehen die vorhandenen Marken als Reiter,
+darunter genau eine davon: links ihr Aussehen, rechts ihre Angaben in drei
+nummerierten Gruppen. Dieselben Nummern stehen in der Zeichnung im Kasten
+„Wozu eine Marke?" – so ist zu sehen, wo jede Angabe in der Mail landet.
+
+| Gruppe | Felder | Wo es erscheint |
+|---|---|---|
+| **1 Absender im Postfach** | Absendername, Absenderadresse | die Zeile, die der Empfänger vor dem Öffnen sieht |
+| **2 Name in der Kopfzeile** | Name der Marke | oben in der Mail, außerdem als `{{marke}}` |
+| **3 Footer und Pflichtangaben** | Impressum, Website, Impressum-Seite, Datenschutz-Seite | das Ende jeder Mail (`{{impressum}}`, Footer-Links) |
 
 Pro Projekt brauchen Sie zwei Dinge:
 
-1. **Eine Marke** (Marken → „Neue Marke"): Name, Website, Impressum,
+1. **Eine Marke** (Marken → „+ Neue Marke"): Name, Website, Impressum,
    Absender – und die Angabe, womit das Design anfangen soll (leer, eine
    mitgelieferte Vorlage oder eine Kopie einer bestehenden Marke). Das
    Design bearbeiten Sie danach über „Aussehen bearbeiten".
-
-| Feld | Wirkung |
-|---|---|
-| Name der Marke | erscheint in der Kopfzeile und als `{{marke}}` |
-| Website | Footer-Zeile „Sie erhalten diese E-Mail, weil Sie sich unter … angemeldet haben" |
-| Impressum im Footer | die Pflichtangaben dieses Projekts (`{{impressum}}`) |
-| Impressum-Seite / Datenschutz-Seite | die Links im Footer |
-| Absendername / Absenderadresse | Absender für Automationen dieser Marke und Vorschlag für neue Newsletter |
 
 2. **Eine Liste** (Listen → „Neue Liste"), damit die Empfänger getrennt
    bleiben. Wer sich für Projekt A angemeldet hat, darf keine Post von
@@ -372,7 +373,10 @@ Pro Projekt brauchen Sie zwei Dinge:
    Begrüßungs- und Abmeldemail dieser Liste, samt Impressum.
 
 **Leere Felder greifen auf die Einstellungen zurück.** Die Hauptmarke braucht
-also nichts einzutragen – für sie bleibt alles wie bisher.
+also nichts einzutragen – für sie bleibt alles wie bisher. Der Abschnitt
+„Absender & Pflichtangaben" unter **Einstellungen** ist genau das: die
+Grundeinstellung für alles, was keine eigene Marke hat, und für die
+Anmeldeseite.
 
 **Wo die Marke jeweils gewählt wird:** beim Newsletter rechts unter „Marke &
 Design", bei der Automation in den Angaben der Strecke, bei der Liste in der
@@ -381,6 +385,12 @@ Spalte „Marke". Beim Anlegen fragt der Assistent ohnehin danach.
 Technisch hängt eine Marke an einer Vorlage – der Reiter **Vorlagen** bleibt
 deshalb für das Aussehen zuständig. Hat eine Marke mehrere Designs, gelten die
 Angaben unter „Marken" für alle davon.
+
+Unter **Vorlagen** steht deshalb nur noch, zu welcher Marke die Vorlage gehört,
+mit einem Knopf dorthin. Soll ein Design zu einem anderen Projekt gehören,
+klappen Sie „Diese Vorlage einer anderen Marke zuordnen" auf: Bei einer
+vorhandenen Marke übernimmt die Vorlage deren Absender und Impressum, ein neuer
+Name legt eine weitere Marke an.
 
 **Das Aussehen einer Marke lässt sich jederzeit austauschen:** Vorlagen →
 Abschnitt „Aussehen wechseln" (oder Marken → „Anderes Design"). Dort stehen die

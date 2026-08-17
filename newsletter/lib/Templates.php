@@ -538,6 +538,51 @@ final class Templates
     }
 
     /**
+     * Eine Vorlage einer Marke zuordnen.
+     *
+     * Gibt es die Marke schon, übernimmt die Vorlage deren Angaben komplett –
+     * sonst stünde unter demselben Markennamen ein anderes Impressum, und
+     * niemand wüsste, welches gilt. Ist der Name neu, bleibt alles Übrige
+     * stehen und nur der Name wechselt.
+     *
+     * @return bool false, wenn kein Name angegeben wurde
+     */
+    public static function assignBrand(int $id, string $markenName): bool
+    {
+        $markenName = trim($markenName);
+        if ($markenName === '') {
+            return false;
+        }
+
+        $vorlage = self::byId($id);
+        if ($vorlage === null) {
+            return false;
+        }
+
+        $werte = [];
+        foreach (array_keys(self::BRAND_FIELDS) as $spalte) {
+            $werte[$spalte] = (string) ($vorlage[$spalte] ?? '');
+        }
+
+        foreach (self::brands() as $marke) {
+            if (strcasecmp((string) $marke['name'], $markenName) !== 0 || $marke['template'] === null) {
+                continue;
+            }
+            if ((int) $marke['template']['id'] === $id) {
+                break;   // schon dort – dann bleibt alles, wie es ist
+            }
+            foreach (array_keys(self::BRAND_FIELDS) as $spalte) {
+                $werte[$spalte] = (string) ($marke['template'][$spalte] ?? '');
+            }
+            break;
+        }
+
+        $werte['brand_name'] = $markenName;
+        self::saveBrand($id, $werte);
+        return true;
+    }
+
+    /**
      * Wo eine Marke überall benutzt wird – damit vor dem Löschen klar ist,
      * was daran hängt.
      *

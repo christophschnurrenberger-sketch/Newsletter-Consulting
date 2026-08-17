@@ -647,6 +647,13 @@ newsletter/
 | `bootstrap.php` | lädt Klassen, Konfiguration, Datenbank |
 | `Config.php` / `Settings.php` | Konfigurationsdatei bzw. Einstellungen aus der Datenbank |
 | `DB.php` / `Schema.php` | Datenbankzugriff (SQLite/MySQL) und Tabellen |
+
+> **Beim Ändern von SQL beachten:** Das System läuft auf **beiden**
+> Datenbanken. Abfragen dürfen deshalb nichts benutzen, das nur eine von
+> beiden kennt – etwa `COLLATE NOCASE` oder `PRAGMA` (nur SQLite). Für
+> eine Sortierung ohne Rücksicht auf Groß- und Kleinschreibung nimmt man
+> `ORDER BY LOWER(spalte)`; das versteht jede der beiden.
+
 | `Mailer.php` | eigener SMTP-Client, MIME-Aufbau, mail()- und Testmodus |
 | `Queue.php` | Warteschlange, Worker, Wiederholungen, Limits |
 | `Campaigns.php` | Ausgaben: speichern, prüfen, kompilieren, starten, auswerten |

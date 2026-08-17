@@ -16,8 +16,14 @@ final class Snippets
     /** @return array<int,array<string,mixed>> */
     public static function all(): array
     {
+        /*
+         * LOWER() statt "COLLATE NOCASE": Das kennt nur SQLite, auf MySQL
+         * bricht die Abfrage ab ("Unknown collation"). LOWER() sortiert auf
+         * beiden Datenbanken gleich – und Groß-/Kleinschreibung ist beim
+         * Sortieren einer Namensliste ohnehin nicht gemeint.
+         */
         return DB::all('SELECT id, name, kind, created_by, created_at, used_at
-                        FROM snippets ORDER BY name COLLATE NOCASE');
+                        FROM snippets ORDER BY LOWER(name)');
     }
 
     public static function byId(int $id): ?array

@@ -1,5 +1,7 @@
 User-agent: *
 Allow: /
-Disallow: /kontakt.php
+Disallow: /kontakt-senden.php
+Disallow: /partials/
+Disallow: /tools/
 
 Sitemap: https://www.golf-newsletter.de/sitemap.xml

@@ -1,59 +1,24 @@
-<!DOCTYPE html>
-<html lang="de">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Datenschutzerklärung von AcumenMail Golf: Informationen zur Verarbeitung personenbezogener Daten nach DSGVO, u. a. beim Kontaktformular und Hosting.">
-    <meta name="robots" content="index, follow">
-    <meta name="theme-color" content="#143D28">
-    <meta name="referrer" content="strict-origin-when-cross-origin">
-    <title>Datenschutzerklärung | AcumenMail Golf</title>
-    <link rel="canonical" href="https://www.golf-newsletter.de/Datenschutz.html">
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='15' fill='%231E6B45'/><text x='16' y='22' font-family='Georgia,serif' font-size='17' font-weight='700' fill='white' text-anchor='middle'>A</text></svg>">
-    <link rel="stylesheet" href="assets/site.css">
-</head>
-<body class="font-inter text-dark-neutral">
+<?php
+$page = [
+    'title'       => 'Datenschutz',
+    'description' => 'Datenschutzerklärung von AcumenMail Golf: Informationen zur Verarbeitung personenbezogener Daten nach DSGVO, u. a. beim Kontaktformular und Hosting.',
+    'section'     => '',
+    'path'        => 'datenschutz.php',
+    'crumbs'      => [['Datenschutz', null]],
+    'cta'         => false,
+    'hero'        => [
+        'kicker' => 'Rechtliches',
+        'h1'     => 'Datenschutzerklärung',
+        'lead'   => 'Informationen zur Verarbeitung personenbezogener Daten nach der DSGVO · Stand: Juli 2026',
+    ],
+];
+include __DIR__ . '/partials/header.php';
+?>
 
-    <!-- Header / Navigation -->
-    <header id="header" class="sticky-header">
-        <div class="container mx-auto flex justify-between items-center px-4 header-inner">
-            <a href="index.html" aria-label="AcumenMail Golf – Startseite" class="site-brand">
-                <span class="site-brand-mark" aria-hidden="true">A</span>
-                <span class="site-brand-text">
-                    <span class="site-brand-name">AcumenMail <span class="brand-accent">Golf</span></span>
-                    <span class="site-brand-line">Newsletter für Golfclubs</span>
-                </span>
-            </a>
-
-            <nav id="main-nav" aria-label="Hauptnavigation" class="hidden md:flex header-nav">
-                <a href="index.html#leistungen" class="header-nav-link">Leistungen</a>
-                <a href="index.html#tool" class="header-nav-link">Das Tool</a>
-                <a href="index.html#automationen" class="header-nav-link">Automationen</a>
-                <a href="index.html#pakete" class="header-nav-link">Pakete</a>
-                <a href="index.html#faq" class="header-nav-link">FAQ</a>
-                <a href="index.html#kontakt" class="btn-primary-custom header-nav-cta">Club-Analyse anfragen</a>
-            </nav>
-
-            <button id="mobile-menu-button" class="mobile-menu-toggle" type="button" aria-label="Menü öffnen" aria-controls="main-nav" aria-expanded="false">
-                <i data-icon="menu" class="lucide"></i>
-            </button>
-        </div>
-    </header>
-
-    <main id="main-content">
-        <section class="legal-hero">
-            <div class="container mx-auto px-4">
-                <span class="section-kicker">Rechtliches</span>
-                <h1 class="legal-title">Datenschutzerklärung</h1>
-                <p class="legal-updated">Informationen zur Verarbeitung personenbezogener Daten nach der DSGVO · Stand: Juli 2026</p>
-            </div>
-        </section>
-
-        <section class="legal-body">
-            <div class="container mx-auto px-4">
-                <div class="legal-content">
-
-                    <nav class="legal-toc" aria-label="Inhaltsverzeichnis">
+<section class="section legal-body">
+    <div class="container">
+        <div class="legal-content">
+<nav class="legal-toc" aria-label="Inhaltsverzeichnis">
                         <h2>Inhalt</h2>
                         <ol>
                             <li><a href="#verantwortlicher">Verantwortliche Stelle</a></li>
@@ -180,53 +145,8 @@
                         <h2>9. Änderungen dieser Datenschutzerklärung</h2>
                         <p>Wir behalten uns vor, diese Datenschutzerklärung anzupassen, damit sie stets den aktuellen rechtlichen Anforderungen entspricht oder um Änderungen unserer Leistungen in der Datenschutzerklärung umzusetzen, z. B. bei der Einführung neuer Dienste. Für Ihren erneuten Besuch gilt dann die neue Datenschutzerklärung.</p>
                     </section>
-
-                </div>
-            </div>
-        </section>
-    </main>
-
-    <!-- Footer -->
-    <footer class="site-footer">
-        <div class="container mx-auto px-4">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-8 md:gap-12 mb-8 footer-grid">
-                <div class="footer-section md:col-span-2">
-                    <a href="index.html" class="site-brand text-color-text-light mb-4">
-                        <span class="site-brand-mark" aria-hidden="true">A</span>
-                        <span class="site-brand-text">
-                            <span class="site-brand-name">AcumenMail Golf</span>
-                            <span class="site-brand-line">Newsletter für Golfclubs</span>
-                        </span>
-                    </a>
-                    <p class="footer-brand-copy">Mitgliederkommunikation für Golfclubs, Golfanlagen und Golfschulen – inklusive Newsletter-Tool auf dem Server des Clubs.</p>
-                </div>
-
-                <div class="footer-section">
-                    <h4 class="footer-eyebrow">Navigation</h4>
-                    <nav class="footer-link-list" aria-label="Footer Navigation">
-                        <a href="index.html#situation">Ausgangslage</a>
-                        <a href="index.html#leistungen">Leistungen</a>
-                        <a href="index.html#pakete">Pakete</a>
-                        <a href="index.html#ablauf">Vorgehen</a>
-                        <a href="index.html#faq">FAQ</a>
-                    </nav>
-                </div>
-
-                <div class="footer-section">
-                    <h4 class="footer-eyebrow">Rechtliches</h4>
-                    <nav class="footer-link-list" aria-label="Rechtliche Links">
-                        <a href="Impressum.html">Impressum</a>
-                        <a href="Datenschutz.html">Datenschutz</a>
-                    </nav>
-                </div>
-            </div>
-            <div class="pt-8 border-t border-gray-700 footer-bottom">
-                <p class="text-sm">&copy; <span id="copyright-year"></span> AcumenMail Golf. Alle Rechte vorbehalten.</p>
-                <p class="text-sm">Newsletter-Marketing für Golfclubs.</p>
-            </div>
         </div>
-    </footer>
+    </div>
+</section>
 
-    <script src="assets/site.js" defer></script>
-</body>
-</html>
+<?php include __DIR__ . '/partials/footer.php'; ?>

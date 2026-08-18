@@ -37,6 +37,7 @@
         mail: '<rect width="20" height="16" x="2" y="4" rx="2"></rect><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path>',
         'mouse-pointer': '<path d="M4.04 4.69a.5.5 0 0 1 .65-.65l16 6.5a.5.5 0 0 1-.06.95l-6.13 1.58a2 2 0 0 0-1.43 1.43l-1.58 6.13a.5.5 0 0 1-.95.06z"></path>',
         menu: '<line x1="4" x2="20" y1="12" y2="12"></line><line x1="4" x2="20" y1="6" y2="6"></line><line x1="4" x2="20" y1="18" y2="18"></line>',
+        phone: '<path d="M13.83 19.17a15.9 15.9 0 0 1-6.9-6.9l1.85-1.85a2 2 0 0 0 .5-2L8.4 4.8A2 2 0 0 0 6.55 3.6H4.2A2 2 0 0 0 2.2 5.75 17.8 17.8 0 0 0 18.25 21.8a2 2 0 0 0 2.15-2v-2.35a2 2 0 0 0-1.2-1.85l-3.62-1.55a2 2 0 0 0-2 .5z"></path>',
         pause: '<rect x="14" y="4" width="4" height="16" rx="1"></rect><rect x="6" y="4" width="4" height="16" rx="1"></rect>',
         pen: '<path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"></path>',
         play: '<polygon points="6 3 20 12 6 21 6 3"></polygon>',
@@ -81,20 +82,116 @@
         }
     }
     renderIcons();
-
     /* ------------------------------------------------------------------ *
-     * Kopfzeile und Navigation
+     * Kopfzeile, Hauptmenü und Mega-Menü
+     *
+     * Ein Menüpunkt mit Unterseiten ist ein <button aria-expanded>, kein Link –
+     * so lässt er sich mit Tastatur und Screenreader bedienen. Auf breiten
+     * Bildschirmen öffnet zusätzlich das Überfahren mit der Maus, auf schmalen
+     * klappt derselbe Knopf die Liste als Akkordeon auf.
      * ------------------------------------------------------------------ */
 
     var header = document.getElementById('header');
     var menuButton = document.getElementById('mobile-menu-button');
+    var backdrop = document.querySelector('.mega-backdrop');
+    var megaItems = document.querySelectorAll('.nav-item.has-mega');
+    var hoverTimer = null;
 
-    if (menuButton) {
-        menuButton.addEventListener('click', function () {
-            var open = document.body.classList.toggle('nav-open');
-            menuButton.setAttribute('aria-expanded', String(open));
-            menuButton.setAttribute('aria-label', open ? 'Menü schließen' : 'Menü öffnen');
-        });
+    function isDesktopNav() {
+        return window.matchMedia('(min-width: 981px)').matches;
+    }
+
+    function setMega(item, open) {
+        var mega = item.querySelector('.mega');
+        var button = item.querySelector('.nav-toggle');
+        if (!mega || !button) { return; }
+
+        button.setAttribute('aria-expanded', String(open));
+
+        if (open) {
+            mega.hidden = false;
+            /* Erst im nächsten Bild die Klasse setzen, sonst gibt es keinen
+               Übergang – der Wechsel von display:none springt sonst hart. */
+            window.requestAnimationFrame(function () { item.classList.add('is-open'); });
+        } else {
+            item.classList.remove('is-open');
+            if (isDesktopNav()) {
+                window.setTimeout(function () {
+                    if (!item.classList.contains('is-open')) { mega.hidden = true; }
+                }, 200);
+            } else {
+                mega.hidden = true;
+            }
+        }
+    }
+
+    function closeAllMega(except) {
+        for (var i = 0; i < megaItems.length; i++) {
+            if (megaItems[i] !== except && megaItems[i].classList.contains('is-open')) {
+                setMega(megaItems[i], false);
+            }
+        }
+        if (backdrop) {
+            backdrop.hidden = !(except && isDesktopNav());
+        }
+    }
+
+    for (var mi = 0; mi < megaItems.length; mi++) {
+        (function (item) {
+            var button = item.querySelector('.nav-toggle');
+            if (!button) { return; }
+
+            button.addEventListener('click', function () {
+                var open = item.classList.contains('is-open');
+                if (open) {
+                    setMega(item, false);
+                    if (backdrop) { backdrop.hidden = true; }
+                } else {
+                    closeAllMega(item);
+                    setMega(item, true);
+                }
+            });
+
+            /* Maus: öffnen beim Überfahren, mit kurzer Nachlaufzeit beim
+               Verlassen – sonst klappt das Menü schon zu, wenn der Zeiger
+               einmal kurz die Lücke streift. */
+            item.addEventListener('mouseenter', function () {
+                if (!isDesktopNav()) { return; }
+                window.clearTimeout(hoverTimer);
+                closeAllMega(item);
+                setMega(item, true);
+            });
+            item.addEventListener('mouseleave', function () {
+                if (!isDesktopNav()) { return; }
+                hoverTimer = window.setTimeout(function () {
+                    setMega(item, false);
+                    if (backdrop) { backdrop.hidden = true; }
+                }, 180);
+            });
+
+            /* Tastatur: verlässt der Fokus den Menüpunkt, schließt er. */
+            item.addEventListener('focusout', function (event) {
+                if (!isDesktopNav()) { return; }
+                if (item.contains(event.relatedTarget)) { return; }
+                setMega(item, false);
+                if (backdrop) { backdrop.hidden = true; }
+            });
+        }(megaItems[mi]));
+    }
+
+    document.addEventListener('keydown', function (event) {
+        if (event.key !== 'Escape') { return; }
+        closeAllMega(null);
+        if (document.body.classList.contains('nav-open')) { closeMenu(); }
+    });
+
+    document.addEventListener('click', function (event) {
+        if (header && header.contains(event.target)) { return; }
+        closeAllMega(null);
+    });
+
+    if (backdrop) {
+        backdrop.addEventListener('click', function () { closeAllMega(null); });
     }
 
     function closeMenu() {
@@ -103,25 +200,32 @@
             menuButton.setAttribute('aria-expanded', 'false');
             menuButton.setAttribute('aria-label', 'Menü öffnen');
         }
+        closeAllMega(null);
     }
 
-    /* Header beim Scrollen absetzen und beim Herunterscrollen wegblenden. */
-    var lastScroll = 0;
+    if (menuButton) {
+        menuButton.addEventListener('click', function () {
+            var open = document.body.classList.toggle('nav-open');
+            menuButton.setAttribute('aria-expanded', String(open));
+            menuButton.setAttribute('aria-label', open ? 'Menü schließen' : 'Menü öffnen');
+            if (!open) { closeAllMega(null); }
+        });
+    }
+
+    /* Wechselt die Breite über den Umbruchpunkt, passt der Zustand nicht mehr. */
+    if (window.matchMedia) {
+        window.matchMedia('(min-width: 981px)').addEventListener('change', function () {
+            closeMenu();
+        });
+    }
+
     window.addEventListener('scroll', function () {
         if (!header) { return; }
         var current = window.pageYOffset || document.documentElement.scrollTop;
-
-        header.classList.toggle('scrolled', current > 40);
-
-        if (current > 160 && !document.body.classList.contains('nav-open')) {
-            header.style.transform = current > lastScroll ? 'translateY(-100%)' : 'translateY(0)';
-        } else {
-            header.style.transform = 'translateY(0)';
-        }
-        lastScroll = current <= 0 ? 0 : current;
+        header.classList.toggle('scrolled', current > 10);
     }, { passive: true });
 
-    /* Anker-Links: Menü schließen, Sprungziel unter den Header legen. */
+    /* Anker auf derselben Seite: Menü schließen und weich scrollen. */
     var anchors = document.querySelectorAll('a[href^="#"]');
     for (var a = 0; a < anchors.length; a++) {
         anchors[a].addEventListener('click', function (event) {
@@ -134,10 +238,11 @@
             closeMenu();
 
             var offset = header ? header.offsetHeight : 0;
-            var top = target.getBoundingClientRect().top + window.pageYOffset - offset - 8;
+            var top = target.getBoundingClientRect().top + window.pageYOffset - offset - 12;
             window.scrollTo({ top: top, behavior: 'smooth' });
         });
     }
+
 
     /* ------------------------------------------------------------------ *
      * Einblenden beim Scrollen

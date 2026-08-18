@@ -17,7 +17,7 @@ if (!defined('NL_ROOT')) {
  * Systemcheck – so lässt sich sofort erkennen, welcher Stand auf dem
  * Server liegt.
  */
-define('NL_VERSION', '1.20.2 (Zurück oben, keine unnötige Rückfrage)');
+define('NL_VERSION', '1.21.0 (Instanzen-Übersicht und Vereinsdesign Ottobeuren)');
 
 mb_internal_encoding('UTF-8');
 date_default_timezone_set('Europe/Berlin');
@@ -40,6 +40,7 @@ foreach ([
     'Config', 'Util', 'DB', 'Schema', 'Settings', 'Log', 'Mailer', 'Urls',
     'Lists', 'Events', 'Subscribers', 'Templates', 'Blocks', 'Renderer', 'Campaigns',
     'Queue', 'Flow', 'Automations', 'SystemMails', 'Auth', 'Tracking', 'Bounces', 'Ai', 'Snippets',
+    'Instanzen',
 ] as $class) {
     require_once NL_ROOT . '/lib/' . $class . '.php';
 }

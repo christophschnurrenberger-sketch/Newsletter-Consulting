@@ -551,4 +551,19 @@ $cronUrl   = Config::url('cron/send.php') . '?token=' . $cronToken;
     </div>
 </div>
 
+<!-- --------------------------------------------------------- Instanzen -->
+<div class="ad-card" id="instanzen">
+    <h2>Weitere Installationen</h2>
+    <p>Betreiben Sie mehrere Installationen – etwa eine je Kunde –, können Sie sie hier eintragen
+        und dann auf einer Seite nebeneinander sehen: Empfänger, Newsletter, Warteschlange und
+        Cron-Lauf. Jede Installation bleibt dabei für sich; abgefragt wird nur, nicht geändert.</p>
+    <?php $andere = Instanzen::all(); ?>
+    <p class="ad-hint"><?= $andere === []
+        ? 'Zurzeit ist keine weitere Installation eingetragen.'
+        : Util::num(count($andere)) . ' weitere Installation' . (count($andere) === 1 ? '' : 'en') . ' eingetragen.' ?></p>
+    <div class="ad-actions">
+        <a class="ad-btn <?= $andere === [] ? 'ad-btn-secondary' : '' ?>" href="instanzen.php">Zur Instanzen-Übersicht</a>
+    </div>
+</div>
+
 <?php require __DIR__ . '/partials/footer.php';

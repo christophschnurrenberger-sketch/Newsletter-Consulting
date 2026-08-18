@@ -44,6 +44,7 @@ Newsletter schreiben, Testmail verschicken, senden.
 | Textassistent | Optional: Vorschläge per Klick (umformulieren, kürzen, korrigieren, Betreffzeilen) – nur mit eigenem Schlüssel, ab Werk aus |
 | Zugänge | Mehrere Benutzer mit drei Rollen (Administrator, Redakteur, Betrachter), Sperren statt Löschen |
 | Mehrere Marken | Eine Installation für mehrere Websites: Vorlage mit eigenem Namen, Impressum und Absender |
+| Mehrere Installationen | Eine Installation je Kunde – Reiter **Instanzen** zeigt alle nebeneinander (Empfänger, Warteschlange, Cron-Lauf, Fassung) |
 | Zustellbarkeit | List-Unsubscribe (auch One-Click nach RFC 8058), Bounce-Auswertung per POP3, Sperrliste |
 | Recht | Double-Opt-in mit Protokoll, Abmeldelink in jeder Mail, Impressum im Footer, Selbstauskunft und Löschung für Empfänger |
 
@@ -107,6 +108,14 @@ springen, gespeichert wird dabei automatisch:
 Der dritte Reiter trägt die Ampel: Solange etwas fehlt (kein Betreff, keine
 Empfänger), steht dort „n offen", der Grund ist im Schritt selbst genannt und
 „Jetzt senden" bleibt gesperrt. Ist alles beisammen, steht dort „bereit".
+
+**Mitgeliefert sind zwei Vereins-/Markendesigns** – Fairway54 und Golfclub
+Ottobeuren –, jeweils als Baukasten-Fassung (weiterbaubar) und als HTML-Rahmen.
+Sie liegen im Ordner `vorlagen/` und stehen unter **Vorlagen → „+ Neue Vorlage“
+→ Fertiges Design übernehmen** sowie beim Anlegen eines Newsletters als Marke
+zur Wahl. Wer ein eigenes Design braucht, kopiert eine der Dateien und passt
+Farben, Wortmarke und Footer an; die Datei taucht danach von selbst in der
+Auswahl auf.
 
 **Kopfzeile und Footer sieht man beim Schreiben.** Über und unter der
 Arbeitsfläche steht die echte Kopfzeile bzw. der echte Footer der gewählten
@@ -505,6 +514,69 @@ jeweiligen Schrittes.
 
 ---
 
+## 6a. Eine eigene Installation je Kunde
+
+Marken (Abschnitt 6) reichen, solange alles Ihnen gehört. Sobald ein **Kunde**
+selbst in die Verwaltung soll, ist die zweite Installation die sauberere
+Trennung: eigener Ordner, eigene Datenbank, eigene Zugänge, eigene Empfänger.
+Niemand sieht die Daten der anderen, und ein Fehlgriff bleibt lokal.
+
+### Anlegen
+
+1. Den Ordner `newsletter/` ein zweites Mal auf den Webspace laden, z. B. nach
+   `/newsletter-kunde`.
+2. Dort `install.php` aufrufen: eigene Datenbank, eigener Administrator.
+3. `install.php` löschen.
+4. Eigenen Cron-Job für diese Installation einrichten (Abschnitt 7) – jede
+   Installation braucht ihren eigenen.
+
+**Schneller geht es mit dem Werkzeug** (auf der Kommandozeile, z. B. per SSH):
+
+```
+php werkzeuge/demo-einrichten.php \
+    --url=https://www.kunde.de/newsletter \
+    --marke="Golfclub Ottobeuren" \
+    --vorlage=golfclub-ottobeuren \
+    --admin=vorstand@kunde.de:EinLangesPasswort
+```
+
+Das legt – falls noch keine `config.php` da ist – eine SQLite-Installation an
+und füllt sie mit vorzeigbarem Bestand: Marke, drei Listen, 15 Empfänger, ein
+versendeter Newsletter samt Zahlen, ein Entwurf, eine aktive Willkommensstrecke
+und zwei eigene Bausteine. Danach ist jede Seite gefüllt, statt überall „noch
+nichts da“ zu zeigen. Für MySQL richten Sie wie gewohnt über `install.php` ein
+und rufen das Werkzeug danach auf. Es läuft **nur auf der Kommandozeile** und
+weigert sich, eine Installation zu füllen, in der schon Empfänger stehen
+(`--auch-wenn-belegt` überschreibt das).
+
+### Alle Installationen auf einer Seite
+
+Unter **Instanzen** (nur für Administratoren) stehen alle Installationen
+nebeneinander: aktive Empfänger, Newsletter, Warteschlange, Listen und
+Automationen, dazu der letzte Cron-Lauf (grün / gelb / rot) und die Fassung.
+Läuft eine ältere Fassung als hier, wird das vermerkt.
+
+Eintragen brauchen Sie zwei Angaben aus der anderen Installation:
+
+| Angabe | Wo sie steht |
+|---|---|
+| Adresse | der Ordner, in dem `admin/` liegt, z. B. `https://www.kunde.de/newsletter` |
+| `cron_token` | in deren `config.php` – derselbe Schlüssel, mit dem dort schon der Cron-Job aufgerufen wird |
+
+Abgefragt wird über `status.php` der jeweiligen Installation. Diese Datei gibt
+**nur Zahlen** heraus – keine Adressen, keine Namen, keine Betreffzeilen – und
+auch das nur gegen den Schlüssel; ohne ihn antwortet sie mit 403. Geändert wird
+über diesen Weg nichts: Die Übersicht schaut nach, mehr nicht.
+
+Ist eine Installation nicht erreichbar oder stimmt der Schlüssel nicht, steht
+das an ihrer Karte; die übrigen Karten bleiben davon unberührt.
+
+> Der Programmcode ist in allen Installationen derselbe. Ein Update spielen Sie
+> deshalb in jede einzeln ein – die Instanzen-Übersicht zeigt Ihnen, wo noch
+> eine ältere Fassung liegt.
+
+---
+
 ## 7. Cron-Job einrichten (wichtig!)
 
 Der Versand läuft **nicht** beim Klick auf „Senden“, sondern im Hintergrund.
@@ -706,9 +778,13 @@ newsletter/
 │   ├── versand.php          Warteschlange steuern
 │   ├── protokoll.php        Ereignisse, Rückläufer, Sperrliste
 │   ├── benutzer.php         Zugänge, Rollen, eigenes Passwort
+│   ├── instanzen.php        alle Installationen nebeneinander
 │   └── einstellungen.php    Absender, SMTP, Tempo, Texte
 │
+├── status.php               Kurzbericht (nur mit cron_token) für die Instanzen-Übersicht
 ├── pruefsummen.txt          Prüfliste für den Systemcheck (mit hochladen)
+├── werkzeuge/
+│   └── demo-einrichten.php  füllt eine frische Installation (nur Kommandozeile)
 ├── cron/
 │   ├── send.php             Versand-Worker (alle 5 Minuten)
 │   ├── bounces.php          Rücklaufpostfach (stündlich)
@@ -717,6 +793,8 @@ newsletter/
 │
 ├── uploads/                 hochgeladene Bilder für den Baukasten
 ├── vorlagen/                fertige Vorlagen zum Übernehmen (.html oder .json)
+│                            – Fairway54 und Golfclub Ottobeuren, je als
+│                              Baukasten-Fassung und als HTML-Rahmen
 ├── lib/                     Programmkern (siehe unten)
 └── data/                    Datenbank, Sperrdatei, Testpostausgang (gesperrt)
 ```

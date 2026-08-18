@@ -1,0 +1,59 @@
+{
+    "vorlage": "Golfclub Ottobeuren (Baukasten)",
+    "beschreibung": "Vereinsdesign zum Weiterbauen: dunkles Grün, goldener Akzent, Serifen-Wortmarke. Kopfzeile, Inhalt und Footer sind Bausteine.",
+    "marke": "Golfclub Ottobeuren",
+    "website": "https://www.golfclub-ottobeuren.de",
+    "blocks": {
+        "meta": {
+            "bg": "#F3F1E7",
+            "cardBg": "#FFFFFF",
+            "width": 620,
+            "font": "Arial, Helvetica, sans-serif",
+            "textColor": "#3A3D35",
+            "headColor": "#123726",
+            "linkColor": "#2C6B45",
+            "radius": 2,
+            "padding": 40,
+            "showHeader": 1,
+            "headerBg": "#123726",
+            "headerText": "#FFFFFF",
+            "logoText": "G",
+            "showFooter": 1,
+            "headerStyle": "wortmarke",
+            "headFont": "Georgia, \"Times New Roman\", serif",
+            "wordmark": "Golfclub",
+            "wordmarkAccent": "Ottobeuren",
+            "accentColor": "#B08A3E",
+            "claim": "Golf im Unterallgäu",
+            "borderColor": "#DED9C8",
+            "footerBg": "#123726",
+            "footerText": "#CBD6CB",
+            "note": ""
+        },
+        "blocks": [
+            {
+                "id": "gco-kopf-1",
+                "type": "kopf",
+                "stil": "wortmarke",
+                "wortmarke": "Golfclub",
+                "akzentTeil": "Ottobeuren",
+                "akzentFarbe": "#D3A94F",
+                "bg": "#123726",
+                "farbe": "#FFFFFF",
+                "claim": "Golf im Unterallgäu",
+                "logoText": "G"
+            },
+            {
+                "id": "gco-inhalt-1",
+                "type": "content"
+            },
+            {
+                "id": "gco-fuss-1",
+                "type": "fuss",
+                "bg": "#123726",
+                "farbe": "#CBD6CB",
+                "hinweis": ""
+            }
+        ]
+    }
+}

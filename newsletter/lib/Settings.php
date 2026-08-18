@@ -77,6 +77,9 @@ final class Settings
         'ai_key'            => '',           // verschlüsselt gespeichert
         'ai_voice'          => '',           // eigener Hinweis zum Tonfall
 
+        /* --- Weitere Installationen (Instanzen-Übersicht) -------------- */
+        'instanzen_json'    => '',           // [{name,url,token}] – siehe lib/Instanzen.php
+
         /* --- Sonstiges ------------------------------------------------ */
         'schema_version'    => '0',
         'installed_at'      => '',

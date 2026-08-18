@@ -2,11 +2,9 @@
 
 ## Ansehen
 
-**`index.html` in diesem Ordner doppelklicken.** Die Seite ist fertiges HTML mit
-relativen Verweisen – 28 Seiten plus zwei persönliche Clubseiten unter `club/`,
-alles ohne Server.
-
-Nur das Kontaktformular braucht PHP (`kontakt-senden.php`).
+**`index.html` in diesem Ordner doppelklicken.** Fertiges HTML mit relativen
+Verweisen – 28 Seiten plus zwei persönliche Clubseiten unter `club/`, alles
+ohne Server. Nur das Kontaktformular braucht PHP (`kontakt-senden.php`).
 
 ## Ändern
 

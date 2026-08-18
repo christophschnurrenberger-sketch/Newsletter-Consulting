@@ -422,6 +422,60 @@
         }
     }
 
+    /* ------------------------------------------------------------------ *
+     * Die Demo-Rahmen
+     * ------------------------------------------------------------------
+     * In den Rahmen steckt die Oberfläche des Newslettersystems selbst.
+     * Zwei Dinge sind zu regeln: Die Demo kennt ihre Höhe, die Seite nicht –
+     * also meldet die Demo sie herauf. Und losgehen soll sie erst, wenn sie
+     * im Bild ist, sonst ist die Animation vorbei, ehe jemand hinsieht.
+     * ------------------------------------------------------------------ */
+
+    var rahmen = document.querySelectorAll('[data-demo-frame]');
+
+    if (rahmen.length) {
+        window.addEventListener('message', function (event) {
+            if (!event.data || event.data.demo !== 'hoehe') { return; }
+            for (var i = 0; i < rahmen.length; i++) {
+                var frame = rahmen[i].querySelector('iframe');
+                if (frame && frame.contentWindow === event.source) {
+                    /* Zwei Pixel Luft: sonst erscheint bei einer krummen Höhe
+                       im Rahmen ein Rollbalken, den niemand braucht. */
+                    rahmen[i].style.setProperty('--demo-h', Math.max(320, event.data.px) + 2 + 'px');
+                }
+            }
+        });
+
+        var losschicken = function (kasten) {
+            kasten.setAttribute('data-sichtbar', '1');
+            var frame = kasten.querySelector('iframe');
+            if (!frame || !frame.contentWindow) { return; }
+            try { frame.contentWindow.postMessage('demo:start', '*'); } catch (e) {}
+        };
+
+        for (var d = 0; d < rahmen.length; d++) {
+            var frame = rahmen[d].querySelector('iframe');
+            if (!frame) { continue; }
+            /* Die Demo kann später fertig werden als der Beobachter feuert */
+            (function (kasten, f) {
+                f.addEventListener('load', function () {
+                    if (kasten.getAttribute('data-sichtbar') === '1') { losschicken(kasten); }
+                });
+            }(rahmen[d], frame));
+        }
+
+        if ('IntersectionObserver' in window) {
+            var demoObserver = new IntersectionObserver(function (entries) {
+                entries.forEach(function (entry) {
+                    if (entry.isIntersecting) { losschicken(entry.target); }
+                });
+            }, { threshold: 0.2 });
+            for (var d2 = 0; d2 < rahmen.length; d2++) { demoObserver.observe(rahmen[d2]); }
+        } else {
+            for (var d3 = 0; d3 < rahmen.length; d3++) { losschicken(rahmen[d3]); }
+        }
+    }
+
     /* Jahreszahl im Footer */
     var year = document.getElementById('copyright-year');
     if (year) { year.textContent = new Date().getFullYear(); }

@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Newsletter-Baukasten – Demo</title>
+<meta name="robots" content="noindex">
+<!--
+    Diese Seite ist keine Nachbildung: Markup und Stylesheets stammen
+    unveraendert aus dem laufenden Newslettersystem. Entfernt wurden nur
+    die Skripte und die Formularlogik – die Demo soll nichts absenden,
+    sondern zeigen, wie die Oberflaeche wirklich aussieht.
+
+    Erneuern: System lokal starten, die jeweilige Seite oeffnen, den
+    Ausschnitt herauskopieren, Skripte und name-Attribute entfernen.
+    Siehe README, Abschnitt „Die Demos“.
+-->
+<link rel="stylesheet" href="../assets/demo/admin.css">
+<link rel="stylesheet" href="../assets/demo/builder.css">
+<style>
+    html, body { margin: 0; padding: 0; background: #F4F6F4; }
+    body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+        padding: 18px;
+        -webkit-font-smoothing: antialiased;
+    }
+    .ad-card { margin: 0 0 16px; }
+    .ad-card:last-child { margin-bottom: 0; }
+    /* Nichts ist anklickbar – das ist eine Ansicht, keine Anwendung */
+    a, button, input, select, textarea { pointer-events: none; }
+
+    /* Die Bausteine erscheinen nacheinander, wenn die Demo ins Bild kommt */
+    [data-baustein] {
+        opacity: 0;
+        transform: translateY(-6px);
+        transition: opacity .45s ease, transform .45s ease;
+    }
+    body.laeuft [data-baustein] { opacity: 1; transform: none; }
+    body.laeuft [data-baustein="1"] { transition-delay: .15s; }
+    body.laeuft [data-baustein="2"] { transition-delay: .75s; }
+    body.laeuft [data-baustein="3"] { transition-delay: 1.35s; }
+
+    @media (prefers-reduced-motion: reduce) {
+        [data-baustein], [data-schritt] { opacity: 1; transform: none; transition: none; }
+    }
+</style>
+</head>
+<body>
+
+<div class="ad-card">
+                <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;">
+                    <h2 style="margin:0;">Inhalt</h2>
+                    <div class="ad-actions-inline">
+                        <button type="button" tabindex="-1" type="submit" value="modus" class="ad-btn ad-btn-small " disabled="">Baukasten</button>
+                        <button type="button" tabindex="-1" type="submit" value="modus" class="ad-btn ad-btn-small ad-btn-secondary">HTML</button>
+                        <input readonly tabindex="-1" type="hidden" value="">
+                    </div>
+                </div>
+
+                                    <p class="ad-hint" style="margin:6px 0 14px;">Bausteine per Drag &amp; Drop anordnen.
+                        Texte lassen sich direkt in der Vorschau schreiben; Platzhalter setzen Sie links ein.</p>
+                        <div class="bk" data-builder="" data-mode="campaign" data-upload="upload.php" data-autosave="1">
+
+        <!-- Bausteine zum Hineinziehen -->
+        <aside class="bk-palette">
+            <h3>Bausteine</h3>
+            <p class="bk-hint">Ziehen Sie einen Baustein nach rechts – oder klicken Sie ihn an,
+                dann wird er unten angehängt.</p>
+                            <button type="button" tabindex="-1" type="button" class="bk-chip" data-add="heading">
+                    <span class="bk-chip-icon" aria-hidden="true">H</span>
+                    Überschrift                </button>
+                            <button type="button" tabindex="-1" type="button" class="bk-chip" data-add="text">
+                    <span class="bk-chip-icon" aria-hidden="true">¶</span>
+                    Textabsatz                </button>
+                            <button type="button" tabindex="-1" type="button" class="bk-chip" data-add="image">
+                    <span class="bk-chip-icon" aria-hidden="true">▣</span>
+                    Bild                </button>
+                            <button type="button" tabindex="-1" type="button" class="bk-chip" data-add="button">
+                    <span class="bk-chip-icon" aria-hidden="true">⬛</span>
+                    Knopf (Call-to-Action)                </button>
+                            <button type="button" tabindex="-1" type="button" class="bk-chip" data-add="divider">
+                    <span class="bk-chip-icon" aria-hidden="true">—</span>
+                    Trennlinie                </button>
+                            <button type="button" tabindex="-1" type="button" class="bk-chip" data-add="spacer">
+                    <span class="bk-chip-icon" aria-hidden="true">↕</span>
+                    Abstand                </button>
+                            <button type="button" tabindex="-1" type="button" class="bk-chip" data-add="columns">
+                    <span class="bk-chip-icon" aria-hidden="true">▥</span>
+                    Zwei Spalten                </button>
+                            <button type="button" tabindex="-1" type="button" class="bk-chip" data-add="social">
+                    <span class="bk-chip-icon" aria-hidden="true">⋯</span>
+                    Links (z. B. Social Media)                </button>
+                            <button type="button" tabindex="-1" type="button" class="bk-chip" data-add="html">
+                    <span class="bk-chip-icon" aria-hidden="true">&lt;/&gt;</span>
+                    Eigenes HTML                </button>
+            
+            <h3 style="margin-top:22px;">Eigene Bausteine</h3>
+            <div class="bk-eigene" data-eigene=""><p class="bk-hint" style="margin: 0px;">Noch keine. Mit dem Stern ☆ am Baustein sichern Sie einen – er steht dann in jedem Newsletter zur Verfügung.</p></div>
+
+            <h3 style="margin-top:22px;">Platzhalter</h3>
+            <p class="bk-hint">Setzt den Platzhalter an der Schreibmarke ein.</p>
+            <select disabled tabindex="-1" class="bk-select" data-placeholder-picker="">
+                <option value="">— einsetzen —</option>
+                                                        <option value="{{anrede}}">{{anrede}} – Sehr geehrte Frau Muster / Hallo Maria …</option>
+                                                        <option value="{{vorname}}">{{vorname}} – Vorname (mit Ersatz: {{vorname|liebe Le…</option>
+                                                        <option value="{{nachname}}">{{nachname}} – Nachname</option>
+                                                        <option value="{{name}}">{{name}} – Vor- und Nachname</option>
+                                                        <option value="{{email}}">{{email}} – E-Mail-Adresse des Empfängers</option>
+                                                        <option value="{{firma}}">{{firma}} – Unternehmen</option>
+                                                        <option value="{{feld:xyz}}">{{feld:xyz}} – eigenes Feld aus dem Empfängerdatensatz</option>
+                                                        <option value="{{abmelden_url}}">{{abmelden_url}} – persönlicher Abmeldelink (Pflicht in je…</option>
+                                                        <option value="{{praeferenzen_url}}">{{praeferenzen_url}} – Link zu Daten &amp; Einstellungen des Empfä…</option>
+                                                        <option value="{{webansicht_url}}">{{webansicht_url}} – Link zur Browser-Ansicht dieser Ausgabe</option>
+                                                        <option value="{{impressum}}">{{impressum}} – Pflichtangaben aus den Einstellungen</option>
+                                                        <option value="{{marke}}">{{marke}} – Markenname</option>
+                                                        <option value="{{datum}}">{{datum}} – aktuelles Datum</option>
+                                                        <option value="{{jahr}}">{{jahr}} – aktuelles Jahr</option>
+                            </select>
+
+                    </aside>
+
+        <!-- Arbeitsfläche -->
+        <div class="bk-stage">
+            <div class="bk-stage-bar">
+                <span class="bk-stage-title">Ausgabe zusammenstellen</span>
+                <span class="bk-verlauf">
+                    <button type="button" tabindex="-1" type="button" class="bk-icon" data-zurueck="" disabled="" title="Rückgängig (Strg+Z)" aria-label="Rückgängig">↶</button>
+                    <button type="button" tabindex="-1" type="button" class="bk-icon" data-vor="" disabled="" title="Wiederherstellen (Strg+Umschalt+Z)" aria-label="Wiederherstellen">↷</button>
+                </span>
+                <span class="bk-autosave" data-autosave-status=""></span>
+                <span class="bk-stage-info" data-count="">3 Bausteine</span>
+            </div>
+                                                        <div class="bk-rahmen bk-rahmen-kopf" data-rahmen="kopf">
+                    <span class="bk-rahmen-schild">Kopfzeile der Vorlage</span>
+                    <div class="bk-rahmen-fenster" style="height: 228px;">
+                        <iframe srcdoc="&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;de&quot;&gt;&lt;head&gt;&lt;meta charset=&quot;utf-8&quot;&gt;
+&lt;meta name=&quot;viewport&quot; content=&quot;width=device-width,initial-scale=1&quot;&gt;
+&lt;title&gt;&lt;/title&gt;
+&lt;style type=&quot;text/css&quot;&gt;@media only screen and (max-width:600px){.nl-col{display:block!important;width:100%!important;max-width:100%!important;padding-left:0!important;padding-right:0!important;}.nl-col-gap{height:16px!important;}.nl-claim{text-align:left!important;padding-top:8px!important;}}&lt;/style&gt;
+&lt;/head&gt;
+&lt;body style=&quot;margin:0;padding:0;background-color:#FAF9F5;&quot;&gt;
+&lt;span style=&quot;display:none!important;opacity:0;color:#FAF9F5;font-size:1px;line-height:1px;max-height:0;max-width:0;overflow:hidden;&quot;&gt;&lt;/span&gt;
+&lt;table role=&quot;presentation&quot; width=&quot;100%&quot; cellpadding=&quot;0&quot; cellspacing=&quot;0&quot; border=&quot;0&quot; style=&quot;background-color:#FAF9F5;padding:24px 12px;&quot;&gt;&lt;tr&gt;&lt;td align=&quot;center&quot;&gt;
+&lt;table role=&quot;presentation&quot; width=&quot;620&quot; cellpadding=&quot;0&quot; cellspacing=&quot;0&quot; border=&quot;0&quot; style=&quot;max-width:620px;width:100%;background-color:#FFFFFF;border:1px solid #E1DED5;border-radius:2px;overflow:hidden;&quot;&gt;
+&lt;tr&gt;&lt;td style=&quot;padding:40px;font-family:Arial, Helvetica, sans-serif;color:#3F4A43;font-size:15px;line-height:1.65;&quot;&gt;
+&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;background-color:#FFFFFF;padding:22px 40px;border-bottom:1px solid #E1DED5;&quot;&gt;&lt;table role=&quot;presentation&quot; width=&quot;100%&quot; cellpadding=&quot;0&quot; cellspacing=&quot;0&quot; border=&quot;0&quot;&gt;&lt;tr&gt;&lt;td class=&quot;nl-col&quot; align=&quot;left&quot; style=&quot;font-family:Georgia, &quot;Times New Roman&quot;, serif;font-size:28px;line-height:1;font-weight:bold;letter-spacing:-0.03em;color:#16261C;&quot;&gt;Fairway&lt;span style=&quot;color:#1E6B45;&quot;&gt;54&lt;/span&gt;&lt;/td&gt;&lt;td class=&quot;nl-col nl-claim&quot; align=&quot;right&quot; style=&quot;font-family:Arial, Helvetica, sans-serif;font-size:11px;font-weight:bold;letter-spacing:0.08em;text-transform:uppercase;color:#C6D3CA;&quot;&gt;Golf lernen von HCP 54 bis 36&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;padding:40px 40px 0;font-family:Arial, Helvetica, sans-serif;color:#3F4A43;font-size:15px;line-height:1.65;&quot;&gt;&lt;div id=&quot;nl-inhalt&quot; style=&quot;height:1px;line-height:1px;&quot;&gt;&amp;nbsp;&lt;/div&gt;
+&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;background-color:#0E2E1D;padding:20px 40px;border-top:1px solid #E1DED5;font-family:Arial, Helvetica, sans-serif;color:#C6D3CA;font-size:12px;line-height:1.6;&quot;&gt;Sie erhalten diese E-Mail, weil Sie sich unter www.fairway54.de für unseren Newsletter angemeldet und die Anmeldung bestätigt haben.&lt;br&gt;&lt;br&gt;&lt;div style=&quot;margin-bottom:14px;padding:12px 14px;border-left:2px solid #1E6B45;font-size:12px;line-height:1.55;&quot;&gt;Anzeige: Die mit * markierten Links sind Partnerlinks. Kaufst du darüber, erhalten wir eine Provision. Für dich ändert sich der Preis nicht.&lt;/div&gt;Golfclub Musterhausen e.V. · Am Fairway 1 · 87700 Musterhausen&lt;br&gt;&lt;br&gt;&lt;a href=&quot;#&quot; style=&quot;color:#C6D3CA;text-decoration:underline;&quot;&gt;Newsletter abbestellen&lt;/a&gt; &amp;middot; &lt;a href=&quot;#&quot; style=&quot;color:#C6D3CA;text-decoration:underline;&quot;&gt;Daten &amp;amp; Einstellungen&lt;/a&gt; &amp;middot; &lt;a href=&quot;https://www.newsletter-consulting.de/Datenschutz.html&quot; style=&quot;color:#C6D3CA;text-decoration:underline;&quot;&gt;Datenschutz&lt;/a&gt; &amp;middot; &lt;a href=&quot;https://www.newsletter-consulting.de/Impressum.html&quot; style=&quot;color:#C6D3CA;text-decoration:underline;&quot;&gt;Impressum&lt;/a&gt; &amp;middot; &lt;a href=&quot;#&quot; style=&quot;color:#C6D3CA;text-decoration:underline;&quot;&gt;Im Browser ansehen&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;padding:0 40px 40px;font-family:Arial, Helvetica, sans-serif;color:#3F4A43;font-size:15px;line-height:1.65;&quot;&gt;
+&lt;/td&gt;&lt;/tr&gt;
+&lt;/table&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/body&gt;&lt;/html&gt;" title="Kopfzeile der Vorlage" scrolling="no" tabindex="-1" aria-hidden="true" loading="eager" style="width: 600px; height: 553px; transform: scale(1); top: 0px;"></iframe>
+                    </div>
+                </div>
+            
+            <div class="bk-canvas" data-canvas=""><div class="bk-drop"></div><div class="bk-block" data-id="b0d580a7f" data-baustein="1"><div class="bk-block-bar"><span class="bk-grip" title="Zum Verschieben ziehen" aria-hidden="true">⠿</span><span class="bk-block-name">Überschrift</span><span class="bk-block-tools"><button type="button" tabindex="-1" type="button" class="bk-icon" data-act="up" title="Nach oben">↑</button><button type="button" tabindex="-1" type="button" class="bk-icon" data-act="down" title="Nach unten">↓</button><button type="button" tabindex="-1" type="button" class="bk-icon" data-act="copy" title="Duplizieren">⧉</button><button type="button" tabindex="-1" type="button" class="bk-icon" data-act="merken" title="Als eigenen Baustein sichern und später wiederverwenden">☆</button><button type="button" tabindex="-1" type="button" class="bk-icon bk-icon-danger" data-act="del" title="Löschen">✕</button></span></div><div class="bk-block-body"><div><div class="bk-inline" contenteditable="false" role="textbox" data-platzhalter="Überschrift" style="font-size: 22px; font-weight: 700; color: rgb(22, 38, 28); text-align: left; line-height: 1.3;">Clubmeisterschaft 2026 – noch 14 Startplätze frei</div></div></div></div><div class="bk-drop"></div><div class="bk-block" data-id="b3af10adc" data-baustein="2"><div class="bk-block-bar"><span class="bk-grip" title="Zum Verschieben ziehen" aria-hidden="true">⠿</span><span class="bk-block-name">Textabsatz</span><span class="bk-block-tools"><button type="button" tabindex="-1" type="button" class="bk-icon" data-act="up" title="Nach oben">↑</button><button type="button" tabindex="-1" type="button" class="bk-icon" data-act="down" title="Nach unten">↓</button><button type="button" tabindex="-1" type="button" class="bk-icon" data-act="copy" title="Duplizieren">⧉</button><button type="button" tabindex="-1" type="button" class="bk-icon" data-act="merken" title="Als eigenen Baustein sichern und später wiederverwenden">☆</button><button type="button" tabindex="-1" type="button" class="bk-icon bk-icon-danger" data-act="del" title="Löschen">✕</button></span></div><div class="bk-block-body"><div><div class="bk-richbar"><button type="button" tabindex="-1" type="button" class="bk-richbtn" title="Fett">B</button><button type="button" tabindex="-1" type="button" class="bk-richbtn" title="Kursiv">I</button><button type="button" tabindex="-1" type="button" class="bk-richbtn" title="Unterstrichen">U</button><button type="button" tabindex="-1" type="button" class="bk-richbtn" title="Aufzählung">•</button><button type="button" tabindex="-1" type="button" class="bk-richbtn" title="Link">🔗</button><button type="button" tabindex="-1" type="button" class="bk-richbtn" title="Formatierung entfernen">⌫</button></div><div class="bk-rich" contenteditable="false" style="font-size: 15px; text-align: left; color: rgb(63, 74, 67);"><p>Liebe(r) {{vorname}}, am Wochenende vom 12. bis 14. Juli spielen wir die Clubmeisterschaft. Von 60 Plätzen sind 46 vergeben, Anmeldeschluss ist Mittwoch.</p></div></div></div></div><div class="bk-drop"></div><div class="bk-block" data-id="b1bfc2458" data-baustein="3"><div class="bk-block-bar"><span class="bk-grip" title="Zum Verschieben ziehen" aria-hidden="true">⠿</span><span class="bk-block-name">Knopf (Call-to-Action)</span><span class="bk-block-tools"><button type="button" tabindex="-1" type="button" class="bk-icon" data-act="up" title="Nach oben">↑</button><button type="button" tabindex="-1" type="button" class="bk-icon" data-act="down" title="Nach unten">↓</button><button type="button" tabindex="-1" type="button" class="bk-icon" data-act="copy" title="Duplizieren">⧉</button><button type="button" tabindex="-1" type="button" class="bk-icon" data-act="merken" title="Als eigenen Baustein sichern und später wiederverwenden">☆</button><button type="button" tabindex="-1" type="button" class="bk-icon bk-icon-danger" data-act="del" title="Löschen">✕</button></span></div><div class="bk-block-body"><div><div style="text-align: left;"><div class="bk-inline" contenteditable="false" role="textbox" data-platzhalter="Knopf" style="display: inline-block; padding: 12px 24px; border-radius: 6px; background: rgb(30, 107, 69); color: rgb(255, 255, 255); font-weight: 700; font-size: 14px;">Jetzt Startzeit sichern</div></div></div></div></div><div class="bk-drop"></div></div>
+
+                            <div class="bk-rahmen bk-rahmen-fuss" data-rahmen="fuss">
+                    <div class="bk-rahmen-fenster" style="height: 325px;">
+                        <iframe srcdoc="&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;de&quot;&gt;&lt;head&gt;&lt;meta charset=&quot;utf-8&quot;&gt;
+&lt;meta name=&quot;viewport&quot; content=&quot;width=device-width,initial-scale=1&quot;&gt;
+&lt;title&gt;&lt;/title&gt;
+&lt;style type=&quot;text/css&quot;&gt;@media only screen and (max-width:600px){.nl-col{display:block!important;width:100%!important;max-width:100%!important;padding-left:0!important;padding-right:0!important;}.nl-col-gap{height:16px!important;}.nl-claim{text-align:left!important;padding-top:8px!important;}}&lt;/style&gt;
+&lt;/head&gt;
+&lt;body style=&quot;margin:0;padding:0;background-color:#FAF9F5;&quot;&gt;
+&lt;span style=&quot;display:none!important;opacity:0;color:#FAF9F5;font-size:1px;line-height:1px;max-height:0;max-width:0;overflow:hidden;&quot;&gt;&lt;/span&gt;
+&lt;table role=&quot;presentation&quot; width=&quot;100%&quot; cellpadding=&quot;0&quot; cellspacing=&quot;0&quot; border=&quot;0&quot; style=&quot;background-color:#FAF9F5;padding:24px 12px;&quot;&gt;&lt;tr&gt;&lt;td align=&quot;center&quot;&gt;
+&lt;table role=&quot;presentation&quot; width=&quot;620&quot; cellpadding=&quot;0&quot; cellspacing=&quot;0&quot; border=&quot;0&quot; style=&quot;max-width:620px;width:100%;background-color:#FFFFFF;border:1px solid #E1DED5;border-radius:2px;overflow:hidden;&quot;&gt;
+&lt;tr&gt;&lt;td style=&quot;padding:40px;font-family:Arial, Helvetica, sans-serif;color:#3F4A43;font-size:15px;line-height:1.65;&quot;&gt;
+&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;background-color:#FFFFFF;padding:22px 40px;border-bottom:1px solid #E1DED5;&quot;&gt;&lt;table role=&quot;presentation&quot; width=&quot;100%&quot; cellpadding=&quot;0&quot; cellspacing=&quot;0&quot; border=&quot;0&quot;&gt;&lt;tr&gt;&lt;td class=&quot;nl-col&quot; align=&quot;left&quot; style=&quot;font-family:Georgia, &quot;Times New Roman&quot;, serif;font-size:28px;line-height:1;font-weight:bold;letter-spacing:-0.03em;color:#16261C;&quot;&gt;Fairway&lt;span style=&quot;color:#1E6B45;&quot;&gt;54&lt;/span&gt;&lt;/td&gt;&lt;td class=&quot;nl-col nl-claim&quot; align=&quot;right&quot; style=&quot;font-family:Arial, Helvetica, sans-serif;font-size:11px;font-weight:bold;letter-spacing:0.08em;text-transform:uppercase;color:#C6D3CA;&quot;&gt;Golf lernen von HCP 54 bis 36&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;padding:40px 40px 0;font-family:Arial, Helvetica, sans-serif;color:#3F4A43;font-size:15px;line-height:1.65;&quot;&gt;&lt;div id=&quot;nl-inhalt&quot; style=&quot;height:1px;line-height:1px;&quot;&gt;&amp;nbsp;&lt;/div&gt;
+&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;background-color:#0E2E1D;padding:20px 40px;border-top:1px solid #E1DED5;font-family:Arial, Helvetica, sans-serif;color:#C6D3CA;font-size:12px;line-height:1.6;&quot;&gt;Sie erhalten diese E-Mail, weil Sie sich unter www.fairway54.de für unseren Newsletter angemeldet und die Anmeldung bestätigt haben.&lt;br&gt;&lt;br&gt;&lt;div style=&quot;margin-bottom:14px;padding:12px 14px;border-left:2px solid #1E6B45;font-size:12px;line-height:1.55;&quot;&gt;Anzeige: Die mit * markierten Links sind Partnerlinks. Kaufst du darüber, erhalten wir eine Provision. Für dich ändert sich der Preis nicht.&lt;/div&gt;Golfclub Musterhausen e.V. · Am Fairway 1 · 87700 Musterhausen&lt;br&gt;&lt;br&gt;&lt;a href=&quot;#&quot; style=&quot;color:#C6D3CA;text-decoration:underline;&quot;&gt;Newsletter abbestellen&lt;/a&gt; &amp;middot; &lt;a href=&quot;#&quot; style=&quot;color:#C6D3CA;text-decoration:underline;&quot;&gt;Daten &amp;amp; Einstellungen&lt;/a&gt; &amp;middot; &lt;a href=&quot;https://www.newsletter-consulting.de/Datenschutz.html&quot; style=&quot;color:#C6D3CA;text-decoration:underline;&quot;&gt;Datenschutz&lt;/a&gt; &amp;middot; &lt;a href=&quot;https://www.newsletter-consulting.de/Impressum.html&quot; style=&quot;color:#C6D3CA;text-decoration:underline;&quot;&gt;Impressum&lt;/a&gt; &amp;middot; &lt;a href=&quot;#&quot; style=&quot;color:#C6D3CA;text-decoration:underline;&quot;&gt;Im Browser ansehen&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;padding:0 40px 40px;font-family:Arial, Helvetica, sans-serif;color:#3F4A43;font-size:15px;line-height:1.65;&quot;&gt;
+&lt;/td&gt;&lt;/tr&gt;
+&lt;/table&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/body&gt;&lt;/html&gt;" title="Footer der Vorlage" scrolling="no" tabindex="-1" aria-hidden="true" loading="eager" style="width: 600px; height: 553px; transform: scale(1); top: -228px;"></iframe>
+                    </div>
+                    <span class="bk-rahmen-schild">Footer der Vorlage – Impressum und Abmeldelink stehen fest drin</span>
+                </div>
+                        <p class="bk-hint bk-canvas-hint">Tipp: Bausteine lassen sich am Griff <span aria-hidden="true">⠿</span>
+                verschieben. Auf dem Handy nutzen Sie die Pfeiltasten am Baustein.</p>
+        </div>
+
+        <!-- Einstellungen -->
+        <aside class="bk-inspector" data-inspector=""><p class="bk-hint">Klicken Sie auf einen Baustein, um ihn einzustellen. Texte und Überschriften lassen sich auch direkt anklicken und überschreiben.</p><div class="bk-panel"><h3>Gestaltung</h3><div class="bk-field"><label>Schriftart</label><select disabled tabindex="-1" class="bk-input"><option value="Arial, Helvetica, sans-serif">Arial (Standard)</option><option value="'Segoe UI', Tahoma, Arial, sans-serif">Segoe UI</option><option value="Georgia, &quot;Times New Roman&quot;, serif">Georgia (Serif)</option><option value="&quot;Trebuchet MS&quot;, Arial, sans-serif">Trebuchet MS</option><option value="Verdana, Geneva, sans-serif">Verdana</option><option value="&quot;Courier New&quot;, Courier, monospace">Courier</option></select></div><div class="bk-field"><label>Textfarbe</label><div class="bk-colorrow"><input readonly tabindex="-1" type="color" value="#3F4A43"><input readonly tabindex="-1" type="text" class="bk-input" value="#3F4A43"></div></div><div class="bk-field"><label>Linkfarbe</label><div class="bk-colorrow"><input readonly tabindex="-1" type="color" value="#1E6B45"><input readonly tabindex="-1" type="text" class="bk-input" value="#1E6B45"></div></div></div></aside>
+
+        <textarea data-blocks-field="" hidden="">{"meta":{"bg":"#FAF9F5","cardBg":"#FFFFFF","width":620,"font":"Arial, Helvetica, sans-serif","textColor":"#3F4A43","headColor":"#16261C","linkColor":"#1E6B45","radius":2,"padding":40,"showHeader":1,"headerBg":"#14243A","headerText":"#FFFFFF","logoText":"A","showFooter":1,"headerStyle":"logo","headFont":"Georgia, \"Times New Roman\", serif","wordmark":"","wordmarkAccent":"","accentColor":"#1E6B45","claim":"","borderColor":"#E1DED5","footerBg":"","footerText":"#8A95A5","note":""},"blocks":[{"id":"b0d580a7f","type":"heading","text":"Clubmeisterschaft 2026 – noch 14 Startplätze frei","size":22,"align":"left","color":"#16261C","space":12},{"id":"b3af10adc","type":"text","html":"&lt;p&gt;Liebe(r) {{vorname}}, am Wochenende vom 12. bis 14. Juli spielen wir die Clubmeisterschaft. Von 60 Plätzen sind 46 vergeben, Anmeldeschluss ist Mittwoch.&lt;/p&gt;","size":15,"align":"left","color":"","space":12},{"id":"b1bfc2458","type":"button","label":"Jetzt Startzeit sichern","href":"","bg":"#1E6B45","color":"#FFFFFF","align":"left","radius":6,"full":0,"space":12}]}</textarea>
+    </div>
+
+    
+                        <input readonly tabindex="-1" type="hidden" value="blocks">
+                            </div>
+
+<script>
+(function () {
+    var gelaufen = false;
+
+    function start() {
+        if (gelaufen) { return; }
+        gelaufen = true;
+        document.body.classList.add('laeuft');
+    }
+
+    function hoehe() {
+        var h = Math.ceil(document.documentElement.getBoundingClientRect().height);
+        try { parent.postMessage({ demo: 'hoehe', px: h }, '*'); } catch (e) {}
+    }
+
+    /*
+     * Kopf- und Fusszeile der Vorlage massstabsgerecht einpassen – dieselbe
+     * Rechnung wie im System (builder.js, rahmenAufbauen). Ohne sie stuende
+     * der Footer ueber den Rand des Rahmens hinaus.
+     */
+    function rahmenEinpassen() {
+        var kaesten = document.querySelectorAll('[data-rahmen]');
+        for (var i = 0; i < kaesten.length; i++) {
+            var kasten  = kaesten[i];
+            var fenster = kasten.querySelector('.bk-rahmen-fenster');
+            var rahmen  = kasten.querySelector('iframe');
+            if (!fenster || !rahmen) { continue; }
+
+            var dok = null;
+            try { dok = rahmen.contentDocument; } catch (e) { dok = null; }
+            var marke = dok && dok.getElementById('nl-inhalt');
+            if (!marke) { kasten.hidden = true; continue; }
+
+            kasten.hidden = false;
+            var oben = marke.getBoundingClientRect().top + (dok.documentElement.scrollTop || 0);
+            if (oben <= 0) { kasten.hidden = true; continue; }
+
+            var ganz = Math.max(dok.documentElement.scrollHeight, dok.body.scrollHeight);
+            var letzter = dok.body.lastElementChild;
+            if (letzter) {
+                var kante = letzter.getBoundingClientRect().bottom + (dok.documentElement.scrollTop || 0);
+                if (kante > oben) { ganz = Math.min(ganz, Math.round(kante) + 8); }
+            }
+
+            var breiteInnen = Math.max(dok.documentElement.scrollWidth, 600);
+            var faktor = Math.min(1, (fenster.clientWidth || breiteInnen) / breiteInnen);
+
+            rahmen.style.width = breiteInnen + 'px';
+            rahmen.style.height = ganz + 'px';
+            rahmen.style.transformOrigin = 'top left';
+            rahmen.style.transform = 'scale(' + faktor + ')';
+
+            if (kasten.getAttribute('data-rahmen') === 'kopf') {
+                rahmen.style.top = '0';
+                fenster.style.height = Math.round(oben * faktor) + 'px';
+            } else {
+                rahmen.style.top = Math.round(-oben * faktor) + 'px';
+                fenster.style.height = Math.round(Math.max(0, ganz - oben) * faktor) + 'px';
+            }
+        }
+    }
+
+    function nachmessen() { rahmenEinpassen(); hoehe(); }
+
+    window.addEventListener('message', function (e) { if (e.data === 'demo:start') { start(); } });
+    window.addEventListener('resize', nachmessen);
+    window.addEventListener('load', nachmessen);
+    nachmessen();
+    setTimeout(nachmessen, 300);
+    setTimeout(nachmessen, 1200);
+
+    // Ohne Rahmen drumherum laeuft die Demo von selbst los
+    if (window.top === window.self) { setTimeout(start, 300); }
+}());
+</script>
+</body>
+</html>

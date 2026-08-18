@@ -22,14 +22,17 @@ include __DIR__ . '/../partials/header.php';
 <!-- Das Werkzeug zuerst zeigen, in voller Breite ---------------------- -->
 <section class="section-sm">
     <div class="container-wide">
-            <figure class="shot">
-                <img src="<?= e(url('assets/bilder/tool-automation.png')) ?>" width="1000" height="853"
-                     alt="Der Ablauf-Editor: Auslöser, Wartezeiten, E-Mail-Schritte und eine Bedingung mit Ja- und Nein-Zweig."
-                     loading="lazy" decoding="async">
+            <figure class="demo-frame" data-demo-frame>
+                <div class="demo-frame-buehne">
+                    <iframe src="<?= e(url('demo/automation.html')) ?>" loading="lazy"
+                            title="Der Ablauf-Editor: Auslöser, Wartezeiten, E-Mail-Schritte und eine Bedingung mit Ja- und Nein-Zweig."></iframe>
+                </div>
                 <figcaption>
                     <b>Die Willkommensstrecke.</b>
-                    <span>Auslöser oben, darunter Wartezeiten und Mails, unten eine Bedingung mit zwei Zweigen.</span>
+                    <span>Auslöser oben, darunter Wartezeiten und Mails, unten eine Bedingung
+                    mit zwei Zweigen. Genau so steht sie im System.</span>
                 </figcaption>
+                <p class="demo-frame-mobil">Auf dem Handy sehen Sie den oberen Ausschnitt – der Rahmen lässt sich darin weiterschieben.</p>
             </figure>
     </div>
 </section>

@@ -33,6 +33,8 @@ Navigation, Randspalte und Footer nicht 28-mal kopiert werden müssen.
   index.html
   software/*.html    software/, loesungen/, leistungen/, wissen/
   assets/            CSS, JavaScript
+  assets/demo/       Stylesheets des Newslettersystems (Kopien)
+  demo/              Die drei Demo-Seiten, als iframe eingebunden
   kontakt-senden.php Einziges PHP: nimmt das Kontaktformular entgegen
   robots.txt, sitemap.xml
 
@@ -173,32 +175,69 @@ Platzhalter im Vorher-Teil).
 
 ---
 
-## Echte Bildschirmfotos statt nachgebauter Oberflächen
+## Die Demos: die Oberfläche selbst, nicht ihr Abbild
 
-Die erste Fassung dieser Seite hatte die Oberfläche des Newsletter-Tools in
-HTML und CSS **nachgebaut** und als Animation ablaufen lassen. Das sah gut aus
-und war trotzdem falsch: Es war eine Behauptung darüber, wie das Tool aussieht,
-keine Auskunft.
+Diese Stelle hat zwei Anläufe hinter sich.
 
-Jetzt stehen dort echte Aufnahmen. Das Newslettersystem wurde lokal installiert
-(SQLite, `install.php`), mit der Golfvorlage `fairway54` eine echte Ausgabe
-geschrieben und eine Automation zusammengezogen – die Bilder in
-`assets/bilder/` sind Bildschirmfotos davon.
+1. Zuerst war die Oberfläche des Newslettersystems in HTML und CSS **nachgebaut**
+   und lief als Animation ab. Das sah gut aus und war trotzdem falsch: eine
+   Behauptung darüber, wie das Tool aussieht, keine Auskunft.
+2. Dann standen dort **Bildschirmfotos**. Ehrlich, aber unscharf – ein 1600 px
+   breites Bild auf einer 600 px breiten Spalte wird nie wieder scharf.
+
+Jetzt steht dort das Original. In `demo/` liegen drei eigenständige Seiten, deren
+Markup und Stylesheets **unverändert aus dem laufenden Newslettersystem** stammen:
 
 | Datei | Zeigt |
 |---|---|
-| `tool-baukasten.png` | Der Baukasten mit Bausteinleiste, Ausgabe und Gestaltungsspalte |
-| `tool-vorschau.png` | Schritt 3: Vorschau der fertigen Mail für Rechner und Handy |
-| `tool-angaben.png` | Schritt 2: Betreff, Absender, Empfängerliste |
-| `tool-automation.png` | Der Ablauf-Editor mit Ja-/Nein-Zweig |
+| `demo/baukasten.html` | Der Baukasten: Bausteinleiste, Ausgabe, Gestaltungsspalte |
+| `demo/automation.html` | Der Ablauf-Editor mit Wartezeiten, Mails und Ja-/Nein-Zweig |
+| `demo/pruefen.html` | Schritt 3: Vorschau, Testversand und die Ampel vor dem Senden |
 
-Zum Erneuern: das Newslettersystem lokal starten, die gewünschte Ansicht
-aufrufen, aufnehmen, zuschneiden und in `assets/bilder/` ablegen. Die Bilder
-sind bewusst eng zugeschnitten – ein ganzer Bildschirm mit Seitennavigation
-ist auf einer halben Spaltenbreite nicht mehr lesbar.
+Die passenden Stylesheets liegen in `assets/demo/` (`admin.css`, `builder.css`,
+`flow.css`) – ebenfalls Kopien, nicht Nachbauten. Es ist echter Text im Browser:
+scharf auf jedem Bildschirm, durchsuchbar, und beim Vergrößern bleibt er lesbar.
 
-`assets/demo.css` und `assets/demo.js` sind damit entfallen (rund 38 KB
-Attrappe weniger).
+**Entfernt wurde nur, was etwas tun könnte:** Skripte, `name`-Attribute,
+Ereignisbehandler, Formularlogik. Knöpfe tragen `type="button"`, Eingaben sind
+`readonly`, Links zeigen ins Leere. Die Demo kann nichts absenden und nichts
+speichern. Die beiden Vorschaurahmen (Kopf- und Fußzeile der Vorlage) bekommen
+ihren Inhalt über `srcdoc` mitgegeben, damit sie ohne Server funktionieren.
+
+Eingebunden sind sie als `<iframe>` in einem `.demo-frame`. Zwei Dinge regelt
+`assets/site.js` dabei:
+
+- **Höhe.** Die Demo misst sich selbst und meldet die Höhe per `postMessage`
+  herauf; die Seite setzt sie als `--demo-h`. Ohne JavaScript greift der
+  Vorgabewert aus `assets/site.css`.
+- **Start.** Die Bausteine blenden nacheinander ein, sobald der Rahmen ins Bild
+  kommt – nicht vorher, sonst ist die Bewegung vorbei, ehe jemand hinsieht.
+
+Auf schmalen Anzeigen stellt sich die Oberfläche untereinander und wäre über drei
+Bildschirmhöhen lang. Dort steht deshalb nur der obere Ausschnitt (520 px, mit
+weichem Abschluss); weiterschieben lässt sich der Rahmen trotzdem.
+
+### Eine Demo erneuern
+
+1. Newslettersystem lokal starten (`php -S 127.0.0.1:8901`), anmelden.
+2. Die gewünschte Ansicht aufrufen und das **gerenderte** Markup sichern
+   (Entwicklerwerkzeuge, „Copy outerHTML" auf `<html>`). Ablauf-Editor und
+   Baukasten bauen ihren Inhalt per JavaScript auf – die PHP-Datei zu lesen
+   genügt nicht.
+3. Ausschnitt herausschneiden und säubern:
+
+   ```
+   python3 tools/demo-saeubern.py seite.html '<div class="ad-card">' > teil.html
+   ```
+
+   Das Werkzeug entfernt Skripte, Ereignisbehandler, `name`-Attribute und
+   versteckte Felder, macht Knöpfe und Eingaben wirkungslos – und nimmt den
+   Zeichenschlüssel der Sitzung sowie die Adresse des Testservers heraus.
+   Beides gehört nicht in ein Repository.
+4. Den Teil in die passende Datei unter `demo/` einsetzen und die Stylesheets
+   in `assets/demo/` auffrischen.
+
+`assets/demo.css`, `assets/demo.js` und `assets/bilder/` sind damit entfallen.
 
 ---
 
@@ -234,6 +273,11 @@ genau eine `h1`, kein horizontales Scrollen ab 320 px, keine JavaScript-Fehler,
 keine PHP-Meldungen. Mega-Menü, mobiles Akkordeon, FAQ und Formularvalidierung
 zusätzlich von Hand getestet.
 
+Die drei Demo-Seiten einzeln bei 1180, 760 und 390 px geprüft: kein Überlauf,
+keine fehlende Datei, keine JavaScript-Fehler. Die Einbindung zusätzlich über
+`http://` **und** `file://` – die Höhenmeldung per `postMessage` funktioniert in
+beiden Fällen.
+
 ## Barrierefreiheit
 
 * Keine externen Schriften, Skripte oder Tracker – nichts verlässt den eigenen Server.
@@ -241,4 +285,5 @@ zusätzlich von Hand getestet.
   Tastatur und Screenreader; Escape schließt, Fokusverlust schließt.
 * Sprungmarke zum Inhalt, sichtbarer Tastaturfokus, Brotkrumen mit `aria-current`.
 * Icons als Inline-SVG, die Platzansicht ebenfalls als SVG statt als Bilddatei.
-* `prefers-reduced-motion` schaltet Bewegung ab und zeigt Endzustände.
+* `prefers-reduced-motion` schaltet Bewegung ab und zeigt Endzustände – auch in den Demos.
+* Die Demo-Rahmen tragen einen `title`, der beschreibt, was darin zu sehen ist.

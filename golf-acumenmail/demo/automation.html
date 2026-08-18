@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Automationen – Demo</title>
+<meta name="robots" content="noindex">
+<!--
+    Diese Seite ist keine Nachbildung: Markup und Stylesheets stammen
+    unveraendert aus dem laufenden Newslettersystem. Entfernt wurden nur
+    die Skripte und die Formularlogik – die Demo soll nichts absenden,
+    sondern zeigen, wie die Oberflaeche wirklich aussieht.
+
+    Erneuern: System lokal starten, die jeweilige Seite oeffnen, den
+    Ausschnitt herauskopieren, Skripte und name-Attribute entfernen.
+    Siehe README, Abschnitt „Die Demos“.
+-->
+<link rel="stylesheet" href="../assets/demo/admin.css">
+<link rel="stylesheet" href="../assets/demo/flow.css">
+<style>
+    html, body { margin: 0; padding: 0; background: #F4F6F4; }
+    body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+        padding: 18px;
+        -webkit-font-smoothing: antialiased;
+    }
+    .ad-card { margin: 0 0 16px; }
+    .ad-card:last-child { margin-bottom: 0; }
+    /* Nichts ist anklickbar – das ist eine Ansicht, keine Anwendung */
+    a, button, input, select, textarea { pointer-events: none; }
+
+    /* Die Schritte erscheinen nacheinander, wenn die Demo ins Bild kommt */
+    [data-schritt] {
+        opacity: 0;
+        transform: translateY(-8px);
+        transition: opacity .4s ease, transform .4s ease;
+    }
+    body.laeuft [data-schritt] { opacity: 1; transform: none; }
+    body.laeuft [data-schritt="1"] { transition-delay: .10s; }
+    body.laeuft [data-schritt="2"] { transition-delay: .45s; }
+    body.laeuft [data-schritt="3"] { transition-delay: .80s; }
+    body.laeuft [data-schritt="4"] { transition-delay: 1.15s; }
+    body.laeuft [data-schritt="5"] { transition-delay: 1.50s; }
+    body.laeuft [data-schritt="6"] { transition-delay: 1.85s; }
+
+    @media (prefers-reduced-motion: reduce) {
+        [data-baustein], [data-schritt] { opacity: 1; transform: none; transition: none; }
+    }
+</style>
+</head>
+<body>
+
+<div class="ad-card">
+        <div class="demo-form">
+                        
+
+            <div class="ad-row" style="align-items:flex-end;">
+                <div class="ad-field">
+                    <label for="a_name">Name</label>
+                    <input readonly tabindex="-1" type="text" id="a_name" value="Willkommen im Club">
+                </div>
+                <div class="ad-field">
+                    <label for="a_list">Auslöser: bestätigte Anmeldung in</label>
+                    <select tabindex="-1" id="a_list">
+                        <option value="0">jeder Liste</option>
+                                                    <option value="1">
+                                Newsletter                            </option>
+                                                    <option value="2">
+                                Neumitglieder 2026                            </option>
+                                            </select>
+                </div>
+                <div class="ad-field">
+                                        <label for="a_marke">Marke</label>
+                    <select tabindex="-1" id="a_marke">
+                                                                                <option value="1">
+                                Golfclub Musterhausen                            </option>
+                                                                                <option value="4">
+                                Fairway54                            </option>
+                                            </select>
+                </div>
+                <div class="ad-field">
+                    <label for="a_status">Status</label>
+                    <select tabindex="-1" id="a_status">
+                        <option value="paused">Pausiert</option>
+                        <option value="active" selected="">Aktiv</option>
+                    </select>
+                </div>
+                <div class="ad-field" style="flex:0;">
+                    <label>&nbsp;</label>
+                                        <details class="ad-menue">
+                        <summary class="ad-btn ad-btn-secondary" aria-label="Weitere Aktionen" title="Weitere Aktionen">…</summary>
+                        <div class="ad-menue-liste">
+                            <button type="button" tabindex="-1" value="loeschen" class="ist-gefahr" data-confirm="Strecke mit allen Schritten löschen?">Strecke löschen</button>
+                        </div>
+                    </details>
+                </div>
+            </div>
+
+            <p class="ad-hint" style="margin-bottom:14px;">Ziehen Sie Schritte in den Ablauf. Wartezeiten zählen
+                jeweils ab dem vorherigen Schritt. Nach einer Bedingung laufen beide Zweige wieder zusammen.</p>
+
+            <div class="fl" data-flow="" data-lists="[{&quot;id&quot;:1,&quot;name&quot;:&quot;Newsletter&quot;},{&quot;id&quot;:2,&quot;name&quot;:&quot;Neumitglieder 2026&quot;}]" data-steps="{&quot;1&quot;:&quot;Willkommen im Golfclub Musterhausen&quot;,&quot;2&quot;:&quot;Ihre ersten Runden: Platzreife, Startzeiten, Ansprechpartner&quot;,&quot;3&quot;:&quot;Drei Turniere, bei denen Gäste immer mitspielen dürfen&quot;}" data-edit-url="automationen.php?id=1&amp;schritt=" data-labels="{&quot;types&quot;:{&quot;warten&quot;:&quot;Warten&quot;,&quot;mail&quot;:&quot;E-Mail senden&quot;,&quot;bedingung&quot;:&quot;Wenn … dann&quot;,&quot;aktion&quot;:&quot;Aktion&quot;,&quot;ende&quot;:&quot;Strecke beenden&quot;},&quot;conditions&quot;:{&quot;geoeffnet&quot;:&quot;hat die letzte Mail dieser Strecke geöffnet&quot;,&quot;geklickt&quot;:&quot;hat in der letzten Mail dieser Strecke geklickt&quot;,&quot;in_liste&quot;:&quot;steht in einer bestimmten Liste&quot;,&quot;hat_firma&quot;:&quot;hat ein Unternehmen hinterlegt&quot;},&quot;actions&quot;:{&quot;liste_hinzufuegen&quot;:&quot;zu einer Liste hinzufügen&quot;,&quot;liste_entfernen&quot;:&quot;aus einer Liste entfernen&quot;,&quot;abmelden&quot;:&quot;vom Newsletter abmelden&quot;},&quot;units&quot;:{&quot;minuten&quot;:&quot;Minuten&quot;,&quot;stunden&quot;:&quot;Stunden&quot;,&quot;tage&quot;:&quot;Tage&quot;},&quot;units_one&quot;:{&quot;minuten&quot;:&quot;Minute&quot;,&quot;stunden&quot;:&quot;Stunde&quot;,&quot;tage&quot;:&quot;Tag&quot;},&quot;nodes&quot;:{&quot;warten&quot;:&quot;Warten&quot;,&quot;mail&quot;:&quot;E-Mail senden&quot;,&quot;bedingung&quot;:&quot;Wenn … dann&quot;,&quot;aktion&quot;:&quot;Aktion&quot;,&quot;ende&quot;:&quot;Strecke beenden&quot;}}">
+
+                <aside class="fl-palette">
+                    <h3>Schritte</h3>
+                    <p class="fl-hint">Ziehen Sie einen Schritt in den Ablauf – oder klicken Sie ihn an,
+                        dann wird er unten angehängt.</p>
+                                            <button type="button" tabindex="-1" type="button" class="fl-chip" data-addnode="warten">
+                            <span class="fl-chip-icon" aria-hidden="true">⏱</span>
+                            Warten                        </button>
+                                            <button type="button" tabindex="-1" type="button" class="fl-chip" data-addnode="mail">
+                            <span class="fl-chip-icon" aria-hidden="true">✉</span>
+                            E-Mail senden                        </button>
+                                            <button type="button" tabindex="-1" type="button" class="fl-chip" data-addnode="bedingung">
+                            <span class="fl-chip-icon" aria-hidden="true">?</span>
+                            Wenn … dann                        </button>
+                                            <button type="button" tabindex="-1" type="button" class="fl-chip" data-addnode="aktion">
+                            <span class="fl-chip-icon" aria-hidden="true">⚙</span>
+                            Aktion                        </button>
+                                            <button type="button" tabindex="-1" type="button" class="fl-chip" data-addnode="ende">
+                            <span class="fl-chip-icon" aria-hidden="true">■</span>
+                            Strecke beenden                        </button>
+                                    </aside>
+
+                <div class="fl-stage">
+                    <div class="fl-trigger">
+                        <strong>Auslöser</strong>
+                        Anmeldung bestätigt                    </div>
+                    <div class="fl-canvas" data-canvas=""><div class="fl-list"><div class="fl-drop"><span class="fl-drop-line"></span></div><div class="fl-node fl-node-warten" data-id="n01" data-schritt="1"><div class="fl-node-bar"><span class="fl-grip" draggable="true" title="Zum Verschieben ziehen" aria-hidden="true">⠿</span><span class="fl-node-icon" aria-hidden="true">⏱</span><span class="fl-node-title">1 Stunde warten</span><span class="fl-node-tools"><button type="button" tabindex="-1" type="button" class="fl-icon" data-act="up" title="Nach oben">↑</button><button type="button" tabindex="-1" type="button" class="fl-icon" data-act="down" title="Nach unten">↓</button><button type="button" tabindex="-1" type="button" class="fl-icon fl-icon-danger" data-act="del" title="Entfernen">✕</button></span></div></div><div class="fl-drop"><span class="fl-drop-line"></span></div><div class="fl-node fl-node-mail" data-id="n02" data-schritt="2"><div class="fl-node-bar"><span class="fl-grip" draggable="true" title="Zum Verschieben ziehen" aria-hidden="true">⠿</span><span class="fl-node-icon" aria-hidden="true">✉</span><span class="fl-node-title">E-Mail senden</span><span class="fl-node-tools"><button type="button" tabindex="-1" type="button" class="fl-icon" data-act="up" title="Nach oben">↑</button><button type="button" tabindex="-1" type="button" class="fl-icon" data-act="down" title="Nach unten">↓</button><button type="button" tabindex="-1" type="button" class="fl-icon fl-icon-danger" data-act="del" title="Entfernen">✕</button></span></div><div class="fl-node-body"><span class="fl-mailsubject">Willkommen im Golfclub Musterhausen</span><a class="fl-mailbtn" href="#">✎ Inhalt bearbeiten</a></div></div><div class="fl-drop"><span class="fl-drop-line"></span></div><div class="fl-node fl-node-warten" data-id="n03" data-schritt="3"><div class="fl-node-bar"><span class="fl-grip" draggable="true" title="Zum Verschieben ziehen" aria-hidden="true">⠿</span><span class="fl-node-icon" aria-hidden="true">⏱</span><span class="fl-node-title">3 Tage warten</span><span class="fl-node-tools"><button type="button" tabindex="-1" type="button" class="fl-icon" data-act="up" title="Nach oben">↑</button><button type="button" tabindex="-1" type="button" class="fl-icon" data-act="down" title="Nach unten">↓</button><button type="button" tabindex="-1" type="button" class="fl-icon fl-icon-danger" data-act="del" title="Entfernen">✕</button></span></div></div><div class="fl-drop"><span class="fl-drop-line"></span></div><div class="fl-node fl-node-mail" data-id="n04" data-schritt="4"><div class="fl-node-bar"><span class="fl-grip" draggable="true" title="Zum Verschieben ziehen" aria-hidden="true">⠿</span><span class="fl-node-icon" aria-hidden="true">✉</span><span class="fl-node-title">E-Mail senden</span><span class="fl-node-tools"><button type="button" tabindex="-1" type="button" class="fl-icon" data-act="up" title="Nach oben">↑</button><button type="button" tabindex="-1" type="button" class="fl-icon" data-act="down" title="Nach unten">↓</button><button type="button" tabindex="-1" type="button" class="fl-icon fl-icon-danger" data-act="del" title="Entfernen">✕</button></span></div><div class="fl-node-body"><span class="fl-mailsubject">Ihre ersten Runden: Platzreife, Startzeiten, Ansprechpartner</span><a class="fl-mailbtn" href="#">✎ Inhalt bearbeiten</a></div></div><div class="fl-drop"><span class="fl-drop-line"></span></div><div class="fl-node fl-node-warten" data-id="n05" data-schritt="5"><div class="fl-node-bar"><span class="fl-grip" draggable="true" title="Zum Verschieben ziehen" aria-hidden="true">⠿</span><span class="fl-node-icon" aria-hidden="true">⏱</span><span class="fl-node-title">4 Tage warten</span><span class="fl-node-tools"><button type="button" tabindex="-1" type="button" class="fl-icon" data-act="up" title="Nach oben">↑</button><button type="button" tabindex="-1" type="button" class="fl-icon" data-act="down" title="Nach unten">↓</button><button type="button" tabindex="-1" type="button" class="fl-icon fl-icon-danger" data-act="del" title="Entfernen">✕</button></span></div></div><div class="fl-drop"><span class="fl-drop-line"></span></div><div class="fl-node fl-node-bedingung" data-id="n06" data-schritt="6"><div class="fl-node-bar"><span class="fl-grip" draggable="true" title="Zum Verschieben ziehen" aria-hidden="true">⠿</span><span class="fl-node-icon" aria-hidden="true">?</span><span class="fl-node-title">Wenn Empfänger hat die letzte Mail dieser Strecke geöffnet</span><span class="fl-node-tools"><button type="button" tabindex="-1" type="button" class="fl-icon" data-act="up" title="Nach oben">↑</button><button type="button" tabindex="-1" type="button" class="fl-icon" data-act="down" title="Nach unten">↓</button><button type="button" tabindex="-1" type="button" class="fl-icon fl-icon-danger" data-act="del" title="Entfernen">✕</button></span></div><div class="fl-branches"><div class="fl-branch fl-branch-yes"><div class="fl-branch-title">Ja</div><div class="fl-list"><div class="fl-drop"><span class="fl-drop-line"></span></div><div class="fl-node fl-node-mail" data-id="n07" data-schritt="6"><div class="fl-node-bar"><span class="fl-grip" draggable="true" title="Zum Verschieben ziehen" aria-hidden="true">⠿</span><span class="fl-node-icon" aria-hidden="true">✉</span><span class="fl-node-title">E-Mail senden</span><span class="fl-node-tools"><button type="button" tabindex="-1" type="button" class="fl-icon" data-act="up" title="Nach oben">↑</button><button type="button" tabindex="-1" type="button" class="fl-icon" data-act="down" title="Nach unten">↓</button><button type="button" tabindex="-1" type="button" class="fl-icon fl-icon-danger" data-act="del" title="Entfernen">✕</button></span></div><div class="fl-node-body"><span class="fl-mailsubject">Drei Turniere, bei denen Gäste immer mitspielen dürfen</span><a class="fl-mailbtn" href="#">✎ Inhalt bearbeiten</a></div></div><div class="fl-drop"><span class="fl-drop-line"></span></div></div></div><div class="fl-branch fl-branch-no"><div class="fl-branch-title">Nein</div><div class="fl-list"><div class="fl-drop"><span class="fl-drop-line"></span></div><div class="fl-node fl-node-aktion" data-id="n08" data-schritt="6"><div class="fl-node-bar"><span class="fl-grip" draggable="true" title="Zum Verschieben ziehen" aria-hidden="true">⠿</span><span class="fl-node-icon" aria-hidden="true">⚙</span><span class="fl-node-title">Zu einer Liste hinzufügen: Neumitglieder 2026</span><span class="fl-node-tools"><button type="button" tabindex="-1" type="button" class="fl-icon" data-act="up" title="Nach oben">↑</button><button type="button" tabindex="-1" type="button" class="fl-icon" data-act="down" title="Nach unten">↓</button><button type="button" tabindex="-1" type="button" class="fl-icon fl-icon-danger" data-act="del" title="Entfernen">✕</button></span></div></div><div class="fl-drop"><span class="fl-drop-line"></span></div></div></div></div></div><div class="fl-drop"><span class="fl-drop-line"></span></div></div></div>
+                </div>
+
+                <aside class="fl-inspector" data-inspector=""><h3>Einstellungen</h3><p class="fl-hint">Klicken Sie auf einen Schritt, um ihn einzustellen.</p></aside>
+
+                <textarea readonly tabindex="-1" data-flow-field="" hidden="">{"nodes":[{"id":"n01","type":"warten","einheit":"stunden","value":1},{"id":"n02","type":"mail","step_id":1},{"id":"n03","type":"warten","einheit":"tage","value":3},{"id":"n04","type":"mail","step_id":2},{"id":"n05","type":"warten","einheit":"tage","value":4},{"id":"n06","type":"bedingung","pruefung":"geoeffnet","list_id":0,"ja":[{"id":"n07","type":"mail","step_id":3}],"nein":[{"id":"n08","type":"aktion","aktion":"liste_hinzufuegen","list_id":2}]}]}</textarea>
+            </div>
+
+            <div class="ad-actions">
+                <button type="button" tabindex="-1" value="speichern" class="ad-btn">Ablauf speichern</button>
+                            </div>
+        </div>
+    </div>
+
+<script>
+(function () {
+    var gelaufen = false;
+
+    function start() {
+        if (gelaufen) { return; }
+        gelaufen = true;
+        document.body.classList.add('laeuft');
+    }
+
+    function hoehe() {
+        var h = Math.ceil(document.documentElement.getBoundingClientRect().height);
+        try { parent.postMessage({ demo: 'hoehe', px: h }, '*'); } catch (e) {}
+    }
+
+    /*
+     * Kopf- und Fusszeile der Vorlage massstabsgerecht einpassen – dieselbe
+     * Rechnung wie im System (builder.js, rahmenAufbauen). Ohne sie stuende
+     * der Footer ueber den Rand des Rahmens hinaus.
+     */
+    function rahmenEinpassen() {
+        var kaesten = document.querySelectorAll('[data-rahmen]');
+        for (var i = 0; i < kaesten.length; i++) {
+            var kasten  = kaesten[i];
+            var fenster = kasten.querySelector('.bk-rahmen-fenster');
+            var rahmen  = kasten.querySelector('iframe');
+            if (!fenster || !rahmen) { continue; }
+
+            var dok = null;
+            try { dok = rahmen.contentDocument; } catch (e) { dok = null; }
+            var marke = dok && dok.getElementById('nl-inhalt');
+            if (!marke) { kasten.hidden = true; continue; }
+
+            kasten.hidden = false;
+            var oben = marke.getBoundingClientRect().top + (dok.documentElement.scrollTop || 0);
+            if (oben <= 0) { kasten.hidden = true; continue; }
+
+            var ganz = Math.max(dok.documentElement.scrollHeight, dok.body.scrollHeight);
+            var letzter = dok.body.lastElementChild;
+            if (letzter) {
+                var kante = letzter.getBoundingClientRect().bottom + (dok.documentElement.scrollTop || 0);
+                if (kante > oben) { ganz = Math.min(ganz, Math.round(kante) + 8); }
+            }
+
+            var breiteInnen = Math.max(dok.documentElement.scrollWidth, 600);
+            var faktor = Math.min(1, (fenster.clientWidth || breiteInnen) / breiteInnen);
+
+            rahmen.style.width = breiteInnen + 'px';
+            rahmen.style.height = ganz + 'px';
+            rahmen.style.transformOrigin = 'top left';
+            rahmen.style.transform = 'scale(' + faktor + ')';
+
+            if (kasten.getAttribute('data-rahmen') === 'kopf') {
+                rahmen.style.top = '0';
+                fenster.style.height = Math.round(oben * faktor) + 'px';
+            } else {
+                rahmen.style.top = Math.round(-oben * faktor) + 'px';
+                fenster.style.height = Math.round(Math.max(0, ganz - oben) * faktor) + 'px';
+            }
+        }
+    }
+
+    function nachmessen() { rahmenEinpassen(); hoehe(); }
+
+    window.addEventListener('message', function (e) { if (e.data === 'demo:start') { start(); } });
+    window.addEventListener('resize', nachmessen);
+    window.addEventListener('load', nachmessen);
+    nachmessen();
+    setTimeout(nachmessen, 300);
+    setTimeout(nachmessen, 1200);
+
+    // Ohne Rahmen drumherum laeuft die Demo von selbst los
+    if (window.top === window.self) { setTimeout(start, 300); }
+}());
+</script>
+</body>
+</html>

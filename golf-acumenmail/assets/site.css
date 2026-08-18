@@ -163,7 +163,7 @@ textarea:focus-visible, select:focus-visible {
 
 /* Das Kleingedruckte über einem Abschnitt. Klein, gesperrt, unaufgeregt. */
 .section-kicker, .capability-index, .feature-row-index, .phase-eyebrow,
-.package-label, .aside-title, .footer-eyebrow, .demo-step-label {
+.package-label, .aside-title, .footer-eyebrow {
     display: block;
     font-family: var(--sans);
     font-size: 0.7rem;
@@ -173,8 +173,7 @@ textarea:focus-visible, select:focus-visible {
     color: var(--muted);
     margin-bottom: 1.1rem;
 }
-.section-dark .section-kicker, .section-kicker.on-dark,
-.section-dark .demo-step-label { color: var(--signal); }
+.section-dark .section-kicker, .section-kicker.on-dark { color: var(--signal); }
 
 /* Knöpfe: rechteckig, satt, ohne Schnörkel */
 .btn-primary-custom, .btn-secondary {
@@ -394,8 +393,11 @@ textarea:focus-visible, select:focus-visible {
 .section-dark h1, .section-dark h2, .section-dark h3, .section-dark h4,
 .section-dark strong { color: var(--on-ink); }
 
-.section-head { max-width: 30ch; margin-bottom: clamp(2.5rem, 5vw, 4rem); }
-.section-title { font-size: clamp(2rem, 4.6vw, 3.4rem); margin-bottom: 1.2rem; }
+/* Der Kopf einer Sektion trug lange dieselbe schmale Breite für Überschrift
+   und Fließtext. Das ließ jeden Vorspann alle fünf Wörter umbrechen. Jetzt
+   bekommt jedes Element die Breite, die zu seiner Schriftgröße passt. */
+.section-head { max-width: 54ch; margin-bottom: clamp(2.5rem, 5vw, 4rem); }
+.section-title { font-size: clamp(2rem, 4.6vw, 3.4rem); margin-bottom: 1.2rem; max-width: 20ch; }
 .section-lead { font-size: 1.15rem; color: var(--muted); max-width: 46ch; }
 .section-dark .section-lead { color: var(--muted-dark); }
 
@@ -593,24 +595,68 @@ a.link-card:hover .link-card-more::before { width: 100%; }
 .related-card:hover strong { color: var(--green); }
 .related-card p { font-size: 0.9rem; color: var(--muted); }
 
-/* Bildschirmfotos aus dem echten Tool */
-.shot { margin: 0; }
-.shot img {
-    width: 100%;
+/* Die Oberfläche selbst, nicht ihr Abbild
+   ------------------------------------------------------------------------
+   Hier standen erst gezeichnete Nachbauten, dann Bildschirmfotos. Beides war
+   falsch: das eine erfunden, das andere unscharf. In dem Rahmen steckt jetzt
+   die Oberfläche des Newslettersystems selbst – Markup und Stylesheets aus
+   dem laufenden System, nur ohne Skripte. Nichts ist anklickbar, nichts wird
+   abgesendet. Die Höhe meldet die Demo selbst (siehe assets/site.js); der
+   Wert unten trägt sie, solange sie noch nicht geladen ist. */
+.demo-frame { margin: 0; }
+.demo-frame-buehne {
+    position: relative;
+    height: var(--demo-h, 1360px);
+    background: #F4F6F4;
     border: 1px solid rgba(27, 43, 33, 0.16);
     box-shadow: 0 30px 70px rgba(12, 31, 20, 0.16);
+    overflow: hidden;
+    transition: height 0.35s ease;
 }
-.section-dark .shot img { border-color: var(--ink-line); box-shadow: 0 30px 70px rgba(0, 0, 0, 0.4); }
+.demo-frame-buehne iframe { display: block; width: 100%; height: 100%; border: 0; }
+.section-dark .demo-frame-buehne { border-color: var(--ink-line); box-shadow: 0 30px 70px rgba(0, 0, 0, 0.4); }
+@media (max-width: 1099px) { .demo-frame-buehne { height: var(--demo-h, 1680px); } }
+
+/* Auf dem Handy stellt sich die Oberfläche untereinander – ausgeklappt wären
+   das gut drei Bildschirmhöhen. Deshalb steht hier nur der obere Ausschnitt;
+   wer mehr sehen will, schiebt im Rahmen weiter. */
+@media (max-width: 699px) {
+    .demo-frame-buehne { height: 520px; }
+    .demo-frame-buehne::after {
+        content: '';
+        position: absolute;
+        inset: auto 0 0 0;
+        height: 5rem;
+        background: linear-gradient(to bottom, rgba(244, 246, 244, 0), #F4F6F4);
+        pointer-events: none;
+    }
+}
+
+/* Der Hinweis gilt nur für schmale Anzeigen */
+.demo-frame-mobil { display: none; }
+@media (max-width: 699px) {
+    .demo-frame-mobil {
+        display: block;
+        margin-top: 0.5rem;
+        font-size: 0.8rem;
+        color: var(--muted);
+    }
+    .section-dark .demo-frame-mobil { color: var(--muted-dark); }
+}
+
+.demo-frame figcaption,
 .shot figcaption {
     display: flex; gap: 0.7rem; align-items: baseline;
     margin-top: 1rem; font-size: 0.86rem; color: var(--muted);
 }
+.section-dark .demo-frame figcaption,
 .section-dark .shot figcaption { color: var(--muted-dark); }
-.shot figcaption b { color: var(--signal); font-family: var(--display); }
-.section-alt .shot figcaption b, .shot figcaption b { color: var(--green); }
+.demo-frame figcaption b,
+.shot figcaption b { color: var(--green); font-family: var(--display); white-space: nowrap; }
+.section-dark .demo-frame figcaption b,
 .section-dark .shot figcaption b { color: var(--signal); }
 
-/* Ein Bild, das über den Textrand hinausragt */
+/* Ein Rahmen, der über den Textrand hinausragt */
 .shot-bleed { margin-inline: calc(var(--gutter) * -1); }
 @media (min-width: 1400px) { .shot-bleed { margin-inline: -3rem; } }
 
@@ -808,12 +854,13 @@ a.link-card:hover .link-card-more::before { width: 100%; }
 .home-hero { padding-bottom: clamp(2.5rem, 5vw, 4rem); }
 
 .home-hero-title {
-    /* Die Umbrüche stehen als <br> im Markup, damit die gelbe Markierung eine
-       ganze Zeile trägt statt mitten im Wort zu reißen. Die Größe ist so
-       gewählt, dass die längste Zeile auch bei 1240 px nicht umbricht. */
-    font-size: clamp(2.2rem, 6.4vw, 5rem);
-    line-height: 1.0;
-    letter-spacing: -0.045em;
+    /* Hier standen einmal feste <br>. Auf dem Handy brachen die Zeilen dann
+       ein zweites Mal und der Satz zerfiel in fünf Fetzen. Jetzt gibt nur die
+       Breite den Rahmen vor, umbrechen darf der Browser selbst. */
+    font-size: clamp(2.05rem, 5.6vw, 4.4rem);
+    line-height: 1.06;
+    letter-spacing: -0.04em;
+    max-width: 20ch;
     margin-bottom: clamp(2.5rem, 5vw, 4rem);
 }
 /* Die Signalfarbe liegt hinter dem Wort, nicht darin */
@@ -841,18 +888,8 @@ a.link-card:hover .link-card-more::before { width: 100%; }
 .home-hero-actions .btn-secondary { padding-inline: 1.5rem; white-space: nowrap; }
 @media (min-width: 1100px) { .home-hero-actions { justify-content: flex-end; } }
 
-/* Zwei Bildschirmfotos nebeneinander, absichtlich ungleich hoch */
-.home-shot-pair {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 3rem;
-    align-items: start;
-    margin-top: 3.5rem;
-}
-@media (min-width: 960px) {
-    .home-shot-pair { grid-template-columns: 6fr 5fr; gap: 3.5rem; }
-    .home-shot-pair .shot:last-child { margin-top: 4rem; }
-}
+/* Der Demo-Rahmen im dunklen Abschnitt der Startseite */
+.home-demo { margin-top: clamp(2.5rem, 5vw, 3.5rem); }
 
 /* 12. Beitragsseiten ====================================================== */
 

@@ -103,6 +103,54 @@ weiterführende Verweise am Ende.
 
 ---
 
+## Persönliche Demo-Seiten je Club
+
+Neben der Website gibt es einen zweiten Baustein für die Ansprache: Statt einer
+allgemeinen Verkaufsseite bekommt jeder Club eine eigene kleine Seite unter
+`club/<kennung>/` – mit seinem Namen, seiner bisherigen Ausgabe und einem
+konkreten Vorschlag daneben.
+
+Der Effekt ist ein anderer als bei einem Angebot: Es liest sich nicht wie
+„ich möchte Ihnen etwas verkaufen“, sondern wie „jemand hat sich mit unserem
+Club beschäftigt“.
+
+**Aufbau der Seite:** Wir haben Ihren Newsletter einmal neu gedacht → vorherige
+Ausgabe und Vorschlag nebeneinander → drei konkrete Verbesserungen → was darüber
+hinaus möglich wäre → Knopf „Beispiel besprechen“.
+
+Das Design ist bewusst ein anderes als der Rest dieser Website: Weiß, kräftiges
+Clubgrün, Signalgelb für Knöpfe, Versalien mit Sperrung, Golfball als
+Aufzählungszeichen – näher am Look deutscher Clubwebsites.
+
+### Einen neuen Club anlegen
+
+```bash
+cp src/club/daten/golfclub-musterstadt.php src/club/daten/gc-beispiel.php
+# Felder ausfüllen, dann:
+php tools/build.php
+```
+
+Fertig unter `club/gc-beispiel/index.html`. Die Kennung ist der Dateiname –
+wer kürzere Adressen will (`domain.de/gc-beispiel` statt `domain.de/club/gc-beispiel`),
+ändert in `tools/build.php` den Zielpfad und in `src/club/render.php` die
+Ebenenzahl beim Umschreiben der Verweise von 2 auf 1.
+
+**Zwei Dinge sind dabei wichtig:**
+
+1. In den Abschnitt `vorher` gehört die **echte** letzte Ausgabe des Clubs –
+   im Wortlaut, nur gekürzt. Eine erfundene Fassung zerstört genau das
+   Vertrauen, auf dem die Idee beruht: Der Empfänger erkennt sofort, ob das
+   seine Mail ist. Solange der Platzhalter drinsteht, weist die Seite selbst
+   darauf hin.
+2. Die Seiten tragen `noindex` und stehen nicht in der Sitemap. Sie sind für
+   genau einen Empfänger gedacht, nicht für Suchmaschinen.
+
+Mitgeliefert sind zwei Beispiele: `golfclub-musterstadt` (frei erfunden, als
+Vorlage zum Kopieren) und `gc-ottobeuren` (echter Club, Vorschlagsseite mit
+Platzhalter im Vorher-Teil).
+
+---
+
 ## Die bewegten Demos
 
 Der Wunsch war „eventuell mit GIFs, die den Prozess zeigen“. Umgesetzt ist es **ohne

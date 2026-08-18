@@ -115,6 +115,43 @@ foreach ($pages as $page) {
     $built[] = $target;
 }
 
+/* ------------------------------------------------- Persoenliche Clubseiten
+
+   Je Datei unter src/club/daten/ entsteht eine eigene kleine Seite unter
+   club/<kennung>/index.html. Sie taucht bewusst nicht in der Sitemap auf:
+   Diese Seiten sind fuer genau einen Empfaenger gedacht, nicht fuer Google.
+   ------------------------------------------------------------------------ */
+
+$clubDir = $src . '/club/daten';
+$clubs   = [];
+
+foreach (glob($clubDir . '/*.php') as $datei) {
+    $kennung = basename($datei, '.php');
+    if ($kennung[0] === '_') { continue; }   // Dateien mit _ sind Vorlagen
+
+    $html = shell_exec(
+        escapeshellarg($php) . ' -f ' . escapeshellarg($src . '/club/render.php')
+        . ' -- ' . escapeshellarg($kennung) . ' 2>&1'
+    );
+    if ($html === null || strncmp($html, '<!DOCTYPE html>', 15) !== 0) {
+        fwrite(STDERR, "FEHLER bei Clubseite $kennung:\n" . substr((string) $html, 0, 300) . "\n");
+        $failed++;
+        continue;
+    }
+
+    /* Diese Seiten liegen zwei Ebenen tief: club/<kennung>/index.html */
+    $html = preg_replace_callback(
+        '/(href|src)="(\/[^"]*)"/',
+        fn($m) => $m[1] . '="' . to_relative($m[2], 2, $keepDynamic) . '"',
+        $html
+    );
+
+    $dest = $root . '/club/' . $kennung . '/index.html';
+    if (!is_dir(dirname($dest))) { mkdir(dirname($dest), 0775, true); }
+    file_put_contents($dest, $html);
+    $clubs[] = $kennung;
+}
+
 /* ------------------------------------------------------------- Sitemap */
 
 $base = rtrim($SITE['domain'], '/');
@@ -142,6 +179,11 @@ foreach ($built as $target) {
 $xml .= "</urlset>\n";
 file_put_contents($root . '/sitemap.xml', $xml);
 
-printf("%d Seiten gebaut, sitemap.xml geschrieben.%s\nZum Ansehen: index.html im Browser öffnen.\n",
-       count($built), $failed ? " $failed FEHLER!" : '');
+printf("%d Seiten gebaut, sitemap.xml geschrieben.\n", count($built));
+if ($clubs) {
+    printf("%d persönliche Clubseiten: %s\n", count($clubs),
+           implode(', ', array_map(fn($k) => "club/$k/", $clubs)));
+}
+if ($failed) { printf("%d FEHLER!\n", $failed); }
+printf("Zum Ansehen: index.html im Browser öffnen.\n");
 exit($failed ? 1 : 0);

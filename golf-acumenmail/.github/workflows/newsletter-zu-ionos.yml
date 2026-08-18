@@ -1,0 +1,290 @@
+# Lädt den Ordner newsletter/ nach jedem Push automatisch auf den IONOS-Webspace.
+#
+# Damit entfällt der Weg über den eigenen Rechner: Was hier im Git liegt,
+# steht kurz darauf auf dem Server. Nichts wird gelöscht, und die Dateien,
+# die dem Server gehören – Zugangsdaten, Datenbank, hochgeladene Bilder –
+# fasst der Ablauf nicht an.
+#
+# EINMALIG EINRICHTEN (auf github.com, in diesem Repository):
+#   Settings → Secrets and variables → Actions → New repository secret
+#     IONOS_FTP_HOST   z. B. access-5017012345.webspace-data.io   (ohne ftp:// )
+#     IONOS_FTP_USER   der FTP-Benutzername aus dem IONOS-Menü
+#     IONOS_FTP_PASS   das zugehörige Passwort
+#     IONOS_ZIEL       Zielordner auf dem Server, z. B. /newsletter
+#
+# Die Zugangsdaten sieht danach niemand mehr – auch Sie nicht. Sie lassen
+# sich nur ersetzen. Nehmen Sie am besten einen eigenen FTP-Zugang, der
+# ausschließlich auf den Newsletter-Ordner zeigt (IONOS: Hosting → FTP-Zugänge).
+
+name: Newsletter zu IONOS
+
+on:
+  push:
+    branches:
+      - claude/newsletter-system-build-bqqfm9
+    paths:
+      - 'newsletter/**'
+  # Von Hand starten – auch als Probelauf, der nur zeigt, was passieren würde
+  workflow_dispatch:
+    inputs:
+      probelauf:
+        description: 'Nur anzeigen, nichts hochladen'
+        type: boolean
+        default: false
+
+# Zwei Uploads gleichzeitig würden sich in die Quere kommen
+concurrency:
+  group: ionos-newsletter
+  cancel-in-progress: false
+
+jobs:
+  hochladen:
+    name: Prüfen und hochladen
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Stand holen
+        uses: actions/checkout@v5
+
+      # PHP bringt der Läufer schon mit – nur zur Sicherheit nachinstallieren.
+      # Bewusst ohne fertige Fremd-Action: je weniger fremder Code an diesem
+      # Ablauf beteiligt ist, desto weniger Wege gibt es zu den Zugangsdaten.
+      - name: PHP bereitstellen
+        run: |
+          command -v php > /dev/null || sudo apt-get update -qq && sudo apt-get install -y -qq php-cli
+          php -v | head -1
+
+      # Lieber hier scheitern als auf dem Server: Eine Datei mit Tippfehler
+      # legt sonst den ganzen Newsletter-Bereich lahm.
+      - name: Alle PHP-Dateien auf Syntax prüfen
+        run: |
+          fehler=0
+          while IFS= read -r -d '' datei; do
+            php -l "$datei" > /dev/null || { echo "::error file=$datei::Syntaxfehler"; fehler=1; }
+          done < <(find newsletter -name '*.php' -print0)
+          exit $fehler
+
+      # Der Systemcheck vergleicht die Dateien auf dem Server mit dieser Liste.
+      # Passt sie nicht zum Code, meldet er hinterher lauter "geändert".
+      - name: Prüfsummenliste ist aktuell?
+        run: |
+          cd newsletter
+          php cron/pruefsummen.php > /dev/null
+          if ! git diff --quiet -- pruefsummen.txt; then
+            echo "::error::pruefsummen.txt passt nicht zum Code."
+            echo "Bitte lokal 'php newsletter/cron/pruefsummen.php' ausführen und mitschicken."
+            git --no-pager diff -- pruefsummen.txt | head -40
+            exit 1
+          fi
+          echo "Prüfsummenliste passt."
+
+      #
+      # Sind die Zugangsdaten hinterlegt?
+      #
+      # Fehlen sie, ist das KEIN Fehler, sondern schlicht "noch nicht
+      # eingerichtet". Früher brach der Ablauf hier ab – und schickte bei
+      # jedem einzelnen Push eine Alarmmail, obwohl am Code nichts falsch
+      # war. Jetzt wird das Hochladen übersprungen und im Bericht steht,
+      # was zu tun ist. Sobald die vier Angaben da sind, läuft es von selbst.
+      #
+      - name: Zugangsdaten vorhanden?
+        id: zugang
+        env:
+          HOST: ${{ secrets.IONOS_FTP_HOST }}
+          FTPUSER: ${{ secrets.IONOS_FTP_USER }}
+          PASS: ${{ secrets.IONOS_FTP_PASS }}
+          ZIEL: ${{ secrets.IONOS_ZIEL }}
+        run: |
+          fehlt=""
+          [ -n "$HOST" ]    || fehlt="$fehlt IONOS_FTP_HOST"
+          [ -n "$FTPUSER" ] || fehlt="$fehlt IONOS_FTP_USER"
+          [ -n "$PASS" ]    || fehlt="$fehlt IONOS_FTP_PASS"
+          [ -n "$ZIEL" ]    || fehlt="$fehlt IONOS_ZIEL"
+
+          if [ -z "$fehlt" ]; then
+            echo "bereit=ja" >> "$GITHUB_OUTPUT"
+            echo "Zugangsdaten sind hinterlegt."
+            exit 0
+          fi
+
+          echo "bereit=nein" >> "$GITHUB_OUTPUT"
+          echo "::notice::Hochladen übersprungen – es fehlen noch:$fehlt"
+          {
+            echo "### Hochladen übersprungen"
+            echo ""
+            echo "Der Code ist geprüft und in Ordnung – er wurde nur noch nicht"
+            echo "auf den Webspace übertragen, weil die Zugangsdaten fehlen:"
+            echo ""
+            for name in $fehlt; do echo "* \`$name\`"; done
+            echo ""
+            echo "**So richten Sie es ein:** In diesem Repository unter"
+            echo "*Settings → Secrets and variables → Actions → New repository secret*"
+            echo "die vier Angaben hinterlegen:"
+            echo ""
+            echo "| Name | Inhalt |"
+            echo "|---|---|"
+            echo "| \`IONOS_FTP_HOST\` | FTP-Server aus dem IONOS-Menü, ohne \`ftp://\` |"
+            echo "| \`IONOS_FTP_USER\` | FTP-Benutzername |"
+            echo "| \`IONOS_FTP_PASS\` | zugehöriges Passwort |"
+            echo "| \`IONOS_ZIEL\` | Zielordner, z. B. \`/newsletter\` |"
+            echo ""
+            echo "Danach läuft das Hochladen bei jedem Push von selbst."
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: lftp installieren
+        if: steps.zugang.outputs.bereit == 'ja'
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq lftp
+
+      - name: Hochladen
+        if: steps.zugang.outputs.bereit == 'ja'
+        env:
+          HOST: ${{ secrets.IONOS_FTP_HOST }}
+          FTPUSER: ${{ secrets.IONOS_FTP_USER }}
+          PASS: ${{ secrets.IONOS_FTP_PASS }}
+          ZIEL: ${{ secrets.IONOS_ZIEL }}
+          PROBE: ${{ inputs.probelauf }}
+        run: |
+          set -euo pipefail
+          [ "${PROBE:-false}" = "true" ] && TROCKEN="--dry-run" || TROCKEN=""
+          [ -n "$TROCKEN" ] && echo "PROBELAUF – es wird nichts übertragen."
+
+          # Bewusst OHNE "--only-newer": Das überspringt eine Datei, sobald die
+          # auf dem Server das jüngere Datum trägt – etwa weil dort jemand etwas
+          # angefasst hat oder die Uhr des Servers vorgeht. Die Übertragung
+          # meldete dann Erfolg, und der alte Stand bliebe stehen. Verglichen
+          # werden so Größe und Zeitstempel; übertragen wird, was abweicht.
+          #
+          # --- Was NICHT hochgeladen wird ------------------------------------
+          # config.php   Zugangsdaten und der Schlüssel, mit dem Passwörter
+          #              verschlüsselt sind. Gehört dem Server, nicht dem Git.
+          # data/        Die Datenbank mit allen Empfängern. Überschreiben
+          #              würde sämtliche Anmeldungen vernichten.
+          # uploads/     Die hochgeladenen Bilder.
+          # install.php  Nach der Einrichtung überflüssig und besser gelöscht.
+          #              Für eine ERSTE Einrichtung die Zeile entfernen.
+
+          # Das Passwort geht über die Umgebung, nicht als Text im Befehl.
+          # Sonst zerbricht ein Passwort mit Anführungszeichen den lftp-Aufruf –
+          # die Anmeldung scheitert dann stumm, und die Meldung lautet
+          # "Permission denied", obwohl das Passwort richtig ist.
+          export LFTP_PASSWORD="$PASS"
+
+          # Beide Versuche bekommen nur einen Anlauf. Ein falsches Passwort wird
+          # beim zweiten Mal nicht richtiger, und ein Server ohne FTP-Dienst
+          # antwortet auch beim dritten Mal nicht – das kostet nur Wartezeit.
+          FTPS_ART="set ftp:ssl-force true; set ftp:ssl-protect-data true; set ssl:verify-certificate true;
+                    set net:max-retries 1; set net:timeout 12;"
+          # ConnectTimeout und NumberOfPasswordPrompts sind wichtig: Ohne sie
+          # kann ssh auf eine Eingabe warten, die in einem Ablauf ohne Tastatur
+          # nie kommt – der Lauf hinge dann bis zum Zeitlimit.
+          SFTP_ART="set sftp:auto-confirm yes;
+                    set sftp:connect-program 'ssh -a -x -o StrictHostKeyChecking=accept-new -o ConnectTimeout=15 -o NumberOfPasswordPrompts=1';
+                    set net:max-retries 1;"
+
+          # Die eigentliche Übertragung – einmal geschrieben, zweimal nutzbar.
+          # $1 = Verbindungsart, $2 = Adresse
+          # Die Art steht bewusst NACH den allgemeinen Einstellungen, damit sie
+          # diese überschreiben kann (etwa die Zahl der Versuche).
+          uebertragen() {
+            lftp -c "
+              set net:max-retries 3;
+              set net:timeout 20;
+              set cmd:fail-exit true;
+              $1
+              open -u '$FTPUSER' --env-password '$2';
+              mirror --reverse --no-perms --parallel=4 $TROCKEN \
+                -x '^config\.php$' \
+                -x '^install\.php$' \
+                -x '^data/' \
+                -x '^uploads/' \
+                --verbose=1 \
+                newsletter/ '$ZIEL';
+              bye;
+            "
+          }
+
+          # Ein Versuch: überträgt, gibt das Protokoll aus und legt die Ausgabe
+          # in AUSGABE ab. Nur so lässt sich hinterher unterscheiden, ob der
+          # Server kein FTPS kann oder die Anmeldung abgelehnt hat.
+          versuch() {
+            set +e
+            AUSGABE=$(uebertragen "$1" "$2" 2>&1)
+            ERGEBNIS=$?
+            set -e
+            echo "$AUSGABE"
+            return $ERGEBNIS
+          }
+
+          # Eine abgelehnte Anmeldung sagt für sich genommen nichts darüber,
+          # WAS zu tun ist. Deshalb hier die drei Gründe, die es in der Praxis
+          # sind – sonst sucht man beim Passwort, obwohl es am Benutzernamen
+          # oder an einer nicht freigeschalteten SSH-Funktion liegt.
+          anmeldung_erklaeren() {
+            echo "$1" | grep -qiE "permission denied|login failed|not logged in|530" || return 0
+            echo "::error::Der Server hat die Anmeldung abgelehnt."
+            {
+              echo "### Anmeldung abgelehnt"
+              echo ""
+              echo "Die Verbindung stand, aber Benutzername oder Passwort wurden"
+              echo "nicht angenommen. Das sind die drei häufigen Gründe:"
+              echo ""
+              echo "1. **Der SFTP-Benutzer ist ein anderer als der FTP-Benutzer.**"
+              echo "   Bei IONOS steht er unter *Hosting → SFTP & SSH*; er sieht oft"
+              echo "   ganz anders aus als der FTP-Name. Dann \`IONOS_FTP_USER\` ändern."
+              echo "2. **SSH/SFTP ist für das Paket nicht freigeschaltet.** Im selben"
+              echo "   Menü einschalten – bei manchen Tarifen ist es zubuchbar."
+              echo "3. **Das Passwort stimmt nicht.** Im IONOS-Menü neu setzen und"
+              echo "   in \`IONOS_FTP_PASS\` eintragen."
+              echo ""
+              echo "Ein Passwort mit Anführungszeichen ist übrigens kein Problem mehr –"
+              echo "es wird nicht mehr in den Befehl geschrieben."
+            } >> "$GITHUB_STEP_SUMMARY"
+          }
+
+          # FTPS oder SFTP? IONOS gibt je nach Paket das eine oder das andere
+          # heraus – neuere Pakete meist nur noch SFTP. Steht "sftp://" vor der
+          # Adresse, läuft es gleich über SSH. Ohne Präfix wird FTPS versucht;
+          # lehnt der Server das ab, hat er schlicht kein FTPS, und wir nehmen
+          # SFTP. Unverschlüsseltes "ftp://" lassen wir bewusst nicht zu:
+          # Passwort und Dateien gingen sonst im Klartext durchs Netz.
+          case "$HOST" in
+            sftp://*)
+              echo "Verbindung über SFTP (SSH)."
+              versuch "$SFTP_ART" "$HOST" && exit 0
+              anmeldung_erklaeren "$AUSGABE"
+              exit 1
+              ;;
+
+            ftp://*)
+              echo "::error::IONOS_FTP_HOST beginnt mit 'ftp://' – unverschlüsselt wird nicht übertragen."
+              echo "Bitte das Präfix weglassen (dann FTPS) oder 'sftp://' davorsetzen."
+              exit 1
+              ;;
+
+            *)
+              echo "Verbindung über FTPS (verschlüsseltes FTP) …"
+              versuch "$FTPS_ART" "$HOST" && exit 0
+
+              # Genau dieser Wortlaut heißt: Der Server kann kein FTPS.
+              if echo "$AUSGABE" | grep -qi "does not support or allow SSL"; then
+                echo "::warning::Dieser Server bietet kein FTPS – zweiter Versuch über SFTP (SSH)."
+                echo "Dauerhaft sauberer: im Secret IONOS_FTP_HOST ein 'sftp://' voranstellen."
+                versuch "$SFTP_ART" "sftp://$HOST" && exit 0
+              fi
+
+              anmeldung_erklaeren "$AUSGABE"
+              exit 1
+              ;;
+          esac
+
+      - name: Fertig
+        if: success() && steps.zugang.outputs.bereit == 'ja'
+        env:
+          ZIEL: ${{ secrets.IONOS_ZIEL }}
+        run: |
+          echo "### Newsletter hochgeladen" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Zielordner: \`$ZIEL\`" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Bitte einmal \`systemcheck.php\` aufrufen – dort steht, ob alle" >> $GITHUB_STEP_SUMMARY
+          echo "Dateien vollständig angekommen sind und welche Fassung nun läuft." >> $GITHUB_STEP_SUMMARY

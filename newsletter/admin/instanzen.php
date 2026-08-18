@@ -11,12 +11,9 @@
  * cron_token. Zurück kommen nur Zahlen, keine Adressen (siehe status.php).
  */
 
-require_once dirname(__DIR__) . '/lib/bootstrap.php';
-
-$pageTitle = 'Instanzen';
+$pageTitle     = 'Instanzen';
+$requiredRight = 'einstellungen';
 require __DIR__ . '/partials/header.php';
-
-Auth::require('einstellungen');
 
 if (Util::isPost()) {
     Util::requireCsrf();

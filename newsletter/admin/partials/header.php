@@ -105,12 +105,11 @@ function subscriber_status_pill(string $status): string
         <?php if (Auth::can('einstellungen')): ?>
             <?= admin_nav('protokoll.php', 'Protokoll') ?>
             <?= admin_nav('einstellungen.php', 'Einstellungen') ?>
-            <?php /* Nur wo es weitere Installationen gibt. Wer eine einzelne
-                     betreibt, braucht den Eintrag nicht – eingetragen wird die
-                     erste über den Verweis in den Einstellungen. */ ?>
-            <?php if (Instanzen::all() !== []): ?>
-                <?= admin_nav('instanzen.php', 'Instanzen') ?>
-            <?php endif; ?>
+            <?php /* Steht immer da, auch bei einer einzelnen Installation:
+                     Wer die Übersicht sucht, sucht sie in der Navigation –
+                     nicht in den Einstellungen. Ohne weitere Einträge zeigt
+                     die Seite die eigene Installation und das Formular. */ ?>
+            <?= admin_nav('instanzen.php', 'Instanzen') ?>
         <?php endif; ?>
         <?= admin_nav('benutzer.php', Auth::can('benutzer') ? 'Benutzer' : 'Mein Zugang') ?>
     </nav>

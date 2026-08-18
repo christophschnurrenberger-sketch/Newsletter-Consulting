@@ -17,7 +17,7 @@ if (!defined('NL_ROOT')) {
  * Systemcheck – so lässt sich sofort erkennen, welcher Stand auf dem
  * Server liegt.
  */
-define('NL_VERSION', '1.21.0 (Instanzen-Übersicht und Vereinsdesign Ottobeuren)');
+define('NL_VERSION', '1.21.1 (Instanzen stehen fest in der Navigation)');
 
 mb_internal_encoding('UTF-8');
 date_default_timezone_set('Europe/Berlin');

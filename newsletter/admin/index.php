@@ -42,7 +42,14 @@ $maxGrowth = max(1, max($growth));
                 <li><?= Util::e($problem) ?></li>
             <?php endforeach; ?>
         </ul>
-        <p style="margin:10px 0 0;"><a href="einstellungen.php">Zu den Einstellungen</a></p>
+        <?php /* Wer die Einstellungen nicht darf, landete hier bisher auf einer
+                 Abweisung. Dann lieber sagen, wer weiterhilft. */ ?>
+        <?php if (Auth::can('einstellungen')): ?>
+            <p style="margin:10px 0 0;"><a href="einstellungen.php">Zu den Einstellungen</a></p>
+        <?php else: ?>
+            <p style="margin:10px 0 0;">Das erledigt eine Administratorin oder ein Administrator
+                in den Einstellungen.</p>
+        <?php endif; ?>
     </div>
 <?php endif; ?>
 

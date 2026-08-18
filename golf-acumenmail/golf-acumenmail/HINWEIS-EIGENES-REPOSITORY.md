@@ -1,33 +1,11 @@
-# Ansehen und Umzug in ein eigenes Repository
-
-## Schnell ansehen – ohne Server
-
-Die Website besteht aus PHP-Dateien; die lassen sich nicht per Doppelklick
-öffnen. Für den schnellen Blick liegt hier ein fertiger statischer Export:
-
-**`static/index.html` im Browser öffnen.** Alle 28 Seiten, Navigation, Mega-Menü
-und die bewegten Demos funktionieren.
-
-Nicht im Export: Kontaktformular und Newsletter-Anmeldung – beides braucht einen
-PHP-Server.
-
-## Richtig laufen lassen
-
-```bash
-cd golf-acumenmail
-php -S 127.0.0.1:8000
-```
-
-Dann <http://127.0.0.1:8000> aufrufen. Nach Änderungen an den `.php`-Dateien den
-Export neu erzeugen: `php tools/build-static.php`.
-
----
-
-## Dieser Ordner gehört in ein eigenes Repository
+# Dieser Ordner gehört in ein eigenes Repository
 
 Der Auftrag war ein neues Repository namens **Golf Acumenmail**. Die GitHub-App
 dieser Sitzung darf keine Repositories anlegen (`403 Resource not accessible by
-integration`), deshalb liegt die Website vorerst hier – damit nichts verloren geht.
+integration`), deshalb liegt die fertige Website vorerst hier – damit nichts
+verloren geht.
+
+## So kommt sie in ihr eigenes Repository
 
 1. Auf <https://github.com/new> ein leeres Repository **`Golf-Acumenmail`**
    anlegen (ohne README, ohne .gitignore, ohne Lizenz).
@@ -51,3 +29,15 @@ git push -u origin main
 ```
 
 Danach kann dieser Ordner aus `Newsletter-Consulting` gelöscht werden.
+
+## Ansehen
+
+Die Seiten sind PHP mit gemeinsamen Partials – zum Ansehen also einen PHP-Server
+starten, nicht die Dateien direkt im Browser öffnen:
+
+```bash
+cd golf-acumenmail
+php -S 127.0.0.1:8000
+```
+
+Alles Weitere steht in `README.md`.

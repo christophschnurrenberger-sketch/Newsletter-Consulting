@@ -1,0 +1,139 @@
+<?php
+/**
+ * Oberfläche des Baukastens – wird von kampagne.php und vorlagen.php genutzt.
+ *
+ * Die eigentliche Bedienung steckt in assets/builder.js; hier steht nur das
+ * Gerüst samt Ausgangsdaten. Gespeichert wird ein JSON-Feld, aus dem der
+ * Server anschließend das E-Mail-HTML erzeugt (lib/Blocks.php).
+ */
+
+/**
+ * @param array       $blocks    Bausteine (Ergebnis von Blocks::parse)
+ * @param string      $mode      'campaign' oder 'template'
+ * @param string      $fieldName Name des versteckten Formularfelds
+ * @param string|null $rahmenUrl Adresse, die dieselbe Mail mit einer Marke
+ *                               an der Inhaltsstelle liefert. Damit zeigt
+ *                               die Arbeitsfläche Kopfzeile und Footer der
+ *                               Vorlage fest an – nur zum Ansehen.
+ */
+function builder_ui(array $blocks, string $mode = 'campaign', string $fieldName = 'blocks_json',
+                    ?string $rahmenUrl = null): void
+{
+    $typen = Blocks::TYPES;
+    if ($mode !== 'template') {
+        // Inhaltsplatzhalter, Kopfzeile und Footer gehören zur Vorlage
+        unset($typen['content'], $typen['kopf'], $typen['fuss']);
+    }
+    $icons = [
+        'heading' => 'H', 'text' => '¶', 'image' => '▣', 'button' => '⬛',
+        'divider' => '—', 'spacer' => '↕', 'columns' => '▥', 'social' => '⋯',
+        'html' => '&lt;/&gt;', 'content' => '⧉', 'kopf' => '▤', 'fuss' => '▨',
+    ];
+    ?>
+    <div class="bk" data-builder data-mode="<?= Util::e($mode) ?>"
+         data-upload="upload.php"
+         data-autosave="1"
+         <?= Ai::available() ? 'data-ki="ki.php"' : '' ?>
+         data-csrf="<?= Util::e(Util::csrfToken()) ?>">
+
+        <!-- Bausteine zum Hineinziehen -->
+        <aside class="bk-palette">
+            <h3>Bausteine</h3>
+            <p class="bk-hint">Ziehen Sie einen Baustein nach rechts – oder klicken Sie ihn an,
+                dann wird er unten angehängt.</p>
+            <?php foreach ($typen as $key => $label): ?>
+                <button type="button" class="bk-chip" draggable="true" data-add="<?= Util::e($key) ?>">
+                    <span class="bk-chip-icon" aria-hidden="true"><?= $icons[$key] ?? '•' ?></span>
+                    <?= Util::e($label) ?>
+                </button>
+            <?php endforeach; ?>
+
+            <h3 style="margin-top:22px;">Eigene Bausteine</h3>
+            <div class="bk-eigene" data-eigene></div>
+
+            <h3 style="margin-top:22px;">Platzhalter</h3>
+            <p class="bk-hint">Setzt den Platzhalter an der Schreibmarke ein.</p>
+            <select class="bk-select" data-placeholder-picker>
+                <option value="">— einsetzen —</option>
+                <?php foreach (Renderer::placeholderHelp() as $code => $bedeutung): ?>
+                    <?php if ($mode === 'campaign' && $code === '{{inhalt}}') { continue; } ?>
+                    <option value="<?= Util::e($code) ?>"><?= Util::e($code) ?> – <?= Util::e(Util::shorten($bedeutung, 40)) ?></option>
+                <?php endforeach; ?>
+            </select>
+
+            <?php if (Ai::available()): ?>
+                <h3 style="margin-top:22px;">Textassistent</h3>
+                <p class="bk-hint">Formuliert auf Wunsch einen Vorschlag für das Textfeld,
+                    in dem die Schreibmarke steht. Sie sehen ihn zuerst.</p>
+                <button type="button" class="bk-ki-open" data-ki-open>✨ Text vorschlagen</button>
+            <?php endif; ?>
+        </aside>
+
+        <!-- Arbeitsfläche -->
+        <div class="bk-stage">
+            <div class="bk-stage-bar">
+                <span class="bk-stage-title"><?= $mode === 'template' ? 'Vorlage' : 'Ausgabe' ?> zusammenstellen</span>
+                <span class="bk-verlauf">
+                    <button type="button" class="bk-icon" data-zurueck disabled
+                            title="Rückgängig (Strg+Z)" aria-label="Rückgängig">↶</button>
+                    <button type="button" class="bk-icon" data-vor disabled
+                            title="Wiederherstellen (Strg+Umschalt+Z)" aria-label="Wiederherstellen">↷</button>
+                </span>
+                <span class="bk-autosave" data-autosave-status></span>
+                <span class="bk-stage-info" data-count></span>
+            </div>
+            <?php if ($mode === 'template'): ?>
+                <?php /* Fehlt der Inhaltsbaustein, setzt das System ihn beim
+                         Versand selbst ein – ohne Hinweis wäre unerklärlich,
+                         warum in der Vorschau plötzlich eine Fläche steht. */ ?>
+                <p class="bk-fehlt" data-fehlt-inhalt hidden>
+                    Der Baustein <strong>„Inhalt der Ausgabe“</strong> fehlt. Er markiert die Stelle,
+                    an der später der Text des Newsletters steht – ohne ihn setzt das System ihn
+                    von selbst über den Footer.
+                    <button type="button" class="ad-btn ad-btn-secondary ad-btn-small"
+                            data-add="content">Jetzt einsetzen</button>
+                </p>
+            <?php endif; ?>
+            <?php if ($rahmenUrl !== null): ?>
+                <?php /* Kopfzeile und Footer gehören zur Vorlage: fest, nicht
+                         verschiebbar, nicht anklickbar – aber sichtbar, damit
+                         niemand ins Leere schreibt. */ ?>
+                <div class="bk-rahmen bk-rahmen-kopf" data-rahmen="kopf" hidden>
+                    <span class="bk-rahmen-schild">Kopfzeile der Vorlage</span>
+                    <div class="bk-rahmen-fenster">
+                        <iframe src="<?= Util::e($rahmenUrl) ?>" title="Kopfzeile der Vorlage"
+                                scrolling="no" tabindex="-1" aria-hidden="true" loading="eager"></iframe>
+                    </div>
+                </div>
+            <?php endif; ?>
+
+            <div class="bk-canvas" data-canvas></div>
+
+            <?php if ($rahmenUrl !== null): ?>
+                <div class="bk-rahmen bk-rahmen-fuss" data-rahmen="fuss" hidden>
+                    <div class="bk-rahmen-fenster">
+                        <iframe src="<?= Util::e($rahmenUrl) ?>" title="Footer der Vorlage"
+                                scrolling="no" tabindex="-1" aria-hidden="true" loading="eager"></iframe>
+                    </div>
+                    <span class="bk-rahmen-schild">Footer der Vorlage – Impressum und Abmeldelink stehen fest drin</span>
+                </div>
+            <?php endif; ?>
+            <p class="bk-hint bk-canvas-hint">Tipp: Bausteine lassen sich am Griff <span aria-hidden="true">⠿</span>
+                verschieben. Auf dem Handy nutzen Sie die Pfeiltasten am Baustein.</p>
+        </div>
+
+        <!-- Einstellungen -->
+        <aside class="bk-inspector" data-inspector></aside>
+
+        <textarea name="<?= Util::e($fieldName) ?>" data-blocks-field hidden><?php
+            echo Util::e((string) json_encode($blocks, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
+        ?></textarea>
+    </div>
+
+    <script>
+        window.NL_FONTS = <?= json_encode(Blocks::fonts(), JSON_UNESCAPED_UNICODE) ?>;
+        window.NL_BLOCK_LABELS = <?= json_encode(Blocks::TYPES, JSON_UNESCAPED_UNICODE) ?>;
+        window.NL_KI_ACTIONS = <?= json_encode(Ai::ACTIONS, JSON_UNESCAPED_UNICODE) ?>;
+    </script>
+    <?php
+}

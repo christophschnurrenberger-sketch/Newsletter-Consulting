@@ -1,0 +1,59 @@
+{
+    "vorlage": "Fairway54 (Baukasten)",
+    "beschreibung": "Golf-Design zum Weiterbauen: Kopfzeile, Inhalt und Footer sind Bausteine.",
+    "marke": "Fairway54",
+    "website": "https://www.fairway54.de",
+    "blocks": {
+        "meta": {
+            "bg": "#FAF9F5",
+            "cardBg": "#FFFFFF",
+            "width": 620,
+            "font": "Arial, Helvetica, sans-serif",
+            "textColor": "#3F4A43",
+            "headColor": "#16261C",
+            "linkColor": "#1E6B45",
+            "radius": 2,
+            "padding": 40,
+            "showHeader": 1,
+            "headerBg": "#14243A",
+            "headerText": "#FFFFFF",
+            "logoText": "A",
+            "showFooter": 1,
+            "headerStyle": "logo",
+            "headFont": "Georgia, \"Times New Roman\", serif",
+            "wordmark": "",
+            "wordmarkAccent": "",
+            "accentColor": "#1E6B45",
+            "claim": "",
+            "borderColor": "#E1DED5",
+            "footerBg": "",
+            "footerText": "#C6D3CA",
+            "note": ""
+        },
+        "blocks": [
+            {
+                "id": "ba2703381",
+                "type": "kopf",
+                "stil": "wortmarke",
+                "wortmarke": "Fairway",
+                "akzentTeil": "54",
+                "akzentFarbe": "#1E6B45",
+                "bg": "#FFFFFF",
+                "farbe": "#16261C",
+                "claim": "Golf lernen von HCP 54 bis 36",
+                "logoText": "A"
+            },
+            {
+                "id": "bfaea0eba",
+                "type": "content"
+            },
+            {
+                "id": "bcb54b8c2",
+                "type": "fuss",
+                "bg": "#0E2E1D",
+                "farbe": "#C6D3CA",
+                "hinweis": "Anzeige: Die mit * markierten Links sind Partnerlinks. Kaufst du darüber, erhalten wir eine Provision. Für dich ändert sich der Preis nicht."
+            }
+        ]
+    }
+}

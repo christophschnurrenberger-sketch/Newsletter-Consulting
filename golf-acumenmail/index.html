@@ -1,877 +1,1183 @@
+
 <!DOCTYPE html>
 <html lang="de">
 <head>
-    <!-- Erzeugt von tools/build.php aus src/index.php – nicht hier ändern. -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Volle Turniere, gebundene Mitglieder, wiederkehrende Gastspieler – mit einer Mitgliederkommunikation, die nicht am schwarzen Brett endet. Inklusive Newsletter-System auf dem Server Ihres Clubs.">
-    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1">
-    <meta name="author" content="AcumenMail Golf">
-    <meta name="theme-color" content="#143D28">
+    <meta name="description" content="AcumenMail hilft mittelständischen Unternehmen, aus Newsletter-Versand ein messbares E-Mail-Marketing-System für Leads, Kundenbindung und Umsatzbeitrag aufzubauen.">
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+    <meta name="author" content="AcumenMail">
+    <meta name="theme-color" content="#14243A">
     <meta name="referrer" content="strict-origin-when-cross-origin">
+    <meta name="keywords" content="E-Mail Marketing Beratung, Newsletter Beratung, Marketing Automation, E-Mail Marketing Strategie, Newsletter Automatisierung, Mittelstand">
 
-    <link rel="canonical" href="https://www.golf-newsletter.de/">
+    <!-- Kanonische URL: ersetzen Sie www.newsletter-consulting.de durch Ihre echte Domain (auch in sitemap.xml, robots.txt und unten im JSON-LD) -->
+    <link rel="canonical" href="https://www.newsletter-consulting.de/">
+
+    <!-- Google Search Console: fügen Sie hier Ihren Verifizierungs-Code ein und entfernen Sie die Kommentarzeichen
+    <meta name="google-site-verification" content="IHR_VERIFIZIERUNGS_CODE"> -->
 
     <meta property="og:locale" content="de_DE">
     <meta property="og:type" content="website">
-    <meta property="og:site_name" content="AcumenMail Golf">
-    <meta property="og:url" content="https://www.golf-newsletter.de/">
-    <meta property="og:title" content="Newsletter-Marketing für Golfclubs">
-    <meta property="og:description" content="Volle Turniere, gebundene Mitglieder, wiederkehrende Gastspieler – mit einer Mitgliederkommunikation, die nicht am schwarzen Brett endet. Inklusive Newsletter-System auf dem Server Ihres Clubs.">
+    <meta property="og:site_name" content="AcumenMail">
+    <meta property="og:url" content="https://www.newsletter-consulting.de/">
+    <meta property="og:title" content="E-Mail Marketing Beratung für Newsletter & Automatisierung | AcumenMail">
+    <meta property="og:description" content="AcumenMail hilft mittelständischen Unternehmen, aus Newsletter-Versand ein messbares E-Mail-Marketing-System für Leads, Kundenbindung und Umsatzbeitrag aufzubauen.">
+    <meta property="og:image" content="https://www.newsletter-consulting.de/images/test.jpg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="Strategische E-Mail-Marketing-Beratung von AcumenMail">
     <meta name="twitter:card" content="summary_large_image">
-
-    <title>Newsletter-Marketing für Golfclubs | AcumenMail Golf</title>
-
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='15' fill='%231E6B45'/><text x='16' y='22' font-family='Georgia,serif' font-size='17' font-weight='700' fill='white' text-anchor='middle'>A</text></svg>">
-
+    <meta name="twitter:title" content="E-Mail Marketing Beratung für Newsletter & Automatisierung | AcumenMail">
+    <meta name="twitter:description" content="AcumenMail hilft mittelständischen Unternehmen, aus Newsletter-Versand ein messbares E-Mail-Marketing-System für Leads, Kundenbindung und Umsatzbeitrag aufzubauen.">
+    <meta name="twitter:image" content="https://www.newsletter-consulting.de/images/test.jpg">
+    <title>E-Mail Marketing Beratung für Newsletter & Automatisierung | AcumenMail</title>
+    <link rel="icon" type="image/png" href="images/favicon.png">
+    <link rel="apple-touch-icon" href="images/favicon.png">
+    <!-- Lokales CSS statt externer Tailwind-CDN -->
+    <!-- Systemschrift statt externer Google Fonts -->
+    <!-- Icons werden lokal als Inline-SVG gerendert -->
     <link rel="stylesheet" href="assets/site.css">
-    <link rel="stylesheet" href="assets/demo.css">
-
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
-      "@type": "ProfessionalService",
-      "name": "AcumenMail Golf",
-      "url": "https:\/\/www.golf-newsletter.de\/",
-      "telephone": "0175 2778902",
-      "areaServed": { "@type": "Country", "name": "Deutschland" },
-      "serviceType": "Newsletter-Marketing für Golfclubs"
+      "@graph": [
+        {
+          "@type": "Organization",
+          "@id": "#organization",
+          "name": "AcumenMail",
+          "url": "https://www.newsletter-consulting.de/",
+          "logo": "https://www.newsletter-consulting.de/images/favicon.png",
+          "description": "Beratung für strategisches E-Mail Marketing, Newsletter, Marketing Automation und Performance-Optimierung.",
+          "hasOfferCatalog": {
+            "@type": "OfferCatalog",
+            "name": "E-Mail Marketing Beratungspakete",
+            "itemListElement": [
+              {
+                "@type": "Offer",
+                "name": "Potenzialanalyse",
+                "description": "Analyse von E-Mail-Marketing-Status, Datenlage und priorisierten Wachstumshebeln.",
+                "priceSpecification": {
+                  "@type": "PriceSpecification",
+                  "priceCurrency": "EUR",
+                  "price": "299",
+                  "valueAddedTaxIncluded": false
+                }
+              },
+              {
+                "@type": "Offer",
+                "name": "Strategie- und Setup-Sprint",
+                "description": "Kompakter Aufbau von Segmentierung, Content-Fahrplan und ersten Automationen.",
+                "priceSpecification": {
+                  "@type": "PriceSpecification",
+                  "priceCurrency": "EUR",
+                  "price": "899",
+                  "valueAddedTaxIncluded": false
+                }
+              },
+              {
+                "@type": "Offer",
+                "name": "Laufende Optimierung",
+                "description": "Kontinuierliche Optimierung von Kampagnen, Automationen, Tests und Reporting.",
+                "priceSpecification": {
+                  "@type": "UnitPriceSpecification",
+                  "priceCurrency": "EUR",
+                  "price": "599",
+                  "unitCode": "MON",
+                  "valueAddedTaxIncluded": false
+                }
+              }
+            ]
+          }
+        },
+        {
+          "@type": "ProfessionalService",
+          "@id": "#professional-service",
+          "name": "AcumenMail",
+          "url": "https://www.newsletter-consulting.de/",
+          "image": "https://www.newsletter-consulting.de/images/test.jpg",
+          "priceRange": "€€",
+          "description": "AcumenMail hilft mittelständischen Unternehmen, aus Newsletter-Versand ein messbares E-Mail-Marketing-System für Leads, Kundenbindung und Umsatzbeitrag aufzubauen.",
+          "areaServed": {
+            "@type": "Country",
+            "name": "Deutschland"
+          },
+          "serviceType": [
+            "E-Mail Marketing Beratung",
+            "Newsletter Marketing",
+            "E-Mail Marketing Strategie",
+            "Content-Strategie",
+            "Segmentierung und Personalisierung",
+            "Marketing Automation",
+            "Performance-Analyse",
+            "Zustellbarkeits-Optimierung",
+            "E-Mail Marketing Potenzialanalyse",
+            "Laufende E-Mail-Marketing-Optimierung"
+          ],
+          "contactPoint": {
+            "@type": "ContactPoint",
+            "contactType": "sales",
+            "availableLanguage": [
+              "de"
+            ]
+          }
+        },
+        {
+          "@type": "WebSite",
+          "@id": "#website",
+          "name": "AcumenMail",
+          "url": "https://www.newsletter-consulting.de/",
+          "inLanguage": "de-DE",
+          "publisher": {
+            "@id": "#organization"
+          }
+        },
+        {
+          "@type": "WebPage",
+          "@id": "#webpage",
+          "url": "https://www.newsletter-consulting.de/",
+          "name": "E-Mail Marketing Beratung für Newsletter & Automatisierung | AcumenMail",
+          "description": "AcumenMail hilft mittelständischen Unternehmen, aus Newsletter-Versand ein messbares E-Mail-Marketing-System für Leads, Kundenbindung und Umsatzbeitrag aufzubauen.",
+          "inLanguage": "de-DE",
+          "isPartOf": {
+            "@id": "#website"
+          },
+          "about": {
+            "@id": "#professional-service"
+          },
+          "primaryImageOfPage": {
+            "@type": "ImageObject",
+            "url": "images/test.jpg"
+          }
+        },
+        {
+          "@type": "FAQPage",
+          "@id": "#faqpage",
+          "inLanguage": "de-DE",
+          "mainEntity": [
+            {
+              "@type": "Question",
+              "name": "Ab wann lohnt sich strategisches E-Mail Marketing?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Sobald Ihre Website, Ihr Vertrieb oder Ihre Kampagnen regelmäßig Kontakte erzeugen, lohnt sich ein strukturiertes E-Mail-System. Entscheidend ist nicht die Größe der Liste, sondern ob Leads, Kunden und Interessenten mit relevanten Inhalten weiterentwickelt werden können."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Was passiert in der Potenzialanalyse?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Wir prüfen Ihre aktuelle E-Mail-Kommunikation, Datenbasis, Zielgruppenlogik und wichtigsten Kennzahlen. Danach wissen Sie, welche Hebel zuerst Wirkung entfalten: Liste, Inhalte, Automationen, Segmentierung oder Zustellbarkeit."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Muss ich mein bestehendes Newsletter-Tool wechseln?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Nicht automatisch. Zuerst bewerten wir, ob Ihr aktuelles Tool die gewünschte Strategie sauber abbilden kann. Ein Wechsel ist nur sinnvoll, wenn Funktionen, Datenstruktur oder Automatisierungsmöglichkeiten Ihr Wachstum begrenzen."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Welche Automationen bringen meistens den größten Effekt?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Häufig starten wir mit Willkommensstrecken, Lead-Nurturing, Reaktivierung und post-purchase Kommunikation. Diese Sequenzen arbeiten dauerhaft im Hintergrund und machen aus einmaligem Interesse eine messbare Kundenbeziehung."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Welche Kennzahlen sind wirklich wichtig?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Öffnungs- und Klickraten sind nützlich, aber nicht genug. Entscheidend sind Conversion, Listenqualität, Umsatzbeitrag, Abmelderate und die Entwicklung einzelner Segmente. Daraus entsteht ein realistisches Bild der Wirkung."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Wie schnell sieht man erste Verbesserungen?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Erste strukturelle Verbesserungen sind oft nach wenigen Wochen sichtbar, etwa klarere Segmentierung, bessere Betreffzeilen oder sauberere Automationen. Belastbare Wachstumseffekte entstehen meist durch konsequente Optimierung über mehrere Kampagnenzyklen."
+              }
+            }
+          ]
+        }
+      ]
     }
     </script>
 </head>
-<body class="is-home">
+<body class="font-inter text-dark-neutral">
 
-<a href="#main-content" class="skip-link">Zum Inhalt springen</a>
-
-<!-- Servicezeile ------------------------------------------------------- -->
-<div class="utility-bar">
-    <div class="container utility-inner">
-        <p class="utility-claim">Newsletter-Marketing für Golfclubs, Golfanlagen und Golfschulen</p>
-        <div class="utility-links">
-            <a href="tel:+491752778902">
-                <i data-icon="phone" class="lucide"></i>0175 2778902            </a>
-            <a href="faq.html">Häufige Fragen</a>
-            <a href="newsletter/admin/login.html" class="utility-login">
-                <i data-icon="lock" class="lucide"></i>Zum Newsletter-Tool
+    <!-- Header / Navigation -->
+    <header id="header" class="sticky-header">
+        <div class="container mx-auto flex justify-between items-center px-4 header-inner">
+            <a href="#hero" aria-label="AcumenMail Startseite" class="site-brand">
+                <span class="site-brand-mark" aria-hidden="true">A</span>
+                <span class="site-brand-text">
+                    <span class="site-brand-name">AcumenMail</span>
+                    <span class="site-brand-line">E-Mail Marketing Beratung</span>
+                </span>
             </a>
+
+            <nav id="main-nav" aria-label="Hauptnavigation" class="hidden md:flex header-nav">
+                <a href="#about" class="header-nav-link">Über uns</a>
+                <a href="#services" class="header-nav-link">Leistungen</a>
+                <a href="#packages" class="header-nav-link">Pakete</a>
+                <a href="#how-we-work" class="header-nav-link">Vorgehen</a>
+                <a href="#faq" class="header-nav-link">FAQ</a>
+                <a href="toolvergleich/index.html" class="header-nav-link">Toolvergleich</a>
+                <a href="#contact" class="btn-primary-custom header-nav-cta">Potenzialanalyse anfragen</a>
+            </nav>
+
+            <button id="mobile-menu-button" class="mobile-menu-toggle" type="button" aria-label="Menü öffnen" aria-controls="main-nav" aria-expanded="false">
+                <i data-lucide="menu" class="lucide"></i>
+            </button>
         </div>
-    </div>
-</div>
-
-<!-- Hauptnavigation ---------------------------------------------------- -->
-<header id="header" class="site-header">
-    <div class="container header-inner">
-
-        <a href="index.html" class="site-brand" aria-label="AcumenMail Golf – Startseite">
-            <span class="site-brand-mark" aria-hidden="true">A</span>
-            <span class="site-brand-text">
-                <span class="site-brand-name">AcumenMail <span class="brand-accent">Golf</span></span>
-                <span class="site-brand-line">Newsletter für Golfclubs</span>
-            </span>
-        </a>
-
-        <nav id="main-nav" class="main-nav" aria-label="Hauptnavigation">
-            <ul class="nav-list">
-                <li class="nav-item has-mega">
-                    <button type="button" class="nav-link nav-toggle" aria-expanded="false" aria-controls="mega-software">
-                        Software<i data-icon="chevron-down" class="lucide nav-caret"></i>
-                    </button>
-
-                    <div class="mega" id="mega-software" hidden>
-                        <div class="container mega-inner">
-                            <div class="mega-intro">
-                                <p class="mega-intro-title">Das Newsletter-System für Golfclubs</p>
-                                <p class="mega-intro-text">Läuft auf dem Server Ihres Clubs. Keine Kosten pro Kontakt, keine Mitgliederdaten bei Dritten.</p>
-                                <a href="software/index.html" class="mega-intro-link">
-                                    Alle Funktionen im Überblick<i data-icon="arrow-right" class="lucide"></i>
-                                </a>
-                            </div>
-
-                            <ul class="mega-list">
-                                <li>
-                                    <a href="software/newsletter-baukasten.html" class="mega-link">
-                                        <span class="mega-icon"><i data-icon="layers" class="lucide"></i></span>
-                                        <span class="mega-text">
-                                            <strong>Newsletter-Baukasten</strong>
-                                            <small>Bausteine ziehen statt HTML schreiben</small>
-                                        </span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="software/automationen.html" class="mega-link">
-                                        <span class="mega-icon"><i data-icon="git-branch" class="lucide"></i></span>
-                                        <span class="mega-text">
-                                            <strong>Automationen</strong>
-                                            <small>Mailstrecken, die von allein laufen</small>
-                                        </span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="software/empfaenger-segmente.html" class="mega-link">
-                                        <span class="mega-icon"><i data-icon="users" class="lucide"></i></span>
-                                        <span class="mega-text">
-                                            <strong>Empfänger &amp; Segmente</strong>
-                                            <small>Import, Listen, Handicap-Gruppen</small>
-                                        </span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="software/auswertung.html" class="mega-link">
-                                        <span class="mega-icon"><i data-icon="line-chart" class="lucide"></i></span>
-                                        <span class="mega-text">
-                                            <strong>Auswertung</strong>
-                                            <small>Öffnungen, Klicks, Bericht für den Vorstand</small>
-                                        </span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="software/zustellbarkeit-dsgvo.html" class="mega-link">
-                                        <span class="mega-icon"><i data-icon="shield-check" class="lucide"></i></span>
-                                        <span class="mega-text">
-                                            <strong>Zustellbarkeit &amp; DSGVO</strong>
-                                            <small>Double-Opt-in, SPF, DKIM, Bounces</small>
-                                        </span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="software/systemvoraussetzungen.html" class="mega-link">
-                                        <span class="mega-icon"><i data-icon="server" class="lucide"></i></span>
-                                        <span class="mega-text">
-                                            <strong>Systemvoraussetzungen</strong>
-                                            <small>Was Ihr Webspace mitbringen muss</small>
-                                        </span>
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                </li>
-                <li class="nav-item has-mega">
-                    <button type="button" class="nav-link nav-toggle" aria-expanded="false" aria-controls="mega-loesungen">
-                        Lösungen<i data-icon="chevron-down" class="lucide nav-caret"></i>
-                    </button>
-
-                    <div class="mega" id="mega-loesungen" hidden>
-                        <div class="container mega-inner">
-                            <div class="mega-intro">
-                                <p class="mega-intro-title">Wofür Clubs uns holen</p>
-                                <p class="mega-intro-text">Fünf Aufgaben, die in fast jedem Golfclub auf dem Tisch liegen – und wie E-Mail sie löst.</p>
-                                <a href="loesungen/index.html" class="mega-intro-link">
-                                    Alle Lösungen ansehen<i data-icon="arrow-right" class="lucide"></i>
-                                </a>
-                            </div>
-
-                            <ul class="mega-list">
-                                <li>
-                                    <a href="loesungen/mitgliederbindung.html" class="mega-link">
-                                        <span class="mega-icon"><i data-icon="users" class="lucide"></i></span>
-                                        <span class="mega-text">
-                                            <strong>Mitgliederbindung</strong>
-                                            <small>Auch die erreichen, die selten da sind</small>
-                                        </span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="loesungen/turniere-events.html" class="mega-link">
-                                        <span class="mega-icon"><i data-icon="trophy" class="lucide"></i></span>
-                                        <span class="mega-text">
-                                            <strong>Turniere &amp; Events</strong>
-                                            <small>Startlisten füllen statt Aushang hoffen</small>
-                                        </span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="loesungen/gastspieler.html" class="mega-link">
-                                        <span class="mega-icon"><i data-icon="flag" class="lucide"></i></span>
-                                        <span class="mega-text">
-                                            <strong>Gastspieler &amp; Greenfee</strong>
-                                            <small>Aus einer Runde eine zweite machen</small>
-                                        </span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="loesungen/neumitglieder.html" class="mega-link">
-                                        <span class="mega-icon"><i data-icon="user-check" class="lucide"></i></span>
-                                        <span class="mega-text">
-                                            <strong>Neumitglieder gewinnen</strong>
-                                            <small>Von der Anfrage bis zur Aufnahme</small>
-                                        </span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="loesungen/golfschule.html" class="mega-link">
-                                        <span class="mega-icon"><i data-icon="target" class="lucide"></i></span>
-                                        <span class="mega-text">
-                                            <strong>Golfschule &amp; Pro</strong>
-                                            <small>Kurse und Platzreife auslasten</small>
-                                        </span>
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                </li>
-                <li class="nav-item has-mega">
-                    <button type="button" class="nav-link nav-toggle" aria-expanded="false" aria-controls="mega-leistungen">
-                        Leistungen<i data-icon="chevron-down" class="lucide nav-caret"></i>
-                    </button>
-
-                    <div class="mega" id="mega-leistungen" hidden>
-                        <div class="container mega-inner">
-                            <div class="mega-intro">
-                                <p class="mega-intro-title">Wir richten ein, Sie versenden</p>
-                                <p class="mega-intro-text">Drei klar umrissene Pakete – vom einmaligen Check bis zur laufenden Betreuung.</p>
-                                <a href="leistungen/index.html" class="mega-intro-link">
-                                    Leistungen im Überblick<i data-icon="arrow-right" class="lucide"></i>
-                                </a>
-                            </div>
-
-                            <ul class="mega-list">
-                                <li>
-                                    <a href="leistungen/clubcheck.html" class="mega-link">
-                                        <span class="mega-icon"><i data-icon="search" class="lucide"></i></span>
-                                        <span class="mega-text">
-                                            <strong>Clubcheck</strong>
-                                            <small>Bestandsaufnahme mit klarer Empfehlung</small>
-                                        </span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="leistungen/saison-setup.html" class="mega-link is-feature">
-                                        <span class="mega-icon"><i data-icon="zap" class="lucide"></i></span>
-                                        <span class="mega-text">
-                                            <strong>Saison-Setup</strong>
-                                            <small>Einrichtung bis zur ersten Ausgabe</small>
-                                        </span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="leistungen/clubbetreuung.html" class="mega-link">
-                                        <span class="mega-icon"><i data-icon="repeat" class="lucide"></i></span>
-                                        <span class="mega-text">
-                                            <strong>Clubbetreuung</strong>
-                                            <small>Wir schreiben und versenden für Sie</small>
-                                        </span>
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                </li>
-                <li class="nav-item">
-                    <a href="preise.html" class="nav-link">Preise</a>
-                </li>
-                <li class="nav-item has-mega">
-                    <button type="button" class="nav-link nav-toggle" aria-expanded="false" aria-controls="mega-wissen">
-                        Wissen<i data-icon="chevron-down" class="lucide nav-caret"></i>
-                    </button>
-
-                    <div class="mega" id="mega-wissen" hidden>
-                        <div class="container mega-inner">
-                            <div class="mega-intro">
-                                <p class="mega-intro-title">Aus der Praxis im Club</p>
-                                <p class="mega-intro-text">Was in Golfclubs funktioniert und was nicht – ohne Marketing-Sprech.</p>
-                                <a href="wissen/index.html" class="mega-intro-link">
-                                    Alle Beiträge<i data-icon="arrow-right" class="lucide"></i>
-                                </a>
-                            </div>
-
-                            <ul class="mega-list">
-                                <li>
-                                    <a href="wissen/newsletter-jahresplan-golfclub.html" class="mega-link">
-                                        <span class="mega-icon"><i data-icon="calendar" class="lucide"></i></span>
-                                        <span class="mega-text">
-                                            <strong>Der Newsletter-Jahresplan</strong>
-                                            <small>12 Monate Clubkommunikation im Überblick</small>
-                                        </span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="wissen/betreffzeilen-golfclub.html" class="mega-link">
-                                        <span class="mega-icon"><i data-icon="mail" class="lucide"></i></span>
-                                        <span class="mega-text">
-                                            <strong>Betreffzeilen, die im Club wirken</strong>
-                                            <small>Was geöffnet wird und was nicht</small>
-                                        </span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="wissen/dsgvo-mitgliederdaten-golfclub.html" class="mega-link">
-                                        <span class="mega-icon"><i data-icon="lock" class="lucide"></i></span>
-                                        <span class="mega-text">
-                                            <strong>Mitgliederdaten rechtssicher nutzen</strong>
-                                            <small>Vereinsinfo, Werbung und die Grenze dazwischen</small>
-                                        </span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="faq.html" class="mega-link">
-                                        <span class="mega-icon"><i data-icon="help-circle" class="lucide"></i></span>
-                                        <span class="mega-text">
-                                            <strong>Häufige Fragen</strong>
-                                            <small>Recht, Aufwand, PC CADDIE, Kosten</small>
-                                        </span>
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                </li>
-                <li class="nav-item">
-                    <a href="ueber-uns.html" class="nav-link">Über uns</a>
-                </li>
-
-                <!-- Auf dem Handy gehört der Hauptknopf mit ins Menü -->
-                <li class="nav-item nav-item-cta">
-                    <a href="kontakt.html" class="btn-primary-custom">Demo anfragen</a>
-                </li>
-            </ul>
-        </nav>
-
-        <div class="header-actions">
-            <a href="kontakt.html" class="btn-primary-custom header-cta">Demo anfragen</a>
-        </div>
-
-        <button id="mobile-menu-button" class="mobile-menu-toggle" type="button"
-                aria-label="Menü öffnen" aria-controls="main-nav" aria-expanded="false">
-            <i data-icon="menu" class="lucide"></i>
-        </button>
-    </div>
-</header>
-
-<div class="mega-backdrop" hidden></div>
+    </header>
 
 <main id="main-content">
+<section id="hero" class="relative parallax-video-wrapper flex items-center justify-center text-center">
+    <!-- Parallax Video -->
+    <video autoplay muted loop playsinline webkit-playsinline preload="auto" disablepictureinpicture aria-hidden="true" class="parallax-video" id="parallaxVideo">
+        <source src="videos/45961-447087612.mp4" type="video/mp4">
+        Ihr Browser unterstützt das Video-Tag nicht.
+    </video>
 
-<!-- Hero ---------------------------------------------------------------- -->
-<section id="hero" class="hero">
-    <div class="container">
-        <div class="hero-grid">
+    <!-- Overlay -->
+    <div class="absolute inset-0 hero-overlay z-10"></div>
 
-            <div class="hero-copy">
-                <span class="hero-badge">
-                    <span class="dot" aria-hidden="true"><i data-icon="flag" class="lucide"></i></span>
-                    Für Golfclubs, Golfanlagen und Golfschulen
-                </span>
-
-                <h1 class="hero-title">
-                    Volle Turniere und treue Mitglieder – mit Newslettern, die
-                    <span class="hero-accent">wirklich gelesen werden.</span>
-                </h1>
-
-                <p class="hero-lead">
-                    Das schwarze Brett erreicht nur, wer ohnehin da ist. Wir bauen Golfclubs eine
-                    Mitgliederkommunikation, die auch die anderen erreicht – und liefern das
-                    Newsletter-System gleich mit. Es läuft auf dem Server Ihres Clubs, ohne
-                    monatliche Gebühr.
-                </p>
-
-                <div class="hero-actions">
-                    <a href="kontakt.html" class="btn-primary-custom">Kostenlose Club-Analyse</a>
-                    <a href="software/index.html" class="btn-secondary">
-                        Software ansehen<i data-icon="arrow-right" class="lucide"></i>
-                    </a>
-                </div>
-
-                <div class="hero-trust-bar" aria-label="Vertrauenssignale">
-                    <span class="hero-trust-item"><i data-icon="shield-check" class="lucide"></i>DSGVO-konform, Daten bleiben im Club</span>
-                    <span class="hero-trust-item"><i data-icon="euro" class="lucide"></i>Keine Kosten pro Kontakt</span>
-                    <span class="hero-trust-item"><i data-icon="clock" class="lucide"></i>Antwort binnen 24 Stunden</span>
-                </div>
-            </div>
-
-            <div class="hero-visual" aria-hidden="true">
-              <div class="hero-mail-wrap">
-                <div class="hero-mail">
-                    <div class="hero-mail-bar">
-                        <span class="hero-mail-dots"><i></i><i></i><i></i></span>
-                        <span class="hero-mail-subject">Clubmeisterschaft 2026 – Anmeldung ist offen</span>
-                    </div>
-                    <div class="hero-mail-head">
-                        <span class="hero-mail-wordmark">Golfclub <em>Musterhausen</em></span>
-                        <span class="hero-mail-claim">Clubnachrichten</span>
-                    </div>
-                    <div class="hero-mail-body">
-                        <span class="hero-mail-kicker">Ausgabe 04 · Juli</span>
-                        <h2 style="font-size:1.28rem; line-height:1.25;">Clubmeisterschaft 2026 – Anmeldung ist offen</h2>
-                        <p>Liebe(r) <span class="ph">{{vorname}}</span>, am Wochenende vom 12. bis 14. Juli
-                            spielen wir die Clubmeisterschaft. 60 Startplätze, alle Klassen, Siegerehrung
-                            im Clubhaus.</p>
-                        <svg class="golf-scene" viewBox="0 0 320 120" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Golfplatz mit Fahne am Grün">
-    <defs>
-        <linearGradient id="gs-sky-1" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0" stop-color="#A9CDE4"></stop>
-            <stop offset="1" stop-color="#E6F1F7"></stop>
-        </linearGradient>
-        <linearGradient id="gs-turf-1" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0" stop-color="#63A87B"></stop>
-            <stop offset="1" stop-color="#2B6E48"></stop>
-        </linearGradient>
-    </defs>
-    <rect width="320" height="120" fill="url(#gs-sky-1)"></rect>
-    <path d="M0 56c14-9 22 2 34-4s18 5 30 1 20-8 32-3 22 7 34 2 24-6 36 0 26 8 38 3 30-6 42 0v14H0z" fill="#3E7A57" opacity=".5"></path>
-    <path d="M0 64c50-12 110 6 168-2s102-14 152-4v62H0z" fill="url(#gs-turf-1)"></path>
-    <path d="M92 120c8-30 28-45 64-51 30-5 52 4 66 14-20 14-42 23-60 37z" fill="#8CC79F" opacity=".45"></path>
-    <ellipse cx="66" cy="98" rx="25" ry="8" fill="#E2D6B8"></ellipse>
-    <ellipse cx="66" cy="96" rx="25" ry="8" fill="#F3EAD6"></ellipse>
-    <ellipse cx="216" cy="82" rx="40" ry="12" fill="#93CFA6" opacity=".7"></ellipse>
-    <path d="M216 81V52" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round"></path>
-    <path d="M216 53l-17 5 17 5z" fill="#C0392B"></path>
-    <circle cx="216" cy="82" r="2.6" fill="#16261C" opacity=".45"></circle>
-</svg>
-                        <span class="hero-mail-cta">Jetzt Startzeit sichern</span>
-                    </div>
-                    <div class="hero-mail-foot">Golfclub Musterhausen e.V. · Impressum · Abmelden</div>
-                </div>
-
-                <span class="hero-chip hero-chip-1">
-                    <i data-icon="users" class="lucide"></i> 612 Empfänger
-                </span>
-                <span class="hero-chip hero-chip-2">
-                    <i data-icon="calendar-check" class="lucide"></i> Freitag, 9:00 geplant
-                </span>
-              </div>
-                <span class="hero-visual-note">Beispielansicht</span>
-            </div>
-
-        </div>
-    </div>
-</section>
-
-<div class="trust-strip">
-    <div class="container trust-strip-inner">
-        <span class="trust-strip-item"><i data-icon="server" class="lucide"></i>Software auf Ihrem eigenen Webspace</span>
-        <span class="trust-strip-item"><i data-icon="euro" class="lucide"></i>Keine laufenden Lizenzkosten</span>
-        <span class="trust-strip-item"><i data-icon="user-check" class="lucide"></i>Ein fester Ansprechpartner</span>
-        <span class="trust-strip-item"><i data-icon="lock" class="lucide"></i>Double-Opt-in mit Protokoll</span>
-    </div>
-</div>
-
-<!-- Ausgangslage --------------------------------------------------------- -->
-<section class="section">
-    <div class="container">
-        <div class="section-head animate-on-scroll">
-            <span class="section-kicker">Ausgangslage</span>
-            <h2 class="section-title">Fünf Situationen, die jeder Club kennt</h2>
-            <p class="section-lead">
-                Keine davon ist ein Golfproblem. Alle fünf sind Kommunikationsprobleme – die
-                Information ist da, sie erreicht nur nicht die Richtigen zur richtigen Zeit.
-            </p>
-        </div>
-
-        <div class="link-card-grid">
-            <a href="loesungen/mitgliederbindung.html" class="link-card animate-on-scroll">
-                <span class="link-card-icon"><i data-icon="users" class="lucide"></i></span>
-                <h3>Mitgliederbindung</h3>
-                <p>Auch die erreichen, die selten da sind</p>
-                <span class="link-card-more">Ansehen<i data-icon="arrow-right" class="lucide"></i></span>
-            </a>
-            <a href="loesungen/turniere-events.html" class="link-card animate-on-scroll">
-                <span class="link-card-icon"><i data-icon="trophy" class="lucide"></i></span>
-                <h3>Turniere &amp; Events</h3>
-                <p>Startlisten füllen statt Aushang hoffen</p>
-                <span class="link-card-more">Ansehen<i data-icon="arrow-right" class="lucide"></i></span>
-            </a>
-            <a href="loesungen/gastspieler.html" class="link-card animate-on-scroll">
-                <span class="link-card-icon"><i data-icon="flag" class="lucide"></i></span>
-                <h3>Gastspieler &amp; Greenfee</h3>
-                <p>Aus einer Runde eine zweite machen</p>
-                <span class="link-card-more">Ansehen<i data-icon="arrow-right" class="lucide"></i></span>
-            </a>
-            <a href="loesungen/neumitglieder.html" class="link-card animate-on-scroll">
-                <span class="link-card-icon"><i data-icon="user-check" class="lucide"></i></span>
-                <h3>Neumitglieder gewinnen</h3>
-                <p>Von der Anfrage bis zur Aufnahme</p>
-                <span class="link-card-more">Ansehen<i data-icon="arrow-right" class="lucide"></i></span>
-            </a>
-            <a href="loesungen/golfschule.html" class="link-card animate-on-scroll">
-                <span class="link-card-icon"><i data-icon="target" class="lucide"></i></span>
-                <h3>Golfschule &amp; Pro</h3>
-                <p>Kurse und Platzreife auslasten</p>
-                <span class="link-card-more">Ansehen<i data-icon="arrow-right" class="lucide"></i></span>
-            </a>
-        </div>
-    </div>
-</section>
-
-<!-- Die Software --------------------------------------------------------- -->
-<section class="section section-dark">
-    <div class="container">
-        <div class="tool-intro-grid">
-            <div class="animate-on-scroll">
-                <span class="section-kicker on-dark">Die Software</span>
-                <h2 class="section-title">Das Werkzeug haben wir schon gebaut.<br>Sie klicken nur noch zusammen.</h2>
-                <p class="section-lead">
-                    Kein Abo pro Kontakt, kein Datenexport zu einem Anbieter in Übersee, keine
-                    Preisstufe, die ab 1.200 Mitgliedern wehtut. Das System läuft auf dem Webspace
-                    Ihres Clubs – bedienbar, ohne dass irgendjemand HTML können muss.
-                </p>
-                <p style="margin-top:1.8rem;">
-                    <a href="software/index.html" class="btn-primary-custom btn-on-dark">Alle Funktionen ansehen</a>
-                </p>
-            </div>
-
-            <div class="tool-claim-list animate-on-scroll">
-                <div class="tool-claim">
-                    <i data-icon="server" class="lucide"></i>
-                    <span><strong>Läuft auf Ihrem Server</strong>
-                    PHP 8 und eine Datenbank genügen. Die Mitgliederdaten verlassen den Club nicht.</span>
-                </div>
-                <div class="tool-claim">
-                    <i data-icon="euro" class="lucide"></i>
-                    <span><strong>Keine laufenden Lizenzkosten</strong>
-                    Ob 300 oder 3.000 Mitglieder – an den Kosten ändert das nichts.</span>
-                </div>
-                <div class="tool-claim">
-                    <i data-icon="lock" class="lucide"></i>
-                    <span><strong>Rechtssicher ab Werk</strong>
-                    Double-Opt-in mit Protokoll, Abmeldelink, Impressum, List-Unsubscribe.</span>
-                </div>
-            </div>
-        </div>
-
-        <!-- Bewegte Demo: so entsteht eine Ausgabe -->
-        <div class="demo-block animate-on-scroll">
-            <div class="demo-head">
-                <span class="demo-step-label">Live-Demo</span>
-                <h3>So entsteht ein Clubnewsletter</h3>
-                <p>Bausteine aus der Leiste ziehen – oder antippen, dann hängen sie sich unten an.
-                    Kopfzeile und Footer gehören zur Clubvorlage und lassen sich nicht versehentlich
-                    verschieben. Keine Zeile HTML.</p>
-            </div>
-
-            <div class="demo-shell is-static" data-demo="builder">
-                <div class="demo-chrome">
-                    <span class="demo-dots" aria-hidden="true"><i></i><i></i><i></i></span>
-                    <span class="demo-url">golfclub-musterhausen.de/newsletter/admin/kampagne.php</span>
-                    <button type="button" class="demo-control demo-toggle" aria-pressed="true">
-                        <i data-icon="play" class="lucide"></i><span class="demo-toggle-label">Abspielen</span>
-                    </button>
-                    <button type="button" class="demo-control demo-replay" aria-label="Demo von vorn abspielen">
-                        <i data-icon="rotate-ccw" class="lucide"></i>
-                    </button>
-                </div>
-
-                <div class="demo-body demo-builder">
-                    <aside class="demo-palette">
-                        <p class="demo-panel-title">Bausteine</p>
-                        <div class="demo-palette-list">
-                            <span class="demo-pal pal-1"><i data-icon="type" class="lucide"></i>Überschrift</span>
-                            <span class="demo-pal pal-2"><i data-icon="align-left" class="lucide"></i>Textabsatz</span>
-                            <span class="demo-pal pal-3"><i data-icon="image" class="lucide"></i>Bild</span>
-                            <span class="demo-pal pal-4"><i data-icon="button" class="lucide"></i>Knopf</span>
-                            <span class="demo-pal pal-5"><i data-icon="columns" class="lucide"></i>Zwei Spalten</span>
-                        </div>
-                    </aside>
-
-                    <div class="demo-canvas">
-                        <div class="demo-mail">
-                            <div class="demo-mail-head">
-                                <span class="demo-wordmark">Golfclub <em>Musterhausen</em></span>
-                                <span class="demo-locked">Kopfzeile · fest</span>
-                            </div>
-                            <div class="demo-drop">
-                                <p class="demo-drop-hint">Hierhin kommen die Bausteine der Ausgabe</p>
-                                <div class="demo-blk blk-1">
-                                    <h4>Clubmeisterschaft 2026 – Anmeldung ist offen</h4>
-                                </div>
-                                <div class="demo-blk blk-2">
-                                    <p>Liebe(r) <span class="ph">{{vorname}}</span>, am Wochenende vom 12. bis
-                                        14. Juli spielen wir die Clubmeisterschaft. 60 Startplätze, alle Klassen.</p>
-                                </div>
-                                <div class="demo-blk blk-3">
-                                    <svg class="golf-scene" viewBox="0 0 320 120" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Golfplatz mit Fahne am Grün">
-    <defs>
-        <linearGradient id="gs-sky-2" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0" stop-color="#A9CDE4"></stop>
-            <stop offset="1" stop-color="#E6F1F7"></stop>
-        </linearGradient>
-        <linearGradient id="gs-turf-2" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0" stop-color="#63A87B"></stop>
-            <stop offset="1" stop-color="#2B6E48"></stop>
-        </linearGradient>
-    </defs>
-    <rect width="320" height="120" fill="url(#gs-sky-2)"></rect>
-    <path d="M0 56c14-9 22 2 34-4s18 5 30 1 20-8 32-3 22 7 34 2 24-6 36 0 26 8 38 3 30-6 42 0v14H0z" fill="#3E7A57" opacity=".5"></path>
-    <path d="M0 64c50-12 110 6 168-2s102-14 152-4v62H0z" fill="url(#gs-turf-2)"></path>
-    <path d="M92 120c8-30 28-45 64-51 30-5 52 4 66 14-20 14-42 23-60 37z" fill="#8CC79F" opacity=".45"></path>
-    <ellipse cx="66" cy="98" rx="25" ry="8" fill="#E2D6B8"></ellipse>
-    <ellipse cx="66" cy="96" rx="25" ry="8" fill="#F3EAD6"></ellipse>
-    <ellipse cx="216" cy="82" rx="40" ry="12" fill="#93CFA6" opacity=".7"></ellipse>
-    <path d="M216 81V52" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round"></path>
-    <path d="M216 53l-17 5 17 5z" fill="#C0392B"></path>
-    <circle cx="216" cy="82" r="2.6" fill="#16261C" opacity=".45"></circle>
-</svg>
-                                </div>
-                                <div class="demo-blk blk-4">
-                                    <span class="demo-cta">Jetzt Startzeit sichern</span>
-                                </div>
-                            </div>
-                            <div class="demo-mail-foot">
-                                <span>Golfclub Musterhausen e.V. · Impressum</span>
-                                <span>Abmelden</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <aside class="demo-settings">
-                        <p class="demo-panel-title">Gestaltung</p>
-                        <div class="demo-set-row"><span>Breite</span><b>620 px</b></div>
-                        <div class="demo-set-row"><span>Überschrift</span><b>Georgia</b></div>
-                        <div class="demo-set-row">
-                            <span>Clubfarbe</span>
-                            <span class="demo-swatches">
-                                <span class="demo-swatch swatch-1" style="background:#14243A"></span>
-                                <span class="demo-swatch swatch-2" style="background:#1E6B45"></span>
-                                <span class="demo-swatch swatch-3" style="background:#B08A3E"></span>
-                            </span>
-                        </div>
-                        <div class="demo-set-row"><span>Footer</span><b>Pflichtangaben</b></div>
-                        <p class="demo-save"><i data-icon="check-circle" class="lucide"></i>Gespeichert um 10:42</p>
-                    </aside>
-
-                    <span class="demo-ghost ghost-1" style="top:52px; --dx:206px; --dy:76px;"><i data-icon="type" class="lucide"></i>Überschrift</span>
-                    <span class="demo-ghost ghost-2" style="top:94px; --dx:206px; --dy:86px;"><i data-icon="align-left" class="lucide"></i>Textabsatz</span>
-                    <span class="demo-ghost ghost-3" style="top:136px; --dx:206px; --dy:96px;"><i data-icon="image" class="lucide"></i>Bild</span>
-                    <span class="demo-ghost ghost-4" style="top:178px; --dx:206px; --dy:112px;"><i data-icon="button" class="lucide"></i>Knopf</span>
-
-                    <svg class="demo-cursor" viewBox="0 0 24 24" aria-hidden="true">
-                        <path d="M4.04 4.69a.5.5 0 0 1 .65-.65l16 6.5a.5.5 0 0 1-.06.95l-6.13 1.58a2 2 0 0 0-1.43 1.43l-1.58 6.13a.5.5 0 0 1-.95.06z"
-                              fill="#16261C" stroke="#fff" stroke-width="1.2"></path>
-                    </svg>
-                </div>
-
-                <p class="demo-caption">
-                    <i data-icon="mouse-pointer" class="lucide" aria-hidden="true"></i>
-                    <span class="demo-caption-text">Die Vorlage des Clubs steht bereits.</span>
-                    <span class="demo-progress" aria-hidden="true"></span>
-                </p>
-            </div>
-        </div>
-
-        <div class="tool-feature-grid animate-on-scroll" aria-label="Funktionen des Newsletter-Systems">
-            <a href="software/newsletter-baukasten.html" class="tool-feature">
-                <i data-icon="layers" class="lucide"></i>
-                <strong>Newsletter-Baukasten</strong>
-                <p>Bausteine ziehen statt HTML schreiben</p>
-            </a>
-            <a href="software/automationen.html" class="tool-feature">
-                <i data-icon="git-branch" class="lucide"></i>
-                <strong>Automationen</strong>
-                <p>Mailstrecken, die von allein laufen</p>
-            </a>
-            <a href="software/empfaenger-segmente.html" class="tool-feature">
-                <i data-icon="users" class="lucide"></i>
-                <strong>Empfänger &amp; Segmente</strong>
-                <p>Import, Listen, Handicap-Gruppen</p>
-            </a>
-            <a href="software/auswertung.html" class="tool-feature">
-                <i data-icon="line-chart" class="lucide"></i>
-                <strong>Auswertung</strong>
-                <p>Öffnungen, Klicks, Bericht für den Vorstand</p>
-            </a>
-            <a href="software/zustellbarkeit-dsgvo.html" class="tool-feature">
-                <i data-icon="shield-check" class="lucide"></i>
-                <strong>Zustellbarkeit &amp; DSGVO</strong>
-                <p>Double-Opt-in, SPF, DKIM, Bounces</p>
-            </a>
-            <a href="software/systemvoraussetzungen.html" class="tool-feature">
-                <i data-icon="server" class="lucide"></i>
-                <strong>Systemvoraussetzungen</strong>
-                <p>Was Ihr Webspace mitbringen muss</p>
-            </a>
-        </div>
-    </div>
-</section>
-
-<!-- Leistungen ----------------------------------------------------------- -->
-<section class="section section-alt">
-    <div class="container">
-        <div class="section-head animate-on-scroll">
-            <span class="section-kicker">Zusammenarbeit</span>
-            <h2 class="section-title">Drei Wege, im Club anzufangen</h2>
-            <p class="section-lead">
-                Nicht jeder Club braucht sofort die volle Betreuung. Entscheidend ist, ob zuerst
-                Klarheit, Einrichtung oder ein verlässlicher Rhythmus fehlt.
-            </p>
-        </div>
-
-        <div class="link-card-grid">
-            <a href="leistungen/clubcheck.html" class="link-card animate-on-scroll">
-                <span class="link-card-icon"><i data-icon="search" class="lucide"></i></span>
-                <h3>Clubcheck</h3>
-                <p>Bestandsaufnahme mit klarer Empfehlung</p>
-                <span class="link-card-more">Ansehen<i data-icon="arrow-right" class="lucide"></i></span>
-            </a>
-            <a href="leistungen/saison-setup.html" class="link-card animate-on-scroll">
-                <span class="link-card-icon"><i data-icon="zap" class="lucide"></i></span>
-                <h3>Saison-Setup</h3>
-                <p>Einrichtung bis zur ersten Ausgabe</p>
-                <span class="link-card-more">Ansehen<i data-icon="arrow-right" class="lucide"></i></span>
-            </a>
-            <a href="leistungen/clubbetreuung.html" class="link-card animate-on-scroll">
-                <span class="link-card-icon"><i data-icon="repeat" class="lucide"></i></span>
-                <h3>Clubbetreuung</h3>
-                <p>Wir schreiben und versenden für Sie</p>
-                <span class="link-card-more">Ansehen<i data-icon="arrow-right" class="lucide"></i></span>
-            </a>
-        </div>
-
-        <p style="margin-top:2rem;">
-            <a href="preise.html" class="btn-secondary">Preise im Detail</a>
+    <!-- Inhalt -->
+    <div class="relative z-20 max-w-3xl px-4 text-white">
+        <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold leading-tight mb-6">
+            Vom Newsletter-Versand zum <span class="hero-accent">messbaren Wachstumssystem.</span>
+        </h1>
+        <p class="text-lg md:text-xl mb-8">
+            AcumenMail hilft mittelständischen Unternehmen, Zielgruppen, Inhalte, Automationen und Kennzahlen so zu verbinden, dass E-Mail Marketing Kundenbindung, Leads und Umsatzbeitrag stärkt.
         </p>
-    </div>
-</section>
-
-<!-- Wissen --------------------------------------------------------------- -->
-<section class="section">
-    <div class="container">
-        <div class="split-grid is-wide-left is-top">
-            <div class="animate-on-scroll">
-                <span class="section-kicker">Wissen</span>
-                <h2 class="section-title">Aus der Praxis im Club</h2>
-                <p class="section-lead">
-                    Was in Golfclubs tatsächlich funktioniert und was nicht – zum Nachlesen, auch
-                    wenn daraus keine Zusammenarbeit wird.
-                </p>
-                <p style="margin-top:1.6rem;">
-                    <a href="wissen/index.html" class="btn-secondary">Alle Beiträge</a>
-                </p>
-            </div>
-
-            <div class="related-grid animate-on-scroll">
-                <a href="wissen/newsletter-jahresplan-golfclub.html" class="related-card">
-                    <span>Redaktionsplan</span><strong>Der Newsletter-Jahresplan</strong>
-                    <p>Zwölf Monate Clubkommunikation – und warum der Winter der wichtigste Teil ist.</p>
-                </a>
-                <a href="wissen/betreffzeilen-golfclub.html" class="related-card">
-                    <span>Redaktion</span><strong>Betreffzeilen, die wirken</strong>
-                    <p>Fünf Muster, die in Golfclubs zuverlässig geöffnet werden.</p>
-                </a>
-                <a href="wissen/dsgvo-mitgliederdaten-golfclub.html" class="related-card">
-                    <span>Recht</span><strong>Mitgliederdaten und DSGVO</strong>
-                    <p>Wo Vereinsinformation aufhört und Werbung anfängt.</p>
-                </a>
-                <a href="faq.html" class="related-card">
-                    <span>FAQ</span><strong>Häufige Fragen</strong>
-                    <p>Recht, Aufwand, PC CADDIE, Kosten – kompakt beantwortet.</p>
-                </a>
-            </div>
+        <a href="#contact" class="inline-block btn-primary-custom text-lg">
+            Potenzialanalyse anfragen
+        </a>
+        <div class="hero-trust-bar" aria-label="Vertrauenssignale">
+            <span class="hero-trust-item"><i data-lucide="user-check" class="lucide" aria-hidden="true"></i>Persönlicher Ansprechpartner</span>
+            <span class="hero-trust-item"><i data-lucide="clock" class="lucide" aria-hidden="true"></i>Antwort innerhalb von 24 Stunden</span>
+            <span class="hero-trust-item"><i data-lucide="shield-check" class="lucide" aria-hidden="true"></i>DSGVO-konforme Umsetzung</span>
+            <span class="hero-trust-item"><i data-lucide="calendar-check" class="lucide" aria-hidden="true"></i>Unverbindliches Erstgespräch</span>
         </div>
     </div>
+<!-- Scroll Down Pfeil -->
+<a href="#about" 
+   class="scroll-down-arrow absolute bottom-8 md:bottom-24 left-1/2 transform -translate-x-1/2 z-30">
+    <svg xmlns="http://www.w3.org/2000/svg" 
+         class="w-8 h-8 md:w-14 md:h-14 text-white arrow-icon" 
+         fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+    </svg>
+</a>
+
+
+
+
 </section>
+<!-- About Us Section -->
+    <section id="about" class="about-section py-20">
+        <div class="container mx-auto px-4">
+            <div class="about-simple">
+                <div class="about-simple-layout">
+                    <figure class="about-portrait animate-on-scroll">
+                        <img src="images/test.jpg" width="640" height="800" loading="lazy" decoding="async" alt="Chris von AcumenMail, persönliche E-Mail-Marketing-Beratung">
+                        <figcaption><strong>Chris von AcumenMail</strong><span>Strategie, Newsletter und Automationen aus einer Hand.</span></figcaption>
+                    </figure>
+
+                    <div class="about-content animate-on-scroll">
+                        <span class="section-kicker">Über AcumenMail</span>
+                        <h2 class="about-title">AcumenMail: Ihr strategischer Partner für digitales Wachstum</h2>
+                        <p class="about-lead">Wir helfen mittelständischen Unternehmen, E-Mail Marketing als verlässliches System für Kundenbindung, Leads und Umsatzbeitrag aufzubauen.</p>
+                    </div>
+
+                    <div class="about-copy animate-on-scroll">
+                        <p><strong>Gute E-Mail-Kommunikation beginnt nicht mit dem nächsten Newsletter.</strong> Sie beginnt mit Klarheit darüber, welche Zielgruppen Sie erreichen wollen, welche Botschaften relevant sind und welche Kennzahlen echten Fortschritt zeigen.</p>
+                        <p>AcumenMail verbindet Strategie, Content, Segmentierung und Automatisierung zu einem ruhigen, messbaren Prozess. So wird aus sporadischem Versand ein Kanal, der kontinuierlich lernt und langfristig Wert schafft.</p>
+                        <p class="about-trust-note"><strong>Persönlich statt anonym:</strong> Sie arbeiten direkt mit einem Ansprechpartner, der Strategie, Segmentierung und Umsetzung zusammen denkt.</p>
+                    </div>
+                </div>
+
+                
+            </div>
+        </div>
+    </section>
+
+    <!-- Our Services Section -->
+
+    <section id="services" class="capability-matrix-section py-20">
+        <div class="container mx-auto px-4">
+            <div class="capability-matrix-shell">
+                <aside class="capability-strategy-panel animate-on-scroll" aria-label="Kernkompetenzen Überblick">
+                    <span class="section-kicker">Kernkompetenzen</span>
+                    <h2 class="capability-strategy-title">Was Ihr E-Mail Marketing leistungsfähiger macht</h2>
+                    <p class="capability-strategy-copy">Vier Hebel entscheiden, ob E-Mail nur versendet wird oder zuverlässig Wachstum unterstützt.</p>
+                    <div class="capability-system-note">
+                        <span>Fokus</span>
+                        <strong>Von einzelnen Newslettern zu einem Kanal, der messbar lernt.</strong>
+                    </div>
+                </aside>
+
+                <div class="capability-card-grid" aria-label="Kernkompetenzen von AcumenMail">
+                    <article class="capability-card animate-on-scroll" style="animation-delay: 0.00s;">
+                        <span class="capability-card-index">01 · Strategie & Potenzial</span>
+                        <h3>Hebel finden</h3>
+                        <p>Status quo, Zielgruppen und der erste wirksame Schritt – klar priorisiert statt Aktionismus.</p>
+                    </article>
+
+                    <article class="capability-card animate-on-scroll" style="animation-delay: 0.05s;">
+                        <span class="capability-card-index">02 · Segmentierung & Content</span>
+                        <h3>Relevanz erhöhen</h3>
+                        <p>Inhalte, die zu Interesse, Bedarf und Kaufphase passen – mehr Resonanz pro Kontakt.</p>
+                    </article>
+
+                    <article class="capability-card animate-on-scroll" style="animation-delay: 0.10s;">
+                        <span class="capability-card-index">03 · Automationen & Journeys</span>
+                        <h3>Beziehungen entwickeln</h3>
+                        <p>Welcome, Nurturing und Reaktivierung – dauerhaft im Hintergrund, damit aus Interesse Kundenbindung wird.</p>
+                    </article>
+
+                    <article class="capability-card animate-on-scroll" style="animation-delay: 0.15s;">
+                        <span class="capability-card-index">04 · Testing & Reporting</span>
+                        <h3>Wirkung messen</h3>
+                        <p>Tests, Conversion und Umsatzbeitrag zeigen, was wirklich wirkt – sichtbar und wiederholbar.</p>
+                    </article>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Engagement Packages Section -->
+    <section id="packages" class="engagement-section py-20">
+        <div class="container mx-auto px-4">
+            <div class="engagement-header animate-on-scroll">
+                <div>
+                    <span class="section-kicker">Zusammenarbeit</span>
+                    <h2 class="engagement-title">Drei sinnvolle Wege, mit AcumenMail zu starten</h2>
+                    <p class="engagement-lead">Nicht jedes Unternehmen braucht sofort die große Betreuung. Entscheidend ist, ob Sie zuerst Klarheit, Umsetzung oder kontinuierliche Optimierung brauchen.</p>
+                </div>
+                <div class="engagement-note">
+                    <strong>Transparente Pakete.</strong>
+                    Jedes Paket ist ein klar umrissener Schritt mit definiertem Ergebnis, Sie wissen vorab, was Sie bekommen. Alle Beträge verstehen sich netto zzgl. MwSt. und externer Toolkosten.
+                </div>
+            </div>
+
+            <div class="engagement-grid" aria-label="Orientierungspakete für E-Mail Marketing Beratung">
+                <article class="engagement-card animate-on-scroll" style="animation-delay: 0.00s;">
+                    <span class="engagement-label">Startklarheit</span>
+                    <h3>Potenzialanalyse</h3>
+                    <p>Für Unternehmen, die wissen wollen, welcher Hebel im E-Mail Marketing zuerst Wirkung erzeugt.</p>
+                    <ul class="engagement-list">
+                        <li><i data-lucide="check" class="lucide" aria-hidden="true"></i><span>Audit von Liste, Kampagnen und Automationen</span></li>
+                        <li><i data-lucide="check" class="lucide" aria-hidden="true"></i><span>Chancenkarte mit priorisierten Maßnahmen</span></li>
+                        <li><i data-lucide="check" class="lucide" aria-hidden="true"></i><span>Klarer nächster Schritt statt Bauchgefühl</span></li>
+                    </ul>
+                    <div class="engagement-meta">
+                        <span>Investition</span>
+                        <strong>ab 299 € einmalig</strong>
+                        <small>Kompakter Audit, Chancenkarte und nächste Schritte.</small>
+                    </div>
+                </article>
+
+                <article class="engagement-card is-featured animate-on-scroll" style="animation-delay: 0.08s;">
+                    <span class="engagement-label">Aufbau</span>
+                    <h3>Strategie- und Setup-Sprint</h3>
+                    <p>Für Unternehmen, die schnell eine klare E-Mail-Struktur mit ersten Automationen aufbauen wollen.</p>
+                    <ul class="engagement-list">
+                        <li><i data-lucide="check" class="lucide" aria-hidden="true"></i><span>Segmentierungslogik, Content-Fahrplan und Kampagnenarchitektur</span></li>
+                        <li><i data-lucide="check" class="lucide" aria-hidden="true"></i><span>Templates, erste Automationen und 90-Tage-Roadmap</span></li>
+                        <li><i data-lucide="check" class="lucide" aria-hidden="true"></i><span>Umsetzung mit Fokus auf messbare Kennzahlen</span></li>
+                    </ul>
+                    <div class="engagement-meta">
+                        <span>Investition</span>
+                        <strong>ab 899 € einmalig</strong>
+                        <small>Strategie, Setup und erste einfache Automationen.</small>
+                    </div>
+                </article>
+
+                <article class="engagement-card animate-on-scroll" style="animation-delay: 0.16s;">
+                    <span class="engagement-label">Wachstum</span>
+                    <h3>Laufende Optimierung</h3>
+                    <p>Für Unternehmen, die E-Mail Marketing dauerhaft als messbaren Wachstumskanal betreiben wollen.</p>
+                    <ul class="engagement-list">
+                        <li><i data-lucide="check" class="lucide" aria-hidden="true"></i><span>Kampagnenroutine, A/B-Tests und Reporting</span></li>
+                        <li><i data-lucide="check" class="lucide" aria-hidden="true"></i><span>Ausbau von Automationen, Segmenten und Journeys</span></li>
+                        <li><i data-lucide="check" class="lucide" aria-hidden="true"></i><span>Regelmäßige Priorisierung nach Wirkung und Aufwand</span></li>
+                    </ul>
+                    <div class="engagement-meta">
+                        <span>Investition</span>
+                        <strong>ab 599 € / Monat</strong>
+                        <small>Kontinuierliche Optimierung, Tests und Reporting.</small>
+                    </div>
+                </article>
+            </div>
+
+            <div class="engagement-bottom animate-on-scroll">
+                <p><strong>Unsicher, welcher Einstieg passt?</strong> In der Potenzialanalyse klären wir gemeinsam, welcher Schritt für Ihr Unternehmen wirtschaftlich am sinnvollsten ist, jeweils zzgl. gesetzlicher MwSt. und externer Toolkosten.</p>
+                <a href="#contact" class="btn-primary-custom">Potenzialanalyse anfragen</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- How We Work Section -->
+    <section id="how-we-work" class="process-section py-20">
+        <div class="container mx-auto px-4">
+            <div class="process-header animate-on-scroll">
+                <span class="section-kicker">Unser Vorgehen</span>
+                <h2 class="process-title">Wie wir arbeiten: Vom Newsletter zum Wachstumssystem</h2>
+                <p class="process-lead">Kein einzelnes Mailing, sondern ein System aus Strategie, Daten und Umsetzung, das messbar auf Kundenbindung, Leads und Umsatzbeitrag einzahlt.</p>
+            </div>
+
+            <div class="process-framework" aria-label="AcumenMail Beratungsprozess">
+                <article class="process-phase animate-on-scroll" style="animation-delay: 0s;">
+                    <div class="phase-top">
+                        <span class="phase-number">01</span>
+                        <span class="phase-icon" aria-hidden="true"><i data-lucide="search" class="lucide"></i></span>
+                    </div>
+                    <p class="phase-eyebrow">Diagnose</p>
+                    <h3 class="phase-title">Werthebel sichtbar machen</h3>
+                    <p class="phase-copy">Wir analysieren Ihren Status quo und trennen Annahmen von echten Wachstumschancen.</p>
+                    <ul class="phase-work">
+                        <li><i data-lucide="check" class="lucide"></i><span>Audit von Liste, Kampagnen, Vorlagen und Automationen</span></li>
+                        <li><i data-lucide="check" class="lucide"></i><span>Zielgruppen-, Daten- und Segmentierungslogik bewerten</span></li>
+                        <li><i data-lucide="check" class="lucide"></i><span>Hebel nach Wirkung, Aufwand und Risiko priorisieren</span></li>
+                    </ul>
+                    <div class="phase-result">
+                        <span>Ergebnis</span>
+                        <strong>Chancenkarte + KPI-Baseline</strong>
+                    </div>
+                </article>
+
+                <article class="process-phase animate-on-scroll" style="animation-delay: 0.08s;">
+                    <div class="phase-top">
+                        <span class="phase-number">02</span>
+                        <span class="phase-icon" aria-hidden="true"><i data-lucide="git-branch" class="lucide"></i></span>
+                    </div>
+                    <p class="phase-eyebrow">Architektur</p>
+                    <h3 class="phase-title">Ein System statt Einzelaktionen</h3>
+                    <p class="phase-copy">Aus der Analyse entsteht eine klare Roadmap für Newsletter, Automationen und Content.</p>
+                    <ul class="phase-work">
+                        <li><i data-lucide="check" class="lucide"></i><span>Positionierung, Kampagnenlogik und Content-Pfeiler definieren</span></li>
+                        <li><i data-lucide="check" class="lucide"></i><span>Automations-Blueprints für Onboarding, Nurturing und Reaktivierung</span></li>
+                        <li><i data-lucide="check" class="lucide"></i><span>90-Tage-Roadmap mit Prioritäten und Verantwortlichkeiten</span></li>
+                    </ul>
+                    <div class="phase-result">
+                        <span>Ergebnis</span>
+                        <strong>Strategie-Blueprint + Umsetzungsplan</strong>
+                    </div>
+                </article>
+
+                <article class="process-phase animate-on-scroll" style="animation-delay: 0.16s;">
+                    <div class="phase-top">
+                        <span class="phase-number">03</span>
+                        <span class="phase-icon" aria-hidden="true"><i data-lucide="line-chart" class="lucide"></i></span>
+                    </div>
+                    <p class="phase-eyebrow">Performance</p>
+                    <h3 class="phase-title">Umsetzen, messen, verbessern</h3>
+                    <p class="phase-copy">Wir bringen die Strategie live und optimieren sie entlang belastbarer Kennzahlen.</p>
+                    <ul class="phase-work">
+                        <li><i data-lucide="check" class="lucide"></i><span>Templates, Sequenzen und Tests sauber implementieren</span></li>
+                        <li><i data-lucide="check" class="lucide"></i><span>A/B-Tests für Betreff, Inhalt, Segment und Angebot durchführen</span></li>
+                        <li><i data-lucide="check" class="lucide"></i><span>Reporting-Routine und konkrete Optimierungsschleifen etablieren</span></li>
+                    </ul>
+                    <div class="phase-result">
+                        <span>Ergebnis</span>
+                        <strong>KPI-Dashboard + Wachstumsroutine</strong>
+                    </div>
+                </article>
+            </div>
+
+            <div class="process-kpi-band animate-on-scroll" aria-label="Kennzahlen der Optimierung">
+                <div class="process-kpi-intro">Optimiert wird nicht nach Bauchgefühl, sondern entlang der Kennzahlen, die Ihr Wachstum tatsächlich bewegen.</div>
+                <div class="process-kpi"><strong>Öffnungsrate</strong><span>Relevanz</span></div>
+                <div class="process-kpi"><strong>Klickrate</strong><span>Interesse</span></div>
+                <div class="process-kpi"><strong>Conversion</strong><span>Wirkung</span></div>
+                <div class="process-kpi"><strong>Listenqualität</strong><span>Substanz</span></div>
+                <div class="process-kpi"><strong>Umsatzbeitrag</strong><span>Impact</span></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section id="faq" class="faq-section py-20">
+        <div class="container mx-auto px-4">
+            <div class="faq-layout">
+                <div class="faq-intro animate-on-scroll">
+                    <span class="section-kicker">FAQ</span>
+                    <h2 class="faq-heading">Antworten auf Ihre strategischen Fragen</h2>
+                    <p class="faq-lead">Gute E-Mail-Strategie beginnt mit Klarheit. Diese Fragen helfen Ihnen, Aufwand, Wirkung und nächste Schritte besser einzuordnen.</p>
+                    <div class="faq-proofline" aria-label="Beratungsschwerpunkte">
+                        <span><i data-lucide="target" class="lucide" aria-hidden="true"></i> Fokus auf messbare Wachstumshebel</span>
+                        <span><i data-lucide="database" class="lucide" aria-hidden="true"></i> Entscheidungen auf Basis von Daten und Segmenten</span>
+                        <span><i data-lucide="repeat" class="lucide" aria-hidden="true"></i> Kontinuierliche Optimierung statt Einmal-Kampagne</span>
+                    </div>
+                    <a href="#contact" class="inline-block btn-primary-custom">Potenzialanalyse anfragen</a>
+                    <p class="faq-cta-note">Sie müssen nicht alle Antworten kennen. In der Potenzialanalyse klären wir, welcher Hebel zuerst den größten Fortschritt bringt.</p>
+                </div>
+
+                <div class="faq-list" aria-label="Häufige Fragen zu E-Mail Marketing Beratung">
+                <article class="faq-item animate-on-scroll" style="animation-delay: 0.00s;">
+                    <button class="faq-question active" type="button" aria-expanded="true">
+                        <span class="faq-number">01</span>
+                        <span class="faq-question-text">
+                            <small>Strategie</small>
+                            <strong>Ab wann lohnt sich strategisches E-Mail Marketing?</strong>
+                        </span>
+                        <i data-lucide="chevron-down" class="lucide" aria-hidden="true"></i>
+                    </button>
+                    <div class="faq-answer open" aria-hidden="false">
+                        <p>Sobald Ihre Website, Ihr Vertrieb oder Ihre Kampagnen regelmäßig Kontakte erzeugen, lohnt sich ein strukturiertes E-Mail-System. Entscheidend ist nicht die Größe der Liste, sondern ob Leads, Kunden und Interessenten mit relevanten Inhalten weiterentwickelt werden können.</p>
+                    </div>
+                </article>
+
+                <article class="faq-item animate-on-scroll" style="animation-delay: 0.05s;">
+                    <button class="faq-question" type="button" aria-expanded="false">
+                        <span class="faq-number">02</span>
+                        <span class="faq-question-text">
+                            <small>Roadmap</small>
+                            <strong>Was passiert in der Potenzialanalyse?</strong>
+                        </span>
+                        <i data-lucide="chevron-down" class="lucide" aria-hidden="true"></i>
+                    </button>
+                    <div class="faq-answer" aria-hidden="true">
+                        <p>Wir prüfen Ihre aktuelle E-Mail-Kommunikation, Datenbasis, Zielgruppenlogik und wichtigsten Kennzahlen. Danach wissen Sie, welche Hebel zuerst Wirkung entfalten: Liste, Inhalte, Automationen, Segmentierung oder Zustellbarkeit.</p>
+                    </div>
+                </article>
+
+                <article class="faq-item animate-on-scroll" style="animation-delay: 0.10s;">
+                    <button class="faq-question" type="button" aria-expanded="false">
+                        <span class="faq-number">03</span>
+                        <span class="faq-question-text">
+                            <small>Umsetzung</small>
+                            <strong>Muss ich mein bestehendes Newsletter-Tool wechseln?</strong>
+                        </span>
+                        <i data-lucide="chevron-down" class="lucide" aria-hidden="true"></i>
+                    </button>
+                    <div class="faq-answer" aria-hidden="true">
+                        <p>Nicht automatisch. Zuerst bewerten wir, ob Ihr aktuelles Tool die gewünschte Strategie sauber abbilden kann. Ein Wechsel ist nur sinnvoll, wenn Funktionen, Datenstruktur oder Automatisierungsmöglichkeiten Ihr Wachstum begrenzen.</p>
+                    </div>
+                </article>
+
+                <article class="faq-item animate-on-scroll" style="animation-delay: 0.15s;">
+                    <button class="faq-question" type="button" aria-expanded="false">
+                        <span class="faq-number">04</span>
+                        <span class="faq-question-text">
+                            <small>Automatisierung</small>
+                            <strong>Welche Automationen bringen meistens den größten Effekt?</strong>
+                        </span>
+                        <i data-lucide="chevron-down" class="lucide" aria-hidden="true"></i>
+                    </button>
+                    <div class="faq-answer" aria-hidden="true">
+                        <p>Häufig starten wir mit Willkommensstrecken, Lead-Nurturing, Reaktivierung und post-purchase Kommunikation. Diese Sequenzen arbeiten dauerhaft im Hintergrund und machen aus einmaligem Interesse eine messbare Kundenbeziehung.</p>
+                    </div>
+                </article>
+
+                <article class="faq-item animate-on-scroll" style="animation-delay: 0.20s;">
+                    <button class="faq-question" type="button" aria-expanded="false">
+                        <span class="faq-number">05</span>
+                        <span class="faq-question-text">
+                            <small>Performance</small>
+                            <strong>Welche Kennzahlen sind wirklich wichtig?</strong>
+                        </span>
+                        <i data-lucide="chevron-down" class="lucide" aria-hidden="true"></i>
+                    </button>
+                    <div class="faq-answer" aria-hidden="true">
+                        <p>Öffnungs- und Klickraten sind nützlich, aber nicht genug. Entscheidend sind Conversion, Listenqualität, Umsatzbeitrag, Abmelderate und die Entwicklung einzelner Segmente. Daraus entsteht ein realistisches Bild der Wirkung.</p>
+                    </div>
+                </article>
+
+                <article class="faq-item animate-on-scroll" style="animation-delay: 0.25s;">
+                    <button class="faq-question" type="button" aria-expanded="false">
+                        <span class="faq-number">06</span>
+                        <span class="faq-question-text">
+                            <small>Zusammenarbeit</small>
+                            <strong>Wie schnell sieht man erste Verbesserungen?</strong>
+                        </span>
+                        <i data-lucide="chevron-down" class="lucide" aria-hidden="true"></i>
+                    </button>
+                    <div class="faq-answer" aria-hidden="true">
+                        <p>Erste strukturelle Verbesserungen sind oft nach wenigen Wochen sichtbar, etwa klarere Segmentierung, bessere Betreffzeilen oder sauberere Automationen. Belastbare Wachstumseffekte entstehen meist durch konsequente Optimierung über mehrere Kampagnenzyklen.</p>
+                    </div>
+                </article>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="contact-section py-20">
+        <div class="container mx-auto px-4">
+            <div class="contact-shell">
+                <aside class="contact-panel animate-on-scroll" aria-label="Ablauf der Kontaktaufnahme">
+                    <span class="section-kicker">Kontakt</span>
+                    <h2 class="contact-panel-title">Lassen Sie uns Ihr Potenzial entfalten</h2>
+                    <p class="contact-panel-lead">Sind Sie bereit, Ihre digitale Kommunikation zu transformieren? Fordern Sie eine unverbindliche Potenzialanalyse an und erfahren Sie, wie AcumenMail Ihr Unternehmen voranbringt.</p>
+                    <ol class="contact-steps">
+                        <li>
+                            <span class="contact-step-index">1</span>
+                            <span class="contact-step-text"><strong>Formular absenden</strong><span>Kurze Angaben zu Ihrem Unternehmen und Ihren Zielen.</span></span>
+                        </li>
+                        <li>
+                            <span class="contact-step-index">2</span>
+                            <span class="contact-step-text"><strong>Persönliches Kennenlernen</strong><span>Wir besprechen Status quo, Potenziale und passende nächste Schritte.</span></span>
+                        </li>
+                        <li>
+                            <span class="contact-step-index">3</span>
+                            <span class="contact-step-text"><strong>Klare Empfehlung</strong><span>Sie erhalten eine konkrete Einschätzung, ob und wie eine Zusammenarbeit sinnvoll ist.</span></span>
+                        </li>
+                    </ol>
+                    <p class="contact-panel-note">Antwort in der Regel innerhalb von 24 Stunden, werktags. Ihre Angaben werden vertraulich behandelt.</p>
+                </aside>
+
+                <div class="contact-card animate-on-scroll">
+                    <form id="contact-form" action="kontakt.php" method="POST" accept-charset="UTF-8" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Spam-Schutz: Honeypot + serverseitig geprüftes Captcha + Zeit-Check -->
+                    <div class="sr-only-field" aria-hidden="true">
+                        <label for="website">Website</label>
+                        <input type="text" id="website" name="_gotcha" tabindex="-1" autocomplete="off">
+                    </div>
+                    <input type="hidden" name="captcha_a" id="captcha_a">
+                    <input type="hidden" name="captcha_b" id="captcha_b">
+                    <input type="hidden" name="form_time" id="form_time">
+                    <div class="md:col-span-1">
+                        <label for="name" class="block text-color-text-body text-sm font-bold mb-2">Name:</label>
+                        <input type="text" id="name" name="name" placeholder="Ihr Name" autocomplete="name" required
+                               class="shadow appearance-none border rounded w-full py-3 px-4 text-color-text-body leading-tight focus:outline-none focus:ring-2 focus:ring-color-accent-red transition-all duration-200"
+                               data-constraints="@Required @JustLetters">
+                        <p class="text-red-500 text-xs italic mt-1 hidden" data-error-for="name"></p>
+                    </div>
+                    <div class="md:col-span-1">
+                        <label for="email" class="block text-color-text-body text-sm font-bold mb-2">E-Mail:</label>
+                        <input type="email" id="email" name="email" placeholder="Ihre E-Mail-Adresse" autocomplete="email" required
+                               class="shadow appearance-none border rounded w-full py-3 px-4 text-color-text-body leading-tight focus:outline-none focus:ring-2 focus:ring-color-accent-red transition-all duration-200"
+                               data-constraints="@Required @Email">
+                        <p class="text-red-500 text-xs italic mt-1 hidden" data-error-for="email"></p>
+                    </div>
+                    <div class="md:col-span-1">
+                        <label for="phone" class="block text-color-text-body text-sm font-bold mb-2">Telefon (optional):</label>
+                        <input type="tel" id="phone" name="phone" placeholder="Ihre Telefonnummer" autocomplete="tel"
+                               class="shadow appearance-none border rounded w-full py-3 px-4 text-color-text-body leading-tight focus:outline-none focus:ring-2 focus:ring-color-accent-red transition-all duration-200"
+                               data-constraints="@JustNumbers">
+                        <p class="text-red-500 text-xs italic mt-1 hidden" data-error-for="phone"></p>
+                    </div>
+                    <div class="md:col-span-1">
+                        <label for="company" class="block text-color-text-body text-sm font-bold mb-2">Unternehmen (optional):</label>
+                        <input type="text" id="company" name="company" placeholder="Ihr Unternehmen" autocomplete="organization"
+                               class="shadow appearance-none border rounded w-full py-3 px-4 text-color-text-body leading-tight focus:outline-none focus:ring-2 focus:ring-color-accent-red transition-all duration-200">
+                    </div>
+                    <div class="md:col-span-2">
+                        <label for="message" class="block text-color-text-body text-sm font-bold mb-2">Ihre Nachricht:</label>
+                        <textarea id="message" name="message" rows="6" minlength="20" required placeholder="Beschreiben Sie Ihre Newsletter-Ziele und wie ich Ihnen helfen kann"
+                                  class="shadow appearance-none border rounded w-full py-3 px-4 text-color-text-body leading-tight focus:outline-none focus:ring-2 focus:ring-color-accent-red transition-all duration-200"
+                                  data-constraints="@Required @Length(min=20)"></textarea>
+                        <p class="text-red-500 text-xs italic mt-1 hidden" data-error-for="message"></p>
+                    </div>
+                    <div class="md:col-span-2">
+                        <label for="captcha" class="block text-color-text-body text-sm font-bold mb-2">Sicherheitsfrage: <span id="captcha-question"></span></label>
+                        <input type="text" id="captcha" name="captcha" inputmode="numeric" autocomplete="off" placeholder="Ergebnis eintragen"
+                               class="shadow appearance-none border rounded w-full py-3 px-4 text-color-text-body leading-tight focus:outline-none focus:ring-2 focus:ring-color-accent-red transition-all duration-200"
+                               data-constraints="@Required @Captcha">
+                        <p class="text-red-500 text-xs italic mt-1 hidden" data-error-for="captcha"></p>
+                    </div>
+                    <p class="md:col-span-2 text-xs text-color-text-body leading-tight">Mit dem Absenden verarbeiten wir Ihre Angaben ausschließlich zur Bearbeitung Ihrer Anfrage. Der Versand erfolgt direkt über unseren eigenen Server – es werden keine Daten an Dritte weitergegeben. Details stehen in der <a href="Datenschutz.html" class="hover:text-color-accent-red transition-colors duration-300">Datenschutzerklärung</a>.</p>
+                    <p id="form-status" class="md:col-span-2 text-sm text-red-500 hidden" role="alert" aria-live="polite"></p>
+                    <div class="md:col-span-2 text-right">
+                        <button type="submit" id="contact-submit-button"
+                                class="inline-block btn-primary-custom">
+                            Potenzialanalyse anfragen
+                        </button>
+                    </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Success Modal (hidden by default) -->
+    <div id="success-modal" class="fixed inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center hidden z-[1001]">
+        <div class="bg-white p-8 rounded-lg shadow-xl text-center max-w-md w-full relative">
+            <button id="close-modal" class="absolute top-4 right-4 text-color-text-body hover:text-color-text-heading">
+                <i data-lucide="x" class="lucide lucide-lg"></i>
+            </button>
+            <i data-lucide="check-circle" class="lucide lucide-2xl text-success-green mb-4"></i>
+            <h3 class="text-2xl font-bold text-color-text-heading mb-4">Vielen Dank!</h3>
+            <p class="text-color-text-body">Ihre Nachricht wurde erfolgreich gesendet. Ich melde mich in Kürze bei Ihnen, um Ihre Newsletter-Beratungsbedürfnisse zu besprechen.</p>
+        </div>
+    </div>
+
+    <!-- Newsletter-Anmeldung (eigenes System, kein Drittanbieter) -->
+    <section id="newsletter" class="newsletter-band" aria-labelledby="newsletter-title">
+        <div class="container mx-auto px-4">
+            <div class="newsletter-card">
+                <div class="newsletter-intro">
+                    <span class="newsletter-eyebrow">Praxis-Impulse per E-Mail</span>
+                    <h2 id="newsletter-title" class="newsletter-title">Alle paar Wochen ein Impuls, der Ihren Newsletter besser macht.</h2>
+                    <p class="newsletter-copy">Konkrete Beispiele zu Segmentierung, Automationen und Zustellbarkeit –
+                        aus echten Projekten. Kein Verkaufsgerede, jederzeit abbestellbar.</p>
+                    <ul class="newsletter-points">
+                        <li>Versand über unseren eigenen Server – keine Daten an Dritte</li>
+                        <li>Bestätigung per Double-Opt-in, Abmeldung mit einem Klick</li>
+                    </ul>
+                </div>
+
+                <form id="newsletter-form" class="newsletter-form" method="post" action="newsletter/subscribe.php" accept-charset="UTF-8">
+                    <!-- Spam-Schutz: für Menschen unsichtbar -->
+                    <div class="newsletter-hp" aria-hidden="true">
+                        <label for="nl-website">Website (bitte frei lassen)</label>
+                        <input type="text" id="nl-website" name="website" tabindex="-1" autocomplete="off">
+                    </div>
+                    <input type="hidden" name="quelle" value="startseite">
+
+                    <div class="newsletter-field">
+                        <label for="nl-first-name">Vorname <span class="newsletter-optional">(optional)</span></label>
+                        <input type="text" id="nl-first-name" name="first_name" autocomplete="given-name" maxlength="120" placeholder="Ihr Vorname">
+                    </div>
+
+                    <div class="newsletter-field">
+                        <label for="nl-email">E-Mail-Adresse</label>
+                        <input type="email" id="nl-email" name="email" required autocomplete="email" maxlength="190" placeholder="name@unternehmen.de">
+                    </div>
+
+                    <label class="newsletter-consent">
+                        <input type="checkbox" name="consent" value="1" required>
+                        <span>Ja, ich möchte den Newsletter erhalten. Die Einwilligung kann ich jederzeit widerrufen.
+                            Hinweise zur Verarbeitung stehen in der <a href="Datenschutz.html">Datenschutzerklärung</a>.</span>
+                    </label>
+
+                    <button type="submit" class="btn-primary-custom newsletter-submit">Newsletter abonnieren</button>
+                    <p id="newsletter-status" class="newsletter-status" role="status" aria-live="polite"></p>
+                </form>
+            </div>
+        </div>
+    </section>
 
 </main>
 
-<!-- Handlungsaufforderung ---------------------------------------------- -->
-<section class="cta-band">
-    <div class="container cta-inner">
-        <div class="cta-copy">
-            <h2 class="cta-title">Sehen Sie das Tool an Ihren eigenen Inhalten</h2>
-            <p class="cta-text">Wir richten eine Testumgebung im Design Ihres Clubs ein und gehen sie in 30 Minuten gemeinsam durch – telefonisch oder per Video, mit Vorstand, Sekretariat oder beiden.</p>
-        </div>
-        <div class="cta-actions">
-            <a href="kontakt.html" class="btn-primary-custom btn-on-dark">Demo anfragen</a>
-            <a href="leistungen/index.html" class="btn-secondary btn-ghost-dark">Leistungen ansehen</a>
-        </div>
-    </div>
-</section>
-
-<!-- Footer ------------------------------------------------------------- -->
-<footer class="site-footer">
-    <div class="container">
-
-        <div class="footer-top">
-            <div class="footer-brand">
-                <span class="site-brand">
-                    <span class="site-brand-mark" aria-hidden="true">A</span>
-                    <span class="site-brand-text">
-                        <span class="site-brand-name">AcumenMail Golf</span>
-                        <span class="site-brand-line">Newsletter für Golfclubs</span>
-                    </span>
-                </span>
-                <p class="footer-brand-copy">
-                    Mitgliederkommunikation für Golfclubs, Golfanlagen und Golfschulen:
-                    Segmente, Redaktionsplan, Automationen – und ein Newsletter-System,
-                    das auf dem Server des Clubs läuft.
-                </p>
-                <address class="footer-address">
-                    Christoph Schnurrenberger<br>
-                    Birkenstr. 10<br>
-                    87734 Benningen<br>
-                    <a href="tel:+491752778902">0175 2778902</a><br>
-                    <a href="mailto:info@newsletter-consulting.de">info@newsletter-consulting.de</a>
-                </address>
-            </div>
-
-            <div class="footer-nav">
-                <div class="footer-col">
-                    <h2 class="footer-eyebrow">Software</h2>
-                    <ul class="footer-link-list">
-                        <li><a href="software/index.html">Übersicht</a></li>
-                        <li><a href="software/newsletter-baukasten.html">Newsletter-Baukasten</a></li>
-                        <li><a href="software/automationen.html">Automationen</a></li>
-                        <li><a href="software/empfaenger-segmente.html">Empfänger &amp; Segmente</a></li>
-                        <li><a href="software/auswertung.html">Auswertung</a></li>
-                        <li><a href="software/zustellbarkeit-dsgvo.html">Zustellbarkeit &amp; DSGVO</a></li>
-                        <li><a href="software/systemvoraussetzungen.html">Systemvoraussetzungen</a></li>
-                    </ul>
-                </div>
-                <div class="footer-col">
-                    <h2 class="footer-eyebrow">Lösungen</h2>
-                    <ul class="footer-link-list">
-                        <li><a href="loesungen/index.html">Übersicht</a></li>
-                        <li><a href="loesungen/mitgliederbindung.html">Mitgliederbindung</a></li>
-                        <li><a href="loesungen/turniere-events.html">Turniere &amp; Events</a></li>
-                        <li><a href="loesungen/gastspieler.html">Gastspieler &amp; Greenfee</a></li>
-                        <li><a href="loesungen/neumitglieder.html">Neumitglieder gewinnen</a></li>
-                        <li><a href="loesungen/golfschule.html">Golfschule &amp; Pro</a></li>
-                    </ul>
-                </div>
-                <div class="footer-col">
-                    <h2 class="footer-eyebrow">Leistungen</h2>
-                    <ul class="footer-link-list">
-                        <li><a href="leistungen/index.html">Übersicht</a></li>
-                        <li><a href="leistungen/clubcheck.html">Clubcheck</a></li>
-                        <li><a href="leistungen/saison-setup.html">Saison-Setup</a></li>
-                        <li><a href="leistungen/clubbetreuung.html">Clubbetreuung</a></li>
-                    </ul>
-                </div>
-                <div class="footer-col">
-                    <h2 class="footer-eyebrow">Wissen</h2>
-                    <ul class="footer-link-list">
-                        <li><a href="wissen/index.html">Übersicht</a></li>
-                        <li><a href="wissen/newsletter-jahresplan-golfclub.html">Der Newsletter-Jahresplan</a></li>
-                        <li><a href="wissen/betreffzeilen-golfclub.html">Betreffzeilen, die im Club wirken</a></li>
-                        <li><a href="wissen/dsgvo-mitgliederdaten-golfclub.html">Mitgliederdaten rechtssicher nutzen</a></li>
-                        <li><a href="faq.html">Häufige Fragen</a></li>
-                    </ul>
+    <!-- Footer -->
+    <footer class="site-footer">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8 md:gap-12 mb-8 footer-grid">
+                <div class="footer-section md:col-span-2">
+                    <a href="#hero" class="site-brand text-color-text-light mb-4">
+                        <span class="site-brand-mark" aria-hidden="true">A</span>
+                        <span class="site-brand-text">
+                            <span class="site-brand-name">AcumenMail</span>
+                            <span class="site-brand-line">E-Mail Marketing Beratung</span>
+                        </span>
+                    </a>
+                    <p class="footer-brand-copy">Strategie, Segmentierung, Automationen und Reporting für E-Mail Marketing, das Kundenbindung, Leads und Umsatzbeitrag messbar stärkt.</p>
                 </div>
 
-                <div class="footer-col">
-                    <h2 class="footer-eyebrow">Unternehmen</h2>
-                    <ul class="footer-link-list">
-                        <li><a href="ueber-uns.html">Über uns</a></li>
-                        <li><a href="preise.html">Preise</a></li>
-                        <li><a href="kontakt.html">Kontakt</a></li>
-                        <li><a href="faq.html">Häufige Fragen</a></li>
-                        <li><a href="impressum.html">Impressum</a></li>
-                        <li><a href="datenschutz.html">Datenschutz</a></li>
-                    </ul>
+                <div class="footer-section">
+                    <h4 class="footer-eyebrow">Navigation</h4>
+                    <nav class="footer-link-list" aria-label="Footer Navigation">
+                        <a href="#about">Über uns</a>
+                        <a href="#services">Leistungen</a>
+                        <a href="#packages">Pakete</a>
+                        <a href="#how-we-work">Vorgehen</a>
+                        <a href="#faq">FAQ</a>
+                        <a href="toolvergleich/index.html">Toolvergleich</a>
+                        <a href="newsletter/anmelden.php">Newsletter</a>
+                        <a href="newsletter/archiv.php">Newsletter-Archiv</a>
+                    </nav>
+                </div>
+
+                <div class="footer-section">
+                    <h4 class="footer-eyebrow">Rechtliches</h4>
+                    <nav class="footer-link-list" aria-label="Rechtliche Links">
+                        <a href="Impressum.html">Impressum</a>
+                        <a href="Datenschutz.html">Datenschutz</a>
+                    </nav>
                 </div>
             </div>
+            <div class="pt-8 border-t border-gray-700 footer-bottom">
+                <p class="text-sm">&copy; <span id="copyright-year"></span> AcumenMail. Alle Rechte vorbehalten.</p>
+                <p class="text-sm">Strategisches E-Mail Marketing für messbares Wachstum.</p>
+            </div>
         </div>
+    </footer>
 
-        <div class="footer-bottom">
-            <p>&copy; <span id="copyright-year">2026</span> AcumenMail Golf. Alle Rechte vorbehalten.</p>
-            <p class="footer-note">
-                Diese Seite lädt keine externen Schriften, Skripte oder Tracker.
-            </p>
-        </div>
-    </div>
-</footer>
+    <script>
 
-<script src="assets/site.js" defer></script>
-<script src="assets/demo.js" defer></script>
+        const localIconPaths = {
+            'arrow-right': '<path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path>',
+            'calendar-check': '<path d="M8 2v4"></path><path d="M16 2v4"></path><rect width="18" height="18" x="3" y="4" rx="2"></rect><path d="M3 10h18"></path><path d="m9 16 2 2 4-4"></path>',
+            check: '<path d="M20 6 9 17l-5-5"></path>',
+            'check-circle': '<path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><path d="m9 11 3 3L22 4"></path>',
+            'chevron-down': '<path d="m6 9 6 6 6-6"></path>',
+            clock: '<circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline>',
+            database: '<ellipse cx="12" cy="5" rx="9" ry="3"></ellipse><path d="M3 5v14c0 1.66 4.03 3 9 3s9-1.34 9-3V5"></path><path d="M3 12c0 1.66 4.03 3 9 3s9-1.34 9-3"></path>',
+            'shield-check': '<path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"></path><path d="m9 12 2 2 4-4"></path>',
+            'user-check': '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><polyline points="16 11 18 13 22 9"></polyline>',
+            'git-branch': '<line x1="6" x2="6" y1="3" y2="15"></line><circle cx="18" cy="6" r="3"></circle><circle cx="6" cy="18" r="3"></circle><path d="M18 9a9 9 0 0 1-9 9"></path>',
+            'line-chart': '<path d="M3 3v18h18"></path><path d="m19 9-5 5-4-4-3 3"></path>',
+            linkedin: '<path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-7a6 6 0 0 1 6-6z"></path><rect width="4" height="12" x="2" y="9"></rect><circle cx="4" cy="4" r="2"></circle>',
+            menu: '<line x1="4" x2="20" y1="12" y2="12"></line><line x1="4" x2="20" y1="6" y2="6"></line><line x1="4" x2="20" y1="18" y2="18"></line>',
+            repeat: '<path d="m17 2 4 4-4 4"></path><path d="M3 11V9a4 4 0 0 1 4-4h14"></path><path d="m7 22-4-4 4-4"></path><path d="M21 13v2a4 4 0 0 1-4 4H3"></path>',
+            search: '<circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path>',
+            target: '<circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="6"></circle><circle cx="12" cy="12" r="2"></circle>',
+            twitter: '<path d="M22 4.01c-.77.35-1.6.58-2.47.69a4.3 4.3 0 0 0 1.89-2.37 8.56 8.56 0 0 1-2.72 1.04A4.28 4.28 0 0 0 11.3 7.3c0 .34.04.67.11.98A12.15 12.15 0 0 1 2.6 3.81a4.28 4.28 0 0 0 1.32 5.71 4.23 4.23 0 0 1-1.94-.54v.05a4.28 4.28 0 0 0 3.43 4.2 4.3 4.3 0 0 1-1.93.07 4.29 4.29 0 0 0 4 2.97A8.6 8.6 0 0 1 2 18.1 12.1 12.1 0 0 0 8.56 20c7.87 0 12.17-6.52 12.17-12.17v-.55A8.7 8.7 0 0 0 22 4.01z"></path>',
+            x: '<path d="M18 6 6 18"></path><path d="m6 6 12 12"></path>'
+        };
+
+        function renderLocalIcons(root = document) {
+            root.querySelectorAll('[data-lucide]').forEach(icon => {
+                const name = icon.getAttribute('data-lucide');
+                const paths = localIconPaths[name];
+                if (!paths) return;
+                if (icon.tagName.toLowerCase() === 'svg' && icon.getAttribute('data-local-icon') === name) return;
+                const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+                svg.setAttribute('viewBox', '0 0 24 24');
+                svg.setAttribute('data-lucide', name);
+                svg.setAttribute('data-local-icon', name);
+                svg.setAttribute('aria-hidden', icon.getAttribute('aria-hidden') || 'true');
+                svg.setAttribute('focusable', 'false');
+                svg.setAttribute('stroke', 'currentColor');
+                svg.setAttribute('stroke-width', '2');
+                svg.setAttribute('stroke-linecap', 'round');
+                svg.setAttribute('stroke-linejoin', 'round');
+                svg.setAttribute('fill', 'none');
+                svg.className.baseVal = icon.getAttribute('class') || 'lucide';
+                svg.innerHTML = paths;
+                icon.replaceWith(svg);
+            });
+        }
+
+        renderLocalIcons();
+
+        const heroVideo = document.getElementById('parallaxVideo');
+        function startHeroVideo() {
+            if (!heroVideo) {
+                return;
+            }
+
+            heroVideo.muted = true;
+            heroVideo.defaultMuted = true;
+            heroVideo.setAttribute('muted', '');
+            heroVideo.setAttribute('playsinline', '');
+            heroVideo.setAttribute('webkit-playsinline', '');
+
+            const playAttempt = heroVideo.play();
+            if (playAttempt && typeof playAttempt.catch === 'function') {
+                playAttempt.catch(() => {
+                    // Mobile Browser können Autoplay trotz stummem Inline-Video blockieren.
+                });
+            }
+        }
+
+        startHeroVideo();
+        document.addEventListener('visibilitychange', function() {
+            if (!document.hidden) {
+                startHeroVideo();
+            }
+        });
+        document.addEventListener('touchstart', startHeroVideo, { once: true, passive: true });
+        document.addEventListener('click', startHeroVideo, { once: true });
+
+        // Mobile Menü Toggle
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+
+        mobileMenuButton.addEventListener('click', function() {
+            const isOpen = document.body.classList.toggle('nav-open');
+            mobileMenuButton.setAttribute('aria-expanded', String(isOpen));
+            mobileMenuButton.setAttribute('aria-label', isOpen ? 'Menü schließen' : 'Menü öffnen');
+        });
+
+        // Sticky Header Effekt
+        window.addEventListener('scroll', function() {
+            const header = document.getElementById('header');
+            if (window.scrollY > 50) { // Nach 50px Scrollen
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+        });
+
+// Navigation beim Scrollen ein-/ausblenden (erst ab 120px)
+let lastScrollTop = 0;
+const header = document.getElementById('header');
+
+window.addEventListener('scroll', function () {
+    const currentScroll = window.pageYOffset || document.documentElement.scrollTop;
+
+    if (currentScroll > 120) {
+        if (currentScroll > lastScrollTop) {
+            // Nach unten scrollen -> Header ausblenden
+            header.style.transform = 'translateY(-100%)';
+        } else {
+            // Nach oben scrollen -> Header einblenden
+            header.style.transform = 'translateY(0)';
+        }
+    } else {
+        // Im oberen Bereich (unter 120px) immer sichtbar lassen
+        header.style.transform = 'translateY(0)';
+    }
+
+    lastScrollTop = currentScroll <= 0 ? 0 : currentScroll; // verhindert negative Werte
+});
+
+
+
+
+
+        // Sanftes Scrollen für Anker-Links (Native JS)
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                const targetId = this.getAttribute('href');
+                if (targetId && targetId !== '#') {
+                    const targetElement = document.querySelector(targetId);
+                    if (targetElement) {
+                        e.preventDefault(); // Prevent default jump, handle manually for smooth scroll
+                        document.body.classList.remove('nav-open'); // Mobile Nav schließen
+                        mobileMenuButton.setAttribute('aria-expanded', 'false');
+                        mobileMenuButton.setAttribute('aria-label', 'Menü öffnen');
+
+                        const headerOffset = document.getElementById('header').offsetHeight;
+                        const elementPosition = targetElement.getBoundingClientRect().top + window.pageYOffset;
+                        const offsetPosition = elementPosition - headerOffset;
+
+                        window.scrollTo({
+                            top: offsetPosition,
+                            behavior: "smooth"
+                        });
+                    } else {
+                        console.error("Target element not found for ID:", targetId);
+                    }
+                } else if (targetId === '#') {
+                    console.warn("Anchor href is just '#', no scroll action performed.");
+                }
+            });
+        });
+
+        // Animation beim Scrollen (Intersection Observer) für allgemeine Elemente
+        const animateOnScrollElements = document.querySelectorAll('.animate-on-scroll');
+        const generalObserver = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('is-visible');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { root: null, rootMargin: '0px', threshold: 0.1 }); // Allgemeine Elemente bei 10% Sichtbarkeit
+
+        animateOnScrollElements.forEach(element => {
+            generalObserver.observe(element);
+        });
+
+        // Kontaktformular Validierung und Modal
+        const contactForm = document.getElementById('contact-form');
+        const successModal = document.getElementById('success-modal');
+        const closeModalButton = document.getElementById('close-modal');
+        const formStatus = document.getElementById('form-status');
+        const submitButton = document.getElementById('contact-submit-button');
+        const captchaQuestion = document.getElementById('captcha-question');
+        const captchaInput = document.getElementById('captcha');
+        let captchaAnswer = null;
+
+        const validationRules = {
+            name: { required: true, pattern: /^[a-zA-ZäöüÄÖÜ\s-]+$/ },
+            email: { required: true, pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/ },
+            phone: { required: false, pattern: /^[0-9+() -]+$/ },
+            message: { required: true, minLength: 20 },
+            captcha: { required: true, captcha: true }
+        };
+
+        function createCaptcha() {
+            const firstNumber = Math.floor(Math.random() * 8) + 2;
+            const secondNumber = Math.floor(Math.random() * 8) + 2;
+            captchaAnswer = firstNumber + secondNumber;
+
+            if (captchaQuestion) {
+                captchaQuestion.textContent = `${firstNumber} + ${secondNumber}`;
+            }
+
+            // Werte für die serverseitige Prüfung (kontakt.php) bereitstellen
+            const aField = document.getElementById('captcha_a');
+            const bField = document.getElementById('captcha_b');
+            if (aField) { aField.value = firstNumber; }
+            if (bField) { bField.value = secondNumber; }
+
+            if (captchaInput) {
+                captchaInput.value = '';
+            }
+        }
+
+        // Zeitstempel für den serverseitigen Spam-/Zeit-Check setzen
+        const formTimeField = document.getElementById('form_time');
+        if (formTimeField) {
+            formTimeField.value = Date.now();
+        }
+
+        function validateField(field) {
+            const value = field.value.trim();
+            const rules = validationRules[field.name];
+            const errorElement = document.querySelector(`[data-error-for="${field.id}"]`);
+            let isValid = true;
+            let errorMessage = '';
+
+            if (!rules.required && value === '') {
+                isValid = true;
+            } else if (rules.required && value === '') {
+                isValid = false;
+                errorMessage = '*Dieses Feld ist erforderlich.';
+            } else if (rules.captcha && Number(value) !== captchaAnswer) {
+                isValid = false;
+                errorMessage = '*Bitte lösen Sie die Sicherheitsfrage korrekt.';
+            } else if (rules.pattern && !rules.pattern.test(value)) {
+                isValid = false;
+                errorMessage = `*Ungültiges ${field.placeholder.toLowerCase().replace('ihr ', '').replace('ihre ', '').replace('ihre-', '')}.`;
+            } else if (rules.minLength && value.length < rules.minLength) {
+                isValid = false;
+                errorMessage = `*Die Nachricht ist zu kurz (mind. ${rules.minLength} Zeichen).`;
+            }
+
+            if (!isValid && errorElement) {
+                errorElement.textContent = errorMessage;
+                errorElement.classList.remove('hidden');
+                field.classList.add('border-red-500');
+            } else if (errorElement) {
+                errorElement.classList.add('hidden');
+                field.classList.remove('border-red-500');
+            }
+            return isValid;
+        }
+
+        createCaptcha();
+
+        function showFormStatus(message) {
+            if (!formStatus) {
+                alert(message);
+                return;
+            }
+
+            formStatus.textContent = message;
+            formStatus.classList.remove('hidden');
+        }
+
+        function clearFormStatus() {
+            if (formStatus) {
+                formStatus.textContent = '';
+                formStatus.classList.add('hidden');
+            }
+        }
+
+        function clearValidationState() {
+            contactForm.querySelectorAll('[data-error-for]').forEach(el => el.classList.add('hidden'));
+            contactForm.querySelectorAll('input, textarea').forEach(el => el.classList.remove('border-red-500'));
+        }
+
+        contactForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            clearFormStatus();
+
+            let formIsValid = true;
+            const fields = contactForm.querySelectorAll('input[data-constraints], textarea[data-constraints]');
+
+            fields.forEach(field => {
+                if (!validateField(field)) {
+                    formIsValid = false;
+                }
+            });
+
+            if (!formIsValid) {
+                return;
+            }
+
+            const originalButtonText = submitButton ? submitButton.textContent : '';
+            if (submitButton) {
+                submitButton.disabled = true;
+                submitButton.textContent = 'Wird gesendet...';
+                submitButton.classList.add('opacity-70', 'cursor-not-allowed');
+            }
+
+            try {
+                const response = await fetch(contactForm.action, {
+                    method: 'POST',
+                    body: new FormData(contactForm),
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                });
+
+                if (response.ok) {
+                    successModal.classList.remove('hidden');
+                    contactForm.reset();
+                    createCaptcha();
+                    clearValidationState();
+                    return;
+                }
+
+                let errorMessage = 'Die Nachricht konnte gerade nicht gesendet werden. Bitte versuchen Sie es erneut oder schreiben Sie direkt per E-Mail.';
+                try {
+                    const data = await response.json();
+                    if (data.errors && data.errors.length > 0) {
+                        errorMessage = data.errors.map(error => error.message).join(' ');
+                    }
+                } catch (error) {
+                    // Server hat keine lesbare Fehlermeldung geliefert.
+                }
+
+                showFormStatus(errorMessage);
+            } catch (error) {
+                showFormStatus('Die Nachricht konnte gerade nicht gesendet werden. Bitte prüfen Sie Ihre Internetverbindung und versuchen Sie es erneut.');
+            } finally {
+                if (submitButton) {
+                    submitButton.disabled = false;
+                    submitButton.textContent = originalButtonText;
+                    submitButton.classList.remove('opacity-70', 'cursor-not-allowed');
+                }
+            }
+        });
+
+        closeModalButton.addEventListener('click', function() {
+            successModal.classList.add('hidden');
+        });
+
+        // Schließen des Modals bei Klick außerhalb
+        successModal.addEventListener('click', function(e) {
+            if (e.target === successModal) {
+                successModal.classList.add('hidden');
+            }
+        });
+
+        // Copyright Jahr aktualisieren
+        document.getElementById('copyright-year').textContent = new Date().getFullYear();
+
+        // FAQ Toggle Logic
+        document.querySelectorAll('.faq-question').forEach(question => {
+            question.addEventListener('click', () => {
+                const answer = question.nextElementSibling;
+                const icon = question.querySelector('.lucide');
+                const isOpen = answer.classList.contains('open');
+
+                document.querySelectorAll('.faq-answer.open').forEach(openAnswer => {
+                    if (openAnswer !== answer) {
+                        openAnswer.classList.remove('open');
+                        openAnswer.setAttribute('aria-hidden', 'true');
+                        const openQuestion = openAnswer.previousElementSibling;
+                        openQuestion.classList.remove('active');
+                        openQuestion.setAttribute('aria-expanded', 'false');
+                    }
+                });
+
+                answer.classList.toggle('open', !isOpen);
+                answer.setAttribute('aria-hidden', String(isOpen));
+                question.classList.toggle('active', !isOpen);
+                question.setAttribute('aria-expanded', String(!isOpen));
+
+                if (icon) {
+                    icon.setAttribute('data-lucide', 'chevron-down');
+                }
+                renderLocalIcons();
+            });
+        });
+    </script>
+    <script src="assets/newsletter-signup.js" defer></script>
 </body>
 </html>

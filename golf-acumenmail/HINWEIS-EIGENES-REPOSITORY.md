@@ -1,25 +1,23 @@
 # Ansehen und Umzug in ein eigenes Repository
 
-## Schnell ansehen – ohne Server
+## Ansehen
 
-Die Website besteht aus PHP-Dateien; die lassen sich nicht per Doppelklick
-öffnen. Für den schnellen Blick liegt hier ein fertiger statischer Export:
+**`index.html` in diesem Ordner doppelklicken.** Mehr ist nicht nötig – die Seite
+ist fertiges HTML mit relativen Verweisen. Alle 28 Seiten, Navigation, Mega-Menü
+und die bewegten Demos funktionieren ohne Server.
 
-**`static/index.html` im Browser öffnen.** Alle 28 Seiten, Navigation, Mega-Menü
-und die bewegten Demos funktionieren.
+Nur das Kontaktformular braucht PHP (`kontakt-senden.php`); lokal öffnet sich die
+Seite trotzdem, das Absenden geht ins Leere.
 
-Nicht im Export: Kontaktformular und Newsletter-Anmeldung – beides braucht einen
-PHP-Server.
+## Ändern
 
-## Richtig laufen lassen
+Bearbeitet wird `src/`, nicht die `.html`-Dateien – die werden erzeugt:
 
 ```bash
-cd golf-acumenmail
-php -S 127.0.0.1:8000
+php tools/build.php
 ```
 
-Dann <http://127.0.0.1:8000> aufrufen. Nach Änderungen an den `.php`-Dateien den
-Export neu erzeugen: `php tools/build-static.php`.
+Alles Weitere steht in `README.md`.
 
 ---
 

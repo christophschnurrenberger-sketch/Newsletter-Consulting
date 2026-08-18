@@ -15,6 +15,23 @@
 # Die Zugangsdaten sieht danach niemand mehr – auch Sie nicht. Sie lassen
 # sich nur ersetzen. Nehmen Sie am besten einen eigenen FTP-Zugang, der
 # ausschließlich auf den Newsletter-Ordner zeigt (IONOS: Hosting → FTP-Zugänge).
+#
+# MEHRERE INSTANZEN (eine je Kunde)
+#   In IONOS_ZIEL dürfen mehrere Ordner stehen – einer je Zeile oder durch
+#   Komma getrennt:
+#       /newsletter
+#       /kunden/ottobeuren
+#       /kunden/fairway54
+#   Jeder Ordner ist eine eigene Instanz mit eigener config.php, eigener
+#   Datenbank und eigenen Bildern. Der Code ist überall derselbe und wird
+#   bei jedem Push in alle Ordner gelegt.
+#
+# EINEN NEUEN KUNDEN ANLEGEN
+#   Actions → „Newsletter zu IONOS“ → Run workflow → bei „Neue Instanz“
+#   den Ordner eintragen, z. B. /kunden/ottobeuren. Dieser eine Lauf legt
+#   den Ordner an und nimmt install.php mit – die braucht es dort einmal.
+#   Danach den Ordner in IONOS_ZIEL ergänzen, damit er künftig
+#   mitaktualisiert wird. Kein Kopieren von Hand, kein FTP-Programm.
 
 name: Newsletter zu IONOS
 
@@ -31,6 +48,10 @@ on:
         description: 'Nur anzeigen, nichts hochladen'
         type: boolean
         default: false
+      neue_instanz:
+        description: 'Neue Instanz: Ordner anlegen und install.php mitschicken, z. B. /kunden/ottobeuren'
+        type: string
+        default: ''
 
 # Zwei Uploads gleichzeitig würden sich in die Quere kommen
 concurrency:
@@ -94,12 +115,15 @@ jobs:
           FTPUSER: ${{ secrets.IONOS_FTP_USER }}
           PASS: ${{ secrets.IONOS_FTP_PASS }}
           ZIEL: ${{ secrets.IONOS_ZIEL }}
+          NEUE_INSTANZ: ${{ inputs.neue_instanz }}
         run: |
           fehlt=""
           [ -n "$HOST" ]    || fehlt="$fehlt IONOS_FTP_HOST"
           [ -n "$FTPUSER" ] || fehlt="$fehlt IONOS_FTP_USER"
           [ -n "$PASS" ]    || fehlt="$fehlt IONOS_FTP_PASS"
-          [ -n "$ZIEL" ]    || fehlt="$fehlt IONOS_ZIEL"
+          # Beim Anlegen der allerersten Instanz gibt es IONOS_ZIEL noch nicht –
+          # der Ordner steht dann im Feld „Neue Instanz“. Das genügt.
+          [ -n "$ZIEL" ] || [ -n "${NEUE_INSTANZ:-}" ] || fehlt="$fehlt IONOS_ZIEL"
 
           if [ -z "$fehlt" ]; then
             echo "bereit=ja" >> "$GITHUB_OUTPUT"
@@ -126,7 +150,7 @@ jobs:
             echo "| \`IONOS_FTP_HOST\` | FTP-Server aus dem IONOS-Menü, ohne \`ftp://\` |"
             echo "| \`IONOS_FTP_USER\` | FTP-Benutzername |"
             echo "| \`IONOS_FTP_PASS\` | zugehöriges Passwort |"
-            echo "| \`IONOS_ZIEL\` | Zielordner, z. B. \`/newsletter\` |"
+            echo "| \`IONOS_ZIEL\` | Zielordner, z. B. \`/newsletter\` – mehrere je Zeile oder durch Komma getrennt |"
             echo ""
             echo "Danach läuft das Hochladen bei jedem Push von selbst."
           } >> "$GITHUB_STEP_SUMMARY"
@@ -143,10 +167,42 @@ jobs:
           PASS: ${{ secrets.IONOS_FTP_PASS }}
           ZIEL: ${{ secrets.IONOS_ZIEL }}
           PROBE: ${{ inputs.probelauf }}
+          NEUE_INSTANZ: ${{ inputs.neue_instanz }}
         run: |
           set -euo pipefail
           [ "${PROBE:-false}" = "true" ] && TROCKEN="--dry-run" || TROCKEN=""
           [ -n "$TROCKEN" ] && echo "PROBELAUF – es wird nichts übertragen."
+
+          # --- Welche Ordner? -----------------------------------------------
+          # IONOS_ZIEL darf mehrere Ordner enthalten: einen je Zeile oder durch
+          # Komma getrennt. Ein Ordner = eine Instanz = ein Kunde, mit eigener
+          # config.php und eigener Datenbank. Der Code ist überall derselbe,
+          # deshalb genügt ein Ablauf für alle.
+          ZIELE=$(printf '%s\n' "${ZIEL:-}" | tr ',' '\n' \
+                  | sed 's/^[[:space:]]*//; s/[[:space:]]*$//' | grep -v '^$' || true)
+
+          # „Neue Instanz“: ein Ordner, den es noch nicht gibt. Nur der bekommt
+          # install.php mit – in einer laufenden Instanz hat sie nichts zu
+          # suchen. Steht er schon in IONOS_ZIEL, wird er nicht doppelt bedient.
+          NEU=$(printf '%s' "${NEUE_INSTANZ:-}" | sed 's/^[[:space:]]*//; s/[[:space:]]*$//')
+          if [ -n "$NEU" ]; then
+            # Ein Anführungszeichen im Ordnernamen zerbräche den lftp-Aufruf,
+            # und die Meldung hätte dann nichts mehr mit der Ursache zu tun.
+            case "$NEU" in
+              *[\'\"\`\;]*|*'$'*)
+                echo "::error::Der Ordnername darf keine Anführungszeichen oder Sonderzeichen enthalten."
+                exit 1 ;;
+            esac
+            ZIELE=$(printf '%s\n%s\n' "$ZIELE" "$NEU" | grep -v '^$' | awk '!schon[$0]++')
+            echo "Neue Instanz: $NEU (install.php kommt mit)"
+          fi
+
+          if [ -z "$ZIELE" ]; then
+            echo "::error::Kein Zielordner angegeben."
+            exit 1
+          fi
+          echo "Zielordner:"
+          printf '%s\n' "$ZIELE" | sed 's/^/  /'
 
           # Bewusst OHNE "--only-newer": Das überspringt eine Datei, sobald die
           # auf dem Server das jüngere Datum trägt – etwa weil dort jemand etwas
@@ -181,6 +237,31 @@ jobs:
                     set sftp:connect-program 'ssh -a -x -o StrictHostKeyChecking=accept-new -o ConnectTimeout=15 -o NumberOfPasswordPrompts=1';
                     set net:max-retries 1;"
 
+          # Je Zielordner ein mkdir und ein mirror. Alles in EINER Sitzung:
+          # Ein zweiter Anmeldevorgang je Kunde wäre nicht nur langsamer, er
+          # gäbe auch einen zweiten Weg, an dem etwas schiefgehen kann.
+          # mkdir -f -p legt den Ordner an, wenn er fehlt, und schweigt, wenn
+          # es ihn schon gibt.
+          mirror_befehle() {
+            local befehle="" z ausnahme anlegen
+            while IFS= read -r z; do
+              [ -n "$z" ] || continue
+              if [ "$z" = "$NEU" ]; then ausnahme=""; else ausnahme="-x '^install\.php$'"; fi
+              # Im Probelauf wird wirklich nichts angefasst – auch kein Ordner
+              # angelegt. --dry-run gilt nur für mirror, nicht für mkdir.
+              if [ -n "$TROCKEN" ]; then anlegen=""; else anlegen="mkdir -f -p '$z';"; fi
+              befehle="$befehle
+                $anlegen
+                mirror --reverse --no-perms --parallel=4 $TROCKEN \
+                  -x '^config\.php\$' $ausnahme \
+                  -x '^data/' \
+                  -x '^uploads/' \
+                  --verbose=1 \
+                  newsletter/ '$z';"
+            done <<< "$ZIELE"
+            printf '%s' "$befehle"
+          }
+
           # Die eigentliche Übertragung – einmal geschrieben, zweimal nutzbar.
           # $1 = Verbindungsart, $2 = Adresse
           # Die Art steht bewusst NACH den allgemeinen Einstellungen, damit sie
@@ -192,13 +273,7 @@ jobs:
               set cmd:fail-exit true;
               $1
               open -u '$FTPUSER' --env-password '$2';
-              mirror --reverse --no-perms --parallel=4 $TROCKEN \
-                -x '^config\.php$' \
-                -x '^install\.php$' \
-                -x '^data/' \
-                -x '^uploads/' \
-                --verbose=1 \
-                newsletter/ '$ZIEL';
+              $(mirror_befehle)
               bye;
             "
           }
@@ -281,10 +356,40 @@ jobs:
         if: success() && steps.zugang.outputs.bereit == 'ja'
         env:
           ZIEL: ${{ secrets.IONOS_ZIEL }}
+          NEUE_INSTANZ: ${{ inputs.neue_instanz }}
         run: |
-          echo "### Newsletter hochgeladen" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "Zielordner: \`$ZIEL\`" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "Bitte einmal \`systemcheck.php\` aufrufen – dort steht, ob alle" >> $GITHUB_STEP_SUMMARY
-          echo "Dateien vollständig angekommen sind und welche Fassung nun läuft." >> $GITHUB_STEP_SUMMARY
+          ZIELE=$(printf '%s\n' "${ZIEL:-}" | tr ',' '\n' \
+                  | sed 's/^[[:space:]]*//; s/[[:space:]]*$//' | grep -v '^$' || true)
+          NEU=$(printf '%s' "${NEUE_INSTANZ:-}" | sed 's/^[[:space:]]*//; s/[[:space:]]*$//')
+          {
+            echo "### Newsletter hochgeladen"
+            echo ""
+            echo "Zielordner:"
+            echo ""
+            printf '%s\n' "$ZIELE" | grep -v '^$' | sed 's/^/* `/; s/$/`/' || true
+            if [ -n "$NEU" ]; then
+              case "$ZIELE" in *"$NEU"*) ;; *) echo "* \`$NEU\` (neu angelegt)";; esac
+            fi
+            echo ""
+            echo "Bitte einmal \`systemcheck.php\` aufrufen – dort steht, ob alle"
+            echo "Dateien vollständig angekommen sind und welche Fassung nun läuft."
+          } >> "$GITHUB_STEP_SUMMARY"
+
+          if [ -n "$NEU" ]; then
+            {
+              echo ""
+              echo "### Neue Instanz \`$NEU\`"
+              echo ""
+              echo "Der Ordner ist angelegt und \`install.php\` liegt darin. Jetzt noch zweierlei:"
+              echo ""
+              echo "1. Im Browser \`$NEU/install.php\` aufrufen und die Einrichtung ausfüllen"
+              echo "   (Datenbank, Absender, erster Zugang). Danach löscht sich install.php"
+              echo "   nicht von selbst – bitte über das FTP-Menü entfernen."
+              echo "2. Den Ordner \`$NEU\` in das Secret \`IONOS_ZIEL\` aufnehmen (eine Zeile je"
+              echo "   Ordner). Sonst bleibt diese Instanz beim nächsten Push auf dem alten Stand."
+              echo ""
+              echo "Danach steht die Instanz unter *System → Instanzen* mit ihren Zahlen"
+              echo "neben den anderen – dafür brauchen Sie von dort den \`cron_token\` aus"
+              echo "ihrer \`config.php\`."
+            } >> "$GITHUB_STEP_SUMMARY"
+          fi

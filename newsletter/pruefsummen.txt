@@ -1,5 +1,5 @@
 # Prüfsummen des Newslettersystems – erzeugt von cron/pruefsummen.php
-# Fassung: 1.21.1 (Instanzen stehen fest in der Navigation)
+# Fassung: 1.22.0 (Mehrere Instanzen aus einem Ablauf)
 # systemcheck.php vergleicht damit die Dateien auf dem Server.
 5bacf6f6b40f57318e29f5313b82551143f0162d3b806e3760bad347b7652e34  README.md
 6605e2f4278b7312a797aa6d5cd964f3b10233ff8f0098d9358bdfba310cea06  abmelden.php
@@ -17,7 +17,7 @@ d20832f202d12ec5cbbeb15322cfe705df7afc357a344a27368ac9c3d1b85c3a  admin/assets/f
 09f16a0690090396d568f5ab82f1dba1ae2de826e0c2692a43ae8a35850ee82a  admin/empfaenger.php
 374c4ab88e11ed77f76096780b79bd907cb3efba04103e9e04d1a16fa6d53c84  admin/import.php
 d55b6d679df9b143f2ae85ede74173b3a93e25b19f4082949f89638e523d8a34  admin/index.php
-ce1043a467767a8ddf8bcb79c2f1d971a11c42c91e287b09d91660fef431ec58  admin/instanzen.php
+8e6e6ad4008e3ab0859cc3e60852db555a87f1a0c6282f572e4ecf875aaa7ad7  admin/instanzen.php
 d63c7a41452f673587448b19b5dd8fe30dc18c865755c3d8fdaf7612dccbf192  admin/kampagne.php
 315052963cf279c2c7bf36ec3deab2242067fd01bbd0114ac6517818bbe5c008  admin/kampagnen.php
 b6e9c67aea86c51606e45ce9f098c30f5fd8daa87ada04331df2c0feb7a84227  admin/ki.php
@@ -71,7 +71,7 @@ d2cc8f3f9a4ce49fd649000d900831b5d21749413fcaf7563d0f60652976569e  lib/SystemMail
 1ff1590061ada92bfd11f5aaf2ca92281368bdfcd03e6a78f6068bd44d60bc95  lib/Tracking.php
 f16866caf47cafebdefeaafbb5569c51d8a403f81add5aaddb9ae9e1befeda43  lib/Urls.php
 3385c0525855de44e1b358d3f9fc74fd9b429f285d372d83255a443573faa423  lib/Util.php
-483912f2257fbe3f049192e60f17335f20125a33c4002c9c53a1bb6493c066e7  lib/bootstrap.php
+dcdba2d623c22ed0cd3086c09fde81c30f1cf1842d700c81612ce5a843903a3b  lib/bootstrap.php
 688d9bd5dbea09f88e9cae351240c9864749e377f49e43f6af41ba6162cbd963  partials/page.php
 c214133fade3769703e0ff5af9122697eb7ed41e6ce70765807db7582f8eea3e  status.php
 ce1a83de309fad556bf61efbe3e8d5cc1fe6cecf6f99990d7685278995e49839  subscribe.php

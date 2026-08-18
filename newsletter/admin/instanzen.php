@@ -194,9 +194,27 @@ function instanz_cron(string $wann): string
     </form>
 </details>
 
-<p class="ad-hint">Eine neue Installation legen Sie an, indem Sie den Ordner <code>newsletter/</code>
-    ein zweites Mal hochladen und dort <code>install.php</code> aufrufen – eigene Datenbank, eigene
-    Zugänge, eigene Marken. Der Programmcode ist derselbe; ein Update spielen Sie in jede Installation
-    einzeln ein.</p>
+<details class="ad-klapp ad-card" id="neue-anlegen" data-merken="instanzen-anlegen">
+    <summary>
+        <h2>Wie lege ich eine neue Installation an?</h2>
+        <span class="ad-klapp-zeichen" aria-hidden="true"></span>
+    </summary>
+    <p style="margin-top:12px;">Eine Installation ist ein eigener Ordner auf dem Webspace, mit eigener
+        <code>config.php</code>, eigener Datenbank und eigenen Zugängen. Der Programmcode ist überall
+        derselbe – kopieren müssen Sie nichts von Hand.</p>
+    <ol style="margin:10px 0 0 18px;padding:0;line-height:1.7;">
+        <li>Auf GitHub unter <em>Actions → „Newsletter zu IONOS“ → Run workflow</em> bei
+            <em>Neue Instanz</em> den Ordner eintragen, etwa <code>/kunden/ottobeuren</code>.
+            Dieser Lauf legt den Ordner an und schickt <code>install.php</code> mit.</li>
+        <li>Im Browser <code>…/kunden/ottobeuren/install.php</code> aufrufen und ausfüllen:
+            Datenbank, Absender, erster Zugang. Danach <code>install.php</code> vom Server löschen.</li>
+        <li>Den Ordner im Repository zum Geheimnis <code>IONOS_ZIEL</code> hinzufügen – eine Zeile
+            je Ordner. Ab dann bekommt die neue Installation jede Aktualisierung automatisch mit.</li>
+        <li>Zurück auf dieser Seite eintragen, mit Adresse und <code>cron_token</code> aus deren
+            <code>config.php</code>. Dann steht sie oben mit ihren Zahlen dabei.</li>
+    </ol>
+    <p class="ad-hint" style="margin:12px 0 0;">Ein Update spielen Sie nicht mehr einzeln ein: Ein
+        Push aktualisiert alle Ordner, die in <code>IONOS_ZIEL</code> stehen.</p>
+</details>
 
 <?php require __DIR__ . '/partials/footer.php'; ?>

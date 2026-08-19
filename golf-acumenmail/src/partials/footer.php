@@ -12,10 +12,10 @@ $cta = $page['cta'] ?? null;
 if ($cta === null) {
     // Standardband – gilt überall dort, wo die Seite nichts eigenes setzt.
     $cta = [
-        'title'     => 'Sehen Sie das Tool an Ihren eigenen Inhalten',
-        'text'      => 'Wir richten eine Testumgebung im Design Ihres Clubs ein und gehen sie in 30 Minuten gemeinsam durch – telefonisch oder per Video, mit Vorstand, Sekretariat oder beiden.',
-        'primary'   => ['Demo anfragen', 'kontakt.php'],
-        'secondary' => ['Leistungen ansehen', 'leistungen/'],
+        'title'     => 'Wir sehen uns Ihren Club an. Kostenlos.',
+        'text'      => 'Dreißig Minuten, telefonisch oder per Video, mit Vorstand, Sekretariat oder beiden. Danach wissen Sie, was Ihr Adressbestand hergibt und was wir an Ihrer Stelle täten – auch wenn das heißt: vorerst nichts.',
+        'primary'   => ['Club-Analyse anfragen', 'kontakt.php'],
+        'secondary' => ['Was das kostet', 'preise.php'],
     ];
 }
 $js = $page['js'] ?? [];

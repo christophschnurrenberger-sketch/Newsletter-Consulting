@@ -10,26 +10,46 @@ $page = [
 include __DIR__ . '/partials/header.php';
 ?>
 
-<!-- Hero: was wir tun, in zwei Sätzen -------------------------------------- -->
+<!-- Hero ------------------------------------------------------------------
+     Aufbau wie bei den guten Anbietern: ein Versprechen, das die eigene
+     Schwachstelle benennt, darunter konkret, wer was macht. Die Nummern
+     entsprechen den drei Paketen im Abschnitt darunter. -->
 <section class="section home-hero">
     <div class="container">
         <p class="section-kicker">Für Golfclubs, Golfanlagen und Golfschulen</p>
 
         <h1 class="home-hero-title">
-            Wir richten Golfclubs den
-            <span class="mark">Newsletter ein.</span>
+            Der Clubnewsletter, der wirklich rausgeht.
+            <span class="mark">Dafür sorgen wir.</span>
         </h1>
 
         <div class="home-hero-foot">
-            <p class="home-hero-lead">
-                Und schreiben ihn monatlich, wenn Sie wollen. Vom Blick auf den Adressbestand über
-                das fertige System im Clubdesign bis zur Ausgabe, die freitags rausgeht. Die
-                Software läuft danach auf dem Webspace Ihres Clubs und kostet im Monat nichts –
-                kein Preis pro Kontakt, keine Stufe ab 1.200 Mitgliedern.
-            </p>
-            <div class="home-hero-actions">
-                <a href="<?= e(url('kontakt.php')) ?>" class="btn-primary-custom">Kostenlose Club-Analyse</a>
-                <a href="<?= e(url('preise.php')) ?>" class="btn-secondary">Was das kostet</a>
+            <div>
+                <p class="home-hero-lead">
+                    Die meisten Clubnewsletter scheitern nicht am Text, sondern am Juni:
+                    Startzeiten, Telefon, Turnierleitung – und dann ist der Monat vorbei.
+                    Genau die drei Schritte, an denen es hängt, übernehmen wir.
+                </p>
+
+                <ol class="home-hero-points">
+                    <li><span><b>Nachsehen, was da ist.</b>
+                        Adressen, Einwilligungen, Hosting – bevor irgendjemand irgendetwas einrichtet.</span></li>
+                    <li><span><b>Das System hinstellen.</b>
+                        Auf dem Webspace Ihres Clubs, im Clubdesign, mit den ersten Auto­mationen.</span></li>
+                    <li><span><b>Schreiben, wenn Sie wollen.</b>
+                        Monatliche Ausgaben, Turnierpost, ein Bericht für den Vorstand.</span></li>
+                </ol>
+            </div>
+
+            <div>
+                <p class="home-hero-note">
+                    Ein fester Ansprechpartner. Keine Kosten pro Kontakt, keine Preisstufe ab
+                    1.200 Mitgliedern – die Software läuft bei Ihnen und bleibt bei Ihnen.
+                </p>
+                <div class="home-hero-actions">
+                    <a href="<?= e(url('kontakt.php')) ?>" class="btn-primary-custom">Kostenlose Club-Analyse</a>
+                    <a href="<?= e(url('preise.php')) ?>" class="btn-secondary">Was das kostet</a>
+                </div>
             </div>
         </div>
     </div>
@@ -49,10 +69,10 @@ include __DIR__ . '/partials/header.php';
     <div class="container">
         <div class="section-head animate-on-scroll">
             <p class="section-kicker">Das Angebot</p>
-            <h2 class="section-title">Drei Schritte, und Sie können nach jedem aufhören</h2>
+            <h2 class="section-title">Erst nachsehen. Dann einrichten. Dann laufen lassen.</h2>
             <p class="section-lead">
-                Die meisten Clubs fangen mit dem Clubcheck an. Ob danach überhaupt etwas folgt,
-                entscheiden Sie – und manchmal raten wir selbst ab.
+                Drei Pakete, die aufeinander aufbauen – aber nach jedem ist Schluss möglich.
+                Die meisten Clubs fangen mit dem Clubcheck an, und manchmal raten wir danach ab.
             </p>
         </div>
 

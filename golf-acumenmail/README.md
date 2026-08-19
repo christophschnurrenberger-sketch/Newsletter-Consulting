@@ -150,8 +150,8 @@ Einstieg. Keiner von ihnen lässt den Besucher raten.
 Die Startseite folgt jetzt derselben Reihenfolge, mit einem eigenen Dreh an der
 Stelle, an der wir uns tatsächlich unterscheiden:
 
-1. **Wer wir sind und was wir tun** – „Wir richten Golfclubs den Newsletter ein",
-   im Vorspann die Betreuung, das eigene Hosting und die fehlende Monatsgebühr.
+1. **Das Versprechen und wer dafür geradesteht** – im Kopf, mit den drei
+   Schritten direkt darunter.
 2. **Das Angebot mit Preisen** – die drei Pakete stehen mit Betrag direkt unter
    dem Kopf, nicht erst drei Klicks später.
 3. **Mieten oder besitzen** – die eine Frage, die jeder Besucher mitbringt, der
@@ -162,6 +162,34 @@ Stelle, an der wir uns tatsächlich unterscheiden:
 
 Punkt 3 und 5 gibt es bei den Mietanbietern nicht: Wer Software vermietet, kann
 schlecht schreiben, wann man besser nicht mietet.
+
+### Der Kopf
+
+Zwischenstand war einmal „Wir richten Golfclubs den Newsletter ein." Sachlich
+richtig, vollständig – und tot. Ein Satz aus einem Leistungsverzeichnis: kein
+Versprechen, keine Spannung, kein Grund weiterzulesen.
+
+Inxmail macht es vor, ohne dass man es abschreiben müsste: **ein Ergebnis, das
+sonst ausbleibt – und daneben, wer dafür sorgt.** Der Bau ist immer derselbe:
+Zeile, Vorspann, drei konkrete Punkte, ein beruhigender Satz, zwei Knöpfe (einer
+verbindlich, einer unverbindlich).
+
+Hier lautet das Ergebnis:
+
+> **Der Clubnewsletter, der wirklich rausgeht. Dafür sorgen wir.**
+
+„Wirklich rausgeht" benennt die Schwachstelle, ohne jemandem etwas vorzuwerfen –
+fast jeder Club hat schon einmal einen Newsletter angefangen und wieder
+eingestellt. „Dafür sorgen wir" macht daraus ein Angebot statt einer
+Beobachtung. Der Vorspann sagt, woran es wirklich liegt (nicht am Text, am
+Juni), die drei nummerierten Schritte sagen, was wir tun – und sie tragen
+dieselben Nummern wie die drei Pakete im Abschnitt darunter.
+
+Der Rest ist Handwerk: Die letzte Zeile des Vorspanns war ein Wort lang, also
+wurde der Satz umgestellt („Genau die drei Schritte, an denen es hängt,
+übernehmen wir") statt an der Breite zu drehen. Und das Handlungsband am
+Seitenende hieß „Sehen Sie das Tool an Ihren eigenen Inhalten" – wieder das
+Werkzeug im Vordergrund. Jetzt: „Wir sehen uns Ihren Club an. Kostenlos."
 
 ---
 

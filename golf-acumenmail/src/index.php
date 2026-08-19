@@ -1,7 +1,7 @@
 <?php
 $page = [
-    'title'       => 'Newsletter-Marketing für Golfclubs',
-    'description' => 'Wir bauen Golfclubs eine Mitgliederkommunikation, die auch die erreicht, die selten auf der Anlage sind – samt Newsletter-System auf dem eigenen Server, ohne Kosten pro Kontakt.',
+    'title'       => 'Newsletter für Golfclubs: einrichten und betreuen lassen',
+    'description' => 'Wir richten Golfclubs den Newsletter ein – System auf dem eigenen Webspace, Clubdesign, Automationen – und schreiben ihn auf Wunsch monatlich. Clubcheck ab 290 €, Einrichtung ab 1.490 €, Betreuung ab 390 € im Monat.',
     'section'     => '',
     'path'        => '',
     'hero'        => false,
@@ -10,50 +10,28 @@ $page = [
 include __DIR__ . '/partials/header.php';
 ?>
 
-<!-- Hero: eine Aussage, sonst nichts ------------------------------------- -->
+<!-- Hero: was wir tun, in zwei Sätzen -------------------------------------- -->
 <section class="section home-hero">
     <div class="container">
         <p class="section-kicker">Für Golfclubs, Golfanlagen und Golfschulen</p>
 
         <h1 class="home-hero-title">
-            Ihr Aushang erreicht nur die,
-            <span class="mark">die ohnehin da sind.</span>
+            Wir richten Golfclubs den
+            <span class="mark">Newsletter ein.</span>
         </h1>
 
         <div class="home-hero-foot">
             <p class="home-hero-lead">
-                Die anderen fünfhundert erfahren vom Turnier, wenn es vorbei ist. Wir ändern das –
-                mit Clubpost, die ankommt, und einem Newsletter-System, das auf Ihrem eigenen
-                Server läuft. Ohne Monatsgebühr, ohne Preisstufe ab 1.200 Mitgliedern.
+                Und schreiben ihn monatlich, wenn Sie wollen. Vom Blick auf den Adressbestand über
+                das fertige System im Clubdesign bis zur Ausgabe, die freitags rausgeht. Die
+                Software läuft danach auf dem Webspace Ihres Clubs und kostet im Monat nichts –
+                kein Preis pro Kontakt, keine Stufe ab 1.200 Mitgliedern.
             </p>
             <div class="home-hero-actions">
                 <a href="<?= e(url('kontakt.php')) ?>" class="btn-primary-custom">Kostenlose Club-Analyse</a>
-                <a href="<?= e(url('software/')) ?>" class="btn-secondary">Software ansehen</a>
+                <a href="<?= e(url('preise.php')) ?>" class="btn-secondary">Was das kostet</a>
             </div>
         </div>
-    </div>
-</section>
-
-<!-- Direkt das Werkzeug zeigen, statt es zu beschreiben -------------------- -->
-<section class="section-sm">
-    <div class="container-wide">
-        <figure class="demo-frame" data-demo-frame>
-            <div class="demo-frame-kopf">
-                <span>Newslettersystem <span class="ort">Golfclub Musterhausen</span></span>
-                <span class="hinweis">Ansicht – nicht bedienbar</span>
-            </div>
-            <div class="demo-frame-buehne">
-                <iframe src="<?= e(url('demo/baukasten.html')) ?>" loading="lazy"
-                        title="Der Newsletter-Baukasten: links die Bausteine, in der Mitte die Ausgabe mit Überschrift, Text und Knopf, rechts die Gestaltung."></iframe>
-            </div>
-            <figcaption>
-                <b>Kein Bild.</b>
-                <span>Die Oberfläche selbst, mit derselben Formatvorlage wie im Sekretariat –
-                eine Ausgabe mitten im Schreiben. Drei Bausteine, kein HTML.
-                <a href="<?= e(url('software/newsletter-baukasten.php')) ?>">Wie der Baukasten
-                arbeitet</a></span>
-            </figcaption>
-        </figure>
     </div>
 </section>
 
@@ -66,36 +44,166 @@ include __DIR__ . '/partials/header.php';
     </div>
 </div>
 
-<!-- Die Ausgangslage ------------------------------------------------------ -->
+<!-- Das Angebot: drei Pakete, mit Preisen ---------------------------------- -->
 <section class="section">
     <div class="container">
         <div class="section-head animate-on-scroll">
-            <p class="section-kicker">Wofür Clubs uns holen</p>
-            <h2 class="section-title">Fünf Aufgaben, die auf jedem Clubtisch liegen</h2>
+            <p class="section-kicker">Das Angebot</p>
+            <h2 class="section-title">Drei Schritte, und Sie können nach jedem aufhören</h2>
             <p class="section-lead">
-                Keine davon ist ein Golfproblem.
+                Die meisten Clubs fangen mit dem Clubcheck an. Ob danach überhaupt etwas folgt,
+                entscheiden Sie – und manchmal raten wir selbst ab.
             </p>
         </div>
 
-        <div class="link-card-grid">
-<?php foreach ($NAV['loesungen']['children'] as $child): ?>
-            <a href="<?= e(url($child['url'])) ?>" class="link-card animate-on-scroll">
-                <h3><?= e($child['label']) ?></h3>
-                <p><?= e($child['desc']) ?></p>
-                <span class="link-card-more">Ansehen<i data-icon="arrow-right" class="lucide"></i></span>
-            </a>
-<?php endforeach; ?>
+        <div class="package-grid">
+            <article class="package-card animate-on-scroll">
+                <p class="package-label">Schritt 1 · Klarheit</p>
+                <h3>Clubcheck</h3>
+                <p>Was Ihr Adressbestand hergibt, was rechtlich trägt und wo der erste Hebel liegt.</p>
+                <ul class="package-list">
+                    <li><i data-icon="check" class="lucide"></i><span>Adressen, Einwilligungen, Datenqualität</span></li>
+                    <li><i data-icon="check" class="lucide"></i><span>Technikcheck Ihres Hostings</span></li>
+                    <li><i data-icon="check" class="lucide"></i><span>Chancenkarte und Gespräch mit dem Vorstand</span></li>
+                </ul>
+                <div class="package-meta">
+                    <span>Investition</span>
+                    <strong>ab 290 € einmalig</strong>
+                    <small>Wird beim Saison-Setup verrechnet.</small>
+                </div>
+                <p style="margin-top:1.2rem;"><a href="<?= e(url('leistungen/clubcheck.php')) ?>" class="btn-secondary" style="width:100%;">Details ansehen</a></p>
+            </article>
+
+            <article class="package-card is-featured animate-on-scroll">
+                <span class="package-flag">Häufig gewählt</span>
+                <p class="package-label">Schritt 2 · Einrichtung</p>
+                <h3>Saison-Setup</h3>
+                <p>Ein versandbereites System im Design Ihres Clubs – Software inklusive, sie gehört danach dem Club.</p>
+                <ul class="package-list">
+                    <li><i data-icon="check" class="lucide"></i><span>Newsletter-System auf dem Clubserver eingerichtet</span></li>
+                    <li><i data-icon="check" class="lucide"></i><span>Zustell­barkeit: SMTP, SPF, DKIM, Bounces</span></li>
+                    <li><i data-icon="check" class="lucide"></i><span>Clubdesign, Anmeldeformular, Listen und Segmente</span></li>
+                    <li><i data-icon="check" class="lucide"></i><span>Zwei Auto­mationen, Redaktionsplan, Einweisung</span></li>
+                </ul>
+                <div class="package-meta">
+                    <span>Investition</span>
+                    <strong>ab 1.490 € einmalig</strong>
+                    <small>Danach keine laufenden Lizenzkosten.</small>
+                </div>
+                <p style="margin-top:1.2rem;"><a href="<?= e(url('leistungen/saison-setup.php')) ?>" class="btn-primary-custom" style="width:100%;">Details ansehen</a></p>
+            </article>
+
+            <article class="package-card animate-on-scroll">
+                <p class="package-label">Schritt 3 · Rhythmus</p>
+                <h3>Clubbetreuung</h3>
+                <p>Für Clubs, bei denen der Newsletter sonst wieder liegen bleibt: Wir schreiben und versenden.</p>
+                <ul class="package-list">
+                    <li><i data-icon="check" class="lucide"></i><span>Monatliche Ausgaben nach Redaktionsplan</span></li>
+                    <li><i data-icon="check" class="lucide"></i><span>Turnier- und Eventkommunikation</span></li>
+                    <li><i data-icon="check" class="lucide"></i><span>Auswertung und Bericht für den Vorstand</span></li>
+                </ul>
+                <div class="package-meta">
+                    <span>Investition</span>
+                    <strong>ab 390 € / Monat</strong>
+                    <small>Monatlich kündbar, kein Jahresvertrag.</small>
+                </div>
+                <p style="margin-top:1.2rem;"><a href="<?= e(url('leistungen/clubbetreuung.php')) ?>" class="btn-secondary" style="width:100%;">Details ansehen</a></p>
+            </article>
         </div>
+
+        <p style="margin-top:2.5rem;">
+            <a href="<?= e(url('preise.php')) ?>" class="btn-secondary">Alle Preise und was enthalten ist</a>
+        </p>
     </div>
 </section>
 
-<!-- Die Software ---------------------------------------------------------- -->
+<!-- Der Unterschied zu den bekannten Anbietern ----------------------------- -->
+<section class="section section-alt">
+    <div class="container">
+        <div class="section-head animate-on-scroll">
+            <p class="section-kicker">Der Unterschied</p>
+            <h2 class="section-title">Mieten oder besitzen</h2>
+            <p class="section-lead">
+                Die bekannten Newsletter-Anbieter vermieten Software. Wir richten eine ein, die
+                danach dem Club gehört.
+            </p>
+        </div>
+
+        <div class="split-grid is-wide-left is-top">
+            <div class="prose animate-on-scroll">
+                <p>
+                    Mietlösungen rechnen nach Kontakten oder versendeten Mails ab. Für einen Club
+                    mit 900 Mitgliedern, 400 Gastspielern und einem Kursverteiler heißt das: Die
+                    Rechnung wächst mit dem Verteiler – und die Mitgliederdaten liegen beim
+                    Anbieter.
+                </p>
+                <p>
+                    Wir gehen den anderen Weg. Das System wird einmal auf dem Webspace des Clubs
+                    eingerichtet und gehört danach dem Club. Wir sind die Agentur davor und
+                    daneben: Wir richten ein, weisen ein und schreiben mit – die Software selbst
+                    stellt uns keine Rechnung, also Ihnen auch nicht.
+                </p>
+            </div>
+
+            <div class="callout animate-on-scroll">
+                <i data-icon="help-circle" class="lucide"></i>
+                <p>
+                    <strong>Und wenn Sie uns nicht mehr wollen?</strong>
+                    Dann bleibt alles da: Adressen, Vorlagen, Auto­mationen, die gesamte Historie.
+                    Das System läuft weiter, auch ohne uns – bei einer Mietlösung geht genau das
+                    nicht.
+                </p>
+            </div>
+        </div>
+
+        <div class="table-scroll animate-on-scroll" style="margin-top:3rem;">
+            <table class="data-table">
+                <caption>Beispielrechnung. Hosting fällt in beiden Fällen an und ist deshalb nicht aufgeführt.</caption>
+                <thead>
+                    <tr>
+                        <th scope="col">&nbsp;</th>
+                        <th scope="col">Mietlösung</th>
+                        <th scope="col">Eigenes System</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <th scope="row">Laufend pro Monat</th>
+                        <td class="no">je nach Tarif und Verteilergröße</td>
+                        <td class="yes">0 € für die Software</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Verteiler wächst</th>
+                        <td class="no">nächste Preisstufe</td>
+                        <td class="yes">ändert nichts</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Mitgliederdaten</th>
+                        <td class="no">beim Anbieter</td>
+                        <td class="yes">auf dem Clubserver</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Wenn Sie aufhören</th>
+                        <td class="no">Daten und Vorlagen weg</td>
+                        <td class="yes">alles bleibt im Club</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <p style="margin-top:2.2rem;">
+            <a href="<?= e(url('preise.php')) ?>" class="btn-secondary">Die Rechnung über fünf Jahre</a>
+        </p>
+    </div>
+</section>
+
+<!-- Die Software, die im Setup steckt -------------------------------------- -->
 <section class="section section-dark">
     <div class="container">
 
         <div class="tool-intro-grid">
             <div class="animate-on-scroll">
-                <p class="section-kicker on-dark">Die Software</p>
+                <p class="section-kicker on-dark">Im Saison-Setup enthalten</p>
                 <h2 class="section-title">Das Werkzeug gab es vor dem Angebot.</h2>
                 <p class="section-lead">
                     Wir haben es für eigene Projekte gebaut, weil uns die Rechnung der Mietanbieter
@@ -126,19 +234,18 @@ include __DIR__ . '/partials/header.php';
 
         <figure class="demo-frame home-demo animate-on-scroll" data-demo-frame>
             <div class="demo-frame-kopf">
-                <span>Newslettersystem <span class="ort">Auto­mationen</span></span>
+                <span>Newslettersystem <span class="ort">Golfclub Musterhausen</span></span>
                 <span class="hinweis">Ansicht – nicht bedienbar</span>
             </div>
             <div class="demo-frame-buehne">
-                <iframe src="<?= e(url('demo/automation.html')) ?>" loading="lazy"
-                        title="Der Ablauf-Editor: Auslöser, Wartezeiten, E-Mail-Schritte und eine Bedingung mit Ja- und Nein-Zweig."></iframe>
+                <iframe src="<?= e(url('demo/baukasten.html')) ?>" loading="lazy"
+                        title="Der Newsletter-Baukasten: links die Bausteine, in der Mitte die Ausgabe mit Überschrift, Text und Knopf, rechts die Gestaltung."></iframe>
             </div>
             <figcaption>
-                <b>Einmal bauen.</b>
-                <span>Die Willkommens­strecke des Golfclubs Musterhausen, wie sie im System
-                steht. Danach läuft sie für jedes neue Mitglied von allein.
-                <a href="<?= e(url('software/automationen.php')) ?>">Was sich damit bauen
-                lässt</a></span>
+                <b>Kein Bild.</b>
+                <span>Die Oberfläche selbst, mit einer Ausgabe mitten im Schreiben. Drei Bausteine,
+                kein HTML. <a href="<?= e(url('software/newsletter-baukasten.php')) ?>">Wie der
+                Baukasten arbeitet</a></span>
             </figcaption>
         </figure>
 
@@ -147,6 +254,30 @@ include __DIR__ . '/partials/header.php';
             <a href="<?= e(url($child['url'])) ?>" class="tool-feature">
                 <strong><?= e($child['label']) ?></strong>
                 <p><?= e($child['desc']) ?></p>
+            </a>
+<?php endforeach; ?>
+        </div>
+    </div>
+</section>
+
+<!-- Wofür Clubs uns holen --------------------------------------------------- -->
+<section class="section">
+    <div class="container">
+        <div class="section-head animate-on-scroll">
+            <p class="section-kicker">Wofür Clubs uns holen</p>
+            <h2 class="section-title">Fünf Aufgaben, die auf jedem Clubtisch liegen</h2>
+            <p class="section-lead">
+                Keine davon ist ein Golfproblem. Zu jeder gibt es eine Seite mit dem, was wir
+                konkret einrichten.
+            </p>
+        </div>
+
+        <div class="link-card-grid">
+<?php foreach ($NAV['loesungen']['children'] as $child): ?>
+            <a href="<?= e(url($child['url'])) ?>" class="link-card animate-on-scroll">
+                <h3><?= e($child['label']) ?></h3>
+                <p><?= e($child['desc']) ?></p>
+                <span class="link-card-more">Ansehen<i data-icon="arrow-right" class="lucide"></i></span>
             </a>
 <?php endforeach; ?>
         </div>
@@ -189,35 +320,8 @@ include __DIR__ . '/partials/header.php';
     </div>
 </section>
 
-<!-- Zusammenarbeit --------------------------------------------------------- -->
-<section class="section">
-    <div class="container">
-        <div class="section-head animate-on-scroll">
-            <p class="section-kicker">Zusammenarbeit</p>
-            <h2 class="section-title">Drei Wege anzufangen</h2>
-            <p class="section-lead">
-                Je nachdem, ob zuerst Klarheit, Einrichtung oder ein verlässlicher Rhythmus fehlt.
-            </p>
-        </div>
-
-        <div class="link-card-grid">
-<?php foreach ($NAV['leistungen']['children'] as $child): ?>
-            <a href="<?= e(url($child['url'])) ?>" class="link-card animate-on-scroll">
-                <h3><?= e($child['label']) ?></h3>
-                <p><?= e($child['desc']) ?></p>
-                <span class="link-card-more">Ansehen<i data-icon="arrow-right" class="lucide"></i></span>
-            </a>
-<?php endforeach; ?>
-        </div>
-
-        <p style="margin-top:2.5rem;">
-            <a href="<?= e(url('preise.php')) ?>" class="btn-secondary">Was das kostet</a>
-        </p>
-    </div>
-</section>
-
 <!-- Wissen ----------------------------------------------------------------- -->
-<section class="section section-alt">
+<section class="section">
     <div class="container">
         <div class="split-grid is-wide-right is-top">
             <div class="animate-on-scroll">

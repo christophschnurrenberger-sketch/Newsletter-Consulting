@@ -7,8 +7,8 @@ $page = [
     'crumbs'      => [['Leistungen', null]],
     'hero'        => [
         'kicker' => 'Leistungen',
-        'h1'     => 'Drei Wege, <span class="accent">im Club anzufangen</span>',
-        'lead'   => 'Nicht jeder Club braucht sofort die volle Betreuung. Entscheidend ist, ob zuerst Klarheit, Einrichtung oder ein verlässlicher Rhythmus fehlt.',
+        'h1'     => 'Was wir <span class="accent">für Ihren Club tun</span>',
+        'lead'   => 'Wir prüfen den Adressbestand, richten das Newsletter-System auf Ihrem Webspace ein und schreiben die Ausgaben, wenn im Sekretariat die Zeit fehlt. Drei Pakete – nach jedem können Sie aufhören.',
         'actions'=> [['Club-Analyse anfragen', 'kontakt.php', 'primary'], ['Preise ansehen', 'preise.php', 'ghost']],
     ],
 ];

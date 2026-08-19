@@ -112,18 +112,56 @@ und selbst gehostete Schriften wären zusätzliche Ladezeit für wenig Gewinn.
 
 ## Seitenstruktur
 
-| Bereich | Seiten |
-|---|---|
-| **Software** | Übersicht · Newsletter-Baukasten · Automationen · Empfänger & Segmente · Auswertung · Zustellbarkeit & DSGVO · Systemvoraussetzungen |
-| **Lösungen** | Übersicht · Mitgliederbindung · Turniere & Events · Gastspieler & Greenfee · Neumitglieder gewinnen · Golfschule & Pro |
-| **Leistungen** | Übersicht · Clubcheck · Saison-Setup · Clubbetreuung |
-| **Preise** | Pakete und eine Vergleichsrechnung gegen Mietlösungen |
-| **Wissen** | Übersicht · Newsletter-Jahresplan · Betreffzeilen · Mitgliederdaten und DSGVO · Häufige Fragen |
-| **Sonstige** | Startseite · Über uns · Kontakt · Impressum · Datenschutz |
+Die Reihenfolge im Menü folgt den Fragen eines Besuchers, nicht der Technik:
 
-Die Startseite verweist in die Bereiche, statt alles selbst zu erzählen. Jede
-Unterseite hat Brotkrumen, eine Randspalte mit der Navigation ihres Bereichs und
-weiterführende Verweise am Ende.
+| Bereich | Beantwortet | Seiten |
+|---|---|---|
+| **Leistungen** | Was tut ihr für mich? | Übersicht · Clubcheck · Saison-Setup · Clubbetreuung |
+| **Lösungen** | Für welche Aufgabe? | Übersicht · Mitgliederbindung · Turniere & Events · Gastspieler & Greenfee · Neumitglieder gewinnen · Golfschule & Pro |
+| **Software** | Womit? | Übersicht · Newsletter-Baukasten · Automationen · Empfänger & Segmente · Auswertung · Zustellbarkeit & DSGVO · Systemvoraussetzungen |
+| **Preise** | Was kostet das? | Pakete und eine Vergleichsrechnung gegen Mietlösungen |
+| **Wissen** | Verstehen die etwas davon? | Übersicht · Newsletter-Jahresplan · Betreffzeilen · Mitgliederdaten und DSGVO · Häufige Fragen |
+| **Sonstige** | | Startseite · Über uns · Kontakt · Impressum · Datenschutz |
+
+Vorher stand „Software" an erster Stelle. Das war eine Aussage über das
+Angebot – und die falsche: Verkauft wird eine Dienstleistung, bei der die
+Software mitkommt, nicht ein Mietwerkzeug. Die Reihenfolge steht an einer
+Stelle, in `$NAV` in `src/partials/config.php`; Hauptmenü, Mega-Menü,
+Brotkrumen, Randspalten, Footer und Sitemap folgen ihr.
+
+Jede Unterseite hat Brotkrumen, eine Randspalte mit der Navigation ihres
+Bereichs und weiterführende Verweise am Ende.
+
+---
+
+## Was die Startseite sagen muss
+
+Die frühere Startseite fing mit einem Problemsatz an („Ihr Aushang erreicht nur
+die, die ohnehin da sind") und zeigte direkt darunter ein großes Fenster mit der
+Newsletter-Oberfläche. Beides für sich gut – zusammen sagten sie: *Die verkaufen
+Software.* Verkauft wird aber eine Dienstleistung. Der Preis stand ausschließlich
+auf der Preisseite, das Wort „einrichten" kam über der Falz gar nicht vor.
+
+Der Vergleich mit den bekannten Anbietern im deutschsprachigen Raum ist eindeutig:
+Bei rapidmail, CleverReach, Inxmail und mail2many steht in der ersten Zeile, *was*
+verkauft wird und *für wen*, direkt darunter der Preis oder ein kostenloser
+Einstieg. Keiner von ihnen lässt den Besucher raten.
+
+Die Startseite folgt jetzt derselben Reihenfolge, mit einem eigenen Dreh an der
+Stelle, an der wir uns tatsächlich unterscheiden:
+
+1. **Wer wir sind und was wir tun** – „Wir richten Golfclubs den Newsletter ein",
+   im Vorspann die Betreuung, das eigene Hosting und die fehlende Monatsgebühr.
+2. **Das Angebot mit Preisen** – die drei Pakete stehen mit Betrag direkt unter
+   dem Kopf, nicht erst drei Klicks später.
+3. **Mieten oder besitzen** – die eine Frage, die jeder Besucher mitbringt, der
+   rapidmail und CleverReach kennt. Mit Vergleichstabelle.
+4. **Die Software** – jetzt klar eingeordnet als „im Saison-Setup enthalten",
+   nicht als das Produkt.
+5. **Wofür Clubs uns holen**, **wann sich das nicht lohnt**, **Wissen**.
+
+Punkt 3 und 5 gibt es bei den Mietanbietern nicht: Wer Software vermietet, kann
+schlecht schreiben, wann man besser nicht mietet.
 
 ---
 

@@ -181,9 +181,30 @@ Hier lautet das Ergebnis:
 „Wirklich rausgeht" benennt die Schwachstelle, ohne jemandem etwas vorzuwerfen –
 fast jeder Club hat schon einmal einen Newsletter angefangen und wieder
 eingestellt. „Dafür sorgen wir" macht daraus ein Angebot statt einer
-Beobachtung. Der Vorspann sagt, woran es wirklich liegt (nicht am Text, am
-Juni), die drei nummerierten Schritte sagen, was wir tun – und sie tragen
-dieselben Nummern wie die drei Pakete im Abschnitt darunter.
+Beobachtung. Der Vorspann sagt, was wir übernehmen; die drei nummerierten
+Schritte sagen, wie – und sie tragen dieselben Nummern wie die drei Pakete im
+Abschnitt darunter.
+
+Im Vorspann stand einen Entwurf lang: *„Die meisten Clubnewsletter scheitern
+nicht am Text, sondern am Juni: Startzeiten, Telefon, Turnierleitung – und dann
+ist der Monat vorbei."* Klingt nach Pointe, ist aber keine. Man kann nicht *an
+einem Monat* scheitern; „Text" und „Juni" sind keine vergleichbaren Größen, die
+Antithese läuft also leer. Und wer die Seite zum ersten Mal sieht, muss sich
+„Juni" erst übersetzen – Hochsaison, Sekretariat im Dauerbetrieb –, wofür der
+Satz dann seine eigene Fußnote nachliefert. Ein Bild, das erklärt werden muss,
+hat sich seinen Platz in der ersten Zeile nicht verdient.
+
+Dazu kam: Der Vorspann wiederholte, was die Überschrift schon gesagt hatte,
+statt weiterzuführen. Jetzt steht dort eine echte Antithese aus zwei
+vergleichbaren Größen und danach unsere Rolle:
+
+> Im Sekretariat fehlt selten die Idee, meistens die Zeit. Wir übernehmen die
+> Arbeit dazwischen – vom Blick auf den Adressbestand bis zur fertigen Ausgabe
+> im Postfach Ihrer Mitglieder.
+
+Der Juni ist nicht verschwunden, er steht jetzt an der richtigen Stelle: im
+Zitat weiter unten, gesagt von jemandem aus einem Clubsekretariat, mit dem
+Zusammenhang drumherum, den er braucht.
 
 Der Rest ist Handwerk: Die letzte Zeile des Vorspanns war ein Wort lang, also
 wurde der Satz umgestellt („Genau die drei Schritte, an denen es hängt,

@@ -26,9 +26,9 @@ include __DIR__ . '/partials/header.php';
         <div class="home-hero-foot">
             <div>
                 <p class="home-hero-lead">
-                    Die meisten Clubnewsletter scheitern nicht am Text, sondern am Juni:
-                    Startzeiten, Telefon, Turnierleitung – und dann ist der Monat vorbei.
-                    Genau die drei Schritte, an denen es hängt, übernehmen wir.
+                    Im Sekretariat fehlt selten die Idee, meistens die Zeit. Wir übernehmen
+                    die Arbeit dazwischen – vom Blick auf den Adressbestand bis zur fertigen
+                    Ausgabe im Postfach Ihrer Mitglieder.
                 </p>
 
                 <ol class="home-hero-points">

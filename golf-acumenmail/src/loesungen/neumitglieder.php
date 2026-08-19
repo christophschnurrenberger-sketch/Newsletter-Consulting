@@ -39,7 +39,7 @@ include __DIR__ . '/../partials/header.php';
                     </p>
                 </div>
 
-                <h2 class="section-title" style="font-size:1.6rem; margin:2.6rem 0 1.4rem;">Die Interessentenstrecke</h2>
+                <h2 class="section-title" style="font-size:1.6rem; margin:2.6rem 0 1.4rem;">Die Interessenten­strecke</h2>
                 <div class="numbered-steps">
                     <div class="numbered-step">
                         <div>
@@ -79,7 +79,7 @@ include __DIR__ . '/../partials/header.php';
                     <p>
                         <strong>Der Übergang muss sitzen</strong>
                         Wird aus dem Interessenten ein Mitglied, endet diese Strecke und die
-                        Willkommensstrecke beginnt. Das passiert automatisch über eine Aktion im
+                        Willkommens­strecke beginnt. Das passiert automatisch über eine Aktion im
                         Ablauf – niemand muss daran denken, und niemand bekommt beides.
                     </p>
                 </div>
@@ -91,7 +91,7 @@ include __DIR__ . '/../partials/header.php';
                         <p>Die Platzreife ist für viele Clubs der eigentliche Einstiegskanal.</p>
                     </a>
                     <a href="<?= e(url('loesungen/mitgliederbindung.php')) ?>" class="related-card">
-                        <span>Lösung</span><strong>Mitgliederbindung</strong>
+                        <span>Lösung</span><strong>Mitglieder­bindung</strong>
                         <p>Was nach der Aufnahme passieren muss, damit es nicht umsonst war.</p>
                     </a>
                 </div>

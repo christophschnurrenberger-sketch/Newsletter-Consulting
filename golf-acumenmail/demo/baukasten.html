@@ -43,6 +43,17 @@
     @media (prefers-reduced-motion: reduce) {
         [data-baustein], [data-schritt] { opacity: 1; transform: none; transition: none; }
     }
+
+    /* Schmale Anzeigen: ein Ausschnitt statt der ganzen Oberflaeche
+       ------------------------------------------------------------------
+       Untereinander gestellt waere der Baukasten hier ueber drei
+       Bildschirme hoch, und ganz oben staende die Bausteinleiste – die
+       Ausgabe selbst kaeme erst nach viel Rollen. Gezeigt wird deshalb
+       der Teil, um den es geht. Ein Ausschnitt, keine andere Oberflaeche. */
+    @media (max-width: 700px) {
+        body { padding: 10px; }
+        .bk-palette, .bk-inspector { display: none; }
+    }
 </style>
 </head>
 <body>
@@ -252,7 +263,12 @@
     function nachmessen() { rahmenEinpassen(); hoehe(); }
 
     window.addEventListener('message', function (e) { if (e.data === 'demo:start') { start(); } });
-    window.addEventListener('resize', nachmessen);
+    /* Beim Ziehen am Fenster nicht bei jedem Pixel neu rechnen */
+    var bremse = null;
+    window.addEventListener('resize', function () {
+        window.clearTimeout(bremse);
+        bremse = window.setTimeout(nachmessen, 120);
+    });
     window.addEventListener('load', nachmessen);
     nachmessen();
     setTimeout(nachmessen, 300);

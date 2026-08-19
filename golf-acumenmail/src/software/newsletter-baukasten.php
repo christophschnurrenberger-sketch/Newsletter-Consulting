@@ -23,16 +23,20 @@ include __DIR__ . '/../partials/header.php';
 <section class="section-sm">
     <div class="container-wide">
             <figure class="demo-frame" data-demo-frame>
+                <div class="demo-frame-kopf">
+                    <span>Newslettersystem <span class="ort">Golfclub Musterhausen</span></span>
+                    <span class="hinweis">Ansicht – nicht bedienbar</span>
+                </div>
                 <div class="demo-frame-buehne">
                     <iframe src="<?= e(url('demo/baukasten.html')) ?>" loading="lazy"
                             title="Der Newsletter-Baukasten: links die Bausteine, in der Mitte die Ausgabe mit Überschrift, Text und Knopf, rechts die Gestaltung."></iframe>
                 </div>
                 <figcaption>
                     <b>Kein Bild.</b>
-                    <span>Der Baukasten selbst, mit einer Ausgabe mitten im Schreiben. Anklicken
-                    lässt sich hier nichts – dafür gibt es den Zugang zum Probieren.</span>
+                    <span>Der Baukasten selbst, mit einer Ausgabe mitten im Schreiben.
+                    <a href="<?= e(url('kontakt.php')) ?>">Einen eigenen Zugang zum
+                    Ausprobieren anfragen</a></span>
                 </figcaption>
-                <p class="demo-frame-mobil">Auf dem Handy sehen Sie den oberen Ausschnitt – der Rahmen lässt sich darin weiterschieben.</p>
             </figure>
     </div>
 </section>

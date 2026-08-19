@@ -438,10 +438,16 @@
             if (!event.data || event.data.demo !== 'hoehe') { return; }
             for (var i = 0; i < rahmen.length; i++) {
                 var frame = rahmen[i].querySelector('iframe');
-                if (frame && frame.contentWindow === event.source) {
-                    /* Zwei Pixel Luft: sonst erscheint bei einer krummen Höhe
-                       im Rahmen ein Rollbalken, den niemand braucht. */
-                    rahmen[i].style.setProperty('--demo-h', Math.max(320, event.data.px) + 2 + 'px');
+                if (!frame || frame.contentWindow !== event.source) { continue; }
+                /* Zwei Pixel Luft: sonst erscheint bei einer krummen Höhe im
+                   Rahmen ein Rollbalken, den niemand braucht. */
+                var neu = Math.max(320, event.data.px) + 2;
+                /* Nur bei echter Änderung anfassen. Während die Höhe animiert,
+                   meldet die Demo bei jedem Zwischenschritt – ohne diese
+                   Schwelle schaukelt sich das gegenseitig auf. */
+                var alt = parseInt(rahmen[i].style.getPropertyValue('--demo-h'), 10) || 0;
+                if (Math.abs(neu - alt) > 4) {
+                    rahmen[i].style.setProperty('--demo-h', neu + 'px');
                 }
             }
         });

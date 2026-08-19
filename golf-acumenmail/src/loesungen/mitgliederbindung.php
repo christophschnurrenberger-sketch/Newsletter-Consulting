@@ -1,16 +1,16 @@
 <?php
 $page = [
-    'title'       => 'Mitgliederbindung',
-    'description' => 'Auch die Mitglieder erreichen, die selten auf der Anlage sind: Willkommensstrecke für Neue, Reaktivierung für Stille, ein Rhythmus, der über den Winter trägt.',
+    'title'       => 'Mitglieder­bindung',
+    'description' => 'Auch die Mitglieder erreichen, die selten auf der Anlage sind: Willkommens­strecke für Neue, Reaktivierung für Stille, ein Rhythmus, der über den Winter trägt.',
     'section'     => 'loesungen',
     'path'        => 'loesungen/mitgliederbindung.php',
-    'crumbs'      => [['Lösungen', 'loesungen/'], ['Mitgliederbindung', null]],
+    'crumbs'      => [['Lösungen', 'loesungen/'], ['Mitglieder­bindung', null]],
     'hero'        => [
         'kicker' => 'Lösung · Bindung',
         'h1'     => 'Die ersten Wochen entscheiden, <span class="accent">die stillen Jahre kündigen</span>',
         'lead'   => 'Ein Mitglied, das nach der Aufnahme monatelang nichts hört, wird selten zum Stammgast. Und eines, das ein halbes Jahr nicht gespielt hat, kündigt irgendwann – meistens ohne vorher etwas zu sagen.',
         'facts'  => [
-            ['3', 'Mails in der Willkommensstrecke'],
+            ['3', 'Mails in der Willkommens­strecke'],
             ['1×', 'einrichten, dann läuft es'],
             ['Winter', 'ist kein Funkloch mehr'],
         ],
@@ -42,7 +42,7 @@ include __DIR__ . '/../partials/header.php';
                 <div class="numbered-steps">
                     <div class="numbered-step">
                         <div>
-                            <h3>Willkommensstrecke für neue Mitglieder</h3>
+                            <h3>Willkommens­strecke für neue Mitglieder</h3>
                             <p>Drei Mails über drei Wochen: Platzregeln und Ansprechpartner, dann
                                 Startzeitenbuchung und Rangekarte, dann die Einladung zur
                                 Schnupperrunde mit zwei Mitgliedern der Riege. Läuft automatisch,
@@ -83,7 +83,7 @@ include __DIR__ . '/../partials/header.php';
                         Ein Austritt kostet den Club nicht nur den Jahresbeitrag, sondern auch die
                         Aufnahmegebühr des Nachfolgers, die Zeit im Sekretariat und – bei
                         Wartelisten-Clubs – nichts, bei allen anderen sehr viel. Eine
-                        Willkommensstrecke kostet einmal Einrichtung.
+                        Willkommens­strecke kostet einmal Einrichtung.
                     </p>
                 </div>
 
@@ -91,7 +91,7 @@ include __DIR__ . '/../partials/header.php';
                 <div class="related-grid">
                     <a href="<?= e(url('software/automationen.php')) ?>" class="related-card">
                         <span>Software</span><strong>Automationen</strong>
-                        <p>Die Willkommensstrecke als Ablauf – warten, senden, verzweigen.</p>
+                        <p>Die Willkommens­strecke als Ablauf – warten, senden, verzweigen.</p>
                     </a>
                     <a href="<?= e(url('software/empfaenger-segmente.php')) ?>" class="related-card">
                         <span>Software</span><strong>Empfänger &amp; Segmente</strong>

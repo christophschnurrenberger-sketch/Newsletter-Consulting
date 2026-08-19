@@ -53,13 +53,13 @@ include __DIR__ . '/partials/header.php';
                     </section>
 
                     <section>
-                        <h2>EU-Streitschlichtung</h2>
+                        <h2>EU-Streit­schlichtung</h2>
                         <p>Die Europäische Kommission stellt eine Plattform zur Online-Streitbeilegung (OS) bereit: <a href="https://ec.europa.eu/consumers/odr/" target="_blank" rel="noopener noreferrer">https://ec.europa.eu/consumers/odr/</a>.<br>
                         Unsere E-Mail-Adresse finden Sie oben im Impressum.</p>
                     </section>
 
                     <section>
-                        <h2>Verbraucherstreitbeilegung / Universalschlichtungsstelle</h2>
+                        <h2>Verbraucher­streit­beilegung / Universal­schlichtungs­stelle</h2>
                         <p>Wir sind nicht bereit oder verpflichtet, an Streitbeilegungsverfahren vor einer Verbraucherschlichtungsstelle teilzunehmen.</p>
                     </section>
 

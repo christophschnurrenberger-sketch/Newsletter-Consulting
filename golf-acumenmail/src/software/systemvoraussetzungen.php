@@ -1,10 +1,10 @@
 <?php
 $page = [
-    'title'       => 'Systemvoraussetzungen',
+    'title'       => 'System­voraus­setzungen',
     'description' => 'Was der Webspace des Golfclubs mitbringen muss: PHP 8, eine Datenbank (SQLite genügt), ein SMTP-Postfach und ein Cron-Job alle fünf Minuten.',
     'section'     => 'software',
     'path'        => 'software/systemvoraussetzungen.php',
-    'crumbs'      => [['Software', 'software/'], ['Systemvoraussetzungen', null]],
+    'crumbs'      => [['Software', 'software/'], ['System­voraus­setzungen', null]],
     'hero'        => [
         'kicker' => 'Software · Technik',
         'h1'     => 'Läuft auf dem Hosting, <span class="accent">das Sie schon haben</span>',

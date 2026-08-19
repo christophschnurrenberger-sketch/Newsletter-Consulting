@@ -1,14 +1,14 @@
 <?php
 $page = [
     'title'       => 'Datenschutz',
-    'description' => 'Datenschutzerklärung von AcumenMail Golf: Informationen zur Verarbeitung personenbezogener Daten nach DSGVO, u. a. beim Kontaktformular und Hosting.',
+    'description' => 'Datenschutz­erklärung von AcumenMail Golf: Informationen zur Verarbeitung personenbezogener Daten nach DSGVO, u. a. beim Kontaktformular und Hosting.',
     'section'     => '',
     'path'        => 'datenschutz.php',
     'crumbs'      => [['Datenschutz', null]],
     'cta'         => false,
     'hero'        => [
         'kicker' => 'Rechtliches',
-        'h1'     => 'Datenschutzerklärung',
+        'h1'     => 'Datenschutz­erklärung',
         'lead'   => 'Informationen zur Verarbeitung personenbezogener Daten nach der DSGVO · Stand: Juli 2026',
     ],
 ];
@@ -24,7 +24,7 @@ include __DIR__ . '/partials/header.php';
                             <li><a href="#verantwortlicher">Verantwortliche Stelle</a></li>
                             <li><a href="#ueberblick">Allgemeine Hinweise</a></li>
                             <li><a href="#hosting">Hosting</a></li>
-                            <li><a href="#pflichtinfos">Allgemeine Hinweise &amp; Pflichtinformationen</a></li>
+                            <li><a href="#pflichtinfos">Allgemeine Hinweise &amp; Pflicht­informationen</a></li>
                             <li><a href="#rechte">Ihre Rechte</a></li>
                             <li><a href="#logs">Server-Log-Dateien</a></li>
                             <li><a href="#cookies">Cookies</a></li>
@@ -69,13 +69,13 @@ include __DIR__ . '/partials/header.php';
                     </section>
 
                     <section id="pflichtinfos">
-                        <h2>4. Allgemeine Hinweise und Pflichtinformationen</h2>
+                        <h2>4. Allgemeine Hinweise und Pflicht­informationen</h2>
 
                         <h3>Datenschutz</h3>
-                        <p>Die Betreiber dieser Seiten nehmen den Schutz Ihrer persönlichen Daten sehr ernst. Wir behandeln Ihre personenbezogenen Daten vertraulich und entsprechend den gesetzlichen Datenschutzvorschriften sowie dieser Datenschutzerklärung.</p>
+                        <p>Die Betreiber dieser Seiten nehmen den Schutz Ihrer persönlichen Daten sehr ernst. Wir behandeln Ihre personenbezogenen Daten vertraulich und entsprechend den gesetzlichen Datenschutzvorschriften sowie dieser Datenschutz­erklärung.</p>
 
                         <h3>Speicherdauer</h3>
-                        <p>Soweit innerhalb dieser Datenschutzerklärung keine speziellere Speicherdauer genannt wurde, verbleiben Ihre personenbezogenen Daten bei uns, bis der Zweck für die Datenverarbeitung entfällt. Wenn Sie ein berechtigtes Löschersuchen geltend machen oder eine Einwilligung zur Datenverarbeitung widerrufen, werden Ihre Daten gelöscht, sofern keine gesetzlich zulässigen Gründe (z. B. steuer- oder handelsrechtliche Aufbewahrungsfristen) für die Speicherung bestehen.</p>
+                        <p>Soweit innerhalb dieser Datenschutz­erklärung keine speziellere Speicherdauer genannt wurde, verbleiben Ihre personenbezogenen Daten bei uns, bis der Zweck für die Datenverarbeitung entfällt. Wenn Sie ein berechtigtes Löschersuchen geltend machen oder eine Einwilligung zur Datenverarbeitung widerrufen, werden Ihre Daten gelöscht, sofern keine gesetzlich zulässigen Gründe (z. B. steuer- oder handelsrechtliche Aufbewahrungsfristen) für die Speicherung bestehen.</p>
 
                         <h3>Rechtsgrundlagen der Verarbeitung</h3>
                         <p>Sofern Sie in die Datenverarbeitung eingewilligt haben, verarbeiten wir Ihre Daten auf Grundlage von Art. 6 Abs. 1 lit. a DSGVO bzw. Art. 9 Abs. 2 lit. a DSGVO. Sind Ihre Daten zur Vertragserfüllung oder zur Durchführung vorvertraglicher Maßnahmen erforderlich, verarbeiten wir sie auf Grundlage von Art. 6 Abs. 1 lit. b DSGVO. Zur Erfüllung einer rechtlichen Verpflichtung auf Grundlage von Art. 6 Abs. 1 lit. c DSGVO. Im Übrigen auf Grundlage unserer berechtigten Interessen gemäß Art. 6 Abs. 1 lit. f DSGVO.</p>
@@ -142,8 +142,8 @@ include __DIR__ . '/partials/header.php';
                     </section>
 
                     <section id="aenderungen">
-                        <h2>9. Änderungen dieser Datenschutzerklärung</h2>
-                        <p>Wir behalten uns vor, diese Datenschutzerklärung anzupassen, damit sie stets den aktuellen rechtlichen Anforderungen entspricht oder um Änderungen unserer Leistungen in der Datenschutzerklärung umzusetzen, z. B. bei der Einführung neuer Dienste. Für Ihren erneuten Besuch gilt dann die neue Datenschutzerklärung.</p>
+                        <h2>9. Änderungen dieser Datenschutz­erklärung</h2>
+                        <p>Wir behalten uns vor, diese Datenschutz­erklärung anzupassen, damit sie stets den aktuellen rechtlichen Anforderungen entspricht oder um Änderungen unserer Leistungen in der Datenschutz­erklärung umzusetzen, z. B. bei der Einführung neuer Dienste. Für Ihren erneuten Besuch gilt dann die neue Datenschutz­erklärung.</p>
                     </section>
         </div>
     </div>

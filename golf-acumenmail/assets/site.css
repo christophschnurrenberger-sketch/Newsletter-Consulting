@@ -242,6 +242,9 @@ textarea:focus-visible, select:focus-visible {
 .site-brand-mark { display: none; }   /* Kein Logo-Kreis. Der Name reicht. */
 .site-brand-text { display: flex; align-items: baseline; gap: 0.5rem; }
 .site-brand-name {
+    /* Der Name ist eine Marke, kein Satz – im Fuß brach er sonst zu
+       „AcumenMail / Golf" um, und die Markierung stand allein auf Zeile zwei. */
+    white-space: nowrap;
     font-family: var(--display);
     font-size: 1.4rem;
     font-weight: 700;
@@ -551,8 +554,55 @@ a.link-card:hover .link-card-more::before { width: 100%; }
 .section-dark .numbered-step::before { color: var(--on-ink); }
 .section-dark .numbered-step p { color: var(--muted-dark); }
 
-.table-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+/*
+   Tabellen ohne Rollbalken
+   ------------------------------------------------------------------------
+   Eine Vergleichstabelle mit min-width: 34rem bekam in einer 443 px breiten
+   Spalte einen waagerechten Rollbalken – auf dem Rechner, nicht nur auf dem
+   Handy. Rollbalken quer durch eine Textseite sind eine Zumutung.
+
+   Deshalb misst sich der Rahmen jetzt selbst (container-type) und stellt die
+   Tabelle untereinander, sobald es eng wird: eine Zeile wird ein Block, die
+   Spaltenüberschrift steht als Etikett über dem Wert. Die Etiketten setzt
+   tools/build.php aus der Kopfzeile der Tabelle ein. Browser ohne
+   Container-Abfragen behalten den Rollrahmen – nichts geht verloren.
+*/
+.table-scroll { container-type: inline-size; overflow-x: auto; -webkit-overflow-scrolling: touch; }
 .data-table { width: 100%; border-collapse: collapse; font-size: 0.96rem; min-width: 34rem; }
+
+@container (max-width: 35rem) {
+    .data-table { min-width: 0; }
+    /* Die Kopfzeile bleibt für Vorlesesoftware stehen, nur unsichtbar */
+    .data-table thead {
+        position: absolute; width: 1px; height: 1px;
+        padding: 0; margin: -1px; overflow: hidden;
+        clip-path: inset(50%); white-space: nowrap;
+    }
+    .data-table tr { display: block; padding: 1rem 0; border-bottom: 1px solid rgba(27, 43, 33, 0.14); }
+    .data-table tbody tr:last-child { border-bottom: 0; }
+    .data-table th, .data-table td { padding: 0; border: 0; }
+    .data-table tbody th {
+        display: block;
+        font-family: var(--display); font-size: 1.1rem; font-weight: 400;
+        color: var(--ink); margin-bottom: 0.5rem;
+    }
+    /* Etikett und Wert nebeneinander, nicht untereinander – sonst wächst
+       eine sechszeilige Tabelle auf anderthalb Bildschirme. */
+    .data-table td {
+        display: flex; gap: 0.9rem; align-items: baseline;
+        margin-top: 0.35rem;
+    }
+    .data-table td[data-label]::before {
+        content: attr(data-label);
+        /* Hier klein und gesperrt zu setzen wie sonst die Kleinkopfzeilen
+           ginge nicht auf: „Eigenes System" braucht dann zwei Zeilen und
+           die Tabelle franst aus. Also schlicht, ohne Versalien. */
+        flex: 0 0 8.5em;
+        font-family: var(--sans);
+        font-size: 0.78rem; font-weight: 400;
+        color: var(--muted); line-height: 1.5;
+    }
+}
 .data-table caption { caption-side: bottom; padding-top: 1rem; font-size: 0.82rem; color: var(--muted); text-align: left; }
 .data-table th, .data-table td { padding: 1.1rem 1.2rem 1.1rem 0; text-align: left; border-bottom: 1px solid rgba(27, 43, 33, 0.14); vertical-align: top; }
 .data-table thead th { font-family: var(--sans); font-size: 0.7rem; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted); border-bottom-width: 2px; border-bottom-color: var(--ink); }
@@ -600,48 +650,70 @@ a.link-card:hover .link-card-more::before { width: 100%; }
    Hier standen erst gezeichnete Nachbauten, dann Bildschirmfotos. Beides war
    falsch: das eine erfunden, das andere unscharf. In dem Rahmen steckt jetzt
    die Oberfläche des Newslettersystems selbst – Markup und Stylesheets aus
-   dem laufenden System, nur ohne Skripte. Nichts ist anklickbar, nichts wird
-   abgesendet. Die Höhe meldet die Demo selbst (siehe assets/site.js); der
-   Wert unten trägt sie, solange sie noch nicht geladen ist. */
+   dem laufenden System, nur ohne Skripte.
+
+   Der Rahmen ist als Schaukasten gebaut, nicht als eingebettete Anwendung:
+   eine beschriftete Leiste darüber sagt, was zu sehen ist, und der Rahmen
+   nimmt keine Eingaben an. Vorher sah er bedienbar aus, war es aber nicht –
+   und auf dem Handy fing er den Fingerwisch ab, statt die Seite
+   weiterzurollen. Genau daran fühlte sich das falsch an.
+
+   Die Höhe meldet die Demo selbst (siehe assets/site.js); der Wert in
+   --demo-h trägt sie, solange sie noch nicht geladen ist. */
 .demo-frame { margin: 0; }
+
+.demo-frame-kopf {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 0.3rem 1.5rem;
+    padding: 0.8rem 1.2rem;
+    background-color: var(--ink);
+    color: var(--on-ink);
+    font-family: var(--sans);
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+}
+.demo-frame-kopf .ort { color: var(--signal); }
+.demo-frame-kopf .hinweis {
+    font-weight: 400;
+    letter-spacing: 0.1em;
+    color: var(--muted-dark);
+}
+
 .demo-frame-buehne {
     position: relative;
     height: var(--demo-h, 1360px);
     background: #F4F6F4;
-    border: 1px solid rgba(27, 43, 33, 0.16);
     box-shadow: 0 30px 70px rgba(12, 31, 20, 0.16);
     overflow: hidden;
     transition: height 0.35s ease;
 }
-.demo-frame-buehne iframe { display: block; width: 100%; height: 100%; border: 0; }
-.section-dark .demo-frame-buehne { border-color: var(--ink-line); box-shadow: 0 30px 70px rgba(0, 0, 0, 0.4); }
-@media (max-width: 1099px) { .demo-frame-buehne { height: var(--demo-h, 1680px); } }
-
-/* Auf dem Handy stellt sich die Oberfläche untereinander – ausgeklappt wären
-   das gut drei Bildschirmhöhen. Deshalb steht hier nur der obere Ausschnitt;
-   wer mehr sehen will, schiebt im Rahmen weiter. */
-@media (max-width: 699px) {
-    .demo-frame-buehne { height: 520px; }
-    .demo-frame-buehne::after {
-        content: '';
-        position: absolute;
-        inset: auto 0 0 0;
-        height: 5rem;
-        background: linear-gradient(to bottom, rgba(244, 246, 244, 0), #F4F6F4);
-        pointer-events: none;
-    }
+.demo-frame-buehne iframe {
+    display: block;
+    width: 100%;
+    height: 100%;
+    border: 0;
+    /* Ein Schaukasten nimmt keine Eingaben an: kein Klick ins Leere, und der
+       Fingerwisch rollt die Seite weiter statt den Rahmen. */
+    pointer-events: none;
 }
+.section-dark .demo-frame-buehne { box-shadow: 0 30px 70px rgba(0, 0, 0, 0.4); }
+@media (max-width: 1099px) { .demo-frame-buehne { height: var(--demo-h, 1620px); } }
 
-/* Der Hinweis gilt nur für schmale Anzeigen */
-.demo-frame-mobil { display: none; }
+/*
+   Auf dem Handy zählt jeder Millimeter: Bei 350 px Innenbreite schnitt die
+   Werkzeugleiste eines Bausteins ihr letztes Zeichen ab. Der Schaukasten
+   nimmt deshalb die ganze Breite und lässt nur die Beschriftung eingerückt.
+*/
 @media (max-width: 699px) {
-    .demo-frame-mobil {
-        display: block;
-        margin-top: 0.5rem;
-        font-size: 0.8rem;
-        color: var(--muted);
-    }
-    .section-dark .demo-frame-mobil { color: var(--muted-dark); }
+    .demo-frame { margin-inline: calc(var(--gutter) * -1); }
+    .demo-frame-buehne { height: var(--demo-h, 1500px); }
+    .demo-frame-kopf { padding-inline: var(--gutter); }
+    .demo-frame figcaption { padding-inline: var(--gutter); }
 }
 
 .demo-frame figcaption,
@@ -649,12 +721,21 @@ a.link-card:hover .link-card-more::before { width: 100%; }
     display: flex; gap: 0.7rem; align-items: baseline;
     margin-top: 1rem; font-size: 0.86rem; color: var(--muted);
 }
+/* Nebeneinander blieb dem Fließtext so wenig Platz, dass er in fünf Fetzen
+   zerfiel. Untereinander liest er sich in zwei Zeilen. */
+@media (max-width: 699px) {
+    .demo-frame figcaption, .shot figcaption { display: block; }
+    .demo-frame figcaption b, .shot figcaption b { display: block; margin-bottom: 0.15rem; }
+}
 .section-dark .demo-frame figcaption,
 .section-dark .shot figcaption { color: var(--muted-dark); }
 .demo-frame figcaption b,
 .shot figcaption b { color: var(--green); font-family: var(--display); white-space: nowrap; }
 .section-dark .demo-frame figcaption b,
 .section-dark .shot figcaption b { color: var(--signal); }
+.demo-frame figcaption a { color: inherit; text-decoration: underline; text-underline-offset: 0.25em; }
+.demo-frame figcaption a:hover { color: var(--green); }
+.section-dark .demo-frame figcaption a:hover { color: var(--signal); }
 
 /* Ein Rahmen, der über den Textrand hinausragt */
 .shot-bleed { margin-inline: calc(var(--gutter) * -1); }
@@ -946,7 +1027,11 @@ a.link-card:hover .link-card-more::before { width: 100%; }
 */
 @media (min-width: 1000px) {
     .page-hero-inner:not(:has(.page-hero-facts)) { grid-template-columns: 1fr; }
-    .page-hero-inner:not(:has(.page-hero-facts)) .page-hero-copy { max-width: 26ch; }
+    /* Die Begrenzung gehört an die Überschrift selbst: "ch" rechnet mit der
+       Schriftgröße des Elements. An der Spalte gesetzt, galt sie plötzlich
+       für die Grundschrift – 246 px für eine Überschrift in 4,6 rem, und
+       "Kostenlose" brach mitten im Wort. */
+    .page-hero-inner:not(:has(.page-hero-facts)) .page-hero-title { max-width: 17ch; }
     .page-hero-inner:not(:has(.page-hero-facts)) .page-hero-lead { max-width: 52ch; }
 }
 
@@ -977,4 +1062,28 @@ a.link-card:hover .link-card-more::before { width: 100%; }
    Silbentrennung greift, weil <html lang="de"> gesetzt ist.
 */
 h1, h2, h3, h4 { overflow-wrap: break-word; hyphens: auto; }
-@media (min-width: 700px) { h1, h2, h3, h4 { hyphens: manual; } }
+/*
+   Die Silbentrennung galt vorher nur bis 700 px. Darüber brach
+   „Datenschutzerklärung" in einer 625 px breiten Überschrift stumpf
+   mitten im Wort. „auto" trennt ohnehin nur dann, wenn es sonst nicht
+   passt – über der Grenze ändert sich also nichts, außer dass die
+   wenigen Fälle richtig getrennt werden.
+*/
+
+/*
+   Umbrüche, die der Browser besser kann als eine feste Breite
+   ------------------------------------------------------------------------
+   Deutsch setzt lange Wörter; im Flattersatz bleibt dadurch gern ein
+   einzelnes Wort auf der letzten Zeile stehen. „balance“ verteilt die Zeilen
+   einer Überschrift gleichmäßig, „pretty“ verhindert im Fließtext das
+   einzelne Wort am Absatzende. Browser ohne diese Eigenschaften setzen wie
+   bisher – es geht nichts verloren.
+*/
+h1, h2, h3, h4,
+.section-title, .page-hero-title, .home-hero-title,
+.link-card h3, .related-card strong, .tool-feature strong {
+    text-wrap: balance;
+}
+p, li, figcaption, .section-lead, .page-hero-lead, .home-hero-lead, .prose {
+    text-wrap: pretty;
+}

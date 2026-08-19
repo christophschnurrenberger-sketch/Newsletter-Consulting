@@ -68,7 +68,7 @@ include __DIR__ . '/../partials/header.php';
                             <tr><th scope="row">Mitgliedsart</th><td>Voll-, Fern-, Jugend-, Schnupper- und Zweitmitglieder ansprechen, wie es zu ihrem Beitrag passt</td></tr>
                             <tr><th scope="row">Aktivität</th><td>Wer lange nicht gespielt hat, bekommt eine andere Mail als der Stammspieler</td></tr>
                             <tr><th scope="row">Gastspieler</th><td>Greenfee-Zahler mit eigener Einwilligung und eigener Ansprache</td></tr>
-                            <tr><th scope="row">Kursinteressenten</th><td>Platzreife-Anfragen, die noch keine Mitglieder sind</td></tr>
+                            <tr><th scope="row">Kurs­interessenten</th><td>Platzreife-Anfragen, die noch keine Mitglieder sind</td></tr>
                             <tr><th scope="row">Riegen und Mannschaften</th><td>Damen, Herren, Senioren, Jugend – interne Termine ohne Streuverlust</td></tr>
                         </tbody>
                     </table>

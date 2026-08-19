@@ -1,7 +1,7 @@
 <?php
 $page = [
     'title'       => 'Automationen',
-    'description' => 'Mailstrecken, die von allein laufen: warten, senden, verzweigen. Willkommensstrecke für neue Mitglieder, Kursbegleitung, Reaktivierung – als Ablauf zusammengezogen statt programmiert.',
+    'description' => 'Mailstrecken, die von allein laufen: warten, senden, verzweigen. Willkommens­strecke für neue Mitglieder, Kursbegleitung, Reaktivierung – als Ablauf zusammengezogen statt programmiert.',
     'section'     => 'software',
     'path'        => 'software/automationen.php',
     'crumbs'      => [['Software', 'software/'], ['Automationen', null]],
@@ -23,16 +23,21 @@ include __DIR__ . '/../partials/header.php';
 <section class="section-sm">
     <div class="container-wide">
             <figure class="demo-frame" data-demo-frame>
+                <div class="demo-frame-kopf">
+                    <span>Newslettersystem <span class="ort">Automationen</span></span>
+                    <span class="hinweis">Ansicht – nicht bedienbar</span>
+                </div>
                 <div class="demo-frame-buehne">
                     <iframe src="<?= e(url('demo/automation.html')) ?>" loading="lazy"
                             title="Der Ablauf-Editor: Auslöser, Wartezeiten, E-Mail-Schritte und eine Bedingung mit Ja- und Nein-Zweig."></iframe>
                 </div>
                 <figcaption>
-                    <b>Die Willkommensstrecke.</b>
+                    <b>Die Willkommens­strecke.</b>
                     <span>Auslöser oben, darunter Wartezeiten und Mails, unten eine Bedingung
-                    mit zwei Zweigen. Genau so steht sie im System.</span>
+                    mit zwei Zweigen. Genau so steht sie im System.
+                    <a href="<?= e(url('kontakt.php')) ?>">Einen eigenen Zugang zum
+                    Ausprobieren anfragen</a></span>
                 </figcaption>
-                <p class="demo-frame-mobil">Auf dem Handy sehen Sie den oberen Ausschnitt – der Rahmen lässt sich darin weiterschieben.</p>
             </figure>
     </div>
 </section>
@@ -115,8 +120,8 @@ include __DIR__ . '/../partials/header.php';
                     <h2>Welche Strecken sich zuerst lohnen</h2>
                     <p>
                         In der Praxis reichen zwei Automationen, um den größten Teil des Nutzens zu
-                        heben – die Willkommensstrecke für neue Mitglieder und die Begleitung von
-                        Kursinteressenten. Beides läuft ganzjährig und trifft Menschen genau dann,
+                        heben – die Willkommens­strecke für neue Mitglieder und die Begleitung von
+                        Kurs­interessenten. Beides läuft ganzjährig und trifft Menschen genau dann,
                         wenn ihr Interesse am größten ist.
                     </p>
                 </div>
@@ -125,8 +130,8 @@ include __DIR__ . '/../partials/header.php';
                 <div class="related-grid">
                     <a href="<?= e(url('loesungen/mitgliederbindung.php')) ?>" class="related-card">
                         <span>Lösung</span>
-                        <strong>Mitgliederbindung</strong>
-                        <p>Die Willkommensstrecke im Zusammenhang – und was danach kommt.</p>
+                        <strong>Mitglieder­bindung</strong>
+                        <p>Die Willkommens­strecke im Zusammenhang – und was danach kommt.</p>
                     </a>
                     <a href="<?= e(url('loesungen/golfschule.php')) ?>" class="related-card">
                         <span>Lösung</span>

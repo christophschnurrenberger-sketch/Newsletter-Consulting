@@ -52,14 +52,14 @@ include __DIR__ . '/../partials/header.php';
                         <div>
                             <h3>Empfänger und Segmente</h3>
                             <p>Import aus der Clubverwaltung, Listen für Mitglieder, Gastspieler und
-                                Kursinteressenten, dazu das Anmeldeformular auf Ihrer Clubseite.</p>
+                                Kurs­interessenten, dazu das Anmeldeformular auf Ihrer Clubseite.</p>
                         </div>
                     </div>
                     <div class="numbered-step">
                         <div>
                             <h3>Zwei Automationen</h3>
-                            <p>In der Regel die Willkommensstrecke für neue Mitglieder und eine
-                                zweite nach Ihrem Bedarf – Kursinteressenten, Gastspieler oder
+                            <p>In der Regel die Willkommens­strecke für neue Mitglieder und eine
+                                zweite nach Ihrem Bedarf – Kurs­interessenten, Gastspieler oder
                                 Reaktivierung.</p>
                         </div>
                     </div>

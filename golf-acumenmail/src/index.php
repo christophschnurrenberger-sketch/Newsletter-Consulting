@@ -38,17 +38,21 @@ include __DIR__ . '/partials/header.php';
 <section class="section-sm">
     <div class="container-wide">
         <figure class="demo-frame" data-demo-frame>
+            <div class="demo-frame-kopf">
+                <span>Newslettersystem <span class="ort">Golfclub Musterhausen</span></span>
+                <span class="hinweis">Ansicht – nicht bedienbar</span>
+            </div>
             <div class="demo-frame-buehne">
                 <iframe src="<?= e(url('demo/baukasten.html')) ?>" loading="lazy"
                         title="Der Newsletter-Baukasten: links die Bausteine, in der Mitte die Ausgabe mit Überschrift, Text und Knopf, rechts die Gestaltung."></iframe>
             </div>
             <figcaption>
                 <b>Kein Bild.</b>
-                <span>Das ist die Oberfläche selbst, mit derselben Formatvorlage wie im
-                Sekretariat – eine Ausgabe des Golfclubs Musterhausen mitten im Schreiben.
-                Drei Bausteine, kein HTML.</span>
+                <span>Die Oberfläche selbst, mit derselben Formatvorlage wie im Sekretariat –
+                eine Ausgabe mitten im Schreiben. Drei Bausteine, kein HTML.
+                <a href="<?= e(url('software/newsletter-baukasten.php')) ?>">Wie der Baukasten
+                arbeitet</a></span>
             </figcaption>
-            <p class="demo-frame-mobil">Auf dem Handy sehen Sie den oberen Ausschnitt – der Rahmen lässt sich darin weiterschieben.</p>
         </figure>
     </div>
 </section>
@@ -121,16 +125,21 @@ include __DIR__ . '/partials/header.php';
         </div>
 
         <figure class="demo-frame home-demo animate-on-scroll" data-demo-frame>
+            <div class="demo-frame-kopf">
+                <span>Newslettersystem <span class="ort">Automationen</span></span>
+                <span class="hinweis">Ansicht – nicht bedienbar</span>
+            </div>
             <div class="demo-frame-buehne">
                 <iframe src="<?= e(url('demo/automation.html')) ?>" loading="lazy"
                         title="Der Ablauf-Editor: Auslöser, Wartezeiten, E-Mail-Schritte und eine Bedingung mit Ja- und Nein-Zweig."></iframe>
             </div>
             <figcaption>
                 <b>Einmal bauen.</b>
-                <span>Die Willkommensstrecke des Golfclubs Musterhausen, wie sie im System
-                steht. Danach läuft sie für jedes neue Mitglied von allein.</span>
+                <span>Die Willkommens­strecke des Golfclubs Musterhausen, wie sie im System
+                steht. Danach läuft sie für jedes neue Mitglied von allein.
+                <a href="<?= e(url('software/automationen.php')) ?>">Was sich damit bauen
+                lässt</a></span>
             </figcaption>
-            <p class="demo-frame-mobil">Auf dem Handy sehen Sie den oberen Ausschnitt – der Rahmen lässt sich darin weiterschieben.</p>
         </figure>
 
         <div class="tool-feature-grid animate-on-scroll" aria-label="Funktionen des Newsletter-Systems">

@@ -141,7 +141,7 @@ include __DIR__ . '/partials/header.php';
                         Mit dem Absenden verarbeiten wir Ihre Angaben ausschließlich zur Bearbeitung
                         Ihrer Anfrage. Der Versand läuft über unseren eigenen Server, es werden keine
                         Daten an Dritte weitergegeben. Näheres in der
-                        <a href="<?= e(url('datenschutz.php')) ?>">Datenschutzerklärung</a>.
+                        <a href="<?= e(url('datenschutz.php')) ?>">Datenschutz­erklärung</a>.
                     </p>
 
                     <p id="form-status" class="form-status form-col-2" role="alert" aria-live="polite"></p>

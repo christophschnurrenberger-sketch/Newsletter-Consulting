@@ -95,8 +95,8 @@ return [
     'moeglichkeiten' => [
         '<strong>Gäste getrennt ansprechen:</strong> Greenfee-Spieler, Partnerhotel-Gäste und Wohnmobil-Besucher brauchen eine andere Mail als Vollmitglieder – und ihre Adressen liegen bereits im System.',
         '<strong>Turnierausschreibungen nur an die passende Handicap-Klasse</strong>, dazu eine automatische Erinnerung an alle, die sich noch nicht gemeldet haben.',
-        '<strong>Eine Willkommensstrecke für neue Mitglieder</strong>, die einmal gebaut wird und danach jahrelang von allein läuft.',
-        '<strong>Kursinteressenten begleiten,</strong> statt auf den Rückruf zu warten – vom Kurzplatz bis zur Platzreife.',
+        '<strong>Eine Willkommens­strecke für neue Mitglieder</strong>, die einmal gebaut wird und danach jahrelang von allein läuft.',
+        '<strong>Kurs­interessenten begleiten,</strong> statt auf den Rückruf zu warten – vom Kurzplatz bis zur Platzreife.',
         '<strong>Über den Winter in Kontakt bleiben:</strong> fünf Monate Funkstille kosten mehr, als sie sparen.',
     ],
 

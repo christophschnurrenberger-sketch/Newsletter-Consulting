@@ -87,7 +87,7 @@ return [
     'moeglichkeiten' => [
         '<strong>Nur die richtige Handicap-Klasse anschreiben</strong> statt aller 900 Mitglieder – die Ausschreibung trifft, wen sie betrifft.',
         '<strong>Eine Erinnerung fünf Tage vorher</strong>, automatisch und nur an die, die sich noch nicht angemeldet haben.',
-        '<strong>Eine Willkommensstrecke für neue Mitglieder</strong>, die einmal gebaut wird und dann jahrelang von allein läuft.',
+        '<strong>Eine Willkommens­strecke für neue Mitglieder</strong>, die einmal gebaut wird und dann jahrelang von allein läuft.',
         '<strong>Gastspieler mit eigener Ansprache</strong> – die Adressen liegen seit der Greenfee-Buchung ohnehin im System.',
         '<strong>Am Saisonende eine Auswertung</strong>, die zeigt, was die Kommunikation gebracht hat.',
     ],

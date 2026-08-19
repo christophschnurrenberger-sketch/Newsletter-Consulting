@@ -64,7 +64,7 @@ include __DIR__ . '/../partials/header.php';
                         <tr>
                             <th scope="col">&nbsp;</th>
                             <th scope="col">Mietlösung</th>
-                            <th scope="col">Ihr eigenes System</th>
+                            <th scope="col">Eigenes System</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -139,16 +139,21 @@ include __DIR__ . '/../partials/header.php';
         </div>
 
         <figure class="demo-frame" data-demo-frame>
+            <div class="demo-frame-kopf">
+                <span>Newslettersystem <span class="ort">Prüfen &amp; Senden</span></span>
+                <span class="hinweis">Ansicht – nicht bedienbar</span>
+            </div>
             <div class="demo-frame-buehne">
                 <iframe src="<?= e(url('demo/pruefen.html')) ?>" loading="lazy"
                         title="Schritt drei im Editor: Vorschau der fertigen Mail, daneben der Testversand, darunter der gesperrte Versandknopf."></iframe>
             </div>
             <figcaption>
                 <b>Schritt 3 von 3.</b>
-                <span>Die Vorschau, der Testversand – und links das, was noch fehlt. Solange
-                dort etwas steht, bleibt „Jetzt senden“ gesperrt.</span>
+                <span>Die Vorschau der fertigen Mail, darunter das, was noch fehlt. Solange
+                dort etwas steht, bleibt „Jetzt senden“ gesperrt.
+                <a href="<?= e(url('kontakt.php')) ?>">Einen eigenen Zugang zum
+                Ausprobieren anfragen</a></span>
             </figcaption>
-            <p class="demo-frame-mobil">Auf dem Handy sehen Sie den oberen Ausschnitt – der Rahmen lässt sich darin weiterschieben.</p>
         </figure>
     </div>
 </section>

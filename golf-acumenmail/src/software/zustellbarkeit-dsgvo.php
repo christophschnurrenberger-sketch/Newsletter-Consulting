@@ -83,7 +83,7 @@ include __DIR__ . '/../partials/header.php';
                         <p>Der ausführliche Beitrag zur Frage, wen Sie wann anschreiben dürfen.</p>
                     </a>
                     <a href="<?= e(url('software/systemvoraussetzungen.php')) ?>" class="related-card">
-                        <span>Software</span><strong>Systemvoraussetzungen</strong>
+                        <span>Software</span><strong>System­voraus­setzungen</strong>
                         <p>Was Ihr Hosting mitbringen muss – und was nicht nötig ist.</p>
                     </a>
                 </div>

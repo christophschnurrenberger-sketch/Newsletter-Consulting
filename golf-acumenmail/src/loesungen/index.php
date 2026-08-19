@@ -1,7 +1,7 @@
 <?php
 $page = [
     'title'       => 'Lösungen für Golfclubs',
-    'description' => 'Mitgliederbindung, Turnierauslastung, Gastspieler, Neumitglieder und Golfschule: fünf Aufgaben, die in fast jedem Golfclub auf dem Tisch liegen – und wie E-Mail sie löst.',
+    'description' => 'Mitglieder­bindung, Turnierauslastung, Gastspieler, Neumitglieder und Golfschule: fünf Aufgaben, die in fast jedem Golfclub auf dem Tisch liegen – und wie E-Mail sie löst.',
     'section'     => 'loesungen',
     'path'        => 'loesungen/',
     'crumbs'      => [['Lösungen', null]],
@@ -56,7 +56,7 @@ include __DIR__ . '/../partials/header.php';
                 <h3 style="margin-top:0;">Was sich daran ändern lässt</h3>
                 <ul>
                     <li>Segmente, damit die Ausschreibung an die passende Handicap-Klasse geht</li>
-                    <li>Eine Willkommensstrecke, die ohne Zutun für jedes neue Mitglied läuft</li>
+                    <li>Eine Willkommens­strecke, die ohne Zutun für jedes neue Mitglied läuft</li>
                     <li>Ein Redaktionsplan, der die Wintermonate mitdenkt</li>
                     <li>Eine eigene Liste für Gastspieler mit eigener Ansprache</li>
                     <li>Ein Werkzeug, das jede und jeder im Sekretariat bedienen kann</li>

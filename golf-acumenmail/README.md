@@ -204,18 +204,40 @@ Ereignisbehandler, Formularlogik. Knöpfe tragen `type="button"`, Eingaben sind
 speichern. Die beiden Vorschaurahmen (Kopf- und Fußzeile der Vorlage) bekommen
 ihren Inhalt über `srcdoc` mitgegeben, damit sie ohne Server funktionieren.
 
-Eingebunden sind sie als `<iframe>` in einem `.demo-frame`. Zwei Dinge regelt
-`assets/site.js` dabei:
+### Ein Schaukasten, keine eingebettete Anwendung
 
-- **Höhe.** Die Demo misst sich selbst und meldet die Höhe per `postMessage`
-  herauf; die Seite setzt sie als `--demo-h`. Ohne JavaScript greift der
-  Vorgabewert aus `assets/site.css`.
+Die erste Einbindung war technisch richtig und fühlte sich trotzdem falsch an.
+Sie sah bedienbar aus, war es aber nicht: Man klickte einen Knopf an, und nichts
+geschah. Auf dem Handy fing der Rahmen den Fingerwisch ab, statt die Seite
+weiterzurollen – man blieb darin hängen. Und der Ausschnitt zeigte ausgerechnet
+die Bausteinleiste, nicht den Newsletter.
+
+Jetzt ist der Rahmen als Schaukasten gebaut:
+
+- **Eine beschriftete Leiste darüber** sagt, was zu sehen ist:
+  „Newslettersystem · Golfclub Musterhausen – Ansicht, nicht bedienbar".
+- **`pointer-events: none` auf dem `<iframe>`.** Kein Klick ins Leere, keine
+  Scrollfalle. Der Finger rollt die Seite weiter, wie überall sonst.
+- **Auf dem Handy ein Ausschnitt statt der ganzen Oberfläche.** Die Bausteinleiste
+  und die Gestaltungsspalte treten zurück (`@media` in der jeweiligen Demo-Datei),
+  gezeigt wird die Ausgabe selbst. Das ist ein Bildausschnitt, keine andere
+  Oberfläche – aus 2 437 px werden 1 280 px, und alles bleibt in Originalgröße
+  lesbar.
+- **Volle Breite auf dem Handy.** Bei 350 px Innenbreite schnitt die Werkzeugleiste
+  eines Bausteins ihr letztes Zeichen ab; über die ganze Breite passt sie.
+
+Dazu regelt `assets/site.js` zwei Dinge:
+
+- **Höhe.** Die Demo misst sich selbst und meldet sie per `postMessage` herauf;
+  die Seite setzt sie als `--demo-h`, aber nur bei einer Abweichung von mehr als
+  vier Pixeln – sonst schaukeln sich Höhenanimation und Messung gegenseitig auf.
+  Ohne JavaScript greift der Vorgabewert aus `assets/site.css`.
 - **Start.** Die Bausteine blenden nacheinander ein, sobald der Rahmen ins Bild
   kommt – nicht vorher, sonst ist die Bewegung vorbei, ehe jemand hinsieht.
 
-Auf schmalen Anzeigen stellt sich die Oberfläche untereinander und wäre über drei
-Bildschirmhöhen lang. Dort steht deshalb nur der obere Ausschnitt (520 px, mit
-weichem Abschluss); weiterschieben lässt sich der Rahmen trotzdem.
+Die Vorschau in `demo/pruefen.html` bekommt zusätzlich die Höhe ihres Inhalts:
+im System rollt sie in einem Rahmen fester Höhe, hier wäre das ein Rollbalken
+mitten in der Seite und eine unten abgeschnittene Mail.
 
 ### Eine Demo erneuern
 
@@ -238,6 +260,43 @@ weichem Abschluss); weiterschieben lässt sich der Rahmen trotzdem.
    in `assets/demo/` auffrischen.
 
 `assets/demo.css`, `assets/demo.js` und `assets/bilder/` sind damit entfallen.
+
+---
+
+## Umbrüche und Rollbalken
+
+Zwei Dinge, die auf einer deutschsprachigen Seite immer wieder auffallen –
+und ein Fehler, der lange unbemerkt blieb.
+
+**Der Seitenkopf war 246 px breit.** Für Seiten ohne Eckdaten stand
+`max-width: 26ch` an der Spalte statt an der Überschrift. `ch` rechnet mit der
+Schriftgröße des Elements – an der Spalte gesetzt, galt das plötzlich für die
+Grundschrift statt für die 4,6 rem der Überschrift. Ergebnis: zehn Seiten mit
+einer Überschrift in einer Spalte von 246 px, „Kostenlose" gebrochen zu
+„Kostenl / ose", bis zu neun Zeilen. Jetzt steht die Begrenzung an der
+Überschrift selbst.
+
+**Umbrüche überlässt die Seite dem Browser.** `text-wrap: balance` verteilt die
+Zeilen einer Überschrift gleichmäßig, `text-wrap: pretty` verhindert im Fließtext
+das einzelne Wort am Absatzende. Feste `<br>` gibt es nicht mehr – sie brachen
+auf dem Handy ein zweites Mal.
+
+**Lange Zusammensetzungen tragen weiche Trennzeichen.** `hyphens: auto` braucht
+ein Trennwörterbuch, und nicht jeder Browser bringt eines für Deutsch mit; dort
+wurde aus „Datenschutzerklärung" ein stumpfes „Datenschutzerklärun / g". Ein
+weiches Trennzeichen (U+00AD) versteht jeder Browser und wird nur sichtbar, wo
+tatsächlich getrennt wird. Es steht direkt in den Quellen – `tools/build.php`
+nimmt es aus `<title>` und den Meta-Angaben wieder heraus, dort wird nicht
+umbrochen und in Suchergebnissen hätte es nichts verloren.
+
+**Tabellen rollen nicht mehr.** Eine Vergleichstabelle mit `min-width: 34rem`
+bekam in einer 443 px breiten Spalte einen waagerechten Rollbalken – auf dem
+Rechner, nicht nur auf dem Handy. Jetzt misst sich der Rahmen selbst
+(`container-type: inline-size`) und stellt die Tabelle untereinander, sobald es
+eng wird: eine Zeile wird ein Block, die Spaltenüberschrift steht als Etikett
+neben dem Wert. Die Etiketten setzt `tools/build.php` aus der Kopfzeile der
+Tabelle ein (`data-label`) – von Hand gepflegt stünden sie beim ersten
+Umsortieren falsch. Browser ohne Container-Abfragen behalten den Rollrahmen.
 
 ---
 
@@ -276,7 +335,15 @@ zusätzlich von Hand getestet.
 Die drei Demo-Seiten einzeln bei 1180, 760 und 390 px geprüft: kein Überlauf,
 keine fehlende Datei, keine JavaScript-Fehler. Die Einbindung zusätzlich über
 `http://` **und** `file://` – die Höhenmeldung per `postMessage` funktioniert in
-beiden Fällen.
+beiden Fällen, und die Vorlagenrahmen im Baukasten zeichnen auch dort.
+
+Für den UX-Durchgang ein eigener Lauf über alle Seiten bei 1440 und 390 px, der
+zwei Dinge sucht: Elemente, die tatsächlich rollen (`overflow` auf `auto`/`scroll`
+**und** Inhalt größer als der Rahmen), und Überschriften oder Absätze, deren
+letzte Zeile kürzer als 28 % der längsten ist. Ergebnis vorher: 43 Fundstellen,
+darunter sieben rollende Tabellen. Danach: keine rollenden Elemente mehr und
+sechs Umbrüche, die alle im üblichen Rahmen liegen. Zusätzlich bei 320, 360 und
+390 px auf waagerechten Überlauf geprüft – keiner.
 
 ## Barrierefreiheit
 

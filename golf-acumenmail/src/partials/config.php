@@ -82,7 +82,7 @@ $NAV = [
                 'icon'  => 'shield-check',
             ],
             [
-                'label' => 'Systemvoraussetzungen',
+                'label' => 'System­voraus­setzungen',
                 'url'   => 'software/systemvoraussetzungen.php',
                 'desc'  => 'Was Ihr Webspace mitbringen muss',
                 'icon'  => 'server',
@@ -100,7 +100,7 @@ $NAV = [
         ],
         'children' => [
             [
-                'label' => 'Mitgliederbindung',
+                'label' => 'Mitglieder­bindung',
                 'url'   => 'loesungen/mitgliederbindung.php',
                 'desc'  => 'Auch die erreichen, die selten da sind',
                 'icon'  => 'users',

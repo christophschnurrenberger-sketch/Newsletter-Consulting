@@ -31,6 +31,13 @@
 
     .ad-reiter { margin-bottom: 18px; }
     .ad-preview-frame { background: #fff; }
+
+    /* Schmale Anzeigen: die Vorschau und das, was noch fehlt. Der
+       Testversand steht auf dem Rechner daneben und faellt hier weg. */
+    @media (max-width: 700px) {
+        body { padding: 10px; }
+        .ad-editor-seite > .ad-card + .ad-card { display: none; }
+    }
 </style>
 </head>
 <body>
@@ -168,7 +175,8 @@
             var faktor = Math.min(1, (fenster.clientWidth || breiteInnen) / breiteInnen);
 
             rahmen.style.width = breiteInnen + 'px';
-            rahmen.style.height = ganz + 'px';
+            /* Zwei Pixel Luft, sonst erscheint ein Rollbalken fuer nichts */
+            rahmen.style.height = (ganz + 4) + 'px';
             rahmen.style.transformOrigin = 'top left';
             rahmen.style.transform = 'scale(' + faktor + ')';
 
@@ -182,10 +190,36 @@
         }
     }
 
-    function nachmessen() { rahmenEinpassen(); hoehe(); }
+    /*
+     * Die Vorschau steht im System in einem Rahmen fester Hoehe und rollt
+     * darin. Hier waere das zweimal falsch: ein Rollbalken mitten in der
+     * Seite, und die Mail unten abgeschnitten. Also bekommt der Rahmen die
+     * Hoehe seines Inhalts – der Newsletter steht dann ganz da.
+     */
+    function vorschauEinpassen() {
+        var rahmen = document.querySelector('.ad-preview-frame');
+        if (!rahmen) { return; }
+        var dok;
+        try { dok = rahmen.contentDocument; } catch (e) { dok = null; }
+        if (!dok || !dok.body) { return; }
+        var ganz = Math.max(dok.documentElement.scrollHeight, dok.body.scrollHeight);
+        if (ganz > 0) {
+            /* Zwei Pixel Luft, sonst erscheint ein Rollbalken fuer nichts */
+            rahmen.style.height = (ganz + 4) + 'px';
+            var buehne = rahmen.closest('.ad-preview-buehne');
+            if (buehne) { buehne.style.height = 'auto'; }
+        }
+    }
+
+    function nachmessen() { rahmenEinpassen(); vorschauEinpassen(); hoehe(); }
 
     window.addEventListener('message', function (e) { if (e.data === 'demo:start') { start(); } });
-    window.addEventListener('resize', nachmessen);
+    /* Beim Ziehen am Fenster nicht bei jedem Pixel neu rechnen */
+    var bremse = null;
+    window.addEventListener('resize', function () {
+        window.clearTimeout(bremse);
+        bremse = window.setTimeout(nachmessen, 120);
+    });
     window.addEventListener('load', nachmessen);
     nachmessen();
     setTimeout(nachmessen, 300);

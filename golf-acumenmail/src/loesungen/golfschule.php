@@ -11,7 +11,7 @@ $page = [
         'lead'   => 'Ein Platzreifekurs mit vier statt acht Teilnehmern kostet den Pro dieselbe Zeit. Die Teilnehmer, die fehlen, haben meist irgendwann einmal angefragt – und nie wieder von sich hören lassen.',
         'facts'  => [
             ['3', 'Mails bis zur Anmeldung'],
-            ['1', 'Liste für Kursinteressenten'],
+            ['1', 'Liste für Kurs­interessenten'],
             ['danach', 'Übergabe an den Club'],
         ],
     ],
@@ -24,7 +24,7 @@ include __DIR__ . '/../partials/header.php';
         <div class="sidebar-layout">
             <div>
                 <div class="prose">
-                    <h2 style="margin-top:0;">Kursinteressenten sind keine Mitglieder</h2>
+                    <h2 style="margin-top:0;">Kurs­interessenten sind keine Mitglieder</h2>
                     <p>
                         Sie stehen ganz am Anfang, kennen niemanden im Club und haben oft eine sehr
                         konkrete Frage im Kopf, die sie sich nicht zu stellen trauen. Deshalb

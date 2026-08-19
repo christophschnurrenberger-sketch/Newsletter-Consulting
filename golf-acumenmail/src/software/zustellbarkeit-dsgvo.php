@@ -1,10 +1,10 @@
 <?php
 $page = [
-    'title'       => 'Zustellbarkeit & DSGVO',
+    'title'       => 'Zustell­barkeit & DSGVO',
     'description' => 'Double-Opt-in mit Protokoll, Abmeldelink in jeder Mail, List-Unsubscribe nach RFC 8058, SPF und DKIM, Bounce-Verarbeitung und Sperrliste.',
     'section'     => 'software',
     'path'        => 'software/zustellbarkeit-dsgvo.php',
-    'crumbs'      => [['Software', 'software/'], ['Zustellbarkeit & DSGVO', null]],
+    'crumbs'      => [['Software', 'software/'], ['Zustell­barkeit & DSGVO', null]],
     'hero'        => [
         'kicker' => 'Software · Recht und Technik',
         'h1'     => 'Ankommen ist <span class="accent">die halbe Miete</span>',

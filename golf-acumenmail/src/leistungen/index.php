@@ -62,7 +62,7 @@ include __DIR__ . '/../partials/header.php';
                     <span class="phase-icon"><i data-icon="layers" class="lucide"></i></span></div>
                 <p class="phase-eyebrow">Einrichtung</p>
                 <h3 class="phase-title">Technik, Design, erste Strecke</h3>
-                <p class="phase-copy">Installation, Zustellbarkeit, Clubdesign, Listen, Automationen, Einweisung.</p>
+                <p class="phase-copy">Installation, Zustell­barkeit, Clubdesign, Listen, Auto­mationen, Einweisung.</p>
                 <div class="phase-result"><span>Ergebnis</span><strong>Versandbereites System</strong></div>
             </article>
             <article class="process-phase">

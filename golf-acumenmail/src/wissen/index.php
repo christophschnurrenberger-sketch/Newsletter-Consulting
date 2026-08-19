@@ -78,7 +78,7 @@ $beitraege = [
                     schreiben.“
                 </blockquote>
                 <figcaption>Sinngemäß aus mehreren Gesprächen mit Clubsekretariaten – und genau
-                    der Grund, warum Automationen und ein Redaktionsplan mehr bringen als die
+                    der Grund, warum Auto­mationen und ein Redaktionsplan mehr bringen als die
                     schönste Vorlage.</figcaption>
             </div>
         </div>

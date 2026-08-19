@@ -1,10 +1,10 @@
 <?php
 $page = [
-    'title'       => 'Automationen',
-    'description' => 'Mailstrecken, die von allein laufen: warten, senden, verzweigen. Willkommens­strecke für neue Mitglieder, Kursbegleitung, Reaktivierung – als Ablauf zusammengezogen statt programmiert.',
+    'title'       => 'Auto­mationen',
+    'description' => 'Mailstrecken, die von allein laufen: warten, senden, verzweigen. Willkommens­strecke für neue Mitglieder, Kursbegleitung, Re­aktivierung – als Ablauf zusammengezogen statt programmiert.',
     'section'     => 'software',
     'path'        => 'software/automationen.php',
-    'crumbs'      => [['Software', 'software/'], ['Automationen', null]],
+    'crumbs'      => [['Software', 'software/'], ['Auto­mationen', null]],
     'hero'        => [
         'kicker' => 'Software · Abläufe',
         'h1'     => 'Die wirksamsten Mails schreibt man <span class="accent">genau einmal</span>',
@@ -24,7 +24,7 @@ include __DIR__ . '/../partials/header.php';
     <div class="container-wide">
             <figure class="demo-frame" data-demo-frame>
                 <div class="demo-frame-kopf">
-                    <span>Newslettersystem <span class="ort">Automationen</span></span>
+                    <span>Newslettersystem <span class="ort">Auto­mationen</span></span>
                     <span class="hinweis">Ansicht – nicht bedienbar</span>
                 </div>
                 <div class="demo-frame-buehne">
@@ -119,7 +119,7 @@ include __DIR__ . '/../partials/header.php';
                 <div class="prose">
                     <h2>Welche Strecken sich zuerst lohnen</h2>
                     <p>
-                        In der Praxis reichen zwei Automationen, um den größten Teil des Nutzens zu
+                        In der Praxis reichen zwei Auto­mationen, um den größten Teil des Nutzens zu
                         heben – die Willkommens­strecke für neue Mitglieder und die Begleitung von
                         Kurs­interessenten. Beides läuft ganzjährig und trifft Menschen genau dann,
                         wenn ihr Interesse am größten ist.

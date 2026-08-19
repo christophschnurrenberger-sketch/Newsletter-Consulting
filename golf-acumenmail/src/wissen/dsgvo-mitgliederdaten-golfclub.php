@@ -145,7 +145,7 @@ include __DIR__ . '/../partials/header.php';
                 <h2 class="section-title" style="font-size:1.5rem; margin:3rem 0 1.2rem;">Weiterlesen</h2>
                 <div class="related-grid">
                     <a href="<?= e(url('software/zustellbarkeit-dsgvo.php')) ?>" class="related-card">
-                        <span>Software</span><strong>Zustellbarkeit &amp; DSGVO</strong>
+                        <span>Software</span><strong>Zustell­barkeit &amp; DSGVO</strong>
                         <p>Was im System fest eingebaut ist und sich nicht abschalten lässt.</p>
                     </a>
                     <a href="<?= e(url('loesungen/gastspieler.php')) ?>" class="related-card">

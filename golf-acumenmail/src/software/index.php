@@ -1,7 +1,7 @@
 <?php
 $page = [
     'title'       => 'Newsletter-Software für Golfclubs',
-    'description' => 'Das Newsletter-System läuft auf dem Server Ihres Clubs: Baukasten ohne HTML, Automationen, Segmente, Auswertung und Zustellbarkeit – ohne Kosten pro Kontakt.',
+    'description' => 'Das Newsletter-System läuft auf dem Server Ihres Clubs: Baukasten ohne HTML, Auto­mationen, Segmente, Auswertung und Zustell­barkeit – ohne Kosten pro Kontakt.',
     'section'     => 'software',
     'path'        => 'software/',
     'crumbs'      => [['Software', null]],
@@ -107,7 +107,7 @@ include __DIR__ . '/../partials/header.php';
             <span class="section-kicker">Funktionen</span>
             <h2 class="section-title">Sechs Bereiche, ein System</h2>
             <p class="section-lead">
-                Jeder Bereich hat eine eigene Seite mit Bildschirmansichten und dem, was im
+                Jeder Bereich hat eine eigene Seite – mit der Oberfläche selbst und dem, was im
                 Cluballtag daraus folgt.
             </p>
         </div>

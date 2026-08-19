@@ -1,14 +1,14 @@
 <?php
 $page = [
     'title'       => 'Saison-Setup',
-    'description' => 'Die vollständige Einrichtung für Golfclubs: Newsletter-System auf dem Clubserver, Vorlage im Clubdesign, Listen, Segmente, zwei Automationen und die Einweisung.',
+    'description' => 'Die vollständige Einrichtung für Golfclubs: Newsletter-System auf dem Clubserver, Vorlage im Clubdesign, Listen, Segmente, zwei Auto­mationen und die Einweisung.',
     'section'     => 'leistungen',
     'path'        => 'leistungen/saison-setup.php',
     'crumbs'      => [['Leistungen', 'leistungen/'], ['Saison-Setup', null]],
     'hero'        => [
         'kicker' => 'Leistung · Einrichtung',
         'h1'     => 'Zum Saisonstart <span class="accent">ein fertiges System</span>',
-        'lead'   => 'Installation, Zustellbarkeit, Clubdesign, Empfängerlisten, die ersten Automationen und die Einweisung des Sekretariats. Danach verschickt Ihr Club selbst – oder gibt es an uns ab.',
+        'lead'   => 'Installation, Zustell­barkeit, Clubdesign, Empfängerlisten, die ersten Auto­mationen und die Einweisung des Sekretariats. Danach verschickt Ihr Club selbst – oder gibt es an uns ab.',
         'facts'  => [['ab 1.490 €', 'einmalig'], ['1–2 Wochen', 'Einrichtung'], ['0 €', 'laufende Lizenz']],
     ],
 ];
@@ -35,7 +35,7 @@ include __DIR__ . '/../partials/header.php';
                     </div>
                     <div class="numbered-step">
                         <div>
-                            <h3>Zustellbarkeit herstellen</h3>
+                            <h3>Zustell­barkeit herstellen</h3>
                             <p>SMTP mit einem echten Postfach Ihrer Domain, SPF und DKIM im DNS,
                                 Bounce-Verarbeitung und der Cron-Job für den portionsweisen Versand.</p>
                         </div>
@@ -57,10 +57,10 @@ include __DIR__ . '/../partials/header.php';
                     </div>
                     <div class="numbered-step">
                         <div>
-                            <h3>Zwei Automationen</h3>
+                            <h3>Zwei Auto­mationen</h3>
                             <p>In der Regel die Willkommens­strecke für neue Mitglieder und eine
                                 zweite nach Ihrem Bedarf – Kurs­interessenten, Gastspieler oder
-                                Reaktivierung.</p>
+                                Re­aktivierung.</p>
                         </div>
                     </div>
                     <div class="numbered-step">

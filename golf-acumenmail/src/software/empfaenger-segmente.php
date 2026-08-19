@@ -11,7 +11,7 @@ $page = [
         'lead'   => 'Die Jugend braucht andere Post als die Seniorenriege, ein Fernmitglied andere als jemand, der dreimal die Woche auf der Anlage steht. Segmente trennen Sie einmal – danach wählen Sie nur noch aus.',
         'facts'  => [
             ['CSV', 'Import aus jeder Clubverwaltung'],
-            ['0', 'versehentliche Reaktivierungen'],
+            ['0', 'versehentliche Re­aktivierungen'],
             ['∞', 'Listen und Segmente'],
         ],
     ],
@@ -92,7 +92,7 @@ include __DIR__ . '/../partials/header.php';
                 <h2 class="section-title" style="font-size:1.5rem; margin:3rem 0 1.2rem;">Weiterlesen</h2>
                 <div class="related-grid">
                     <a href="<?= e(url('software/zustellbarkeit-dsgvo.php')) ?>" class="related-card">
-                        <span>Software</span><strong>Zustellbarkeit &amp; DSGVO</strong>
+                        <span>Software</span><strong>Zustell­barkeit &amp; DSGVO</strong>
                         <p>Double-Opt-in, Protokoll, Abmeldelink und was der Gesetzgeber verlangt.</p>
                     </a>
                     <a href="<?= e(url('wissen/dsgvo-mitgliederdaten-golfclub.php')) ?>" class="related-card">

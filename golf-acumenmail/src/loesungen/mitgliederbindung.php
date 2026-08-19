@@ -1,7 +1,7 @@
 <?php
 $page = [
     'title'       => 'Mitglieder­bindung',
-    'description' => 'Auch die Mitglieder erreichen, die selten auf der Anlage sind: Willkommens­strecke für Neue, Reaktivierung für Stille, ein Rhythmus, der über den Winter trägt.',
+    'description' => 'Auch die Mitglieder erreichen, die selten auf der Anlage sind: Willkommens­strecke für Neue, Re­aktivierung für Stille, ein Rhythmus, der über den Winter trägt.',
     'section'     => 'loesungen',
     'path'        => 'loesungen/mitgliederbindung.php',
     'crumbs'      => [['Lösungen', 'loesungen/'], ['Mitglieder­bindung', null]],
@@ -51,7 +51,7 @@ include __DIR__ . '/../partials/header.php';
                     </div>
                     <div class="numbered-step">
                         <div>
-                            <h3>Reaktivierung für stille Mitglieder</h3>
+                            <h3>Re­aktivierung für stille Mitglieder</h3>
                             <p>Wer eine bestimmte Zeit nicht gespielt hat, bekommt genau eine gute
                                 Mail – eine ehrliche Nachfrage statt eines Angebots, danach eine
                                 unverbindliche Platzrunde mit dem Pro. Mehr wäre aufdringlich,
@@ -90,7 +90,7 @@ include __DIR__ . '/../partials/header.php';
                 <h2 class="section-title" style="font-size:1.5rem; margin:3rem 0 1.2rem;">Womit das umgesetzt wird</h2>
                 <div class="related-grid">
                     <a href="<?= e(url('software/automationen.php')) ?>" class="related-card">
-                        <span>Software</span><strong>Automationen</strong>
+                        <span>Software</span><strong>Auto­mationen</strong>
                         <p>Die Willkommens­strecke als Ablauf – warten, senden, verzweigen.</p>
                     </a>
                     <a href="<?= e(url('software/empfaenger-segmente.php')) ?>" class="related-card">

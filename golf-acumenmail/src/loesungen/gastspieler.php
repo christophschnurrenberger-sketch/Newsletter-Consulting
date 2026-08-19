@@ -12,7 +12,7 @@ $page = [
         'facts'  => [
             ['Tag 2', 'Danke und Rückfrage'],
             ['Tag 30', 'Einladung mit Vorteil'],
-            ['Saisonende', 'Fern- oder Zweitmitgliedschaft'],
+            ['Saison­ende', 'Fern- oder Zweitmitgliedschaft'],
         ],
     ],
 ];
@@ -68,7 +68,7 @@ include __DIR__ . '/../partials/header.php';
                     </div>
                     <div class="numbered-step">
                         <div>
-                            <h3>Zum Saisonende</h3>
+                            <h3>Zum Saison­ende</h3>
                             <p>Wer zwei- oder dreimal da war, bekommt das Angebot einer Fern- oder
                                 Zweitmitgliedschaft – mit der Rechnung, die zeigt, ab wann sich das
                                 gegenüber Greenfee lohnt.</p>
@@ -89,11 +89,11 @@ include __DIR__ . '/../partials/header.php';
                 <h2 class="section-title" style="font-size:1.5rem; margin:3rem 0 1.2rem;">Womit das umgesetzt wird</h2>
                 <div class="related-grid">
                     <a href="<?= e(url('software/zustellbarkeit-dsgvo.php')) ?>" class="related-card">
-                        <span>Software</span><strong>Zustellbarkeit &amp; DSGVO</strong>
+                        <span>Software</span><strong>Zustell­barkeit &amp; DSGVO</strong>
                         <p>Double-Opt-in und Protokoll – die Grundlage bei Gastadressen.</p>
                     </a>
                     <a href="<?= e(url('software/automationen.php')) ?>" class="related-card">
-                        <span>Software</span><strong>Automationen</strong>
+                        <span>Software</span><strong>Auto­mationen</strong>
                         <p>Die drei Mails laufen ohne Zutun, sobald jemand gebucht hat.</p>
                     </a>
                 </div>

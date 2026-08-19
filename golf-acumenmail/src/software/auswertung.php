@@ -40,23 +40,23 @@ include __DIR__ . '/../partials/header.php';
 
                 <h2 class="section-title" style="font-size:1.6rem; margin:2.6rem 0 1.2rem;">Die Zahlen, die im Vorstand zählen</h2>
                 <div class="stat-band">
-                    <div><strong>Öffnungsrate</strong><span>Sagt, ob Betreff und Absender passen</span></div>
+                    <div><strong>Öffnungs­rate</strong><span>Sagt, ob Betreff und Absender passen</span></div>
                     <div><strong>Klickrate</strong><span>Sagt, ob der Inhalt relevant war</span></div>
-                    <div><strong>Anmeldungen</strong><span>Sagt, ob das Turnier voll wird</span></div>
-                    <div><strong>Listenqualität</strong><span>Sagt, ob die Basis gesund ist</span></div>
+                    <div><strong>An­meldungen</strong><span>Sagt, ob das Turnier voll wird</span></div>
+                    <div><strong>Listen­qualität</strong><span>Sagt, ob die Basis gesund ist</span></div>
                 </div>
 
                 <div class="prose">
                     <h2>Was die Zahlen nicht können</h2>
                     <p>
-                        Die Öffnungsrate ist die unzuverlässigste der vier. Sie wird über ein kleines
+                        Die Öffnungs­rate ist die unzuverlässigste der vier. Sie wird über ein kleines
                         Bild gemessen, und moderne Postfächer laden dieses Bild teils automatisch
                         oder gar nicht. Als Vergleichswert zwischen zwei eigenen Ausgaben taugt sie,
                         als absolute Wahrheit nicht.
                     </p>
                     <p>
                         Belastbarer sind Klicks und das, was danach passiert: Wie viele Startplätze
-                        wurden nach der Ausgabe gebucht? Wie viele Anmeldungen zum Kurs kamen in den
+                        wurden nach der Ausgabe gebucht? Wie viele An­meldungen zum Kurs kamen in den
                         drei Tagen danach? Diese Verbindung stellen wir in der Betreuung her – die
                         Software liefert die eine Hälfte, die Clubverwaltung die andere.
                     </p>

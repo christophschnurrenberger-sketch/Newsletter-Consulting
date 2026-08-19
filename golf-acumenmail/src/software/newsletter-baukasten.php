@@ -106,7 +106,7 @@ include __DIR__ . '/../partials/header.php';
                 <div class="related-grid">
                     <a href="<?= e(url('software/automationen.php')) ?>" class="related-card">
                         <span>Software</span>
-                        <strong>Automationen</strong>
+                        <strong>Auto­mationen</strong>
                         <p>Derselbe Baukasten schreibt auch die Mails, die von allein hinausgehen.</p>
                     </a>
                     <a href="<?= e(url('software/empfaenger-segmente.php')) ?>" class="related-card">

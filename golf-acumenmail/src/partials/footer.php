@@ -55,7 +55,7 @@ $js = $page['js'] ?? [];
                 </span>
                 <p class="footer-brand-copy">
                     Mitgliederkommunikation für Golfclubs, Golfanlagen und Golfschulen:
-                    Segmente, Redaktionsplan, Automationen – und ein Newsletter-System,
+                    Segmente, Redaktionsplan, Auto­mationen – und ein Newsletter-System,
                     das auf dem Server des Clubs läuft.
                 </p>
                 <address class="footer-address">

@@ -126,7 +126,7 @@ include __DIR__ . '/partials/header.php';
 
         <figure class="demo-frame home-demo animate-on-scroll" data-demo-frame>
             <div class="demo-frame-kopf">
-                <span>Newslettersystem <span class="ort">Automationen</span></span>
+                <span>Newslettersystem <span class="ort">Auto­mationen</span></span>
                 <span class="hinweis">Ansicht – nicht bedienbar</span>
             </div>
             <div class="demo-frame-buehne">
@@ -163,7 +163,7 @@ include __DIR__ . '/partials/header.php';
                 <div class="prose" style="margin-top:1.6rem;">
                     <p>
                         Wenn Ihr Club zweimal im Jahr einen Rundbrief verschickt und keine
-                        Automationen braucht, ist ein günstiger Miettarif die einfachere Wahl. Das
+                        Auto­mationen braucht, ist ein günstiger Miettarif die einfachere Wahl. Das
                         sagen wir im Clubcheck auch dann, wenn wir damit den Auftrag verlieren.
                     </p>
                     <p>
@@ -182,7 +182,7 @@ include __DIR__ . '/partials/header.php';
                 </blockquote>
                 <figcaption>
                     Sinngemäß aus mehreren Gesprächen mit Clubsekretariaten. Genau deshalb bringen
-                    ein Redaktionsplan und zwei Automationen mehr als die schönste Vorlage.
+                    ein Redaktionsplan und zwei Auto­mationen mehr als die schönste Vorlage.
                 </figcaption>
             </div>
         </div>

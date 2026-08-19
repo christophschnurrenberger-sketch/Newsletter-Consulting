@@ -52,7 +52,7 @@ include __DIR__ . '/../partials/header.php';
                             <tr>
                                 <th scope="row">Cron-Job</th>
                                 <td class="yes">alle 5 Minuten</td>
-                                <td>Für portionsweisen Versand, Automationen und Bounces</td>
+                                <td>Für portionsweisen Versand, Auto­mationen und Bounces</td>
                             </tr>
                             <tr>
                                 <th scope="row">Speicherplatz</th>

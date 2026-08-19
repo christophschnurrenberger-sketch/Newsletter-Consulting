@@ -289,6 +289,20 @@ tatsächlich getrennt wird. Es steht direkt in den Quellen – `tools/build.php`
 nimmt es aus `<title>` und den Meta-Angaben wieder heraus, dort wird nicht
 umbrochen und in Suchergebnissen hätte es nichts verloren.
 
+**Wörter, die über ihre Spalte hinausliefen.** Auf der Auswertungsseite standen
+„Öffnungsrate", „Klickrate", „Anmeldungen" und „Listenqualität" in einem Band, das
+für Zahlen gedacht war: 3 rem Schrift in Spalten von 180 px. Die Wörter passten
+nie und liefen ineinander. Dasselbe im Kopf: Marke, Navigation und Knopf ergaben
+zusammen 1272 px in einer Spalte von 1144 px, der Kopf ragte auf jeder Seite
+rechts über das Raster hinaus.
+
+Beides war lange unsichtbar, weil `body` ein `overflow-x: hidden` trägt – die
+Seite rollt dadurch nie waagerecht, aber jede Prüfung über
+`documentElement.scrollWidth` läuft ins Leere. **Ein Prüflauf, der nur die
+Seitenbreite misst, findet solche Fehler nicht.** Der Lauf vergleicht deshalb
+für *jedes* Element `scrollWidth` mit `clientWidth` – unabhängig davon, ob die
+Seite als Ganzes rollt. Damit fielen beide Fälle sofort auf.
+
 **Tabellen rollen nicht mehr.** Eine Vergleichstabelle mit `min-width: 34rem`
 bekam in einer 443 px breiten Spalte einen waagerechten Rollbalken – auf dem
 Rechner, nicht nur auf dem Handy. Jetzt misst sich der Rahmen selbst
@@ -337,13 +351,20 @@ keine fehlende Datei, keine JavaScript-Fehler. Die Einbindung zusätzlich über
 `http://` **und** `file://` – die Höhenmeldung per `postMessage` funktioniert in
 beiden Fällen, und die Vorlagenrahmen im Baukasten zeichnen auch dort.
 
-Für den UX-Durchgang ein eigener Lauf über alle Seiten bei 1440 und 390 px, der
-zwei Dinge sucht: Elemente, die tatsächlich rollen (`overflow` auf `auto`/`scroll`
-**und** Inhalt größer als der Rahmen), und Überschriften oder Absätze, deren
-letzte Zeile kürzer als 28 % der längsten ist. Ergebnis vorher: 43 Fundstellen,
-darunter sieben rollende Tabellen. Danach: keine rollenden Elemente mehr und
-sechs Umbrüche, die alle im üblichen Rahmen liegen. Zusätzlich bei 320, 360 und
-390 px auf waagerechten Überlauf geprüft – keiner.
+Für den UX-Durchgang drei eigene Läufe:
+
+1. **Rollende Elemente und zu kurze letzte Zeilen**, bei 1440 und 390 px:
+   `overflow` auf `auto`/`scroll` **und** Inhalt größer als der Rahmen; dazu
+   Überschriften und Absätze, deren letzte Zeile kürzer als 28 % der längsten
+   ist. Vorher 43 Fundstellen, darunter sieben rollende Tabellen. Jetzt keine
+   rollenden Elemente und vier Umbrüche, die alle im üblichen Rahmen liegen.
+2. **Text, der über sein eigenes Kästchen hinausläuft**, bei 1440, 1100, 900,
+   700, 500, 390 und 320 px: für jedes Element `scrollWidth` gegen
+   `clientWidth`, unabhängig von der Seitenbreite. Das ist der Lauf, der die
+   überlaufenden Kennzahlen und den zu breiten Seitenkopf gefunden hat – beides
+   war für jede Prüfung unsichtbar, die nur die Seite als Ganzes misst. Jetzt:
+   keine Fundstelle.
+3. **Waagerechter Überlauf** bei 320, 360 und 390 px – keiner.
 
 ## Barrierefreiheit
 

@@ -40,12 +40,12 @@ include __DIR__ . '/partials/header.php';
                 <span class="package-flag">Häufig gewählt</span>
                 <p class="package-label">Einrichtung</p>
                 <h3>Saison-Setup</h3>
-                <p>Für Clubs, die zum Saisonstart ein fertiges System wollen – inklusive Software, Design und Automationen.</p>
+                <p>Für Clubs, die zum Saisonstart ein fertiges System wollen – inklusive Software, Design und Auto­mationen.</p>
                 <ul class="package-list">
                     <li><i data-icon="check" class="lucide"></i><span>Newsletter-System auf dem Clubserver eingerichtet</span></li>
-                    <li><i data-icon="check" class="lucide"></i><span>Zustellbarkeit: SMTP, SPF, DKIM, Bounces</span></li>
+                    <li><i data-icon="check" class="lucide"></i><span>Zustell­barkeit: SMTP, SPF, DKIM, Bounces</span></li>
                     <li><i data-icon="check" class="lucide"></i><span>Vorlage im Clubdesign, Anmeldeformular, Listen und Segmente</span></li>
-                    <li><i data-icon="check" class="lucide"></i><span>Zwei Automationen und ein Redaktionsplan für die Saison</span></li>
+                    <li><i data-icon="check" class="lucide"></i><span>Zwei Auto­mationen und ein Redaktionsplan für die Saison</span></li>
                     <li><i data-icon="check" class="lucide"></i><span>Einweisung des Sekretariats, Handbuch für den Club</span></li>
                 </ul>
                 <div class="package-meta">
@@ -63,7 +63,7 @@ include __DIR__ . '/partials/header.php';
                 <ul class="package-list">
                     <li><i data-icon="check" class="lucide"></i><span>Monatliche Ausgaben nach Redaktionsplan</span></li>
                     <li><i data-icon="check" class="lucide"></i><span>Turnier- und Eventkommunikation</span></li>
-                    <li><i data-icon="check" class="lucide"></i><span>Ausbau der Automationen und Segmente</span></li>
+                    <li><i data-icon="check" class="lucide"></i><span>Ausbau der Auto­mationen und Segmente</span></li>
                     <li><i data-icon="check" class="lucide"></i><span>Auswertung je Kampagne, Bericht für den Vorstand</span></li>
                 </ul>
                 <div class="package-meta">
@@ -77,7 +77,7 @@ include __DIR__ . '/partials/header.php';
 
         <p class="form-hint" style="margin-top:1.6rem; max-width:52rem;">
             Alle Beträge netto zzgl. gesetzlicher Mehrwertsteuer. Der genaue Preis hängt von
-            Mitgliederzahl, Zustand des Adressbestands und Umfang der Automationen ab – im
+            Mitgliederzahl, Zustand des Adressbestands und Umfang der Auto­mationen ab – im
             Clubcheck bekommen Sie ein verbindliches Angebot.
         </p>
     </div>
@@ -119,7 +119,7 @@ include __DIR__ . '/partials/header.php';
             <i data-icon="euro" class="lucide"></i>
             <p>
                 <strong>Wann sich eine Mietlösung trotzdem lohnt</strong>
-                Wenn Ihr Club zwei Mailings im Jahr verschickt und keine Automationen braucht, ist
+                Wenn Ihr Club zwei Mailings im Jahr verschickt und keine Auto­mationen braucht, ist
                 ein günstiger Miettarif die einfachere Wahl. Wir sagen das im Clubcheck auch dann,
                 wenn wir damit den Auftrag verlieren.
             </p>

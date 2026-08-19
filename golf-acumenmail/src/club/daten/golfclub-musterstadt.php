@@ -34,7 +34,7 @@ return [
         'betreff' => 'Newsletter Golfclub Musterstadt 07/2026',
         'anrede'  => 'Liebe Mitglieder,',
         'absaetze' => [
-            'anbei erhalten Sie die aktuellen Informationen aus unserem Club. Am Wochenende vom 12. bis 14. Juli findet unsere Clubmeisterschaft statt. Anmeldungen sind ab sofort im Sekretariat oder über die bekannten Wege möglich, die Startliste hängt wie gewohnt aus.',
+            'anbei erhalten Sie die aktuellen Informationen aus unserem Club. Am Wochenende vom 12. bis 14. Juli findet unsere Clubmeisterschaft statt. An­meldungen sind ab sofort im Sekretariat oder über die bekannten Wege möglich, die Startliste hängt wie gewohnt aus.',
             'Ausserdem möchten wir darauf hinweisen, dass die Driving Range am 18. Juli wegen Pflegearbeiten ab 12 Uhr gesperrt ist. Der Platz selbst ist normal bespielbar. Weiterhin findet am 26. Juli unser Sommerabend im Clubhaus statt, um Anmeldung wird gebeten.',
             'Der Vorstand weist darauf hin, dass die Beitragsordnung zum 1. September aktualisiert wird. Die neue Fassung finden Sie in Kürze auf unserer Homepage im Mitgliederbereich.',
             'Mit sportlichen Grüßen, Ihr Vorstand',
@@ -76,7 +76,7 @@ return [
             'text'    => 'Die Anmeldung liegt einen Klick entfernt statt hinter einem Anruf.
                           Der Knopf führt direkt in Ihre bestehende Turnieranmeldung – dort ändert
                           sich nichts.',
-            'wirkung' => 'Anmeldungen lassen sich damit erstmals der Ausgabe zuordnen.',
+            'wirkung' => 'An­meldungen lassen sich damit erstmals der Ausgabe zuordnen.',
         ],
     ],
 
@@ -89,7 +89,7 @@ return [
         '<strong>Eine Erinnerung fünf Tage vorher</strong>, automatisch und nur an die, die sich noch nicht angemeldet haben.',
         '<strong>Eine Willkommens­strecke für neue Mitglieder</strong>, die einmal gebaut wird und dann jahrelang von allein läuft.',
         '<strong>Gastspieler mit eigener Ansprache</strong> – die Adressen liegen seit der Greenfee-Buchung ohnehin im System.',
-        '<strong>Am Saisonende eine Auswertung</strong>, die zeigt, was die Kommunikation gebracht hat.',
+        '<strong>Am Saison­ende eine Auswertung</strong>, die zeigt, was die Kommunikation gebracht hat.',
     ],
 
     'abschluss' => 'Wenn Sie mögen, gehen wir das in einer halben Stunde gemeinsam durch –

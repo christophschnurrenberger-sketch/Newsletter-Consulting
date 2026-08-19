@@ -58,7 +58,7 @@ $NAV = [
                 'icon'  => 'layers',
             ],
             [
-                'label' => 'Automationen',
+                'label' => 'Auto­mationen',
                 'url'   => 'software/automationen.php',
                 'desc'  => 'Mailstrecken, die von allein laufen',
                 'icon'  => 'git-branch',
@@ -76,7 +76,7 @@ $NAV = [
                 'icon'  => 'line-chart',
             ],
             [
-                'label' => 'Zustellbarkeit & DSGVO',
+                'label' => 'Zustell­barkeit & DSGVO',
                 'url'   => 'software/zustellbarkeit-dsgvo.php',
                 'desc'  => 'Double-Opt-in, SPF, DKIM, Bounces',
                 'icon'  => 'shield-check',

@@ -118,18 +118,18 @@ include __DIR__ . '/../partials/header.php';
                     <p>
                         Wichtig ist Beständigkeit: Wer den Absendernamen ständig wechselt, wird nicht
                         wiedererkannt. Und die Adresse muss ein echtes Postfach Ihrer Domain sein –
-                        alles andere kostet Zustellbarkeit.
+                        alles andere kostet Zustell­barkeit.
                     </p>
 
                     <h2 id="testen">Testen statt raten</h2>
                     <p>
-                        Zwei Betreffzeilen, zwei Hälften der Liste, ein Vergleich der Öffnungsraten.
+                        Zwei Betreffzeilen, zwei Hälften der Liste, ein Vergleich der Öffnungs­raten.
                         Nach drei bis vier Ausgaben sieht man, welches Muster im eigenen Club zieht –
                         und das kann durchaus von dem abweichen, was hier steht. Ein Club mit vielen
                         Senioren reagiert anders als eine Anlage mit hohem Gästeanteil.
                     </p>
                     <p>
-                        Eine Einschränkung: Die Öffnungsrate ist die unzuverlässigste aller
+                        Eine Einschränkung: Die Öffnungs­rate ist die unzuverlässigste aller
                         Kennzahlen, weil moderne Postfächer das Messbild teils automatisch laden.
                         Als Vergleich zwischen zwei Varianten derselben Ausgabe taugt sie trotzdem –
                         als absolute Wahrheit nicht.

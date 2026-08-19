@@ -256,8 +256,16 @@ textarea:focus-visible, select:focus-visible {
     background-color: var(--signal);
     padding: 0 0.28em 0.08em;
 }
+/*
+   Der Beisatz stand im Kopf neben dem Namen und machte die Marke 385 px
+   breit. Zusammen mit Navigation und Knopf ergab das 1272 px in einer
+   Spalte von 1144 px – der Kopf ragte rechts über das Raster der Seite
+   hinaus, auf jeder Seite. Sichtbar wurde es nie, weil body
+   overflow-x: hidden trägt. Im Kopf steht der Beisatz ohnehin doppelt:
+   die Servicezeile darüber sagt dasselbe. Also nur noch im Fuß.
+*/
 .site-brand-line { font-size: 0.68rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); }
-@media (max-width: 1140px) { .site-brand-line { display: none; } }
+.site-header .site-brand-line { display: none; }
 
 .main-nav { flex: 1; }
 .nav-list { display: flex; align-items: center; justify-content: center; gap: 0.15rem; }
@@ -379,7 +387,11 @@ textarea:focus-visible, select:focus-visible {
 /* Eckdaten: nur Zahlen und Linien, keine Kästen */
 .page-hero-facts { display: grid; gap: 0; border-top: 2px solid var(--ink); }
 .page-fact { padding: 1.2rem 0; border-bottom: 1px solid rgba(27, 43, 33, 0.14); display: flex; align-items: baseline; gap: 1.2rem; }
-.page-fact strong { font-family: var(--display); font-size: 2rem; line-height: 1; color: var(--text); min-width: 4.5ch; }
+.page-fact strong {
+    font-family: var(--display); font-size: clamp(1.5rem, 1.6vw, 2rem); line-height: 1.1;
+    color: var(--text); min-width: 4.5ch;
+    overflow-wrap: break-word; hyphens: auto;
+}
 .page-fact span { font-size: 0.88rem; color: var(--muted); }
 
 .trust-strip { background-color: var(--ink); color: var(--muted-dark); padding: 1.1rem 0; }
@@ -620,15 +632,27 @@ a.link-card:hover .link-card-more::before { width: 100%; }
 .quote-card blockquote { font-family: var(--display); font-size: 1.5rem; line-height: 1.3; letter-spacing: -0.02em; color: var(--text); margin-bottom: 1rem; }
 .quote-card figcaption { font-size: 0.88rem; color: var(--muted); }
 
-/* Kennzahlen: groß, ohne Kasten */
+/* Kennzahlen: groß, ohne Kasten
+   ------------------------------------------------------------------------
+   Gedacht war das für Zahlen („0 €", „300"). Tatsächlich stehen dort
+   deutsche Wörter – „Listenqualität" bei 3 rem in einer Spalte von 180 px.
+   Das passte nie: die Wörter liefen übereinander, sichtbar nur deshalb
+   nicht als Rollbalken, weil body overflow-x: hidden trägt. Die Spalten
+   sind jetzt breiter, die Schrift kleiner, und getrennt wird an den
+   weichen Trennstellen aus den Quellen. */
 .stat-band, .hero-stats {
-    display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    /* 270 px ist mit Bedacht gewählt: In der schmalen Spalte (784 px)
+       ergibt das zwei Spalten, über die ganze Breite (1144 px) vier – bei
+       vier Einträgen also immer ein volles Raster statt einer Dreierreihe
+       mit einem Nachzügler. */
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
     gap: 0; border-top: 2px solid var(--ink);
 }
-.stat-band > div, .hero-stat { padding: 1.6rem 1.5rem 1.6rem 0; border-bottom: 1px solid rgba(27, 43, 33, 0.14); }
+.stat-band > div, .hero-stat { padding: 1.6rem 1.5rem 1.6rem 0; border-bottom: 1px solid rgba(27, 43, 33, 0.14); min-width: 0; }
 .stat-band strong, .hero-stat strong {
     display: block; font-family: var(--display);
-    font-size: clamp(2.2rem, 4vw, 3rem); line-height: 1; margin-bottom: 0.4rem;
+    font-size: clamp(1.7rem, 2.6vw, 2.3rem); line-height: 1.08; margin-bottom: 0.4rem;
+    overflow-wrap: break-word; hyphens: auto;
 }
 .stat-band span, .hero-stat span { font-size: 0.88rem; color: var(--muted); }
 .section-dark .stat-band { border-top-color: var(--signal); }

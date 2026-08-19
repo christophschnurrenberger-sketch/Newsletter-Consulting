@@ -1,7 +1,7 @@
 <?php
 $page = [
     'title'       => 'Clubbetreuung',
-    'description' => 'Wir schreiben, versenden und werten aus: monatliche Ausgaben nach Redaktionsplan, Ausbau der Automationen und ein Bericht für den Vorstand.',
+    'description' => 'Wir schreiben, versenden und werten aus: monatliche Ausgaben nach Redaktionsplan, Ausbau der Auto­mationen und ein Bericht für den Vorstand.',
     'section'     => 'leistungen',
     'path'        => 'leistungen/clubbetreuung.php',
     'crumbs'      => [['Leistungen', 'leistungen/'], ['Clubbetreuung', null]],
@@ -29,7 +29,7 @@ include __DIR__ . '/../partials/header.php';
                     <ul>
                         <li><strong>Monatliche Ausgaben</strong> nach dem gemeinsamen Redaktionsplan – wir schreiben, Sie geben frei</li>
                         <li><strong>Turnier- und Eventkommunikation</strong> mit Ankündigung, Erinnerung und Nachbereitung</li>
-                        <li><strong>Ausbau der Automationen</strong> und Pflege der Segmente über die Saison</li>
+                        <li><strong>Ausbau der Auto­mationen</strong> und Pflege der Segmente über die Saison</li>
                         <li><strong>Tests</strong> zu Betreffzeilen und Versandzeitpunkten, damit die Zahlen besser werden statt gleich zu bleiben</li>
                         <li><strong>Auswertung je Kampagne</strong> und ein zusammenfassender Bericht für den Vorstand</li>
                     </ul>

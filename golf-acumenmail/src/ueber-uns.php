@@ -93,7 +93,7 @@ include __DIR__ . '/partials/header.php';
 
         <div class="stat-band">
             <div><strong>Baukasten</strong><span>Drag &amp; Drop statt HTML, auch am Handy</span></div>
-            <div><strong>Automationen</strong><span>Warten, senden, verzweigen als Ablauf</span></div>
+            <div><strong>Auto­mationen</strong><span>Warten, senden, verzweigen als Ablauf</span></div>
             <div><strong>Eigener Versand</strong><span>SMTP, Cron, Bounces, Sperrliste</span></div>
             <div><strong>Mehrere Marken</strong><span>Club, Golfschule und Gastronomie getrennt</span></div>
         </div>

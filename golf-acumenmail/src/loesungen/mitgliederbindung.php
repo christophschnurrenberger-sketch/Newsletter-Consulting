@@ -7,8 +7,8 @@ $page = [
     'crumbs'      => [['Lösungen', 'loesungen/'], ['Mitglieder­bindung', null]],
     'hero'        => [
         'kicker' => 'Lösung · Bindung',
-        'h1'     => 'Die ersten Wochen entscheiden, <span class="accent">die stillen Jahre kündigen</span>',
-        'lead'   => 'Ein Mitglied, das nach der Aufnahme monatelang nichts hört, wird selten zum Stammgast. Und eines, das ein halbes Jahr nicht gespielt hat, kündigt irgendwann – meistens ohne vorher etwas zu sagen.',
+        'h1'     => 'Weniger stille Mitglieder, <span class="accent">weniger Kündigungen</span>',
+        'lead'   => 'Ein Mitglied, das ein halbes Jahr nicht gespielt hat, kündigt irgendwann – meistens ohne vorher etwas zu sagen. Jede Kündigung kostet einen Jahresbeitrag und die Mühe, einen Nachfolger zu finden. Wir halten den Kontakt zu denen, die selten da sind, bevor die Frage nach dem Beitrag kommt.',
         'facts'  => [
             ['3', 'Mails in der Willkommens­strecke'],
             ['1×', 'einrichten, dann läuft es'],

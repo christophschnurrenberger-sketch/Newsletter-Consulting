@@ -7,8 +7,8 @@ $page = [
     'crumbs'      => [['Lösungen', 'loesungen/'], ['Turniere & Events', null]],
     'hero'        => [
         'kicker' => 'Lösung · Auslastung',
-        'h1'     => 'Die Ausschreibung allein <span class="accent">füllt kein Feld</span>',
-        'lead'   => 'Sie hängt seit vier Wochen im Clubhaus, und zwei Wochen vor dem Turnier sind 18 von 60 Plätzen vergeben. Nicht weil das Turnier unattraktiv wäre – sondern weil die meisten nichts davon wissen.',
+        'h1'     => 'Turniere <span class="accent">schneller ausbuchen</span>',
+        'lead'   => 'Die Ausschreibung hängt seit vier Wochen im Clubhaus, zwei Wochen vorher sind 18 von 60 Plätzen vergeben. Jeder leere Startplatz ist ein Startgeld, das nicht kommt, plus der Umsatz, der danach in der Gastronomie liegen geblieben wäre. Wir bewerben Turniere gezielt bei den Mitgliedern, die tatsächlich dafür infrage kommen – statt darauf zu hoffen, dass der Aushang gesehen wird.',
         'facts'  => [
             ['3', 'Mails je Turnier'],
             ['−5 Tage', 'nur an die Unentschlossenen'],

@@ -7,8 +7,8 @@ $page = [
     'crumbs'      => [['Lösungen', 'loesungen/'], ['Gastspieler & Greenfee', null]],
     'hero'        => [
         'kicker' => 'Lösung · Greenfee',
-        'h1'     => 'Die Adresse liegt seit der Buchung im System. <span class="accent">Angesprochen wird sie nie.</span>',
-        'lead'   => 'Gastspieler sind für die meisten Anlagen die am stärksten unterschätzte Gruppe: bereits erreichbar, bereits interessiert, bereits einmal dagewesen – und trotzdem nach der Runde vergessen.',
+        'h1'     => 'Mehr aus jedem <span class="accent">Gastspieler herausholen</span>',
+        'lead'   => 'Die Adresse liegt seit der Buchung im System, angesprochen wird sie nie. Dabei zahlt ein Gast, der einmal kommt, ein Greenfee – einer, der dreimal kommt, drei, und mancher am Ende einen Mitgliedsbeitrag. Wir sprechen Gäste nach der Runde gezielt wieder an: für die nächste Runde, ein Greenfee-Angebot oder eine Mitgliedschaft.',
         'facts'  => [
             ['Tag 2', 'Danke und Rückfrage'],
             ['Tag 30', 'Einladung mit Vorteil'],

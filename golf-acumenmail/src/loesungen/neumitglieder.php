@@ -7,8 +7,8 @@ $page = [
     'crumbs'      => [['Lösungen', 'loesungen/'], ['Neumitglieder gewinnen', null]],
     'hero'        => [
         'kicker' => 'Lösung · Wachstum',
-        'h1'     => 'Wer heute anfragt, entscheidet sich <span class="accent">selten heute</span>',
-        'lead'   => 'Zwischen der ersten Anfrage und der Aufnahme liegen bei den meisten Menschen Wochen bis Monate. In dieser Zeit passiert im Club meist nichts – und die Entscheidung fällt woanders.',
+        'h1'     => 'Aus mehr Anfragen <span class="accent">werden Mitglieder</span>',
+        'lead'   => 'Zwischen der ersten Anfrage und der Aufnahme liegen Wochen bis Monate, und in dieser Zeit passiert im Club meist nichts. Wer sich dann für die Anlage im Nachbarort entscheidet, fehlt nicht einmal, sondern in jedem Beitragsjahr wieder. Wir halten Interessenten warm, bis sie so weit sind.',
         'facts'  => [
             ['Wochen', 'dauert die Entscheidung'],
             ['4', 'Mails bis zum Termin'],

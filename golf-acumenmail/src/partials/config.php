@@ -77,39 +77,39 @@ $NAV = [
         'label' => 'Lösungen',
         'url'   => 'loesungen/',
         'intro' => [
-            'title' => 'Wofür Clubs uns holen',
-            'text'  => 'Fünf Aufgaben, die in fast jedem Golfclub auf dem Tisch liegen – und wie E-Mail sie löst.',
+            'title' => 'Wo im Club Umsatz liegen bleibt',
+            'text'  => 'Fünf Stellen, an denen der Kontakt längst da ist und trotzdem nichts passiert.',
             'link'  => ['Alle Lösungen ansehen', 'loesungen/'],
         ],
         'children' => [
             [
                 'label' => 'Mitglieder­bindung',
                 'url'   => 'loesungen/mitgliederbindung.php',
-                'desc'  => 'Auch die erreichen, die selten da sind',
+                'desc'  => 'Weniger stille Mitglieder, weniger Kündigungen',
                 'icon'  => 'users',
             ],
             [
                 'label' => 'Turniere & Events',
                 'url'   => 'loesungen/turniere-events.php',
-                'desc'  => 'Startlisten füllen statt Aushang hoffen',
+                'desc'  => 'Turniere schneller ausbuchen',
                 'icon'  => 'trophy',
             ],
             [
                 'label' => 'Gastspieler & Greenfee',
                 'url'   => 'loesungen/gastspieler.php',
-                'desc'  => 'Aus einer Runde eine zweite machen',
+                'desc'  => 'Mehr aus jedem Gastspieler herausholen',
                 'icon'  => 'flag',
             ],
             [
                 'label' => 'Neumitglieder gewinnen',
                 'url'   => 'loesungen/neumitglieder.php',
-                'desc'  => 'Von der Anfrage bis zur Aufnahme',
+                'desc'  => 'Aus mehr Anfragen werden Mitglieder',
                 'icon'  => 'user-check',
             ],
             [
                 'label' => 'Golfschule & Pro',
                 'url'   => 'loesungen/golfschule.php',
-                'desc'  => 'Kurse und Platzreife auslasten',
+                'desc'  => 'Kurse voll bekommen, bevor sie starten',
                 'icon'  => 'target',
             ],
         ],
@@ -119,8 +119,8 @@ $NAV = [
         'label' => 'Software',
         'url'   => 'software/',
         'intro' => [
-            'title' => 'Das Newsletter-System für Golfclubs',
-            'text'  => 'Läuft auf dem Server Ihres Clubs. Keine Kosten pro Kontakt, keine Mitgliederdaten bei Dritten.',
+            'title' => 'Kein SaaS. Keine Abhängigkeit.',
+            'text'  => 'Einmal einrichten, danach gehört die Software dem Club – auch wenn wir irgendwann nicht mehr dabei sind.',
             'link'  => ['Alle Funktionen im Überblick', 'software/'],
         ],
         'children' => [

@@ -7,8 +7,8 @@ $page = [
     'crumbs'      => [['Lösungen', 'loesungen/'], ['Golfschule & Pro', null]],
     'hero'        => [
         'kicker' => 'Lösung · Golfschule',
-        'h1'     => 'Der Kurs ist erst voll, <span class="accent">wenn er voll ist</span>',
-        'lead'   => 'Ein Platzreifekurs mit vier statt acht Teilnehmern kostet den Pro dieselbe Zeit. Die Teilnehmer, die fehlen, haben meist irgendwann einmal angefragt – und nie wieder von sich hören lassen.',
+        'h1'     => 'Kurse voll bekommen, <span class="accent">bevor sie starten</span>',
+        'lead'   => 'Ein Platzreifekurs mit vier statt acht Teilnehmern kostet den Pro dieselbe Zeit – der halbe Kursumsatz fehlt trotzdem, und mit ihm die Mitglieder, die daraus hätten werden können. Die Teilnehmer, die fehlen, haben meist irgendwann einmal angefragt. Wir sprechen sie an, bevor der Kurs beginnt.',
         'facts'  => [
             ['3', 'Mails bis zur Anmeldung'],
             ['1', 'Liste für Kurs­interessenten'],

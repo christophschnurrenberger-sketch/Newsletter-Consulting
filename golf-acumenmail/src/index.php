@@ -137,32 +137,115 @@ include __DIR__ . '/partials/header.php';
     </div>
 </section>
 
+<!-- Die Rechnung ----------------------------------------------------------
+     Was in den Texten fehlte, war die Groessenordnung. Wichtig: Die Zahlen
+     sind offen gerechnet und als Schwelle formuliert, nicht als Zusage –
+     versprechen laesst sich hier seriös nichts. -->
+<section class="section section-dark">
+    <div class="container">
+        <div class="section-head animate-on-scroll">
+            <p class="section-kicker on-dark">Die Rechnung</p>
+            <h2 class="section-title">Ab wann sich das trägt</h2>
+            <p class="section-lead">
+                Wir versprechen keine Anmeldungen – seriös kann das niemand. Wir sagen Ihnen,
+                ab welcher Zahl es sich getragen hat. Ob die für Ihren Club realistisch ist,
+                rechnen wir im Clubcheck an Ihren eigenen Zahlen nach.
+            </p>
+        </div>
+
+        <ol class="rechenweg animate-on-scroll">
+            <li>
+                <b>900</b>
+                <span class="was">Mitglieder im Verteiler</span>
+                <span class="warum">Ein mittlerer Club. Ihre Zahl kennen Sie besser.</span>
+            </li>
+            <li>
+                <b>× 12</b>
+                <span class="was">Ausgaben im Jahr</span>
+                <span class="warum">Ein Anlass im Monat, mehr braucht es nicht.</span>
+            </li>
+            <li>
+                <b>= 10.800</b>
+                <span class="was">Gelegenheiten im Jahr</span>
+                <span class="warum">So oft könnte jemand von einem Turnier, einem Kurs oder
+                einem Greenfee-Angebot erfahren. Heute finden die meisten davon nicht statt.</span>
+            </li>
+        </ol>
+
+        <div class="split-grid is-wide-left is-top" style="margin-top:3rem;">
+            <div class="prose animate-on-scroll">
+                <p>
+                    Was davon übrig bleibt, hängt an Ihrem Club. Rechnen Sie mit dem, was eine
+                    zusätzliche Buchung tatsächlich bringt – ein Turnierstart, eine Greenfee-Runde,
+                    ein Kursplatz. Wir setzen hier vorsichtig <b>50 € Deckungsbeitrag je Buchung</b>
+                    an; ersetzen Sie die Zahl im Gespräch durch Ihre eigene.
+                </p>
+                <p>
+                    Zehn zusätzliche Buchungen im Monat sind bei 900 Mitgliedern gut ein Prozent,
+                    das einmal im Monat auf eine Mail reagiert. Das ist die Größenordnung, um die
+                    es hier geht – nicht um eine Verdopplung von irgendetwas.
+                </p>
+            </div>
+
+            <div class="callout animate-on-scroll">
+                <i data-icon="help-circle" class="lucide"></i>
+                <p>
+                    <strong>Eine Rechnung, keine Zusage.</strong>
+                    Ob Ihr Adressbestand diese Zahl hergibt, hängt daran, wie viele Adressen
+                    zustellbar sind und eine Einwilligung haben. Genau das sehen wir uns im
+                    Clubcheck an – und wenn die Antwort nein lautet, sagen wir das.
+                </p>
+            </div>
+        </div>
+
+        <div class="stat-band animate-on-scroll" style="margin-top:3rem;">
+            <div>
+                <strong>10 im Monat</strong>
+                <span>zusätzliche Buchungen, und das Saison-Setup ist nach dem dritten Monat
+                bezahlt. Danach bleibt es im Club.</span>
+            </div>
+            <div>
+                <strong>8 im Monat</strong>
+                <span>zusätzliche Buchungen, und die laufende Clubbetreuung trägt sich selbst.</span>
+            </div>
+            <div>
+                <strong>1,1 %</strong>
+                <span>der Mitglieder, die im Monat einmal reagieren. Mehr steht in dieser
+                Rechnung nicht.</span>
+            </div>
+        </div>
+    </div>
+</section>
+
 <!-- Der Unterschied zu den bekannten Anbietern ----------------------------- -->
 <section class="section section-alt">
     <div class="container">
         <div class="section-head animate-on-scroll">
             <p class="section-kicker">Der Unterschied</p>
-            <h2 class="section-title">Mieten oder besitzen</h2>
+            <h2 class="section-title">Kein SaaS. Keine Abhängigkeit.</h2>
             <p class="section-lead">
-                Die bekannten Newsletter-Anbieter vermieten Software. Wir richten eine ein, die
-                danach dem Club gehört.
+                Die Software gehört Ihrem Club – vom Tag der Einrichtung an. Das ist kein
+                technisches Detail, das ist der Unterschied zu allem, was Sie sonst angeboten
+                bekommen.
             </p>
         </div>
 
         <div class="split-grid is-wide-left is-top">
-            <div class="prose animate-on-scroll">
-                <p>
-                    Mietlösungen rechnen nach Kontakten oder versendeten Mails ab. Für einen Club
-                    mit 900 Mitgliedern, 400 Gastspielern und einem Kursverteiler heißt das: Die
-                    Rechnung wächst mit dem Verteiler – und die Mitgliederdaten liegen beim
-                    Anbieter.
-                </p>
-                <p>
-                    Wir gehen den anderen Weg. Das System wird einmal auf dem Webspace des Clubs
-                    eingerichtet und gehört danach dem Club. Wir sind die Agentur davor und
-                    daneben: Wir richten ein, weisen ein und schreiben mit – die Software selbst
-                    stellt uns keine Rechnung, also Ihnen auch nicht.
-                </p>
+            <div class="animate-on-scroll">
+                <ul class="checklist">
+                    <li><i data-icon="check" class="lucide"></i><span><b>Einmalige Einrichtung statt Monatsgebühr.</b>
+                        Für die Software selbst zahlen Sie danach nichts mehr.</span></li>
+                    <li><i data-icon="check" class="lucide"></i><span><b>Läuft auf Ihrem Server.</b>
+                        Auf dem Webspace, den Ihr Club ohnehin bezahlt – PHP 8 genügt.</span></li>
+                    <li><i data-icon="check" class="lucide"></i><span><b>Mitgliederdaten bleiben bei Ihnen.</b>
+                        Kein Auftragsverarbeiter, keine Adressen bei Dritten.</span></li>
+                    <li><i data-icon="check" class="lucide"></i><span><b>Keine Kosten pro Kontakt.</b>
+                        Ob 900 oder 3.000 Adressen – an der Rechnung ändert das nichts.</span></li>
+                    <li><i data-icon="check" class="lucide"></i><span><b>Keine Abhängigkeit von einem Anbieter,</b>
+                        der Tarife, Bedingungen oder Funktionsumfang ändert.</span></li>
+                    <li><i data-icon="check" class="lucide"></i><span><b>Auch wenn unsere Zusammenarbeit endet,</b>
+                        bleibt das System im Club – mit Adressen, Vorlagen und Historie.</span></li>
+                </ul>
             </div>
 
             <div class="callout animate-on-scroll">

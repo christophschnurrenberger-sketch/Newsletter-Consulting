@@ -350,6 +350,78 @@ mitten in der Seite und eine unten abgeschnittene Mail.
 
 ---
 
+## Vier Schritte statt vier Funktionen
+
+Die Texte waren lange nach Funktionen gebaut: Newsletter → Segmente →
+Automationen → Software. Das beschreibt, was wir einrichten, nicht was der Club
+davon hat. Jetzt folgt jede Seite derselben Kette:
+
+**Problem → wirtschaftliche Folge → Lösung → konkreter Nutzen**
+
+Am deutlichsten wird der Unterschied bei den Lösungsseiten. Die alten
+Überschriften waren gute Beobachtungen – und blieben bei Schritt eins stehen:
+
+| vorher | jetzt |
+|---|---|
+| „Die Ausschreibung allein füllt kein Feld" | **Turniere schneller ausbuchen** |
+| „Die Adresse liegt seit der Buchung im System. Angesprochen wird sie nie." | **Mehr aus jedem Gastspieler herausholen** |
+| „Die ersten Wochen entscheiden, die stillen Jahre kündigen" | **Weniger stille Mitglieder, weniger Kündigungen** |
+| „Wer heute anfragt, entscheidet sich selten heute" | **Aus mehr Anfragen werden Mitglieder** |
+| „Der Kurs ist erst voll, wenn er voll ist" | **Kurse voll bekommen, bevor sie starten** |
+
+Die alten Sätze sind nicht verloren: Sie stehen jetzt am Anfang des Vorspanns,
+gefolgt von dem, was das Problem kostet. Bei den Turnieren zum Beispiel: „Jeder
+leere Startplatz ist ein Startgeld, das nicht kommt, plus der Umsatz, der danach
+in der Gastronomie liegen geblieben wäre."
+
+### Die Rechnung
+
+Was gefehlt hat, waren Größenordnungen. Ein Vorstand entscheidet über Geld, nicht
+über Segmente. Auf der Startseite steht deshalb eine offene Rechnung:
+
+```
+  900        Mitglieder im Verteiler
+× 12         Ausgaben im Jahr
+= 10.800     Gelegenheiten im Jahr
+```
+
+Der zweite Teil ist heikler, deshalb ist er als **Schwelle** formuliert und nicht
+als Versprechen: Bei 50 € Deckungsbeitrag je zusätzlicher Buchung – ein
+Turnierstart, eine Greenfee-Runde, ein Kursplatz – tragen **zehn zusätzliche
+Buchungen im Monat** das Saison-Setup nach dem dritten Monat, **acht** tragen die
+laufende Betreuung. Zehn von 900 Mitgliedern sind **1,1 %**, die im Monat einmal
+reagieren.
+
+Drei Regeln, damit das seriös bleibt:
+
+1. **Der Rechenweg steht sichtbar auf der Seite.** Wer nachrechnen will, kann.
+2. **Die Annahme ist benannt und austauschbar.** Die 50 € sind vorsichtig
+   angesetzt und stehen ausdrücklich als Platzhalter für die eigene Zahl des
+   Clubs da.
+3. **Es ist eine Schwelle, kein Ergebnis.** „Ab wann es sich getragen hat", nicht
+   „so viel bekommen Sie". Daneben steht der Hinweis, dass die Zahl vom
+   Adressbestand abhängt – und dass wir im Clubcheck auch absagen.
+
+**Vor dem Livegang prüfen:** Ob 50 € Deckungsbeitrag für Ihren Markt stimmen. Die
+Zahl steht in `src/index.php` im Abschnitt „Die Rechnung"; ändert sie sich,
+ändern sich auch die Schwellen 10 und 8 im Kennzahlenband darunter.
+
+### Der USP, als Verkaufsargument statt als Fußnote
+
+„Läuft auf dem Server Ihres Clubs" war technisch erklärt. Für einen Vorstand ist
+das eine Frage von Abhängigkeit und Eigentum, nicht von Hosting:
+
+> **Kein SaaS. Keine Abhängigkeit.**
+> Die Software gehört Ihrem Club – vom Tag der Einrichtung an.
+
+Darunter sechs Argumente, jeweils Vorteil zuerst, Begründung dahinter: einmalige
+Einrichtung, läuft auf Ihrem Server, Mitgliederdaten bleiben bei Ihnen, keine
+Kosten pro Kontakt, keine Abhängigkeit von einem Anbieter – und der Satz, der am
+meisten wiegt: **auch wenn unsere Zusammenarbeit endet, bleibt das System im
+Club.** Kein Mietanbieter kann das schreiben.
+
+---
+
 ## Umbrüche und Rollbalken
 
 Zwei Dinge, die auf einer deutschsprachigen Seite immer wieder auffallen –

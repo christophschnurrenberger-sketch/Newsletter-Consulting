@@ -7,8 +7,8 @@ $page = [
     'crumbs'      => [['Lösungen', null]],
     'hero'        => [
         'kicker' => 'Lösungen',
-        'h1'     => 'Fünf Aufgaben, die in jedem Club <span class="accent">auf dem Tisch liegen</span>',
-        'lead'   => 'Keine davon ist ein Golfproblem. Alle fünf sind Kommunikationsprobleme – die Information ist da, sie erreicht nur nicht die richtigen Leute zur richtigen Zeit.',
+        'h1'     => 'Fünf Stellen, an denen <span class="accent">Umsatz liegen bleibt</span>',
+        'lead'   => 'Keine davon ist ein Golfproblem. Überall ist der Kontakt längst da – er wird nur nicht genutzt. Und überall lässt sich ausrechnen, was das kostet.',
         'actions'=> [['Club-Analyse anfragen', 'kontakt.php', 'primary']],
     ],
 ];

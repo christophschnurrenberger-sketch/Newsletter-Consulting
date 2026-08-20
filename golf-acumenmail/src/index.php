@@ -71,8 +71,9 @@ include __DIR__ . '/partials/header.php';
             <p class="section-kicker">Das Angebot</p>
             <h2 class="section-title">Erst nachsehen. Dann einrichten. Dann laufen lassen.</h2>
             <p class="section-lead">
-                Drei Pakete, die aufeinander aufbauen – aber nach jedem ist Schluss möglich.
-                Die meisten Clubs fangen mit dem Clubcheck an, und manchmal raten wir danach ab.
+                Drei Pakete, die aufeinander aufbauen – nach jedem ist Schluss möglich. Die
+                meisten Clubs fangen mit dem Clubcheck an: Danach steht schwarz auf weiß, was
+                Ihr Adressbestand hergibt und wo der erste Hebel liegt.
             </p>
         </div>
 
@@ -137,81 +138,66 @@ include __DIR__ . '/partials/header.php';
     </div>
 </section>
 
-<!-- Die Rechnung ----------------------------------------------------------
-     Was in den Texten fehlte, war die Groessenordnung. Wichtig: Die Zahlen
-     sind offen gerechnet und als Schwelle formuliert, nicht als Zusage –
-     versprechen laesst sich hier seriös nichts. -->
+<!-- Was sich ändert: Zeit und Gewissheit --------------------------------- -->
 <section class="section section-dark">
     <div class="container">
         <div class="section-head animate-on-scroll">
-            <p class="section-kicker on-dark">Die Rechnung</p>
-            <h2 class="section-title">Ab wann sich das trägt</h2>
+            <p class="section-kicker on-dark">Was sich ändert</p>
+            <h2 class="section-title">Sechs Stunden im Jahr – und die Gewissheit, dass es ankommt.</h2>
             <p class="section-lead">
-                Wir versprechen keine Anmeldungen – seriös kann das niemand. Wir sagen Ihnen,
-                ab welcher Zahl es sich getragen hat. Ob die für Ihren Club realistisch ist,
-                rechnen wir im Clubcheck an Ihren eigenen Zahlen nach.
+                Zwei Größen lassen sich vor der Einrichtung ehrlich benennen: was eine Ausgabe
+                an Zeit kostet, und was Sie danach über ihren Verbleib wissen.
             </p>
         </div>
 
         <ol class="rechenweg animate-on-scroll">
             <li>
-                <b>900</b>
-                <span class="was">Mitglieder im Verteiler</span>
-                <span class="warum">Ein mittlerer Club. Ihre Zahl kennen Sie besser.</span>
-            </li>
-            <li>
-                <b>× 12</b>
+                <b>12</b>
                 <span class="was">Ausgaben im Jahr</span>
                 <span class="warum">Ein Anlass im Monat, mehr braucht es nicht.</span>
             </li>
             <li>
-                <b>= 10.800</b>
-                <span class="was">Gelegenheiten im Jahr</span>
-                <span class="warum">So oft könnte jemand von einem Turnier, einem Kurs oder
-                einem Greenfee-Angebot erfahren. Heute finden die meisten davon nicht statt.</span>
+                <b>× 30</b>
+                <span class="was">Minuten je Ausgabe</span>
+                <span class="warum">Bausteine anordnen, Text schreiben, Vorschau prüfen, senden.</span>
+            </li>
+            <li>
+                <b>= 6</b>
+                <span class="was">Stunden im Jahr</span>
+                <span class="warum">So viel kostet der Clubnewsletter das Sekretariat, wenn das
+                System einmal steht. Oder keine einzige, wenn wir die Ausgaben übernehmen.</span>
             </li>
         </ol>
 
         <div class="split-grid is-wide-left is-top" style="margin-top:3rem;">
             <div class="prose animate-on-scroll">
                 <p>
-                    Was davon übrig bleibt, hängt an Ihrem Club. Rechnen Sie mit dem, was eine
-                    zusätzliche Buchung tatsächlich bringt – ein Turnierstart, eine Greenfee-Runde,
-                    ein Kursplatz. Wir setzen hier vorsichtig <b>50 € Deckungsbeitrag je Buchung</b>
-                    an; ersetzen Sie die Zahl im Gespräch durch Ihre eigene.
+                    Die zweite Größe ist keine Zeit, sondern Gewissheit. Eine Sammelmail aus dem
+                    Postfach des Sekretariats geht hinaus, und dann ist Stille: ob sie angekommen
+                    ist, welche Adresse längst tot ist, wer sie überhaupt geöffnet hat – nichts
+                    davon erfahren Sie. Bei neunhundert Empfängern im Blindkopie-Feld sortieren
+                    manche Postfächer sie ohnehin als Massensendung aus.
                 </p>
                 <p>
-                    Zehn zusätzliche Buchungen im Monat sind bei 900 Mitgliedern gut ein Prozent,
-                    das einmal im Monat auf eine Mail reagiert. Das ist die Größenordnung, um die
-                    es hier geht – nicht um eine Verdopplung von irgendetwas.
+                    Ein eingerichtetes System beantwortet genau diese Fragen. Es meldet
+                    unzustellbare Adressen, trägt Abmeldungen selbst aus und zeigt nach jeder
+                    Ausgabe, wie viele geöffnet und geklickt haben. Aus einem Rundbrief ins
+                    Ungewisse wird eine Kommunikation, über die sich im Vorstand berichten lässt.
                 </p>
             </div>
 
-            <div class="callout animate-on-scroll">
-                <i data-icon="help-circle" class="lucide"></i>
-                <p>
-                    <strong>Eine Rechnung, keine Zusage.</strong>
-                    Ob Ihr Adressbestand diese Zahl hergibt, hängt daran, wie viele Adressen
-                    zustellbar sind und eine Einwilligung haben. Genau das sehen wir uns im
-                    Clubcheck an – und wenn die Antwort nein lautet, sagen wir das.
-                </p>
-            </div>
-        </div>
-
-        <div class="stat-band animate-on-scroll" style="margin-top:3rem;">
-            <div>
-                <strong>10 im Monat</strong>
-                <span>zusätzliche Buchungen, und das Saison-Setup ist nach dem dritten Monat
-                bezahlt. Danach bleibt es im Club.</span>
-            </div>
-            <div>
-                <strong>8 im Monat</strong>
-                <span>zusätzliche Buchungen, und die laufende Clubbetreuung trägt sich selbst.</span>
-            </div>
-            <div>
-                <strong>1,1 %</strong>
-                <span>der Mitglieder, die im Monat einmal reagieren. Mehr steht in dieser
-                Rechnung nicht.</span>
+            <div class="animate-on-scroll">
+                <ul class="checklist">
+                    <li><i data-icon="check" class="lucide"></i><span>Versand über ein echtes
+                        Postfach Ihrer Domain, mit SPF und DKIM – damit die Ausgabe nicht im
+                        Spam-Ordner endet</span></li>
+                    <li><i data-icon="check" class="lucide"></i><span>Unzustellbare Adressen
+                        werden erkannt und stillgelegt, ohne dass jemand nachsieht</span></li>
+                    <li><i data-icon="check" class="lucide"></i><span>Abmeldungen laufen von
+                        allein – rechtssicher und ohne Arbeit im Sekretariat</span></li>
+                    <li><i data-icon="check" class="lucide"></i><span>Nach jeder Ausgabe:
+                        Zustellungen, Öffnungen, Klicks – ein Bericht, den der Vorstand versteht</span></li>
+                </ul>
             </div>
         </div>
     </div>
@@ -236,7 +222,7 @@ include __DIR__ . '/partials/header.php';
                     <li><i data-icon="check" class="lucide"></i><span><b>Einmalige Einrichtung statt Monatsgebühr.</b>
                         Für die Software selbst zahlen Sie danach nichts mehr.</span></li>
                     <li><i data-icon="check" class="lucide"></i><span><b>Läuft auf Ihrem Server.</b>
-                        Auf dem Webspace, den Ihr Club ohnehin bezahlt – PHP 8 genügt.</span></li>
+                        Auf dem Webspace, den Ihr Club ohnehin bezahlt – ohne zusätzlichen Vertrag.</span></li>
                     <li><i data-icon="check" class="lucide"></i><span><b>Mitgliederdaten bleiben bei Ihnen.</b>
                         Kein Auftragsverarbeiter, keine Adressen bei Dritten.</span></li>
                     <li><i data-icon="check" class="lucide"></i><span><b>Keine Kosten pro Kontakt.</b>
@@ -301,17 +287,18 @@ include __DIR__ . '/partials/header.php';
 </section>
 
 <!-- Die Software, die im Setup steckt -------------------------------------- -->
-<section class="section section-dark">
+<section class="section">
     <div class="container">
 
         <div class="tool-intro-grid">
             <div class="animate-on-scroll">
-                <p class="section-kicker on-dark">Im Saison-Setup enthalten</p>
-                <h2 class="section-title">Das Werkzeug gab es vor dem Angebot.</h2>
+                <p class="section-kicker">Im Saison-Setup enthalten</p>
+                <h2 class="section-title">Ein Newslettersystem, gebaut für Golfclubs</h2>
                 <p class="section-lead">
-                    Wir haben es für eigene Projekte gebaut, weil uns die Rechnung der Mietanbieter
-                    nicht gefiel. Es liegt auf dem Webspace des Clubs, rechnet nicht nach Kontakten
-                    ab und lässt sich bedienen, ohne dass jemand HTML kann.
+                    Kein zurechtgebogenes Allzweckwerkzeug: Listen, Segmente und Auto­mationen
+                    sind auf das zugeschnitten, was in einem Club anfällt – Mitglieder,
+                    Gastspieler, Kursteilnehmer, Turnierfelder. Bedienen lässt es sich ohne eine
+                    Zeile HTML.
                 </p>
                 <p style="margin-top:2.2rem;">
                     <a href="<?= e(url('software/')) ?>" class="btn-primary-custom">Alle Funktionen</a>
@@ -324,8 +311,9 @@ include __DIR__ . '/partials/header.php';
                     <span>Für die Software selbst. Ob 300 oder 3.000 Mitglieder ändert daran nichts.</span>
                 </div>
                 <div class="tool-claim">
-                    <strong>PHP 8 genügt</strong>
-                    <span>SQLite reicht als Datenbank. Kein eigener Server, kein Docker, kein Composer.</span>
+                    <strong>Auf Ihrem Webspace</strong>
+                    <span>Kein zusätzlicher Vertrag, kein eigener Server. Wir richten es dort ein,
+                    wo Ihre Website ohnehin liegt.</span>
                 </div>
                 <div class="tool-claim">
                     <strong>Rechtssicher ab Werk</strong>
@@ -364,14 +352,14 @@ include __DIR__ . '/partials/header.php';
 </section>
 
 <!-- Wofür Clubs uns holen --------------------------------------------------- -->
-<section class="section">
+<section class="section section-alt">
     <div class="container">
         <div class="section-head animate-on-scroll">
-            <p class="section-kicker">Wofür Clubs uns holen</p>
-            <h2 class="section-title">Fünf Aufgaben, die auf jedem Clubtisch liegen</h2>
+            <p class="section-kicker">Wo es sich auszahlt</p>
+            <h2 class="section-title">Fünf Stellen, an denen im Club etwas liegen bleibt</h2>
             <p class="section-lead">
-                Keine davon ist ein Golfproblem. Zu jeder gibt es eine Seite mit dem, was wir
-                konkret einrichten.
+                Überall ist der Kontakt längst da – er wird nur nicht genutzt. Zu jeder Stelle
+                gibt es eine Seite mit dem, was wir konkret einrichten.
             </p>
         </div>
 
@@ -387,44 +375,78 @@ include __DIR__ . '/partials/header.php';
     </div>
 </section>
 
-<!-- Der ehrliche Teil ------------------------------------------------------ -->
-<section class="section section-alt">
+<!-- Unser Vorgehen ---------------------------------------------------------- -->
+<section class="section">
     <div class="container">
-        <div class="split-grid is-wide-left is-top">
-            <div class="animate-on-scroll">
-                <p class="section-kicker">Wann sich das nicht lohnt</p>
-                <h2 class="section-title">Manchmal ist die Antwort: lassen Sie es.</h2>
-                <div class="prose" style="margin-top:1.6rem;">
-                    <p>
-                        Wenn Ihr Club zweimal im Jahr einen Rundbrief verschickt und keine
-                        Auto­mationen braucht, ist ein günstiger Miettarif die einfachere Wahl. Das
-                        sagen wir im Clubcheck auch dann, wenn wir damit den Auftrag verlieren.
-                    </p>
-                    <p>
-                        Es lohnt sich ungefähr ab 300 Empfängern, weil der Aufwand pro Ausgabe
-                        gleich bleibt – egal ob 300 oder 3.000 Leute sie bekommen. Und es lohnt
-                        sich dann besonders, wenn jemand im Club den Newsletter eigentlich machen
-                        will, aber im Juni nie dazu kommt.
-                    </p>
-                </div>
-            </div>
-
-            <div class="quote-card animate-on-scroll">
-                <blockquote>
-                    „Wir hatten den Newsletter zweimal angefangen und zweimal wieder eingestellt.
-                    Nicht weil er schlecht war, sondern weil im Juni niemand Zeit hatte.“
-                </blockquote>
-                <figcaption>
-                    Sinngemäß aus mehreren Gesprächen mit Clubsekretariaten. Genau deshalb bringen
-                    ein Redaktionsplan und zwei Auto­mationen mehr als die schönste Vorlage.
-                </figcaption>
-            </div>
+        <div class="section-head animate-on-scroll">
+            <p class="section-kicker">Unser Vorgehen</p>
+            <h2 class="section-title">Wir sehen erst nach, dann richten wir ein</h2>
+            <p class="section-lead">
+                Fünf Dinge prüfen wir, bevor irgendetwas installiert wird. Danach wissen Sie,
+                was Ihr Bestand hergibt – und wir wissen, wo anzufangen ist.
+            </p>
         </div>
+
+        <div class="capability-grid">
+            <article class="capability-card animate-on-scroll">
+                <h3>Adressbestand</h3>
+                <p>Wie viele Adressen es gibt, wie aktuell sie sind und wie viele Dubletten und
+                tote Einträge darin stecken.</p>
+                <ul class="capability-list">
+                    <li><i data-icon="check" class="lucide"></i><span>Abgleich mit der Clubverwaltung</span></li>
+                    <li><i data-icon="check" class="lucide"></i><span>Dubletten und Tippfehler</span></li>
+                </ul>
+            </article>
+
+            <article class="capability-card animate-on-scroll">
+                <h3>Einwilligungen</h3>
+                <p>Woher die Adressen stammen und ob eine belastbare Grundlage für den Versand
+                besteht – bevor die erste Mail hinausgeht.</p>
+                <ul class="capability-list">
+                    <li><i data-icon="check" class="lucide"></i><span>Herkunft je Adressquelle</span></li>
+                    <li><i data-icon="check" class="lucide"></i><span>Vereinsinformation oder Werbung</span></li>
+                </ul>
+            </article>
+
+            <article class="capability-card animate-on-scroll">
+                <h3>Bisherige Kommunikation</h3>
+                <p>Was in den letzten zwei Jahren hinausging und was daraus wurde. Oft liegt hier
+                schon die Antwort, woran es hakt.</p>
+                <ul class="capability-list">
+                    <li><i data-icon="check" class="lucide"></i><span>Anlässe und Rhythmus</span></li>
+                    <li><i data-icon="check" class="lucide"></i><span>Was liegen geblieben ist</span></li>
+                </ul>
+            </article>
+
+            <article class="capability-card animate-on-scroll">
+                <h3>Technik</h3>
+                <p>Ob Ihr Hosting das System trägt und ob der Versand über Ihre Domain sauber
+                aufgesetzt ist.</p>
+                <ul class="capability-list">
+                    <li><i data-icon="check" class="lucide"></i><span>Webspace und Postfach</span></li>
+                    <li><i data-icon="check" class="lucide"></i><span>SPF und DKIM</span></li>
+                </ul>
+            </article>
+
+            <article class="capability-card animate-on-scroll">
+                <h3>Segmente</h3>
+                <p>Welche Gruppen sich aus Ihren Daten überhaupt bilden lassen – Mitglieder,
+                Gäste, Kursteilnehmer, Handicap-Bereiche.</p>
+                <ul class="capability-list">
+                    <li><i data-icon="check" class="lucide"></i><span>Was heute schon möglich ist</span></li>
+                    <li><i data-icon="check" class="lucide"></i><span>Was zuerst gepflegt gehört</span></li>
+                </ul>
+            </article>
+        </div>
+
+        <p style="margin-top:2.5rem;">
+            <a href="<?= e(url('leistungen/clubcheck.php')) ?>" class="btn-secondary">Was im Clubcheck steckt</a>
+        </p>
     </div>
 </section>
 
 <!-- Wissen ----------------------------------------------------------------- -->
-<section class="section">
+<section class="section section-alt">
     <div class="container">
         <div class="split-grid is-wide-right is-top">
             <div class="animate-on-scroll">

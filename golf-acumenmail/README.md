@@ -160,8 +160,8 @@ Stelle, an der wir uns tatsächlich unterscheiden:
    nicht als das Produkt.
 5. **Wofür Clubs uns holen**, **wann sich das nicht lohnt**, **Wissen**.
 
-Punkt 3 und 5 gibt es bei den Mietanbietern nicht: Wer Software vermietet, kann
-schlecht schreiben, wann man besser nicht mietet.
+Punkt 3 gibt es bei den Mietanbietern nicht: Wer Software vermietet, kann
+schlecht erklären, warum man sie besser besitzt.
 
 ### Der Kopf
 
@@ -374,37 +374,58 @@ gefolgt von dem, was das Problem kostet. Bei den Turnieren zum Beispiel: „Jede
 leere Startplatz ist ein Startgeld, das nicht kommt, plus der Umsatz, der danach
 in der Gastronomie liegen geblieben wäre."
 
-### Die Rechnung
+### Die Zahlen: Zeit und Zustellung, nicht Umsatz
 
-Was gefehlt hat, waren Größenordnungen. Ein Vorstand entscheidet über Geld, nicht
-über Segmente. Auf der Startseite steht deshalb eine offene Rechnung:
+Ein erster Entwurf rechnete mit zusätzlichen Buchungen: zehn im Monat à 50 €
+Deckungsbeitrag, damit sei das Saison-Setup nach drei Monaten bezahlt. Die
+Rechnung war sauber – und stand auf einer falschen Annahme. **Mitglieder eines
+Golfclubs zahlen einmal im Jahr ihren Beitrag.** Sie „buchen" nichts, was pro
+Kopf Umsatz erzeugt. Greenfee und Kursgebühren gibt es, aber nicht bei den 900
+Mitgliedern, mit denen die Rechnung gerechnet hatte. Eine Rechnung, deren
+Grundgröße nicht stimmt, ist schlimmer als gar keine.
+
+Ehrlich benennbar sind zwei andere Größen, und beide stehen jetzt dort:
 
 ```
-  900        Mitglieder im Verteiler
-× 12         Ausgaben im Jahr
-= 10.800     Gelegenheiten im Jahr
+  12        Ausgaben im Jahr
+×  30       Minuten je Ausgabe
+=   6       Stunden im Jahr
 ```
 
-Der zweite Teil ist heikler, deshalb ist er als **Schwelle** formuliert und nicht
-als Versprechen: Bei 50 € Deckungsbeitrag je zusätzlicher Buchung – ein
-Turnierstart, eine Greenfee-Runde, ein Kursplatz – tragen **zehn zusätzliche
-Buchungen im Monat** das Saison-Setup nach dem dritten Monat, **acht** tragen die
-laufende Betreuung. Zehn von 900 Mitgliedern sind **1,1 %**, die im Monat einmal
-reagieren.
+Sechs Stunden – so viel kostet der Clubnewsletter das Sekretariat, wenn das
+System einmal steht. Oder keine einzige, wenn die Ausgaben in der Clubbetreuung
+liegen. Die 30 Minuten sind der Mittelwert der „20 bis 40 Minuten", die auch in
+den häufigen Fragen stehen.
 
-Drei Regeln, damit das seriös bleibt:
+Die zweite Größe ist keine Zeit, sondern Gewissheit: **Die Botschaft kommt an,
+und man sieht, dass sie ankommt.** Eine Sammelmail aus dem Postfach des
+Sekretariats geht hinaus, und dann ist Stille – ob sie ankam, welche Adresse tot
+ist, wer geöffnet hat, erfährt niemand. Ein eingerichtetes System beantwortet
+genau das: SPF und DKIM gegen den Spam-Ordner, automatisch stillgelegte
+Fehladressen, Abmeldungen ohne Zutun, und nach jeder Ausgabe ein Bericht, den
+der Vorstand versteht.
 
-1. **Der Rechenweg steht sichtbar auf der Seite.** Wer nachrechnen will, kann.
-2. **Die Annahme ist benannt und austauschbar.** Die 50 € sind vorsichtig
-   angesetzt und stehen ausdrücklich als Platzhalter für die eigene Zahl des
-   Clubs da.
-3. **Es ist eine Schwelle, kein Ergebnis.** „Ab wann es sich getragen hat", nicht
-   „so viel bekommen Sie". Daneben steht der Hinweis, dass die Zahl vom
-   Adressbestand abhängt – und dass wir im Clubcheck auch absagen.
+Das ist kein Verkaufstrick, sondern der eigentliche Unterschied zwischen einem
+Rundbrief ins Ungewisse und einer Kommunikation, über die man berichten kann.
 
-**Vor dem Livegang prüfen:** Ob 50 € Deckungsbeitrag für Ihren Markt stimmen. Die
-Zahl steht in `src/index.php` im Abschnitt „Die Rechnung"; ändert sie sich,
-ändern sich auch die Schwellen 10 und 8 im Kennzahlenband darunter.
+### Zwei Stellen, an denen der Ton nicht stimmte
+
+**„Das Werkzeug gab es vor dem Angebot."** Gemeint war Unabhängigkeit, gelesen
+wurde: schnell zusammengebaut, für den Eigenbedarf. Dazu stand als
+Verkaufsargument „PHP 8 genügt – SQLite reicht als Datenbank" – für einen
+Vorstand ist das keine Information, sondern Rauschen. Jetzt heißt der Abschnitt
+„Ein Newslettersystem, gebaut für Golfclubs", und aus der PHP-Zeile ist „Auf
+Ihrem Webspace – kein zusätzlicher Vertrag, kein eigener Server" geworden. Die
+technischen Voraussetzungen stehen weiterhin dort, wo sie hingehören: auf der
+Seite „Systemvoraussetzungen".
+
+**„Manchmal ist die Antwort: lassen Sie es."** Ein ganzer Abschnitt, der erklärte,
+wann ein Miettarif die bessere Wahl ist. Als Vertrauenssignal gedacht, als
+Absage gelesen – auf einer Seite, die Aufträge bringen soll, ist das der falsche
+Platz dafür. An seiner Stelle steht jetzt **„Unser Vorgehen"**: die fünf Dinge,
+die im Clubcheck geprüft werden, bevor irgendetwas installiert wird –
+Adressbestand, Einwilligungen, bisherige Kommunikation, Technik, Segmente. Das
+zeigt Sorgfalt, ohne abzuraten.
 
 ### Der USP, als Verkaufsargument statt als Fußnote
 

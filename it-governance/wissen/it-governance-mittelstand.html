@@ -1,0 +1,894 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <!-- Erzeugt von tools/build.php aus src/wissen/it-governance-mittelstand.php – nicht hier ändern. -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Ein Grundlagenartikel: Was IT-Governance im Mittelstand tatsächlich heißt, welche zehn Bausteine dazugehören, was der Unterschied zu IT-Management und Informationssicherheit ist – und in welcher Reihenfolge man vorgeht.">
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1">
+    <meta name="author" content="Christoph Schnurrenberger">
+    <meta name="theme-color" content="#0E2A47">
+    <meta name="referrer" content="strict-origin-when-cross-origin">
+
+    <link rel="canonical" href="https://www.it-governance-mittelstand.de/wissen/it-governance-mittelstand.php">
+
+    <meta property="og:locale" content="de_DE">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Schnurrenberger IT-Governance">
+    <meta property="og:url" content="https://www.it-governance-mittelstand.de/wissen/it-governance-mittelstand.php">
+    <meta property="og:title" content="IT-Governance im Mittelstand: was der Begriff konkret bedeutet">
+    <meta property="og:description" content="Ein Grundlagenartikel: Was IT-Governance im Mittelstand tatsächlich heißt, welche zehn Bausteine dazugehören, was der Unterschied zu IT-Management und Informationssicherheit ist – und in welcher Reihenfolge man vorgeht.">
+    <meta name="twitter:card" content="summary_large_image">
+
+    <title>IT-Governance im Mittelstand: was der Begriff konkret bedeutet | Schnurrenberger IT-Governance</title>
+
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%230E2A47'/><path d='M8 21V11l8-4 8 4v10' stroke='%23C98A4B' stroke-width='2' fill='none' stroke-linejoin='round'/><path d='M8 21h16' stroke='white' stroke-width='2' stroke-linecap='round'/></svg>">
+
+    <link rel="stylesheet" href="../assets/site.css">
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "ProfessionalService",
+      "name": "Schnurrenberger IT-Governance",
+      "description": "Beratung für IT-Governance, IT-Prozesse, Auditfähigkeit und regulatorische Anforderungen im Mittelstand.",
+      "url": "https:\/\/www.it-governance-mittelstand.de\/",
+      "telephone": "0175 2778902",
+      "email": "kontakt@it-governance-mittelstand.de",
+      "founder": { "@type": "Person", "name": "Christoph Schnurrenberger" },
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "Birkenstr. 10",
+        "addressLocality": "87734 Benningen",
+        "addressCountry": "DE"
+      },
+      "areaServed": [
+        { "@type": "Country", "name": "Deutschland" },
+        { "@type": "Country", "name": "Österreich" },
+        { "@type": "Country", "name": "Schweiz" }
+      ],
+      "serviceType": "IT-Governance-Beratung"
+    }
+    </script>
+</head>
+<body class="">
+
+<a href="#main-content" class="skip-link">Zum Inhalt springen</a>
+
+<!-- Servicezeile ------------------------------------------------------- -->
+<div class="utility-bar">
+    <div class="container utility-inner">
+        <p class="utility-claim">IT-Governance, IT-Prozesse und Auditfähigkeit für mittelständische Unternehmen</p>
+        <div class="utility-links">
+            <a href="tel:+491752778902">
+                <i data-icon="phone" class="lucide"></i>0175 2778902            </a>
+            <a href="../faq.html">Häufige Fragen</a>
+            <a href="../wissen/index.html" class="utility-highlight">
+                <i data-icon="book-open" class="lucide"></i>Wissensbereich
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Hauptnavigation ---------------------------------------------------- -->
+<header id="header" class="site-header">
+    <div class="container header-inner">
+
+        <a href="../index.html" class="site-brand" aria-label="Schnurrenberger IT-Governance – Startseite">
+            <span class="site-brand-mark" aria-hidden="true">
+                <svg viewBox="0 0 32 32" width="32" height="32" fill="none" aria-hidden="true">
+                    <path d="M6 22V11l10-5 10 5v11" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                    <path d="M11 22v-6M16 22v-9M21 22v-6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    <path d="M5 26h22" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+            </span>
+            <span class="site-brand-text">
+                <span class="site-brand-name">Schnurrenberger <span class="brand-accent">IT-Governance</span></span>
+                <span class="site-brand-line">IT-Governance für den Mittelstand</span>
+            </span>
+        </a>
+
+        <nav id="main-nav" class="main-nav" aria-label="Hauptnavigation">
+            <ul class="nav-list">
+                <li class="nav-item has-mega">
+                    <button type="button" class="nav-link nav-toggle" aria-expanded="false" aria-controls="mega-leistungen">
+                        Leistungen<i data-icon="chevron-down" class="lucide nav-caret"></i>
+                    </button>
+
+                    <div class="mega" id="mega-leistungen" hidden>
+                        <div class="container mega-inner">
+                            <div class="mega-intro">
+                                <p class="mega-intro-title">Abgegrenzte Beratungsleistungen statt Tagessatz-Bauchladen</p>
+                                <p class="mega-intro-text">Jede Leistung hat einen festen Umfang, ein festes Ergebnis und einen Preis, der vorher feststeht. Sie wissen vor der Beauftragung, was am Ende auf dem Tisch liegt.</p>
+                                <a href="../leistungen/index.html" class="mega-intro-link">
+                                    Alle Leistungen im Überblick<i data-icon="arrow-right" class="lucide"></i>
+                                </a>
+                            </div>
+
+                            <ul class="mega-list">
+                                <li>
+                                    <a href="../leistungen/quick-assessment.html" class="mega-link">
+                                        <span class="mega-icon"><i data-icon="compass" class="lucide"></i></span>
+                                        <span class="mega-text">
+                                            <strong>IT-Governance Quick Assessment</strong>
+                                            <small>Standortbestimmung in zwei Wochen</small>
+                                        </span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="../leistungen/gap-analyse.html" class="mega-link is-feature">
+                                        <span class="mega-icon"><i data-icon="search" class="lucide"></i></span>
+                                        <span class="mega-text">
+                                            <strong>IT-Governance Gap-Analyse</strong>
+                                            <small>Soll-Ist-Vergleich mit priorisierter Maßnahmenliste</small>
+                                        </span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="../leistungen/audit-readiness.html" class="mega-link">
+                                        <span class="mega-icon"><i data-icon="clipboard-check" class="lucide"></i></span>
+                                        <span class="mega-text">
+                                            <strong>Audit Readiness Assessment</strong>
+                                            <small>Vor der Prüfung wissen, was die Prüfung findet</small>
+                                        </span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="../leistungen/it-prozess-assessment.html" class="mega-link">
+                                        <span class="mega-icon"><i data-icon="git-branch" class="lucide"></i></span>
+                                        <span class="mega-text">
+                                            <strong>IT-Prozess-Assessment</strong>
+                                            <small>Reifegrad der IT-Prozesse, belastbar bewertet</small>
+                                        </span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="../leistungen/it-operating-model.html" class="mega-link">
+                                        <span class="mega-icon"><i data-icon="layers" class="lucide"></i></span>
+                                        <span class="mega-text">
+                                            <strong>IT Operating Model</strong>
+                                            <small>Wie die IT künftig aufgestellt und gesteuert wird</small>
+                                        </span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="../leistungen/governance-framework.html" class="mega-link">
+                                        <span class="mega-icon"><i data-icon="building" class="lucide"></i></span>
+                                        <span class="mega-text">
+                                            <strong>IT-Governance-Framework</strong>
+                                            <small>Richtlinien, Gremien, Entscheidungswege</small>
+                                        </span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="../leistungen/rollen-verantwortlichkeiten.html" class="mega-link">
+                                        <span class="mega-icon"><i data-icon="users" class="lucide"></i></span>
+                                        <span class="mega-text">
+                                            <strong>Rollen &amp; Verantwortlichkeiten</strong>
+                                            <small>RACI, das im Alltag hält</small>
+                                        </span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="../leistungen/kontrollframework.html" class="mega-link">
+                                        <span class="mega-icon"><i data-icon="shield-check" class="lucide"></i></span>
+                                        <span class="mega-text">
+                                            <strong>IT-Kontrollframework</strong>
+                                            <small>Kontrollen, die Nachweise erzeugen</small>
+                                        </span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="../leistungen/demand-management.html" class="mega-link">
+                                        <span class="mega-icon"><i data-icon="inbox" class="lucide"></i></span>
+                                        <span class="mega-text">
+                                            <strong>IT Demand Management</strong>
+                                            <small>Anforderungen bewerten, priorisieren, entscheiden</small>
+                                        </span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="../leistungen/service-management.html" class="mega-link">
+                                        <span class="mega-icon"><i data-icon="server" class="lucide"></i></span>
+                                        <span class="mega-text">
+                                            <strong>IT Service Management</strong>
+                                            <small>Servicekatalog, Prozesse, Kennzahlen</small>
+                                        </span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="../leistungen/governance-betreuung.html" class="mega-link">
+                                        <span class="mega-icon"><i data-icon="repeat" class="lucide"></i></span>
+                                        <span class="mega-text">
+                                            <strong>Laufende Governance-Betreuung</strong>
+                                            <small>Fester Tag im Monat statt Projektstau</small>
+                                        </span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </li>
+                <li class="nav-item has-mega">
+                    <button type="button" class="nav-link nav-toggle" aria-expanded="false" aria-controls="mega-themen">
+                        Themen<i data-icon="chevron-down" class="lucide nav-caret"></i>
+                    </button>
+
+                    <div class="mega" id="mega-themen" hidden>
+                        <div class="container mega-inner">
+                            <div class="mega-intro">
+                                <p class="mega-intro-title">Worum es fachlich geht</p>
+                                <p class="mega-intro-text">Regulatorische Anforderungen, Kontrollen, Dokumentation, Kennzahlen – erklärt für Menschen, die IT verantworten, aber keine Auditoren sind.</p>
+                                <a href="../themen/index.html" class="mega-intro-link">
+                                    Alle Themen ansehen<i data-icon="arrow-right" class="lucide"></i>
+                                </a>
+                            </div>
+
+                            <ul class="mega-list">
+                                <li>
+                                    <a href="../themen/nis2.html" class="mega-link">
+                                        <span class="mega-icon"><i data-icon="shield-check" class="lucide"></i></span>
+                                        <span class="mega-text">
+                                            <strong>NIS2</strong>
+                                            <small>Betroffenheit, Pflichten, Leitungsverantwortung</small>
+                                        </span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="../themen/dora.html" class="mega-link">
+                                        <span class="mega-icon"><i data-icon="euro" class="lucide"></i></span>
+                                        <span class="mega-text">
+                                            <strong>DORA</strong>
+                                            <small>Finanzsektor und seine IT-Dienstleister</small>
+                                        </span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="../themen/iso-27001.html" class="mega-link">
+                                        <span class="mega-icon"><i data-icon="award" class="lucide"></i></span>
+                                        <span class="mega-text">
+                                            <strong>ISO/IEC 27001</strong>
+                                            <small>Zertifizierung – und was davor kommt</small>
+                                        </span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="../themen/it-risikomanagement.html" class="mega-link">
+                                        <span class="mega-icon"><i data-icon="alert-triangle" class="lucide"></i></span>
+                                        <span class="mega-text">
+                                            <strong>IT-Risikomanagement</strong>
+                                            <small>Risiken, die im Vorstand ankommen</small>
+                                        </span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="../themen/it-notfallmanagement.html" class="mega-link">
+                                        <span class="mega-icon"><i data-icon="life-buoy" class="lucide"></i></span>
+                                        <span class="mega-text">
+                                            <strong>IT-Notfallmanagement</strong>
+                                            <small>Wiederanlauf, Notfallhandbuch, Test</small>
+                                        </span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="../themen/dienstleistermanagement.html" class="mega-link">
+                                        <span class="mega-icon"><i data-icon="link" class="lucide"></i></span>
+                                        <span class="mega-text">
+                                            <strong>IT-Dienstleistermanagement</strong>
+                                            <small>Auslagerung bleibt Ihre Verantwortung</small>
+                                        </span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="../themen/it-dokumentation.html" class="mega-link">
+                                        <span class="mega-icon"><i data-icon="file-text" class="lucide"></i></span>
+                                        <span class="mega-text">
+                                            <strong>IT-Dokumentation</strong>
+                                            <small>Was gepflegt werden muss – und was nicht</small>
+                                        </span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="../themen/it-kennzahlen.html" class="mega-link">
+                                        <span class="mega-icon"><i data-icon="line-chart" class="lucide"></i></span>
+                                        <span class="mega-text">
+                                            <strong>IT-Kennzahlen &amp; Reporting</strong>
+                                            <small>Steuerung statt Bauchgefühl</small>
+                                        </span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="../themen/asset-applikationsmanagement.html" class="mega-link">
+                                        <span class="mega-icon"><i data-icon="database" class="lucide"></i></span>
+                                        <span class="mega-text">
+                                            <strong>Asset- &amp; Applikationsmanagement</strong>
+                                            <small>Ohne Inventar keine Kontrolle</small>
+                                        </span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="../themen/prozessharmonisierung.html" class="mega-link">
+                                        <span class="mega-icon"><i data-icon="globe" class="lucide"></i></span>
+                                        <span class="mega-text">
+                                            <strong>Prozessharmonisierung</strong>
+                                            <small>Mehrere Standorte, ein Prozess</small>
+                                        </span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <a href="../vorgehen.html" class="nav-link">Vorgehen</a>
+                </li>
+                <li class="nav-item has-mega is-active">
+                    <button type="button" class="nav-link nav-toggle" aria-expanded="false" aria-controls="mega-wissen">
+                        Wissen<i data-icon="chevron-down" class="lucide nav-caret"></i>
+                    </button>
+
+                    <div class="mega" id="mega-wissen" hidden>
+                        <div class="container mega-inner">
+                            <div class="mega-intro">
+                                <p class="mega-intro-title">Ausführlich, kostenlos, ohne Anmeldung</p>
+                                <p class="mega-intro-text">Leitfäden, Checklisten und Modelle aus der Projektarbeit. Wer sie selbst umsetzt, braucht mich nicht – das ist so gemeint.</p>
+                                <a href="../wissen/index.html" class="mega-intro-link">
+                                    Alle Beiträge<i data-icon="arrow-right" class="lucide"></i>
+                                </a>
+                            </div>
+
+                            <ul class="mega-list">
+                                <li>
+                                    <a href="../wissen/it-governance-mittelstand.html" class="mega-link">
+                                        <span class="mega-icon"><i data-icon="book-open" class="lucide"></i></span>
+                                        <span class="mega-text">
+                                            <strong>IT-Governance im Mittelstand</strong>
+                                            <small>Was der Begriff konkret bedeutet</small>
+                                        </span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="../wissen/nis2-betroffenheit.html" class="mega-link">
+                                        <span class="mega-icon"><i data-icon="help-circle" class="lucide"></i></span>
+                                        <span class="mega-text">
+                                            <strong>NIS2-Betroffenheit prüfen</strong>
+                                            <small>In sechs Schritten zur belastbaren Einschätzung</small>
+                                        </span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="../wissen/audit-vorbereitung.html" class="mega-link">
+                                        <span class="mega-icon"><i data-icon="calendar-check" class="lucide"></i></span>
+                                        <span class="mega-text">
+                                            <strong>Audit-Vorbereitung</strong>
+                                            <small>Die 12 Wochen vor der Prüfung</small>
+                                        </span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="../wissen/reifegradmodell.html" class="mega-link">
+                                        <span class="mega-icon"><i data-icon="bar-chart" class="lucide"></i></span>
+                                        <span class="mega-text">
+                                            <strong>Reifegradmodell zur Selbsteinschätzung</strong>
+                                            <small>12 Fragen, fünf Stufen, ehrliches Ergebnis</small>
+                                        </span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="../wissen/kontrollen-nachweise.html" class="mega-link">
+                                        <span class="mega-icon"><i data-icon="check-circle" class="lucide"></i></span>
+                                        <span class="mega-text">
+                                            <strong>Von der Kontrolle zum Nachweis</strong>
+                                            <small>Warum Prüfer Belege sehen wollen, nicht Absichten</small>
+                                        </span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="../wissen/dokumentenlandkarte.html" class="mega-link">
+                                        <span class="mega-icon"><i data-icon="map" class="lucide"></i></span>
+                                        <span class="mega-text">
+                                            <strong>Die IT-Dokumentenlandkarte</strong>
+                                            <small>Welche Dokumente eine IT wirklich braucht</small>
+                                        </span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="../faq.html" class="mega-link">
+                                        <span class="mega-icon"><i data-icon="message-circle" class="lucide"></i></span>
+                                        <span class="mega-text">
+                                            <strong>Häufige Fragen</strong>
+                                            <small>Ablauf, Kosten, Abgrenzung, Vertraulichkeit</small>
+                                        </span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <a href="../preise.html" class="nav-link">Preise</a>
+                </li>
+                <li class="nav-item">
+                    <a href="../ueber-mich.html" class="nav-link">Über mich</a>
+                </li>
+
+                <!-- Auf dem Handy gehört der Hauptknopf mit ins Menü -->
+                <li class="nav-item nav-item-cta">
+                    <a href="../kontakt.html" class="btn-primary-custom">Erstgespräch vereinbaren</a>
+                </li>
+            </ul>
+        </nav>
+
+        <div class="header-actions">
+            <a href="../kontakt.html" class="btn-primary-custom header-cta">Erstgespräch vereinbaren</a>
+        </div>
+
+        <button id="mobile-menu-button" class="mobile-menu-toggle" type="button"
+                aria-label="Menü öffnen" aria-controls="main-nav" aria-expanded="false">
+            <i data-icon="menu" class="lucide"></i>
+        </button>
+    </div>
+</header>
+
+<div class="mega-backdrop" hidden></div>
+
+<main id="main-content">
+<!-- Seitenkopf --------------------------------------------------------- -->
+<section class="page-hero">
+    <div class="container">
+        <nav class="breadcrumb" aria-label="Sie sind hier">
+            <ol>
+                <li><a href="../index.html">Start</a></li>
+                <li><a href="../wissen/index.html">Wissen</a></li>
+                <li aria-current="page">IT-Governance im Mittelstand</li>
+            </ol>
+        </nav>
+
+        <div class="page-hero-inner">
+            <div class="page-hero-copy">
+                <span class="section-kicker">Leitfaden · Grundlagen</span>
+                <h1 class="page-hero-title">IT-Governance im Mittelstand – <span class="accent">ohne Konzernsprache</span></h1>
+                <p class="page-hero-lead">Der Begriff schreckt ab, weil er nach Vorstandsetage klingt. Gemeint ist etwas sehr Praktisches: dass jemand weiß, wer über IT entscheidet, wie das abläuft und woran man erkennt, dass es eingehalten wurde.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container">
+        <div class="sidebar-layout">
+            <div class="prose">
+
+                <div class="toc">
+                    <h2>Inhalt</h2>
+                    <ol>
+                        <li><a href="#definition">Was IT-Governance eigentlich ist</a></li>
+                        <li><a href="#abgrenzung">Abgrenzung zu IT-Management und Sicherheit</a></li>
+                        <li><a href="#bausteine">Die zehn Bausteine</a></li>
+                        <li><a href="#mittelstand">Was im Mittelstand anders ist</a></li>
+                        <li><a href="#reihenfolge">Die richtige Reihenfolge</a></li>
+                        <li><a href="#fehler">Fünf typische Fehler</a></li>
+                    </ol>
+                </div>
+
+                <h2 id="definition">Was IT-Governance eigentlich ist</h2>
+                <p>
+                    IT-Governance beantwortet drei Fragen, und zwar auf eine Weise, die sich
+                    belegen lässt:
+                </p>
+                <ol class="steps">
+                    <li>
+                        <h3>Wer entscheidet worüber?</h3>
+                        <p>Über Budget, Architektur, Anwendungen, Auslagerungen, Risiken,
+                           Ausnahmen. Nicht in einem Organigramm, sondern konkret: ab welchem
+                           Betrag, in welchem Gremium, mit wessen Zustimmung.</p>
+                    </li>
+                    <li>
+                        <h3>Nach welchen Regeln?</h3>
+                        <p>Welche Verfahren gelten, wer muss beteiligt werden, was ist verboten,
+                           was ist genehmigungspflichtig, was passiert bei Abweichung.</p>
+                    </li>
+                    <li>
+                        <h3>Woran erkennt man, dass es eingehalten wird?</h3>
+                        <p>Kontrollen, Kennzahlen, Berichte, Nachweise. Ohne diesen dritten Punkt
+                           ist Governance eine Absichtserklärung – und in jeder Prüfung wertlos.</p>
+                    </li>
+                </ol>
+
+                <div class="pullquote">
+                    Governance ist nicht die Frage, ob gut gearbeitet wird. Sie ist die Frage, ob
+                    das auch dann noch funktioniert, wenn die Person wechselt, die es bisher gut
+                    gemacht hat.
+                </div>
+
+                <h2 id="abgrenzung">Abgrenzung: Governance, Management, Sicherheit</h2>
+                <p>
+                    Diese drei Begriffe werden oft synonym verwendet und meinen Unterschiedliches.
+                    Die Unterscheidung hilft, weil sie die Zuständigkeiten klärt:
+                </p>
+                <div class="table-wrap">
+                    <table class="data-table">
+                        <thead>
+                            <tr><th scope="col">Begriff</th><th scope="col">Beantwortet</th><th scope="col">Typische Rolle</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>IT-Governance</strong></td>
+                                <td>Was soll erreicht werden, wer entscheidet, wie wird überwacht?</td>
+                                <td>Geschäftsführung, IT-Steuerkreis</td>
+                            </tr>
+                            <tr>
+                                <td><strong>IT-Management</strong></td>
+                                <td>Wie wird das Beschlossene umgesetzt und betrieben?</td>
+                                <td>IT-Leitung, Teams</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Informationssicherheit</strong></td>
+                                <td>Wie werden Vertraulichkeit, Integrität und Verfügbarkeit geschützt?</td>
+                                <td>Sicherheitsbeauftragter</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Datenschutz</strong></td>
+                                <td>Wie werden personenbezogene Daten rechtskonform verarbeitet?</td>
+                                <td>Datenschutzbeauftragter, Kanzlei</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p>
+                    Wichtig ist die Grenze nach unten und nach außen: Governance sagt nicht, welche
+                    Firewall gekauft wird. Und sie ersetzt keine rechtliche Bewertung – ob eine
+                    Verarbeitung zulässig ist, entscheidet nicht der IT-Steuerkreis.
+                </p>
+
+                <h2 id="bausteine">Die zehn Bausteine</h2>
+                <p>
+                    Wenn man alle gängigen Rahmenwerke – COBIT, ISO/IEC 27001, ITIL, aber auch die
+                    Anforderungslisten von Prüfern und Kunden – auf das reduziert, was ein
+                    mittelständisches Unternehmen tatsächlich braucht, bleiben zehn Bausteine:
+                </p>
+                <div class="table-wrap">
+                    <table class="data-table">
+                        <thead>
+                            <tr><th scope="col">Baustein</th><th scope="col">Mindestumfang im Mittelstand</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td><strong>1 · Steuerungsstruktur</strong></td><td>Ein Gremium, das quartalsweise tagt und protokolliert wird</td></tr>
+                            <tr><td><strong>2 · Rollen und Verantwortlichkeiten</strong></td><td>10–15 benannte Rollen mit Vertretung</td></tr>
+                            <tr><td><strong>3 · Regelungen</strong></td><td>6–10 Richtlinien, freigegeben und bekannt</td></tr>
+                            <tr><td><strong>4 · Anforderungssteuerung (Demand)</strong></td><td>Ein Eingang, ein Bewertungsschema, eine Entscheidungsrunde</td></tr>
+                            <tr><td><strong>5 · Servicebetrieb</strong></td><td>Servicekatalog, Incident- und Change-Prozess</td></tr>
+                            <tr><td><strong>6 · Risikomanagement</strong></td><td>15–30 Risiken, quartalsweise geprüft, in Euro bewertet</td></tr>
+                            <tr><td><strong>7 · Kontrollen</strong></td><td>15–40 Kontrollen mit Nachweis im Arbeitsablauf</td></tr>
+                            <tr><td><strong>8 · Dokumentation und Inventar</strong></td><td>Kerndokumente aktuell, Anwendungsverzeichnis vollständig</td></tr>
+                            <tr><td><strong>9 · Dienstleistersteuerung</strong></td><td>Übersicht, Kritikalität, jährliche Bewertung der wichtigsten</td></tr>
+                            <tr><td><strong>10 · Kennzahlen und Bericht</strong></td><td>8–12 Kennzahlen, ein Bericht monatlich auf einer Seite</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p>
+                    Das ist der vollständige Umfang. Ein Unternehmen mit 300 Mitarbeitenden, das
+                    diese zehn Punkte erfüllt, besteht die allermeisten Prüfungen und kann seine IT
+                    steuern. Alles, was darüber hinausgeht, sollte einen konkreten Anlass haben.
+                </p>
+
+                <h2 id="mittelstand">Was im Mittelstand anders ist</h2>
+                <ul class="checklist">
+                    <li><strong>Personalunion ist normal.</strong> Eine Person trägt drei bis fünf
+                        Rollen. Das ist zulässig, solange unvereinbare Rollen getrennt bleiben –
+                        wer beantragt, darf nicht genehmigen.</li>
+                    <li><strong>Kurze Wege sind ein Vorteil.</strong> Entscheidungen, die im
+                        Konzern drei Gremien durchlaufen, fallen hier in einem Gespräch. Governance
+                        soll diesen Vorteil nicht zerstören, sondern absichern.</li>
+                    <li><strong>Es gibt keinen Stab.</strong> Niemand hat Zeit, ein
+                        Managementsystem zu pflegen. Deshalb muss jeder Nachweis im Arbeitsablauf
+                        entstehen, nicht daneben.</li>
+                    <li><strong>Der Anlass kommt von außen.</strong> Selten beginnt ein
+                        Governance-Projekt aus eigenem Antrieb. Meist ist es ein Prüfbericht, ein
+                        Kunde, ein Vorfall oder eine Konzernmutter.</li>
+                    <li><strong>Historisch gewachsen ist der Normalzustand.</strong> Wer das als
+                        Versäumnis behandelt, verliert die Beteiligung der Menschen, die es
+                        aufgebaut haben.</li>
+                </ul>
+
+                <h2 id="reihenfolge">Die richtige Reihenfolge</h2>
+                <p>
+                    Die Reihenfolge ist wichtiger als die Vollständigkeit. Wer Kontrollen einführt,
+                    bevor Rollen geklärt sind, kontrolliert ins Leere. Wer Prozesse beschreibt,
+                    ohne Verantwortliche zu benennen, beschreibt Wünsche.
+                </p>
+<ol class="chain" aria-label="Reihenfolge beim Aufbau">
+    <li>
+        <span class="chain-step">
+            <strong>1 · Standort</strong>
+            <small>Wo stehen wir wirklich?</small>
+        </span>
+        <span class="chain-arrow" aria-hidden="true">›</span>
+    </li>
+    <li>
+        <span class="chain-step">
+            <strong>2 · Rollen</strong>
+            <small>Wer ist wofür zuständig?</small>
+        </span>
+        <span class="chain-arrow" aria-hidden="true">›</span>
+    </li>
+    <li>
+        <span class="chain-step">
+            <strong>3 · Regeln</strong>
+            <small>Was soll gelten?</small>
+        </span>
+        <span class="chain-arrow" aria-hidden="true">›</span>
+    </li>
+    <li>
+        <span class="chain-step">
+            <strong>4 · Prozesse</strong>
+            <small>Wie läuft es ab?</small>
+        </span>
+        <span class="chain-arrow" aria-hidden="true">›</span>
+    </li>
+    <li>
+        <span class="chain-step">
+            <strong>5 · Kontrollen</strong>
+            <small>Wird es eingehalten?</small>
+        </span>
+        <span class="chain-arrow" aria-hidden="true">›</span>
+    </li>
+    <li>
+        <span class="chain-step">
+            <strong>6 · Bericht</strong>
+            <small>Wie steuern wir?</small>
+        </span>
+    </li>
+</ol>
+                <p>
+                    Für ein Unternehmen ohne Vorarbeit sind das realistisch 12 bis 24 Monate –
+                    nebenbei, im Tagesgeschäft, mit Hilfe. Wer schneller fertig sein will, bekommt
+                    Dokumente statt Wirkung.
+                </p>
+
+                <h2 id="fehler">Fünf typische Fehler</h2>
+                <ol class="steps">
+                    <li>
+                        <h3>Das Konzernregelwerk kopieren</h3>
+                        <p>Vierzig Dokumente aus einer anderen Organisation passen nicht und werden
+                           nicht gelebt. Sie erzeugen zusätzlich das Risiko, an Regeln gemessen zu
+                           werden, die man sich selbst gegeben hat.</p>
+                    </li>
+                    <li>
+                        <h3>Governance als IT-Projekt behandeln</h3>
+                        <p>Ohne Beteiligung der Geschäftsführung und der Fachbereiche entsteht ein
+                           IT-internes Regelwerk, das an der ersten Ausnahme von oben zerbricht.</p>
+                    </li>
+                    <li>
+                        <h3>Werkzeug vor Struktur</h3>
+                        <p>Ein GRC-Werkzeug löst kein Governance-Problem. Es verwaltet eine
+                           Struktur, die es vorher geben muss – sonst verwaltet es Leere,
+                           allerdings mit Lizenzkosten.</p>
+                    </li>
+                    <li>
+                        <h3>Vollständigkeit vor Wirksamkeit</h3>
+                        <p>Lieber fünf Kontrollen, die laufen, als vierzig, die dokumentiert sind.
+                           Ein Prüfer bewertet eine funktionierende Teilmenge deutlich besser als
+                           ein vollständiges System ohne Nachweise.</p>
+                    </li>
+                    <li>
+                        <h3>Nach dem Projekt aufhören</h3>
+                        <p>Governance ist ein Betriebsmodus, kein Projekt. Ohne festen Rhythmus –
+                           Gremium, Kontrollen, Bericht – ist nach zwölf Monaten der alte Zustand
+                           erreicht, nur mit Dokumenten im Laufwerk.</p>
+                    </li>
+                </ol>
+
+            </div>
+<aside class="page-aside">
+
+    <div class="aside-card">
+        <h2 class="aside-title">Wissen</h2>
+        <nav class="aside-nav" aria-label="Weitere Seiten in diesem Bereich">
+            <a href="../wissen/index.html">
+                Übersicht
+                <i data-icon="arrow-right" class="lucide"></i>
+            </a>
+            <a href="../wissen/it-governance-mittelstand.html" class="is-current" aria-current="page">
+                IT-Governance im Mittelstand                <i data-icon="arrow-right" class="lucide"></i>
+            </a>
+            <a href="../wissen/nis2-betroffenheit.html">
+                NIS2-Betroffenheit prüfen                <i data-icon="arrow-right" class="lucide"></i>
+            </a>
+            <a href="../wissen/audit-vorbereitung.html">
+                Audit-Vorbereitung                <i data-icon="arrow-right" class="lucide"></i>
+            </a>
+            <a href="../wissen/reifegradmodell.html">
+                Reifegradmodell zur Selbsteinschätzung                <i data-icon="arrow-right" class="lucide"></i>
+            </a>
+            <a href="../wissen/kontrollen-nachweise.html">
+                Von der Kontrolle zum Nachweis                <i data-icon="arrow-right" class="lucide"></i>
+            </a>
+            <a href="../wissen/dokumentenlandkarte.html">
+                Die IT-Dokumentenlandkarte                <i data-icon="arrow-right" class="lucide"></i>
+            </a>
+            <a href="../faq.html">
+                Häufige Fragen                <i data-icon="arrow-right" class="lucide"></i>
+            </a>
+        </nav>
+    </div>
+
+    <div class="aside-card is-dark">
+        <h2 class="aside-title">Selbst einschätzen</h2>
+        <p>Zwölf Fragen, fünf Stufen, ein ehrliches Ergebnis – ohne Datenabgabe.</p>
+        <a href="../wissen/reifegradmodell.html" class="btn-primary-custom btn-on-dark">Zur Selbsteinschätzung</a>
+    </div>
+</aside>
+        </div>
+    </div>
+</section>
+
+<section class="section section-tight related">
+    <div class="container">
+        <h2 class="related-title">Passt dazu</h2>
+        <div class="related-grid">
+            <a href="../wissen/reifegradmodell.html" class="related-card">
+                <span class="related-icon"><i data-icon="bar-chart" class="lucide"></i></span>
+                <span class="related-text">
+                    <strong>Reifegradmodell zur Selbsteinschätzung</strong>
+                    <small>12 Fragen, fünf Stufen, ehrliches Ergebnis</small>
+                </span>
+                <i data-icon="arrow-right" class="lucide related-arrow"></i>
+            </a>
+            <a href="../leistungen/quick-assessment.html" class="related-card">
+                <span class="related-icon"><i data-icon="compass" class="lucide"></i></span>
+                <span class="related-text">
+                    <strong>IT-Governance Quick Assessment</strong>
+                    <small>Standortbestimmung in zwei Wochen</small>
+                </span>
+                <i data-icon="arrow-right" class="lucide related-arrow"></i>
+            </a>
+            <a href="../themen/it-kennzahlen.html" class="related-card">
+                <span class="related-icon"><i data-icon="line-chart" class="lucide"></i></span>
+                <span class="related-text">
+                    <strong>IT-Kennzahlen &amp; Reporting</strong>
+                    <small>Steuerung statt Bauchgefühl</small>
+                </span>
+                <i data-icon="arrow-right" class="lucide related-arrow"></i>
+            </a>
+        </div>
+    </div>
+</section>
+</main>
+
+<!-- Handlungsband ------------------------------------------------------ -->
+<section class="cta-band">
+    <div class="container cta-inner">
+        <div class="cta-copy">
+            <h2 class="cta-title">Sprechen wir 30 Minuten über Ihre Ausgangslage</h2>
+            <p class="cta-text">Kostenlos und unverbindlich. Sie schildern, was ansteht – Audit, Prüfungsfeststellung, NIS2, Wachstum, unklare Zuständigkeiten. Sie bekommen eine ehrliche Einschätzung, was zuerst zu tun ist. Auch dann, wenn die Antwort lautet: dafür brauchen Sie keine Beratung.</p>
+        </div>
+        <div class="cta-actions">
+            <a href="../kontakt.html" class="btn-primary-custom btn-on-dark">Erstgespräch vereinbaren</a>
+            <a href="../leistungen/index.html" class="btn-secondary btn-ghost-dark">Leistungen ansehen</a>
+        </div>
+    </div>
+</section>
+
+<!-- Footer ------------------------------------------------------------- -->
+<footer class="site-footer">
+    <div class="container">
+
+        <div class="footer-top">
+            <div class="footer-brand">
+                <span class="site-brand">
+                    <span class="site-brand-mark" aria-hidden="true">
+                        <svg viewBox="0 0 32 32" width="32" height="32" fill="none" aria-hidden="true">
+                            <path d="M6 22V11l10-5 10 5v11" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                            <path d="M11 22v-6M16 22v-9M21 22v-6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                            <path d="M5 26h22" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
+                    </span>
+                    <span class="site-brand-text">
+                        <span class="site-brand-name">Schnurrenberger IT-Governance</span>
+                        <span class="site-brand-line">IT-Governance für den Mittelstand</span>
+                    </span>
+                </span>
+                <p class="footer-brand-copy">
+                    Beratung für mittelständische Unternehmen, deren IT schneller gewachsen ist
+                    als ihre Steuerung: Governance-Strukturen, Prozesse, Rollen, Kontrollen und
+                    Nachweise – so aufgesetzt, dass sie im Alltag gelebt und in der Prüfung
+                    anerkannt werden.
+                </p>
+                <address class="footer-address">
+                    Christoph Schnurrenberger<br>
+                    Birkenstr. 10<br>
+                    87734 Benningen<br>
+                    <a href="tel:+491752778902">0175 2778902</a><br>
+                    <a href="mailto:kontakt@it-governance-mittelstand.de">kontakt@it-governance-mittelstand.de</a>
+                </address>
+            </div>
+
+            <div class="footer-nav">
+                <div class="footer-col">
+                    <h2 class="footer-eyebrow">Leistungen</h2>
+                    <ul class="footer-link-list">
+                        <li><a href="../leistungen/index.html">Übersicht</a></li>
+                        <li><a href="../leistungen/quick-assessment.html">IT-Governance Quick Assessment</a></li>
+                        <li><a href="../leistungen/gap-analyse.html">IT-Governance Gap-Analyse</a></li>
+                        <li><a href="../leistungen/audit-readiness.html">Audit Readiness Assessment</a></li>
+                        <li><a href="../leistungen/it-prozess-assessment.html">IT-Prozess-Assessment</a></li>
+                        <li><a href="../leistungen/it-operating-model.html">IT Operating Model</a></li>
+                        <li><a href="../leistungen/governance-framework.html">IT-Governance-Framework</a></li>
+                        <li><a href="../leistungen/rollen-verantwortlichkeiten.html">Rollen &amp; Verantwortlichkeiten</a></li>
+                        <li><a href="../leistungen/kontrollframework.html">IT-Kontrollframework</a></li>
+                        <li><a href="../leistungen/demand-management.html">IT Demand Management</a></li>
+                        <li><a href="../leistungen/service-management.html">IT Service Management</a></li>
+                        <li><a href="../leistungen/governance-betreuung.html">Laufende Governance-Betreuung</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h2 class="footer-eyebrow">Themen</h2>
+                    <ul class="footer-link-list">
+                        <li><a href="../themen/index.html">Übersicht</a></li>
+                        <li><a href="../themen/nis2.html">NIS2</a></li>
+                        <li><a href="../themen/dora.html">DORA</a></li>
+                        <li><a href="../themen/iso-27001.html">ISO/IEC 27001</a></li>
+                        <li><a href="../themen/it-risikomanagement.html">IT-Risikomanagement</a></li>
+                        <li><a href="../themen/it-notfallmanagement.html">IT-Notfallmanagement</a></li>
+                        <li><a href="../themen/dienstleistermanagement.html">IT-Dienstleistermanagement</a></li>
+                        <li><a href="../themen/it-dokumentation.html">IT-Dokumentation</a></li>
+                        <li><a href="../themen/it-kennzahlen.html">IT-Kennzahlen &amp; Reporting</a></li>
+                        <li><a href="../themen/asset-applikationsmanagement.html">Asset- &amp; Applikationsmanagement</a></li>
+                        <li><a href="../themen/prozessharmonisierung.html">Prozessharmonisierung</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h2 class="footer-eyebrow">Wissen</h2>
+                    <ul class="footer-link-list">
+                        <li><a href="../wissen/index.html">Übersicht</a></li>
+                        <li><a href="../wissen/it-governance-mittelstand.html">IT-Governance im Mittelstand</a></li>
+                        <li><a href="../wissen/nis2-betroffenheit.html">NIS2-Betroffenheit prüfen</a></li>
+                        <li><a href="../wissen/audit-vorbereitung.html">Audit-Vorbereitung</a></li>
+                        <li><a href="../wissen/reifegradmodell.html">Reifegradmodell zur Selbsteinschätzung</a></li>
+                        <li><a href="../wissen/kontrollen-nachweise.html">Von der Kontrolle zum Nachweis</a></li>
+                        <li><a href="../wissen/dokumentenlandkarte.html">Die IT-Dokumentenlandkarte</a></li>
+                        <li><a href="../faq.html">Häufige Fragen</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-col">
+                    <h2 class="footer-eyebrow">Beratung</h2>
+                    <ul class="footer-link-list">
+                        <li><a href="../vorgehen.html">Vorgehen</a></li>
+                        <li><a href="../fuer-wen.html">Für wen ich arbeite</a></li>
+                        <li><a href="../preise.html">Preise &amp; Investition</a></li>
+                        <li><a href="../ueber-mich.html">Über mich</a></li>
+                        <li><a href="../faq.html">Häufige Fragen</a></li>
+                        <li><a href="../kontakt.html">Kontakt</a></li>
+                        <li><a href="../impressum.html">Impressum</a></li>
+                        <li><a href="../datenschutz.html">Datenschutz</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer-legal">
+            <p>
+                <strong>Keine Rechtsberatung.</strong> Diese Website und meine Leistungen
+                dienen der fachlichen Organisations- und Prozessberatung. Sie enthalten
+                keine Rechtsberatung im Sinne des Rechtsdienstleistungsgesetzes und ersetzen
+                keine anwaltliche Prüfung. Rechtliche Bewertungen – etwa zur Betroffenheit
+                von NIS2 oder DORA, zu Vertrags- und Haftungsfragen oder zu Meldepflichten –
+                treffen ausschließlich zugelassene Rechtsanwältinnen und Rechtsanwälte.
+                Auf Wunsch arbeite ich der von Ihnen beauftragten Kanzlei fachlich zu.
+            </p>
+        </div>
+
+        <div class="footer-bottom">
+            <p>&copy; <span id="copyright-year">2026</span> Christoph Schnurrenberger. Alle Rechte vorbehalten.</p>
+            <p class="footer-note">
+                Diese Seite lädt keine externen Schriften, Skripte oder Tracker.
+            </p>
+        </div>
+    </div>
+</footer>
+
+<script src="../assets/site.js" defer></script>
+</body>
+</html>

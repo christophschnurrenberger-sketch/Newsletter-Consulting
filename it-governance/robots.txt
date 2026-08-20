@@ -1,0 +1,7 @@
+# Alles darf gelesen werden – die Seite hat keinen geschützten Bereich.
+User-agent: *
+Allow: /
+Disallow: /kontakt-senden.php
+
+# BITTE ANPASSEN, sobald die endgültige Domain feststeht.
+Sitemap: https://www.it-governance-mittelstand.de/sitemap.xml

@@ -43,7 +43,9 @@ $canonical = rtrim($SITE['domain'], '/') . '/club/' . $slug . '/';
 
     <title><?= e($club['name']) ?> – Ihr Newsletter, einmal neu gedacht</title>
 
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='15' fill='%231B5E32'/><text x='16' y='22' font-family='Georgia,serif' font-size='17' font-weight='700' fill='white' text-anchor='middle'>A</text></svg>">
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
     <link rel="stylesheet" href="/assets/club.css">
 </head>
 <body class="club-page">
@@ -52,7 +54,7 @@ $canonical = rtrim($SITE['domain'], '/') . '/club/' . $slug . '/';
 <header class="club-header">
     <div class="club-wrap club-header-inner">
         <a class="club-sender" href="/index.php" style="text-decoration:none;">
-            <span class="club-sender-mark" aria-hidden="true">A</span>
+            <span class="club-sender-mark"><?php include __DIR__ . '/../partials/logo.php'; ?></span>
             <span class="club-sender-text">
                 <span class="club-sender-name">AcumenMail Golf</span>
                 <span class="club-sender-line">Newsletter für Golfclubs</span>

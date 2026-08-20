@@ -238,8 +238,32 @@ textarea:focus-visible, select:focus-visible {
 .site-header.scrolled { border-bottom-color: rgba(27, 43, 33, 0.18); }
 .header-inner { display: flex; align-items: center; justify-content: space-between; gap: 2rem; min-height: 78px; }
 
-.site-brand { display: inline-flex; align-items: baseline; gap: 0.5rem; flex-shrink: 0; }
-.site-brand-mark { display: none; }   /* Kein Logo-Kreis. Der Name reicht. */
+/*
+   Die Bildmarke
+   ------------------------------------------------------------------------
+   Lange stand hier „Kein Logo-Kreis, der Name reicht". Für die Seite selbst
+   stimmte das – aber ein Name ist kein Lesezeichen-Symbol, kein Bild in der
+   Vorschau beim Teilen und kein Absender im Postfach. Deshalb jetzt eine
+   Marke: eine Fahnenstange, an der ein Brief weht. Kein Kreis, kein Verlauf,
+   keine abgerundeten Ecken – dieselbe rechteckige Fläche in derselben
+   Signalfarbe, mit der die Seite auch Wörter markiert.
+
+   Das Wort „Golf" trägt daneben keine Markierung mehr: Zwei lindgrüne Blöcke
+   nebeneinander streiten sich. Die Fläche gehört jetzt der Marke, das Wort
+   bekommt das Clubgrün.
+*/
+.site-brand { display: inline-flex; align-items: center; gap: 0.6rem; flex-shrink: 0; }
+.site-brand-mark { display: block; flex-shrink: 0; line-height: 0; }
+.site-brand-mark .marke { display: block; width: 2.1rem; height: 2.1rem; }
+.marke-flaeche { fill: var(--signal); }
+.marke-tinte { fill: var(--ink); }
+/*
+   Negativfassung: Auf dunklem Grund fällt die Fläche weg und die Zeichnung
+   wird lindgrün. Sonst verschwände der Balken unter der Stange im Untergrund
+   und die Marke sähe unten abgeschnitten aus.
+*/
+.site-footer .marke-flaeche, .section-dark .marke-flaeche { fill: transparent; }
+.site-footer .marke-tinte, .section-dark .marke-tinte { fill: var(--signal); }
 .site-brand-text { display: flex; align-items: baseline; gap: 0.5rem; }
 .site-brand-name {
     /* Der Name ist eine Marke, kein Satz – im Fuß brach er sonst zu
@@ -251,11 +275,8 @@ textarea:focus-visible, select:focus-visible {
     letter-spacing: -0.04em;
     color: var(--text);
 }
-.site-brand-name .brand-accent {
-    /* Der Akzent liegt auf dem Wort, nicht auf einem Icon daneben */
-    background-color: var(--signal);
-    padding: 0 0.28em 0.08em;
-}
+.site-brand-name .brand-accent { color: var(--green); }
+.site-footer .site-brand-name .brand-accent { color: var(--signal); }
 /*
    Der Beisatz stand im Kopf neben dem Namen und machte die Marke 385 px
    breit. Zusammen mit Navigation und Knopf ergab das 1272 px in einer
@@ -266,6 +287,13 @@ textarea:focus-visible, select:focus-visible {
 */
 .site-brand-line { font-size: 0.68rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); }
 .site-header .site-brand-line { display: none; }
+/*
+   Im Fuß steht der Beisatz weiterhin – aber unter 520 px passen Marke,
+   Name und Beisatz nicht mehr nebeneinander, und die Zeile schob den
+   ganzen Fuß über den Rand. Dort trägt ohnehin der Absatz darunter
+   dieselbe Auskunft.
+*/
+@media (max-width: 520px) { .site-brand-line { display: none; } }
 
 .main-nav { flex: 1; }
 .nav-list { display: flex; align-items: center; justify-content: center; gap: 0.15rem; }
@@ -954,7 +982,11 @@ a.link-card:hover .link-card-more::before { width: 100%; }
 .site-footer h2, .site-footer strong { color: var(--on-ink); }
 .footer-top { display: grid; grid-template-columns: 1fr; gap: 3rem; padding-bottom: 3rem; border-bottom: 1px solid var(--ink-line); }
 @media (min-width: 900px) { .footer-top { grid-template-columns: 4fr 8fr; gap: 4rem; } }
-.footer-brand .site-brand { margin-bottom: 1.4rem; }
+.footer-brand .site-brand { margin-bottom: 1.4rem; flex-shrink: 1; min-width: 0; }
+.footer-brand .site-brand-mark .marke { width: 2.6rem; height: 2.6rem; }
+/* Im Fuß steht der Beisatz unter dem Namen, nicht daneben: Neben ihm brach er
+   in zwei Zeilen um und schob die Sperrung aus der Spalte heraus. */
+.footer-brand .site-brand-text { flex-direction: column; align-items: flex-start; gap: 0.25rem; }
 .footer-brand .site-brand-name { color: var(--on-ink); }
 .footer-brand .site-brand-line { color: var(--muted-dark); }
 .footer-brand-copy { font-size: 0.94rem; margin-bottom: 1.6rem; max-width: 34ch; }

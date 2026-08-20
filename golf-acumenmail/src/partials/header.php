@@ -49,11 +49,17 @@ $canonical = rtrim($SITE['domain'], '/') . url($page['path']);
     <meta property="og:url" content="<?= e($canonical) ?>">
     <meta property="og:title" content="<?= e($page['title']) ?>">
     <meta property="og:description" content="<?= e($page['description']) ?>">
+    <meta property="og:image" content="<?= e(rtrim($SITE['domain'], '/') . url('assets/og-bild.png')) ?>">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="<?= e($SITE['name']) ?> – <?= e($SITE['claim']) ?>">
     <meta name="twitter:card" content="summary_large_image">
 
     <title><?= e($page['title']) ?> | <?= e($SITE['name']) ?></title>
 
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='15' fill='%231E6B45'/><text x='16' y='22' font-family='Georgia,serif' font-size='17' font-weight='700' fill='white' text-anchor='middle'>A</text></svg>">
+    <link rel="icon" href="<?= e(url('favicon.svg')) ?>" type="image/svg+xml">
+    <link rel="icon" href="<?= e(url('favicon-32.png')) ?>" sizes="32x32" type="image/png">
+    <link rel="apple-touch-icon" href="<?= e(url('apple-touch-icon.png')) ?>">
 
     <link rel="stylesheet" href="<?= e(url('assets/site.css')) ?>">
 <?php foreach ($page['css'] as $sheet): ?>
@@ -97,7 +103,7 @@ $canonical = rtrim($SITE['domain'], '/') . url($page['path']);
     <div class="container header-inner">
 
         <a href="<?= e(url('')) ?>" class="site-brand" aria-label="<?= e($SITE['name']) ?> – Startseite">
-            <span class="site-brand-mark" aria-hidden="true">A</span>
+            <span class="site-brand-mark"><?php include __DIR__ . '/logo.php'; ?></span>
             <span class="site-brand-text">
                 <span class="site-brand-name">AcumenMail <span class="brand-accent">Golf</span></span>
                 <span class="site-brand-line"><?= e($SITE['claim']) ?></span>

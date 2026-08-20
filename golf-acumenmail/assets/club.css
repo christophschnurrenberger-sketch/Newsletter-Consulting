@@ -149,19 +149,15 @@ body.club-page {
     min-height: 84px;
 }
 .club-sender { display: flex; align-items: center; gap: 0.8rem; }
-.club-sender-mark {
-    width: 42px; height: 42px;
-    border-radius: 50%;
-    background-color: var(--c-green);
-    color: #fff;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    font-family: var(--c-head);
-    font-size: 1.1rem;
-    font-weight: 700;
-    flex-shrink: 0;
-}
+/*
+   Diese Seiten tragen die Farben des jeweiligen Clubs – die Marke des
+   Absenders bleibt trotzdem in ihren eigenen. Genau dafür gibt es sie:
+   Man soll sehen, von wem der Vorschlag kommt.
+*/
+.club-sender-mark { display: block; flex-shrink: 0; line-height: 0; }
+.club-sender-mark .marke { display: block; width: 42px; height: 42px; }
+.club-sender-mark .marke-flaeche { fill: #C7F04A; }
+.club-sender-mark .marke-tinte { fill: #0C1F14; }
 .club-sender-text { display: flex; flex-direction: column; line-height: 1.2; }
 .club-sender-name {
     font-family: var(--c-head);

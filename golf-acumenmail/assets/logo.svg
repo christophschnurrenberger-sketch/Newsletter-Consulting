@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="AcumenMail Golf">
+    <!--
+        Bildmarke: eine Fahnenstange, an der ein Brief weht.
+        Der Wimpel ist ein Umschlag – rechts die Spitze einer Fahne, oben die
+        ausgesparte Klappe. Golf und Post in einer Form, ohne dass eines von
+        beiden erklärt werden muss. Das Lindgrün ist dasselbe, das auf der
+        Seite die Wörter markiert; der Balken unten ist das Grün, in dem die
+        Stange steckt.
+    -->
+    <rect width="64" height="64" fill="#C7F04A"/>
+    <path d="M20 10 L45 10 L53 19 L45 28 L20 28 Z" fill="#0C1F14"/>
+    <path d="M20 10 L45 10 L32.5 21 Z" fill="#C7F04A"/>
+    <rect x="15" y="7" width="5" height="45" fill="#0C1F14"/>
+    <rect y="52" width="64" height="12" fill="#0C1F14"/>
+</svg>

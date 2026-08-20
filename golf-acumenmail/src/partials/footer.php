@@ -47,9 +47,9 @@ $js = $page['js'] ?? [];
         <div class="footer-top">
             <div class="footer-brand">
                 <span class="site-brand">
-                    <span class="site-brand-mark" aria-hidden="true">A</span>
+                    <span class="site-brand-mark"><?php include __DIR__ . '/logo.php'; ?></span>
                     <span class="site-brand-text">
-                        <span class="site-brand-name"><?= e($SITE['name']) ?></span>
+                        <span class="site-brand-name">AcumenMail <span class="brand-accent">Golf</span></span>
                         <span class="site-brand-line"><?= e($SITE['claim']) ?></span>
                     </span>
                 </span>

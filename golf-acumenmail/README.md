@@ -33,8 +33,12 @@ Navigation, Randspalte und Footer nicht 28-mal kopiert werden müssen.
   index.html
   software/*.html    software/, loesungen/, leistungen/, wissen/
   assets/            CSS, JavaScript
+  assets/logo.svg    Die Bildmarke – Vorlage für alles Weitere
+  assets/og-bild.png Vorschaubild fürs Teilen (1200 x 630)
   assets/demo/       Stylesheets des Newslettersystems (Kopien)
   demo/              Die drei Demo-Seiten, als iframe eingebunden
+  favicon.svg        Lesezeichen-Symbol, dazu favicon-32.png
+  apple-touch-icon.png
   kontakt-senden.php Einziges PHP: nimmt das Kontaktformular entgegen
   robots.txt, sitemap.xml
 
@@ -107,6 +111,53 @@ noch einmal ausführlich:
 Die Anzeigeschrift ist Georgia in sehr großen Graden. Bewusst keine externe
 Schrift: Google Fonts ist auf einer deutschen Seite auch ein Datenschutzthema,
 und selbst gehostete Schriften wären zusätzliche Ladezeit für wenig Gewinn.
+
+---
+
+## Die Bildmarke
+
+Lange stand im Stylesheet „Kein Logo-Kreis. Der Name reicht." Für die Seite
+stimmte das – ein Name ist nur kein Lesezeichen-Symbol, kein Bild in der
+Vorschau beim Teilen und kein Absender auf einer Clubseite.
+
+Die Marke ist **eine Fahnenstange, an der ein Brief weht.** Der Wimpel ist ein
+Umschlag: rechts die Spitze einer Fahne, oben die ausgesparte Klappe. Golf und
+Post in einer Form, ohne dass eines von beiden erklärt werden muss. Verworfen
+wurde eine schlichte Fahne – die hat jeder Golfanbieter – und eine Fassung mit
+Loch im Rasen, deren Ellipse ab 32 px zu Matsch wurde.
+
+Gebaut ist sie aus vier Rechtecken und zwei Dreiecken, ohne Rundungen, ohne
+Verlauf, ohne Schatten: dieselbe rechteckige Fläche in derselben Signalfarbe,
+mit der die Seite auch Wörter markiert. Deshalb trägt das Wort „Golf" im
+Namenszug keine Markierung mehr – zwei lindgrüne Blöcke nebeneinander streiten
+sich. Die Fläche gehört jetzt der Marke, das Wort bekommt das Clubgrün.
+
+**Zwei Fassungen.** Auf hellem Grund die volle: lindgrüne Fläche, Zeichnung in
+Tinte. Auf dunklem Grund fällt die Fläche weg und die Zeichnung wird lindgrün –
+sonst verschwände der Balken unter der Stange im Untergrund und die Marke sähe
+unten abgeschnitten aus. Das steuert das Stylesheet über zwei Klassen
+(`.marke-flaeche`, `.marke-tinte`), die Umschaltung passiert automatisch in
+`.site-footer` und `.section-dark`.
+
+**Wo sie steht:**
+
+| Ort | Fassung |
+|---|---|
+| Kopfzeile, neben dem Namenszug | voll, 2,1 rem |
+| Fußzeile | negativ, 2,6 rem |
+| Persönliche Clubseiten, als Absender | voll, 42 px – in unseren Farben, obwohl die Seite die des Clubs trägt |
+| Lesezeichen (`favicon.svg`, `favicon-32.png`) | voll |
+| Startbildschirm auf dem Handy (`apple-touch-icon.png`) | voll |
+| Vorschau beim Teilen (`assets/og-bild.png`) | voll, mit Namenszug und Hauptzeile |
+
+Die Zeichnung liegt zweimal: als `src/partials/logo.php` (eingebettet, Farben
+über Klassen) und als `assets/logo.svg` (feste Farben, Vorlage für die
+Rasterbilder). Wer eine ändert, ändert bitte auch die andere.
+
+**Rasterbilder erneuern:** Die PNG-Dateien sind aus derselben Zeichnung
+gerendert. Fällt eine Änderung an, mit einem Browser neu aufnehmen –
+`favicon-32.png` (32 x 32), `apple-touch-icon.png` (180 x 180) und
+`assets/og-bild.png` (1200 x 630).
 
 ---
 

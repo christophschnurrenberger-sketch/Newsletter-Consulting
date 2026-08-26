@@ -22,6 +22,12 @@ if (Util::isPost()) {
             Util::flash('Die Datei ist größer als 5 MB. Bitte teilen Sie sie auf.', 'error');
             Util::redirect('import.php');
         }
+        // Nur eine wirklich hochgeladene Datei lesen – nie einen Pfad, der
+        // aus der Anfrage stammt.
+        if (!is_uploaded_file((string) $_FILES['datei']['tmp_name'])) {
+            Util::flash('Ungültiger Upload.', 'error');
+            Util::redirect('import.php');
+        }
         $content = (string) file_get_contents((string) $_FILES['datei']['tmp_name']);
     } elseif (Util::postRaw('einfuegen') !== '') {
         $content = Util::postRaw('einfuegen');

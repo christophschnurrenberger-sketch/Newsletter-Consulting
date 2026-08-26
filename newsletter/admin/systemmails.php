@@ -23,7 +23,7 @@ if (Util::get('vorschau') !== '') {
         exit('Diese Mail gibt es nicht.');
     }
     $vorlage = Templates::byId(Util::getInt('marke')) ?? Templates::defaultTemplate();
-    header('Content-Type: text/html; charset=utf-8');
+    Util::previewHeaders();
     echo SystemMails::preview($art, $vorlage);
     exit;
 }

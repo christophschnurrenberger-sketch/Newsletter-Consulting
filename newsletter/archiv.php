@@ -74,8 +74,7 @@ if ($campaignId > 0) {
             'email'            => '',
         ], true);
 
-        header('Content-Type: text/html; charset=utf-8');
-        header('X-Frame-Options: SAMEORIGIN');
+        Util::previewHeaders();
         echo $html;
         exit;
     }

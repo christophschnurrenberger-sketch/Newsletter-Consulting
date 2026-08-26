@@ -20,7 +20,7 @@ if (Util::get('vorschau') === '1') {
         exit('Schritt nicht gefunden.');
     }
     $mail = Campaigns::renderFor($source, Renderer::sampleSubscriber(), 'vorschau');
-    header('Content-Type: text/html; charset=utf-8');
+    Util::previewHeaders();
     echo preg_replace('#<img[^>]+track\.php\?o=[^>]*>#i', '', $mail['html']);
     exit;
 }
@@ -49,7 +49,7 @@ if (Util::get('rahmen') === '1') {
         'praeferenzen_url' => '#',
         'webansicht_url'   => '#',
     ], true);
-    header('Content-Type: text/html; charset=utf-8');
+    Util::previewHeaders();
     echo $html;
     exit;
 }

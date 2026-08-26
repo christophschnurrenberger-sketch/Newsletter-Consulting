@@ -41,7 +41,7 @@ if (Util::get('vorschau') === '1') {
         'praeferenzen_url' => '#',
         'webansicht_url'   => '#',
     ], true);
-    header('Content-Type: text/html; charset=utf-8');
+    Util::previewHeaders();
     echo $html;
     exit;
 }

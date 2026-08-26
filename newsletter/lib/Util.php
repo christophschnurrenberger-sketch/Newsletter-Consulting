@@ -299,6 +299,30 @@ final class Util
         return str_contains($accept, 'application/json') || strtolower($xhr) === 'xmlhttprequest';
     }
 
+    /**
+     * Kopfzeilen für Seiten, die eine fertige Mail ausliefern.
+     *
+     * Newsletter dürfen beliebiges HTML enthalten – das ist der Sinn eines
+     * Baukastens. Ausgeliefert wird dieses HTML aber auf der eigenen Adresse:
+     * im Archiv und in jeder Vorschau. Ohne Riegel liefe darin enthaltenes
+     * JavaScript im selben Ursprung wie der Admin-Bereich; eine Redakteurin
+     * könnte sich so Rechte verschaffen, die ihre Rolle nicht hergibt.
+     *
+     * In einer E-Mail läuft ohnehin nie JavaScript – kein Mailprogramm führt
+     * es aus. Es hier zu verbieten nimmt also nichts weg. Bilder, Schriften
+     * und Formatierungen bleiben erlaubt, sonst sähe die Vorschau anders aus
+     * als die Mail.
+     */
+    public static function previewHeaders(): void
+    {
+        header('Content-Type: text/html; charset=utf-8');
+        header('X-Frame-Options: SAMEORIGIN');
+        header('X-Content-Type-Options: nosniff');
+        header("Content-Security-Policy: default-src 'none'; img-src * data:; "
+            . "style-src 'unsafe-inline'; font-src * data:; media-src *; "
+            . "frame-ancestors 'self'; base-uri 'none'; form-action 'none'");
+    }
+
     /* ------------------------------------------------------------ Session */
 
     public static function session(): void
@@ -322,15 +346,71 @@ final class Util
                 // Vor der Einrichtung gibt es noch keine Basis-URL.
             }
         }
+        /*
+         * Jede Installation bekommt ihre EIGENE Sitzung.
+         *
+         * Liegen zwei Instanzen auf derselben Adresse – etwa /newsletter und
+         * /kunden/ottobeuren im selben Webspace –, so teilten sie sich sonst
+         * Plätzchennamen ("acm_nl_session"), Pfad ("/") und beim üblichen
+         * Hosting auch den Ablageort der Sitzungsdaten. In der Sitzung steht
+         * nur die Benutzernummer. Wer sich in der einen Instanz anmeldet,
+         * wäre damit in der anderen als deren Benutzer Nr. 1 angemeldet –
+         * also als fremder Administrator, ohne je ein Passwort zu kennen.
+         *
+         * Deshalb dreifach getrennt: eigener Name, eigener Pfad und ein
+         * Kennzeichen IN der Sitzung, das beim Betreten geprüft wird.
+         */
+        $kennung = substr(sha1('nl-instanz:' . (realpath(NL_ROOT) ?: NL_ROOT)), 0, 12);
+
+        // Pfad aus der Basis-URL: Das Plätzchen geht dann gar nicht erst an
+        // die Nachbarinstanz. Ohne Basis-URL (vor der Einrichtung) bleibt "/".
+        $pfad = '/';
+        try {
+            $teil = (string) parse_url(Config::baseUrl(), PHP_URL_PATH);
+            $teil = '/' . trim($teil, '/');
+            if ($teil !== '/') {
+                $pfad = $teil . '/';
+            }
+        } catch (Throwable $e) {
+            // Vor der Einrichtung gibt es noch keine Basis-URL.
+        }
+
         session_set_cookie_params([
             'lifetime' => 0,
-            'path'     => '/',
+            'path'     => $pfad,
             'secure'   => $https,
             'httponly' => true,
             'samesite' => 'Lax',
         ]);
-        session_name('acm_nl_session');
+        session_name('acm_nl_' . $kennung);
         session_start();
+
+        /*
+         * Letzte Sicherung: Teilen sich zwei Instanzen wider Erwarten doch
+         * eine Sitzung, gilt sie nur für die, die sie angelegt hat. Eine
+         * fremde wird verworfen statt übernommen.
+         */
+        if (!isset($_SESSION['nl_instanz'])) {
+            $_SESSION['nl_instanz'] = $kennung;
+            return;
+        }
+        if (hash_equals((string) $_SESSION['nl_instanz'], $kennung)) {
+            return;
+        }
+        /*
+         * Fremde Sitzung: verlassen, aber NICHT löschen.
+         *
+         * Ein session_regenerate_id(true) würde die Sitzung des Nachbarn
+         * wegräumen – wer eine fremde Kennung kennt, könnte damit dessen
+         * Angemeldete hinauswerfen. Deshalb wird die fremde Sitzung nur
+         * abgelegt und hier mit einer eigenen, leeren weitergearbeitet.
+         */
+        session_abort();
+        session_id(function_exists('session_create_id')
+            ? (string) session_create_id()
+            : bin2hex(random_bytes(16)));
+        session_start();
+        $_SESSION = ['nl_instanz' => $kennung];
     }
 
     /* --------------------------------------------------------------- CSRF */
@@ -353,7 +433,13 @@ final class Util
     public static function requireCsrf(): void
     {
         self::session();
-        $sent = (string) ($_POST['_csrf'] ?? $_GET['_csrf'] ?? '');
+        /*
+         * Nur aus dem POST-Rumpf. In der Adresszeile stünde das Zeichen im
+         * Verlauf, im Serverprotokoll und im Verweis-Kopf zur nächsten Seite –
+         * drei Wege nach draußen, die es nicht braucht: Jedes Formular und
+         * jede Hintergrundabfrage im System schickt es im Rumpf mit.
+         */
+        $sent = (string) ($_POST['_csrf'] ?? '');
         if ($sent === '' || empty($_SESSION['csrf']) || !hash_equals($_SESSION['csrf'], $sent)) {
             http_response_code(403);
             exit('Sicherheitsprüfung fehlgeschlagen (CSRF). Bitte laden Sie die Seite neu.');

@@ -24,7 +24,7 @@ if (Util::get('vorschau') === '1') {
     $sample = Renderer::sampleSubscriber();
     $mail   = Campaigns::renderFor($campaign, $sample, 'vorschau');
 
-    header('Content-Type: text/html; charset=utf-8');
+    Util::previewHeaders();
     // Zählpixel in der Vorschau entfernen
     echo preg_replace('#<img[^>]+track\.php\?o=[^>]*>#i', '', $mail['html']);
     exit;
@@ -63,7 +63,7 @@ if (Util::get('rahmen') === '1') {
         'webansicht_url'   => '#',
     ], true);
 
-    header('Content-Type: text/html; charset=utf-8');
+    Util::previewHeaders();
     echo $html;
     exit;
 }

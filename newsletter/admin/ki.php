@@ -28,6 +28,18 @@ if (!isset(Ai::ACTIONS[$aktion])) {
     Util::json(['ok' => false, 'fehler' => 'Unbekannte Aufgabe.'], 422);
 }
 
+/*
+ * Jede Anfrage kostet Geld beim Anbieter. Ohne Bremse könnte ein Zugang –
+ * auch ein gestohlener – in einer Nacht die ganze Kasse leerlaufen lassen.
+ * 120 Vorschläge je Stunde und Zugang: Beim Schreiben merkt das niemand.
+ */
+$wer = (string) (Auth::user()['id'] ?? '0');
+if (!Util::rateLimit('ki', $wer, 120, 3600)) {
+    Log::warn('ki', 'Textassistent gebremst: Zugang #' . $wer . ' über 120 Anfragen in einer Stunde.');
+    Util::json(['ok' => false, 'fehler' => 'Sie haben den Textassistenten in dieser Stunde sehr oft '
+        . 'benutzt. Bitte versuchen Sie es später noch einmal.'], 429);
+}
+
 try {
     $vorschlag = Ai::suggest($aktion, Util::postRaw('text'), Util::postRaw('hinweis'));
 } catch (Throwable $e) {

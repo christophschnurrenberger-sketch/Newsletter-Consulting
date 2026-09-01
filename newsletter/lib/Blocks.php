@@ -1066,6 +1066,23 @@ final class Blocks
         if ($url === '') {
             return '';
         }
+
+        /*
+         * Zuerst das Protokoll prüfen – vor allem anderen.
+         *
+         * Sonst gäbe es ein Schlupfloch: Adressen mit einem Platzhalter
+         * durften früher unbesehen durch, und "javascript:alert(1){{x}}"
+         * enthält einen. Steuerzeichen fliegen vorher raus, weil Browser
+         * sie überlesen: "java<Zeilenumbruch>script:" wäre sonst wieder
+         * ein gültiges javascript:.
+         */
+        $pruef   = preg_replace('/[\x00-\x20\x7f]/', '', $url) ?? $url;
+        $erlaubt = $imageOnly ? ['http', 'https'] : ['http', 'https', 'mailto', 'tel'];
+        if (preg_match('#^([a-z][a-z0-9+.\-]*)\s*:#i', $pruef, $treffer)
+            && !in_array(strtolower($treffer[1]), $erlaubt, true)) {
+            return '';
+        }
+
         if (str_contains($url, '{{')) {
             return mb_substr($url, 0, 500); // Platzhalter wie {{webansicht_url}}
         }

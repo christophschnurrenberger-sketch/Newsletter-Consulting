@@ -650,6 +650,21 @@ a.link-card:hover .link-card-more::before { width: 100%; }
 .data-table .yes { color: var(--green); font-weight: 700; }
 .data-table .no { color: var(--muted); }
 
+/* Dieselbe Tabelle auf dunklem Grund: Linien und Farben umgestellt, sonst
+   verschwänden die Trennlinien und das Grün wäre nicht mehr zu lesen. */
+.section-dark .data-table th,
+.section-dark .data-table td { border-bottom-color: var(--ink-line); }
+.section-dark .data-table thead th { color: var(--muted-dark); border-bottom-color: var(--signal); }
+.section-dark .data-table tbody th { color: var(--on-ink); }
+.section-dark .data-table caption { color: var(--muted-dark); }
+.section-dark .data-table .yes { color: var(--signal); }
+.section-dark .data-table .no { color: var(--muted-dark); }
+@container (max-width: 35rem) {
+    .section-dark .data-table tr { border-bottom-color: var(--ink-line); }
+    .section-dark .data-table tbody th { color: var(--on-ink); }
+    .section-dark .data-table td[data-label]::before { color: var(--muted-dark); }
+}
+
 .callout { display: flex; gap: 1.2rem; border-left: 4px solid var(--signal); padding: 0.4rem 0 0.4rem 1.6rem; margin: 2.6rem 0; }
 .callout .lucide { display: none; }
 .callout p { font-size: 1rem; }
@@ -659,56 +674,6 @@ a.link-card:hover .link-card-more::before { width: 100%; }
 .quote-card { border-left: 4px solid var(--signal); padding-left: 1.8rem; }
 .quote-card blockquote { font-family: var(--display); font-size: 1.5rem; line-height: 1.3; letter-spacing: -0.02em; color: var(--text); margin-bottom: 1rem; }
 .quote-card figcaption { font-size: 0.88rem; color: var(--muted); }
-
-/* Ein Rechenweg, der wie einer aussieht
-   ------------------------------------------------------------------------
-   Drei Zeilen, die sich addieren – Zahl links, Bezeichnung daneben, die
-   Begründung darunter. Absichtlich keine Kästen: Es soll wie eine Notiz
-   auf einem Block wirken, nicht wie eine Infografik. */
-.rechenweg {
-    list-style: none;
-    display: grid;
-    gap: 0;
-    margin-top: clamp(2rem, 4vw, 3rem);
-    border-top: 2px solid var(--ink);
-}
-.section-dark .rechenweg { border-top-color: var(--signal); }
-.rechenweg li {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 0.15rem 1.6rem;
-    padding: 1.3rem 0;
-    border-bottom: 1px solid rgba(27, 43, 33, 0.14);
-}
-.section-dark .rechenweg li { border-bottom-color: var(--ink-line); }
-@media (min-width: 760px) {
-    .rechenweg li {
-        grid-template-columns: minmax(6.5ch, auto) minmax(0, 1fr);
-        align-items: baseline;
-    }
-    .rechenweg .warum { grid-column: 2; }
-}
-.rechenweg b {
-    font-family: var(--display);
-    font-size: clamp(1.9rem, 3.4vw, 2.8rem);
-    line-height: 1;
-    color: var(--ink);
-}
-.section-dark .rechenweg b { color: var(--on-ink); }
-.rechenweg li:last-child b { color: var(--green); }
-.section-dark .rechenweg li:last-child b { color: var(--signal); }
-.rechenweg .was {
-    font-family: var(--display);
-    font-size: 1.15rem;
-    color: var(--text);
-}
-.section-dark .rechenweg .was { color: var(--on-ink); }
-.rechenweg .warum {
-    font-size: 0.9rem;
-    color: var(--muted);
-    max-width: 62ch;
-}
-.section-dark .rechenweg .warum { color: var(--muted-dark); }
 
 /* Fettung innerhalb der Häkchenliste – der Vorteil zuerst, die Begründung
    dahinter im selben Absatz. */

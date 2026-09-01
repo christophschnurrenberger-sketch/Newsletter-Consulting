@@ -425,39 +425,47 @@ gefolgt von dem, was das Problem kostet. Bei den Turnieren zum Beispiel: „Jede
 leere Startplatz ist ein Startgeld, das nicht kommt, plus der Umsatz, der danach
 in der Gastronomie liegen geblieben wäre."
 
-### Die Zahlen: Zeit und Zustellung, nicht Umsatz
+### Zwei Rechnungen, die beide nicht getragen haben
 
-Ein erster Entwurf rechnete mit zusätzlichen Buchungen: zehn im Monat à 50 €
+Auf der Startseite standen nacheinander zwei Zahlenblöcke. Beide waren sauber
+gerechnet, beide sind wieder raus – und die Gründe lohnen sich zu merken.
+
+**Erster Versuch: der Umsatz.** Zehn zusätzliche Buchungen im Monat à 50 €
 Deckungsbeitrag, damit sei das Saison-Setup nach drei Monaten bezahlt. Die
-Rechnung war sauber – und stand auf einer falschen Annahme. **Mitglieder eines
-Golfclubs zahlen einmal im Jahr ihren Beitrag.** Sie „buchen" nichts, was pro
-Kopf Umsatz erzeugt. Greenfee und Kursgebühren gibt es, aber nicht bei den 900
-Mitgliedern, mit denen die Rechnung gerechnet hatte. Eine Rechnung, deren
-Grundgröße nicht stimmt, ist schlimmer als gar keine.
+Rechnung stand auf einer falschen Annahme: **Mitglieder eines Golfclubs zahlen
+einmal im Jahr ihren Beitrag.** Sie „buchen" nichts, was pro Kopf Umsatz
+erzeugt. Greenfee und Kursgebühren gibt es, aber nicht bei den 900 Mitgliedern,
+mit denen gerechnet worden war. Eine Rechnung, deren Grundgröße nicht stimmt,
+ist schlimmer als gar keine.
 
-Ehrlich benennbar sind zwei andere Größen, und beide stehen jetzt dort:
+**Zweiter Versuch: die Zeit.** Zwölf Ausgaben mal dreißig Minuten gleich sechs
+Stunden im Jahr. Diesmal stimmte die Rechnung – und arbeitete trotzdem gegen
+das eigene Angebot. Sechs Stunden im Jahr sind nichts. Wer das liest, fragt
+sich zu Recht, wofür er dafür jemanden bezahlen soll; das Argument erledigt die
+Clubbetreuung, also das laufende Geschäft, gleich mit. **Eine Zahl, die den
+eigenen Aufwand kleinredet, redet auch den eigenen Wert klein.**
 
-```
-  12        Ausgaben im Jahr
-×  30       Minuten je Ausgabe
-=   6       Stunden im Jahr
-```
+Die Lehre aus beiden: An dieser Stelle gehört keine Zahl hin, sondern ein
+Zustand. Dort steht jetzt eine Gegenüberstellung – links, was heute passiert,
+rechts, was nach der Einrichtung passiert:
 
-Sechs Stunden – so viel kostet der Clubnewsletter das Sekretariat, wenn das
-System einmal steht. Oder keine einzige, wenn die Ausgaben in der Clubbetreuung
-liegen. Die 30 Minuten sind der Mittelwert der „20 bis 40 Minuten", die auch in
-den häufigen Fragen stehen.
+| | Heute | Mit System |
+|---|---|---|
+| Wer es erfährt | wer zufällig im Clubhaus vorbeigeht | alle im Verteiler, auch im Winter |
+| Ob es ankommt | Sammelmail im Blindkopie-Feld, oft im Spam | eigene Domain, mit SPF und DKIM |
+| Tote Adressen | bleiben jahrelang in der Liste | werden erkannt und stillgelegt |
+| Abmeldungen | per Zuruf ans Sekretariat | Abmeldelink, rechtssicher, ohne Zutun |
+| Was der Vorstand sieht | nichts | Zustellungen, Öffnungen, Klicks je Ausgabe |
+| Im Juni | bleibt der Newsletter liegen | Redaktionsplan und Automationen laufen weiter |
 
-Die zweite Größe ist keine Zeit, sondern Gewissheit: **Die Botschaft kommt an,
-und man sieht, dass sie ankommt.** Eine Sammelmail aus dem Postfach des
-Sekretariats geht hinaus, und dann ist Stille – ob sie ankam, welche Adresse tot
-ist, wer geöffnet hat, erfährt niemand. Ein eingerichtetes System beantwortet
-genau das: SPF und DKIM gegen den Spam-Ordner, automatisch stillgelegte
-Fehladressen, Abmeldungen ohne Zutun, und nach jeder Ausgabe ein Bericht, den
-der Vorstand versteht.
+Jede Zeile ist nachprüfbar, keine behauptet ein Ergebnis. Und der Aufwand kommt
+gar nicht mehr vor – die Frage „wie viel Zeit kostet das?" beantworten die
+häufigen Fragen, wo sie hingehört und wo sie auch der Hinweis auf die
+Clubbetreuung begleitet.
 
-Das ist kein Verkaufstrick, sondern der eigentliche Unterschied zwischen einem
-Rundbrief ins Ungewisse und einer Kommunikation, über die man berichten kann.
+Technisch ist es dieselbe `.data-table` wie überall: Damit stapelt sie sich auf
+schmalen Anzeigen von selbst und bekommt ihre Etiketten aus der Kopfzeile. Neu
+dazugekommen sind nur die Farben für den dunklen Grund.
 
 ### Zwei Stellen, an denen der Ton nicht stimmte
 

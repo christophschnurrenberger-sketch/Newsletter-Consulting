@@ -17,7 +17,7 @@
 final class Schema
 {
     /** Version des Schemas – wird in settings gespeichert. */
-    public const VERSION = 7;
+    public const VERSION = 8;
 
     public static function migrate(): void
     {
@@ -70,6 +70,17 @@ final class Schema
          */
         self::ensureColumn('lists', 'template_id', '%INT% NULL');
         self::ensureColumn('automations', 'template_id', '%INT% NULL');
+        /*
+         * Zweiter Faktor je Zugang und der Stichtag für Sitzungen.
+         *
+         * sessions_valid_from wird beim Passwortwechsel neu gesetzt. Alle
+         * Sitzungen, die vorher angefangen haben, gelten damit als beendet –
+         * ohne dass man die Sitzungsdateien des Servers durchsuchen müsste.
+         */
+        self::ensureColumn('users', 'totp_secret', "%STR(255)% NOT NULL DEFAULT ''");
+        self::ensureColumn('users', 'totp_confirmed_at', '%DT%');
+        self::ensureColumn('users', 'totp_recovery', '%TEXT%');
+        self::ensureColumn('users', 'sessions_valid_from', '%DT%');
 
         Settings::set('schema_version', (string) self::VERSION);
     }
@@ -156,6 +167,10 @@ final class Schema
                 password_hash %STR(255)% NOT NULL,
                 role          %STR(20)%  NOT NULL DEFAULT \'admin\',
                 status        %STR(20)%  NOT NULL DEFAULT \'active\',
+                totp_secret   %STR(255)% NOT NULL DEFAULT \'\',
+                totp_confirmed_at   %DT%,
+                totp_recovery       %TEXT%,
+                sessions_valid_from %DT%,
                 created_at    %DT%,
                 last_login_at %DT%
             )%ENGINE%',

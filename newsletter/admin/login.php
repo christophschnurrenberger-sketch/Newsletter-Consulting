@@ -14,20 +14,45 @@ if (Auth::userCount() === 0) {
 
 $error  = '';
 $email  = '';
-$weiter = Util::get('weiter');
+$weiter = Util::isPost() ? Util::post('weiter') : Util::get('weiter');
+
+/* „Andere Anmeldung“: den halben Vorgang wegwerfen und neu beginnen. */
+if (Util::get('abbrechen') === '1') {
+    Auth::logout();
+    Util::redirect('login.php');
+}
+
+/* Wartet dieser Browser schon auf die Zahl aus der App? */
+$wartet = Auth::wartetAufZweitenFaktor();
+
+/** Nur seiteneigene Ziele zulassen (kein offener Redirect). */
+$weiterleiten = static function (string $wunsch): void {
+    $ziel = 'index.php';
+    if ($wunsch !== '' && preg_match('#^[a-z0-9_\-]+\.php(\?[^\s]*)?$#i', basename($wunsch))) {
+        $ziel = basename($wunsch);
+    }
+    Util::redirect($ziel);
+};
 
 if (Util::isPost()) {
     Util::requireCsrf();
-    $email = Util::post('email');
-    $error = Auth::login($email, Util::postRaw('password'));
-    if ($error === '') {
-        // Nur seiteneigene Ziele zulassen (kein offener Redirect)
-        $target = 'index.php';
-        $wanted = Util::post('weiter');
-        if ($wanted !== '' && preg_match('#^[a-z0-9_\-]+\.php(\?[^\s]*)?$#i', basename($wanted))) {
-            $target = basename($wanted);
+
+    if (Util::post('schritt') === 'zwei') {
+        $error = Auth::zweiterFaktor(Util::post('code'));
+        if ($error === '') {
+            $weiterleiten($weiter);
         }
-        Util::redirect($target);
+        $wartet = Auth::wartetAufZweitenFaktor();
+    } else {
+        $email = Util::post('email');
+        $error = Auth::login($email, Util::postRaw('password'));
+        if ($error === '') {
+            $weiterleiten($weiter);
+        }
+        if ($error === Auth::ZWEITER_FAKTOR) {
+            $error  = '';
+            $wartet = Auth::wartetAufZweitenFaktor();
+        }
     }
 }
 ?>
@@ -50,6 +75,32 @@ if (Util::isPost()) {
             <div class="ad-flash ad-flash-error"><?= Util::e($error) ?></div>
         <?php endif; ?>
 
+        <?php if ($wartet !== null): ?>
+
+            <p>Bitte geben Sie die sechsstellige Zahl aus Ihrer Authenticator-App ein.
+                Sie wechselt alle 30 Sekunden.</p>
+
+            <form method="post" autocomplete="off">
+                <?= Util::csrfField() ?>
+                <input type="hidden" name="schritt" value="zwei">
+                <input type="hidden" name="weiter" value="<?= Util::e($weiter) ?>">
+                <div class="ad-field">
+                    <label for="code">Zahl aus der App</label>
+                    <input type="text" id="code" name="code" required autofocus
+                           inputmode="numeric" autocomplete="one-time-code"
+                           maxlength="13" placeholder="123456"
+                           style="font-family:ui-monospace,Menlo,Consolas,monospace;
+                                  font-size:22px;letter-spacing:.18em;text-align:center;">
+                </div>
+                <button type="submit" class="ad-btn">Weiter</button>
+            </form>
+
+            <p class="ad-hint" style="margin-top:16px;">Telefon nicht zur Hand? Geben Sie oben
+                statt der Zahl einen Ihrer Ersatzcodes ein. Jeder gilt genau einmal.</p>
+            <p class="ad-hint"><a href="login.php?abbrechen=1">Andere Anmeldung</a></p>
+
+        <?php else: ?>
+
         <form method="post" autocomplete="on">
             <?= Util::csrfField() ?>
             <input type="hidden" name="weiter" value="<?= Util::e($weiter) ?>">
@@ -64,6 +115,8 @@ if (Util::isPost()) {
             </div>
             <button type="submit" class="ad-btn">Anmelden</button>
         </form>
+
+        <?php endif; ?>
     </div>
 </div>
 </body>

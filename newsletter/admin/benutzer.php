@@ -37,8 +37,14 @@ if (Util::isPost()) {
     $action = Util::post('aktion');
     $userId = Util::postInt('user_id');
 
-    // Fremde Zugänge darf nur bearbeiten, wer das Recht dazu hat.
-    if ($action !== 'eigenes_passwort' && !$darfVerwalten) {
+    /*
+     * Fremde Zugänge darf nur bearbeiten, wer das Recht dazu hat. Am eigenen
+     * Zugang darf jede und jeder arbeiten – Passwort und zweiter Faktor
+     * gehören der Person, nicht der Verwaltung.
+     */
+    $amEigenenZugang = ['eigenes_passwort', 'totp_start', 'totp_bestaetigen',
+                        'totp_neue_codes', 'totp_aus'];
+    if (!in_array($action, $amEigenenZugang, true) && !$darfVerwalten) {
         Util::flash('Dafür fehlt Ihnen die Berechtigung. Fragen Sie eine Administratorin oder einen Administrator.', 'error');
         Util::redirect('benutzer.php');
     }
@@ -113,16 +119,79 @@ if (Util::isPost()) {
                 throw new InvalidArgumentException('Das bisherige Passwort stimmt nicht.');
             }
             Auth::setPassword((int) $currentUser['id'], Util::postRaw('passwort_neu'));
-            Util::flash('Ihr Passwort wurde geändert.');
+            // Der eigene Browser darf bleiben – alle anderen sind jetzt draußen.
+            Auth::eigeneSitzungBehalten();
+            Util::flash('Ihr Passwort wurde geändert. Alle anderen Anmeldungen wurden beendet.');
         } catch (Throwable $e) {
             Util::flash(Util::e($e->getMessage()), 'error');
         }
         Util::redirect('benutzer.php');
     }
+
+    /* ------------------------------------------------- Zweiter Faktor */
+
+    if ($action === 'totp_start') {
+        // Geheimnis vormerken; scharf wird es erst mit der ersten richtigen Zahl
+        Auth::totpVormerken((int) $currentUser['id'], Totp::neuesGeheimnis());
+        Util::redirect('benutzer.php?einrichten=1#zweifaktor');
+    }
+
+    if ($action === 'totp_bestaetigen') {
+        $geheim = Auth::totpGeheimnis((int) $currentUser['id']);
+        if ($geheim === '' || !Totp::pruefe($geheim, Util::post('code'))) {
+            Util::flash('Die Zahl stimmt nicht. Bitte prüfen Sie die Uhrzeit auf Ihrem Telefon '
+                . 'und geben Sie die aktuelle Zahl ein.', 'error');
+            Util::redirect('benutzer.php?einrichten=1#zweifaktor');
+        }
+        $codes = Totp::ersatzcodes();
+        Auth::totpBestaetigen((int) $currentUser['id'], $codes);
+        // Genau einmal anzeigen – danach sind nur noch die Hashes da
+        $_SESSION['ersatzcodes'] = $codes;
+        Util::flash('Die Zwei-Faktor-Anmeldung ist eingeschaltet.');
+        Util::redirect('benutzer.php#zweifaktor');
+    }
+
+    if ($action === 'totp_neue_codes') {
+        if (!Auth::verifyPassword((int) $currentUser['id'], Util::postRaw('passwort'))) {
+            Util::flash('Das Passwort stimmt nicht.', 'error');
+            Util::redirect('benutzer.php#zweifaktor');
+        }
+        $codes = Totp::ersatzcodes();
+        Auth::totpBestaetigen((int) $currentUser['id'], $codes);
+        $_SESSION['ersatzcodes'] = $codes;
+        Util::flash('Neue Ersatzcodes erzeugt. Die alten gelten nicht mehr.');
+        Util::redirect('benutzer.php#zweifaktor');
+    }
+
+    if ($action === 'totp_aus') {
+        if (!Auth::verifyPassword((int) $currentUser['id'], Util::postRaw('passwort'))) {
+            Util::flash('Das Passwort stimmt nicht.', 'error');
+            Util::redirect('benutzer.php#zweifaktor');
+        }
+        Auth::totpAbschalten((int) $currentUser['id']);
+        Util::flash('Die Zwei-Faktor-Anmeldung ist ausgeschaltet.', 'warning');
+        Util::redirect('benutzer.php#zweifaktor');
+    }
+
+    /*
+     * Notausgang: Ein Administrator schaltet den zweiten Faktor für einen
+     * anderen Zugang ab – etwa wenn das Telefon weg ist und die Ersatzcodes
+     * auch. Das steht im Protokoll.
+     */
+    if ($action === 'totp_fremd_aus' && $userId > 0) {
+        $wer = (string) DB::value('SELECT email FROM users WHERE id = ?', [$userId], '');
+        Auth::totpAbschalten($userId);
+        Log::warn('auth', 'Zwei-Faktor-Anmeldung für ' . $wer . ' abgeschaltet durch '
+            . $currentUser['email'] . '.');
+        Util::flash('Zwei-Faktor-Anmeldung für <strong>' . Util::e($wer) . '</strong> abgeschaltet. '
+            . 'Bitte weisen Sie die Person darauf hin, sie neu einzurichten.', 'warning');
+        Util::redirect('benutzer.php');
+    }
 }
 
 $users = $darfVerwalten
-    ? DB::all('SELECT id, email, name, role, status, created_at, last_login_at FROM users ORDER BY role, email')
+    ? DB::all('SELECT id, email, name, role, status, totp_secret, totp_confirmed_at,
+                     created_at, last_login_at FROM users ORDER BY role, email')
     : [];
 $adminZahl = Auth::adminCount();
 ?>
@@ -164,6 +233,7 @@ $adminZahl = Auth::adminCount();
             <th>Name</th>
             <th>Rolle</th>
             <th>Status</th>
+            <th>2 Faktoren</th>
             <th>Letzte Anmeldung</th>
             <th></th>
         </tr>
@@ -187,9 +257,31 @@ $adminZahl = Auth::adminCount();
                         <?= $user['status'] === 'active' ? 'aktiv' : 'gesperrt' ?>
                     </span>
                 </td>
+                <td>
+                    <?php if (Auth::hatZweitenFaktor($user)): ?>
+                        <span class="ad-pill ad-pill-green">an</span>
+                    <?php else: ?>
+                        <span class="ad-pill ad-pill-grey">aus</span>
+                    <?php endif; ?>
+                </td>
                 <td><?= Util::e(Util::dt((string) $user['last_login_at'])) ?></td>
                 <td>
                     <a class="ad-btn ad-btn-secondary ad-btn-small" href="benutzer.php?bearbeiten=<?= (int) $user['id'] ?>">Bearbeiten</a>
+                    <?php if (!$istIch && Auth::hatZweitenFaktor($user)): ?>
+                        <details class="ad-menue">
+                            <summary aria-label="Weitere Aktionen">…</summary>
+                            <div class="ad-menue-liste">
+                                <form method="post">
+                                    <?= Util::csrfField() ?>
+                                    <input type="hidden" name="aktion" value="totp_fremd_aus">
+                                    <input type="hidden" name="user_id" value="<?= (int) $user['id'] ?>">
+                                    <button type="submit" class="ist-gefahr"
+                                            data-confirm="Zwei-Faktor-Anmeldung für diesen Zugang abschalten? Nur tun, wenn die Person ihr Telefon und ihre Ersatzcodes verloren hat.">
+                                        Zwei-Faktor-Anmeldung abschalten</button>
+                                </form>
+                            </div>
+                        </details>
+                    <?php endif; ?>
                 </td>
             </tr>
 
@@ -329,6 +421,144 @@ $adminZahl = Auth::adminCount();
     </div>
 </div>
 <?php endif; ?>
+
+<!-- ------------------------------------------------- Zweiter Faktor -->
+
+<?php
+$zweiAn      = Auth::hatZweitenFaktor($currentUser);
+$einrichten  = Util::get('einrichten') === '1' && !$zweiAn;
+$frischeCodes = $_SESSION['ersatzcodes'] ?? null;
+unset($_SESSION['ersatzcodes']);
+?>
+
+<div class="ad-card" id="zweifaktor">
+    <div class="ad-page-head" style="margin:0 0 12px;">
+        <div>
+            <h2 style="margin:0;">Zwei-Faktor-Anmeldung</h2>
+            <p class="ad-sub" style="margin:4px 0 0;">Zusätzlich zum Passwort eine Zahl vom Telefon.
+                Ein gestohlenes Passwort allein nützt dann niemandem etwas.</p>
+        </div>
+        <span class="ad-pill <?= $zweiAn ? 'ad-pill-green' : 'ad-pill-grey' ?>">
+            <?= $zweiAn ? 'eingeschaltet' : 'aus' ?></span>
+    </div>
+
+    <?php if ($frischeCodes !== null): ?>
+        <div class="ad-flash ad-flash-warning">
+            <strong>Bitte jetzt notieren – diese Codes sehen Sie kein zweites Mal.</strong>
+            <p style="margin:6px 0 0;">Jeder Code ersetzt einmalig die Zahl aus der App. Bewahren Sie
+                sie dort auf, wo Sie auch Ihre Ausweise haben – nicht auf demselben Telefon.</p>
+            <div class="ad-mono" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));
+                        gap:6px 18px;margin-top:12px;font-size:15px;letter-spacing:.06em;">
+                <?php foreach ($frischeCodes as $code): ?>
+                    <span><?= Util::e($code) ?></span>
+                <?php endforeach; ?>
+            </div>
+        </div>
+    <?php endif; ?>
+
+    <?php if ($zweiAn): ?>
+
+        <p>Beim Anmelden fragt das System nach dem Passwort und danach nach der Zahl aus Ihrer App.
+            Es sind noch <strong><?= Util::num(Auth::ersatzcodesUebrig((int) $currentUser['id'])) ?>
+            Ersatzcodes</strong> übrig.</p>
+
+        <div class="ad-row" style="align-items:flex-end;">
+            <form method="post" class="ad-field" style="flex:1 1 300px;">
+                <?= Util::csrfField() ?>
+                <input type="hidden" name="aktion" value="totp_neue_codes">
+                <label for="pw_codes">Neue Ersatzcodes erzeugen — Passwort zur Bestätigung</label>
+                <div class="ad-row" style="margin:0;">
+                    <input type="password" id="pw_codes" name="passwort" required autocomplete="current-password">
+                    <button type="submit" class="ad-btn ad-btn-secondary"
+                            data-confirm="Die bisherigen Ersatzcodes gelten danach nicht mehr. Fortfahren?">Erzeugen</button>
+                </div>
+            </form>
+        </div>
+
+        <details class="ad-klapp" style="margin-top:14px;">
+            <summary><h3 style="display:inline;font-size:15px;">Zwei-Faktor-Anmeldung abschalten</h3>
+                <span class="ad-klapp-zeichen" aria-hidden="true"></span></summary>
+            <p class="ad-hint" style="margin-top:10px;">Danach genügt wieder das Passwort allein.</p>
+            <form method="post" class="ad-row" style="align-items:flex-end;">
+                <?= Util::csrfField() ?>
+                <input type="hidden" name="aktion" value="totp_aus">
+                <div class="ad-field">
+                    <label for="pw_aus">Passwort zur Bestätigung</label>
+                    <input type="password" id="pw_aus" name="passwort" required autocomplete="current-password">
+                </div>
+                <div class="ad-field" style="flex:0;">
+                    <label>&nbsp;</label>
+                    <button type="submit" class="ad-btn ad-btn-secondary"
+                            data-confirm="Wirklich abschalten? Danach schützt nur noch das Passwort.">Abschalten</button>
+                </div>
+            </form>
+        </details>
+
+    <?php elseif ($einrichten):
+        $geheim  = Auth::totpGeheimnis((int) $currentUser['id']);
+        $adresse = Totp::adresse($geheim, (string) $currentUser['email'], Settings::get('brand_name'));
+    ?>
+
+        <div class="ad-block">
+            <div class="ad-block-nr">1</div>
+            <div>
+                <h3 style="margin:0 0 6px;">App scannen lassen</h3>
+                <p class="ad-hint" style="margin:0 0 12px;">Öffnen Sie eine Authenticator-App auf dem
+                    Telefon — etwa Google Authenticator, Microsoft Authenticator, Aegis oder 1Password —
+                    und halten Sie sie an dieses Bild.</p>
+                <div style="display:flex;flex-wrap:wrap;gap:22px;align-items:flex-start;">
+                    <div style="background:#fff;padding:10px;border:1px solid var(--ad-border);border-radius:6px;">
+                        <?= Qr::svg($adresse, 200) ?>
+                    </div>
+                    <div style="flex:1 1 260px;">
+                        <p class="ad-hint" style="margin:0 0 6px;">Geht das Scannen nicht, tippen Sie
+                            diesen Schlüssel von Hand ein:</p>
+                        <p class="ad-mono" style="font-size:16px;letter-spacing:.08em;word-break:break-all;margin:0;">
+                            <?= Util::e(Totp::lesbar($geheim)) ?></p>
+                        <p class="ad-hint" style="margin:10px 0 0;">Am Telefon selbst?
+                            <a href="<?= Util::e($adresse) ?>">App direkt öffnen</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="ad-block">
+            <div class="ad-block-nr">2</div>
+            <div>
+                <h3 style="margin:0 0 6px;">Erste Zahl eingeben</h3>
+                <p class="ad-hint" style="margin:0 0 12px;">Damit prüfen wir, dass die App richtig
+                    eingerichtet ist. Vorher wird nichts scharf geschaltet.</p>
+                <form method="post" class="ad-row" style="align-items:flex-end;margin:0;">
+                    <?= Util::csrfField() ?>
+                    <input type="hidden" name="aktion" value="totp_bestaetigen">
+                    <div class="ad-field" style="flex:0 1 200px;">
+                        <label for="code">Zahl aus der App</label>
+                        <input type="text" id="code" name="code" required inputmode="numeric"
+                               maxlength="6" placeholder="123456" autocomplete="one-time-code"
+                               class="ad-mono" style="font-size:20px;letter-spacing:.16em;text-align:center;">
+                    </div>
+                    <div class="ad-field" style="flex:0;">
+                        <label>&nbsp;</label>
+                        <button type="submit" class="ad-btn">Einschalten</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <p class="ad-hint"><a href="benutzer.php#zweifaktor">Abbrechen</a></p>
+
+    <?php else: ?>
+
+        <p>Ohne zweiten Faktor genügt Ihr Passwort, um an alle Empfängerdaten zu kommen. Mit ihm
+            braucht es zusätzlich Ihr Telefon. Das Einrichten dauert zwei Minuten.</p>
+        <form method="post">
+            <?= Util::csrfField() ?>
+            <input type="hidden" name="aktion" value="totp_start">
+            <button type="submit" class="ad-btn">Zwei-Faktor-Anmeldung einrichten</button>
+        </form>
+
+    <?php endif; ?>
+</div>
 
 <div class="ad-card">
     <h2 style="margin-top:0;">Eigenes Passwort ändern</h2>

@@ -8,7 +8,12 @@ require_once dirname(__DIR__) . '/lib/bootstrap.php';
 /* ------------------------------------------------------- CSV-Ausgabe */
 
 if (Util::get('export') === '1') {
-    Auth::require();
+    /*
+     * Nicht mit „lesen“: Die Liste einzeln durchzublättern ist etwas anderes,
+     * als alle Adressen auf einmal aus dem Haus zu tragen. Dafür braucht es
+     * das Recht, Empfänger auch wirklich zu verwalten.
+     */
+    Auth::require('empfaenger');
     $status = Util::get('status');
     $listId = Util::getInt('liste');
 
@@ -182,7 +187,9 @@ $queryBase = array_filter(['q' => $search, 'status' => $status, 'liste' => $list
     <div class="ad-actions-inline">
         <a class="ad-btn" href="empfaenger.php?neu=1">Empfänger anlegen</a>
         <a class="ad-btn ad-btn-secondary" href="import.php">Import</a>
-        <a class="ad-btn ad-btn-secondary" href="empfaenger.php?export=1&amp;<?= Util::e(http_build_query($queryBase)) ?>">Export (CSV)</a>
+        <?php if (Auth::can('empfaenger')): ?>
+            <a class="ad-btn ad-btn-secondary" href="empfaenger.php?export=1&amp;<?= Util::e(http_build_query($queryBase)) ?>">Export (CSV)</a>
+        <?php endif; ?>
     </div>
 </div>
 

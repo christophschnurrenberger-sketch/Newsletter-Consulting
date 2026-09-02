@@ -17,7 +17,7 @@ if (!defined('NL_ROOT')) {
  * Systemcheck – so lässt sich sofort erkennen, welcher Stand auf dem
  * Server liegt.
  */
-define('NL_VERSION', '1.23.1 (Adressen in Blöcken strenger geprüft, Textassistent gebremst)');
+define('NL_VERSION', '1.24.0 (Zwei-Faktor-Anmeldung, strengere Passwörter)');
 
 mb_internal_encoding('UTF-8');
 date_default_timezone_set('Europe/Berlin');
@@ -39,7 +39,7 @@ if (PHP_SAPI !== 'cli' && !headers_sent()) {
 foreach ([
     'Config', 'Util', 'DB', 'Schema', 'Settings', 'Log', 'Mailer', 'Urls',
     'Lists', 'Events', 'Subscribers', 'Templates', 'Blocks', 'Renderer', 'Campaigns',
-    'Queue', 'Flow', 'Automations', 'SystemMails', 'Auth', 'Tracking', 'Bounces', 'Ai', 'Snippets',
+    'Queue', 'Flow', 'Automations', 'SystemMails', 'Totp', 'Qr', 'Auth', 'Tracking', 'Bounces', 'Ai', 'Snippets',
     'Instanzen',
 ] as $class) {
     require_once NL_ROOT . '/lib/' . $class . '.php';

@@ -1,6 +1,0 @@
-# robots.txt für AcumenMail
-# Domain www.newsletter-consulting.de ggf. durch Ihre echte Domain ersetzen
-User-agent: *
-Allow: /
-
-Sitemap: https://www.newsletter-consulting.de/sitemap.xml

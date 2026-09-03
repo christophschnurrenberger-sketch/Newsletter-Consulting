@@ -689,3 +689,58 @@ h3 { font-size: 15px; color: var(--ad-navy); margin: 20px 0 8px; }
     font-size: 13px;
     color: var(--ad-muted);
 }
+
+/* ---------------------------------------------------- Bestätigungsfenster */
+/*
+ * Ersetzt den Browser-Dialog von window.confirm durch ein Fenster im Stil
+ * der Verwaltung. Bewusst schlicht: abdunkeln, eine Karte in der Mitte,
+ * zwei Knöpfe.
+ */
+.ad-frage-hinter {
+    position: fixed;
+    inset: 0;
+    background: rgba(20, 36, 58, .45);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    z-index: 1000;
+}
+.ad-frage {
+    background: var(--ad-card);
+    border-radius: 12px;
+    box-shadow: 0 18px 50px rgba(20, 36, 58, .28);
+    max-width: 420px;
+    width: 100%;
+    padding: 24px 24px 20px;
+    animation: ad-frage-auf .12s ease-out;
+}
+@keyframes ad-frage-auf {
+    from { transform: translateY(6px); opacity: 0; }
+    to   { transform: translateY(0);   opacity: 1; }
+}
+@media (prefers-reduced-motion: reduce) {
+    .ad-frage { animation: none; }
+}
+.ad-frage-text {
+    margin: 0 0 20px;
+    color: var(--ad-navy);
+    font-size: 16px;
+    line-height: 1.5;
+}
+.ad-frage-knoepfe {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+/* Der bestätigende Knopf bei gefährlichen Aktionen: voll rot. */
+.ad-btn-gefahr-voll {
+    background-color: var(--ad-red);
+    border-color: var(--ad-red);
+    color: #fff;
+}
+.ad-btn-gefahr-voll:hover {
+    background-color: var(--ad-red-dark);
+    border-color: var(--ad-red-dark);
+    color: #fff;
+}

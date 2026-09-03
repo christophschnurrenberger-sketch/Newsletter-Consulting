@@ -4,14 +4,100 @@
 (function () {
     'use strict';
 
-    /* Rückfrage vor gefährlichen Aktionen (data-confirm="Wirklich löschen?") */
+    /*
+     * Rückfrage vor gefährlichen Aktionen (data-confirm="Wirklich löschen?").
+     *
+     * Statt des nüchternen Browser-Dialogs ein eigenes Fenster im Stil der
+     * Verwaltung. Der Browser-Dialog fragt sofort (synchron); unser Fenster
+     * antwortet erst später. Deshalb halten wir den Klick zuerst an, zeigen
+     * das Fenster – und lösen bei „Ja" genau denselben Klick noch einmal aus,
+     * diesmal ohne Rückfrage. So bleibt das Absenden von Formularen und das
+     * Folgen von Links unverändert, samt Name und Wert eines Knopfes.
+     */
     document.addEventListener('click', function (event) {
         var el = event.target.closest('[data-confirm]');
-        if (el && !window.confirm(el.getAttribute('data-confirm'))) {
-            event.preventDefault();
-            event.stopPropagation();
-        }
+        if (!el) { return; }
+        if (el.nlBestaetigt) { el.nlBestaetigt = false; return; }  // durchlassen
+
+        event.preventDefault();
+        event.stopPropagation();
+
+        var gefahr = el.classList.contains('ist-gefahr') || el.classList.contains('ad-btn-danger');
+        nlFrage(el.getAttribute('data-confirm'), {
+            ok: el.getAttribute('data-confirm-ok') || (gefahr ? 'Löschen' : 'Fortfahren'),
+            gefahr: gefahr
+        }).then(function (ja) {
+            if (ja) {
+                el.nlBestaetigt = true;
+                el.click();
+            }
+        });
     });
+
+    /**
+     * Ein Bestätigungsfenster. Gibt ein Versprechen zurück, das mit true
+     * (bestätigt) oder false (abgebrochen) endet. Bewusst ohne Framework.
+     */
+    function nlFrage(text, opt) {
+        opt = opt || {};
+        return new Promise(function (fertig) {
+            var vorherAktiv = document.activeElement;
+
+            var hinter = document.createElement('div');
+            hinter.className = 'ad-frage-hinter';
+
+            var box = document.createElement('div');
+            box.className = 'ad-frage';
+            box.setAttribute('role', 'dialog');
+            box.setAttribute('aria-modal', 'true');
+
+            var p = document.createElement('p');
+            p.className = 'ad-frage-text';
+            p.textContent = text || 'Sind Sie sicher?';
+            box.appendChild(p);
+
+            var reihe = document.createElement('div');
+            reihe.className = 'ad-frage-knoepfe';
+
+            var nein = document.createElement('button');
+            nein.type = 'button';
+            nein.className = 'ad-btn ad-btn-secondary';
+            nein.textContent = 'Abbrechen';
+
+            var ja = document.createElement('button');
+            ja.type = 'button';
+            ja.className = 'ad-btn' + (opt.gefahr ? ' ad-btn-gefahr-voll' : '');
+            ja.textContent = opt.ok || 'Fortfahren';
+
+            reihe.appendChild(nein);
+            reihe.appendChild(ja);
+            box.appendChild(reihe);
+            hinter.appendChild(box);
+            document.body.appendChild(hinter);
+
+            ja.focus();
+
+            function schliessen(antwort) {
+                document.removeEventListener('keydown', beiTaste, true);
+                hinter.remove();
+                if (vorherAktiv && typeof vorherAktiv.focus === 'function') { vorherAktiv.focus(); }
+                fertig(antwort);
+            }
+            function beiTaste(e) {
+                if (e.key === 'Escape') { e.preventDefault(); schliessen(false); }
+                if (e.key === 'Enter')  { e.preventDefault(); schliessen(true); }
+            }
+
+            nein.addEventListener('click', function () { schliessen(false); });
+            ja.addEventListener('click', function () { schliessen(true); });
+            hinter.addEventListener('mousedown', function (e) {
+                if (e.target === hinter) { schliessen(false); }  // Klick daneben
+            });
+            document.addEventListener('keydown', beiTaste, true);
+        });
+    }
+    // Auch für andere Skripte auf der Seite nutzbar
+    window.nlFrage = nlFrage;
 
     /* Alle Zeilen einer Tabelle auswählen */
     var toggleAll = document.querySelector('[data-check-all]');

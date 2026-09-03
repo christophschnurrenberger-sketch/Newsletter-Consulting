@@ -593,8 +593,9 @@
             if (act === 'down') { moveBlock(block.id, 1); }
             if (act === 'copy') { duplicateBlock(block.id); }
             if (act === 'del')  {
-                if (!window.confirm('Diesen Baustein löschen?')) { return; }
-                removeBlock(block.id);
+                window.nlFrage('Diesen Baustein löschen?', { ok: 'Löschen', gefahr: true })
+                    .then(function (ja) { if (ja) { removeBlock(block.id); render(); } });
+                return;
             }
             render();
         });
@@ -2166,15 +2167,18 @@
     }
 
     function bausteinLoeschen(id, name, danach) {
-        if (!window.confirm('Den gesicherten Baustein „' + name + '" löschen? '
-            + 'Bereits eingesetzte Bausteine bleiben, wo sie sind.')) { return; }
-        var daten = new FormData();
-        daten.set('_csrf', CSRF);
-        daten.set('loeschen', String(id));
-        fetch('bausteine.php', { method: 'POST', body: daten, credentials: 'same-origin' })
-            .then(function (a) { return a.json(); })
-            .then(function (antwort) {
-                if (antwort && antwort.ok) { danach(antwort.bausteine); }
+        window.nlFrage('Den gesicherten Baustein „' + name + '" löschen? '
+            + 'Bereits eingesetzte Bausteine bleiben, wo sie sind.', { ok: 'Löschen', gefahr: true })
+            .then(function (ja) {
+                if (!ja) { return; }
+                var daten = new FormData();
+                daten.set('_csrf', CSRF);
+                daten.set('loeschen', String(id));
+                fetch('bausteine.php', { method: 'POST', body: daten, credentials: 'same-origin' })
+                    .then(function (a) { return a.json(); })
+                    .then(function (antwort) {
+                        if (antwort && antwort.ok) { danach(antwort.bausteine); }
+                    });
             });
     }
 

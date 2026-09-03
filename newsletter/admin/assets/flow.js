@@ -330,8 +330,9 @@
             if (act === 'up')   { moveNode(node.id, -1); }
             if (act === 'down') { moveNode(node.id, 1); }
             if (act === 'del')  {
-                if (!window.confirm('Diesen Schritt entfernen?')) { return; }
-                removeNode(node.id);
+                window.nlFrage('Diesen Schritt entfernen?', { ok: 'Entfernen', gefahr: true })
+                    .then(function (ja) { if (ja) { removeNode(node.id); render(); } });
+                return;
             }
             render();
         });

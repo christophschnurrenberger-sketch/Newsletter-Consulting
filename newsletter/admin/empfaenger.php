@@ -291,7 +291,16 @@ $queryBase = array_filter(['q' => $search, 'status' => $status, 'liste' => $list
 </div>
 
 <?php if ($rows === []): ?>
-    <div class="ad-empty">Keine Empfänger gefunden.</div>
+    <?php if (trim($search) !== '' || $status !== '' || $listId > 0): ?>
+        <?= admin_empty('search', 'Keine Empfänger gefunden',
+            'Mit dieser Suche oder diesem Filter passt niemand zusammen.',
+            '<a class="ad-btn ad-btn-secondary" href="empfaenger.php">Filter zurücksetzen</a>') ?>
+    <?php else: ?>
+        <?= admin_empty('users', 'Noch keine Empfänger',
+            'Legen Sie den ersten von Hand an oder importieren Sie eine Liste als CSV.',
+            '<a class="ad-btn" href="empfaenger.php?neu=1">Empfänger anlegen</a> '
+            . '<a class="ad-btn ad-btn-secondary" href="import.php">CSV importieren</a>') ?>
+    <?php endif; ?>
 <?php else: ?>
     <form method="post" data-sammelform>
         <?= Util::csrfField() ?>

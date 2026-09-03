@@ -52,6 +52,35 @@ function admin_nav(string $file, string $label, string $badge = ''): string
         . '</a>';
 }
 
+/**
+ * Ein freundlicher Leerzustand: Icon, kurze Überschrift, ein Satz und
+ * optional eine Handlung. So steht auf leeren Seiten nicht bloß „nichts da“,
+ * sondern was als Nächstes zu tun ist.
+ *
+ * @param string $icon  Schlüssel aus der kleinen Icon-Auswahl unten
+ * @param string $title Überschrift (wird maskiert)
+ * @param string $text  ein erklärender Satz (wird maskiert)
+ * @param string $tat   optionaler Handlungs-Knopf als fertiges HTML (vertraut)
+ */
+function admin_empty(string $icon, string $title, string $text, string $tat = ''): string
+{
+    $icons = [
+        'mail'   => '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3.5 6.5 8.5 6 8.5-6"/>',
+        'users'  => '<circle cx="9" cy="8" r="3.2"/><path d="M3.5 20a5.5 5.5 0 0 1 11 0"/><path d="M16 6.2a3 3 0 0 1 0 5.6M20.5 20a5 5 0 0 0-4-4.9"/>',
+        'list'   => '<path d="M8 6h13M8 12h13M8 18h13"/><path d="M3.5 6h.01M3.5 12h.01M3.5 18h.01"/>',
+        'layout' => '<rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/>',
+        'search' => '<circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/>',
+    ];
+    $d = $icons[$icon] ?? $icons['mail'];
+    return '<div class="ad-empty">'
+        . '<div class="ad-empty-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" '
+        . 'stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' . $d . '</svg></div>'
+        . '<h3>' . Util::e($title) . '</h3>'
+        . '<p>' . Util::e($text) . '</p>'
+        . ($tat !== '' ? '<div class="ad-empty-tat">' . $tat . '</div>' : '')
+        . '</div>';
+}
+
 /** Status einer Kampagne als farbige Pille. */
 function campaign_status_pill(string $status): string
 {

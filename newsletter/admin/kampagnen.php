@@ -60,13 +60,15 @@ $anzahl    = Campaigns::statusCounts();
 </nav>
 
 <?php if ($campaigns === []): ?>
-    <div class="ad-empty">
-        <?php if ($filter !== '' && $anzahl[''] > 0): ?>
-            Hier liegt gerade nichts. <a href="kampagnen.php">Alle Newsletter anzeigen</a>
-        <?php else: ?>
-            Noch kein Newsletter angelegt. <a href="neu.php">Jetzt den ersten schreiben</a>
-        <?php endif; ?>
-    </div>
+    <?php if ($filter !== '' && $anzahl[''] > 0): ?>
+        <?= admin_empty('search', 'Hier liegt gerade nichts',
+            'In diesem Filter gibt es keine Ausgabe.',
+            '<a class="ad-btn ad-btn-secondary" href="kampagnen.php">Alle Newsletter anzeigen</a>') ?>
+    <?php else: ?>
+        <?= admin_empty('mail', 'Noch kein Newsletter',
+            'Schreiben Sie Ihre erste Ausgabe – heute versendet oder für später geplant.',
+            '<a class="ad-btn" href="neu.php">Ersten Newsletter schreiben</a>') ?>
+    <?php endif; ?>
 <?php else: ?>
     <div class="ad-table-wrap">
         <table class="ad-table">

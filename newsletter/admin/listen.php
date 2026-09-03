@@ -58,7 +58,9 @@ $counts = Lists::activeCounts();
 </div>
 
 <?php if ($lists === []): ?>
-    <div class="ad-empty">Noch keine Liste vorhanden – legen Sie unten die erste an.</div>
+    <?= admin_empty('list', 'Noch keine Liste',
+        'Listen bündeln Ihre Empfänger – z. B. „Clubnachrichten“ oder „Turniere“. Legen Sie die erste an.',
+        '<a class="ad-btn" href="#neue-liste">Erste Liste anlegen</a>') ?>
 <?php else: ?>
     <?php foreach ($lists as $list): ?>
         <div class="ad-card">

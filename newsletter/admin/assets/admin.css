@@ -183,7 +183,7 @@ h3 { font-size: 15px; color: var(--ad-navy); margin: 20px 0 8px; }
 
 /* --------------------------------------------------------------- Tabellen */
 
-.ad-table { width: 100%; border-collapse: collapse; font-size: 14px; background-color: #fff; }
+.ad-table { width: 100%; border-collapse: collapse; font-size: 14px; background-color: #fff; font-variant-numeric: tabular-nums; }
 .ad-table th, .ad-table td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--ad-border); vertical-align: middle; }
 .ad-table th { background-color: #FAFBFD; color: var(--ad-navy); font-size: 12.5px; text-transform: uppercase; letter-spacing: .4px; }
 .ad-table tr:last-child td { border-bottom: none; }
@@ -208,7 +208,13 @@ h3 { font-size: 15px; color: var(--ad-navy); margin: 20px 0 8px; }
 .ad-settings.hat-reiter .ad-tab-panel { display: none; }
 .ad-settings.hat-reiter .ad-tab-panel.aktiv { display: block; }
 
-.ad-empty { padding: 28px; text-align: center; color: var(--ad-muted); background: #fff; border: 1px dashed var(--ad-border); border-radius: 10px; }
+.ad-empty { padding: 40px 28px; text-align: center; color: var(--ad-muted); background: #fff; border: 1px dashed var(--ad-border); border-radius: 12px; margin-bottom: 22px; }
+.ad-empty-ico { width: 48px; height: 48px; margin: 0 auto 14px; border-radius: 13px;
+    display: flex; align-items: center; justify-content: center; background: var(--ad-bg); color: var(--ad-navy); }
+.ad-empty-ico svg { width: 24px; height: 24px; }
+.ad-empty h3 { margin: 0 0 6px; color: var(--ad-navy); font-size: 16px; }
+.ad-empty p { margin: 0 auto; max-width: 46ch; line-height: 1.55; }
+.ad-empty .ad-empty-tat { margin-top: 18px; }
 
 /* ----------------------------------------------------------- Bausteine */
 

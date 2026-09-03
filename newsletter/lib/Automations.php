@@ -15,7 +15,24 @@ final class Automations
     public const ACTIVE = 'active';
     public const PAUSED = 'paused';
 
-    public const TRIGGER_CONFIRM = 'confirm';
+    public const TRIGGER_CONFIRM  = 'confirm';   // nach bestätigter Anmeldung
+    public const TRIGGER_BIRTHDAY = 'birthday';  // am Geburtstag des Mitglieds
+    public const TRIGGER_INACTIVE = 'inactive';  // wenn lange nichts mehr geöffnet wurde
+
+    /** Auslöser und ihre Bezeichnung in der Oberfläche. */
+    public const TRIGGERS = [
+        self::TRIGGER_CONFIRM  => 'Nach der Anmeldung',
+        self::TRIGGER_BIRTHDAY => 'Am Geburtstag',
+        self::TRIGGER_INACTIVE => 'Bei längerer Inaktivität',
+    ];
+
+    /** Vorgabe für die Inaktivitäts-Schwelle in Tagen. */
+    public const INACTIVE_DAYS = 180;
+
+    public static function triggerLabel(string $trigger): string
+    {
+        return self::TRIGGERS[$trigger] ?? $trigger;
+    }
 
     /* ---------------------------------------------------------------- CRUD */
 
@@ -33,12 +50,18 @@ final class Automations
     /**
      * @param int|null $templateId Marke der Strecke; neue Schritte erben sie
      */
-    public static function create(string $name, ?int $listId = null, ?int $templateId = null): int
+    public static function create(string $name, ?int $listId = null, ?int $templateId = null,
+                                  string $trigger = self::TRIGGER_CONFIRM, ?int $triggerDays = null): int
     {
         $now = Util::now();
+        if (!isset(self::TRIGGERS[$trigger])) {
+            $trigger = self::TRIGGER_CONFIRM;
+        }
         return DB::insert('automations', [
             'name'         => mb_substr(trim($name), 0, 190) ?: 'Neue Strecke',
-            'trigger_type' => self::TRIGGER_CONFIRM,
+            'trigger_type' => $trigger,
+            'trigger_days' => $trigger === self::TRIGGER_INACTIVE
+                ? max(1, (int) ($triggerDays ?? self::INACTIVE_DAYS)) : null,
             'list_id'      => $listId,
             'template_id'  => $templateId !== null && $templateId > 0 ? $templateId : null,
             'status'       => self::PAUSED,
@@ -61,10 +84,13 @@ final class Automations
     public static function save(int $id, array $data): void
     {
         $update = [];
-        foreach (['name', 'list_id', 'status', 'template_id'] as $field) {
+        foreach (['name', 'list_id', 'status', 'template_id', 'trigger_type', 'trigger_days'] as $field) {
             if (array_key_exists($field, $data)) {
                 $update[$field] = $data[$field];
             }
+        }
+        if (isset($update['trigger_type']) && !isset(self::TRIGGERS[$update['trigger_type']])) {
+            $update['trigger_type'] = self::TRIGGER_CONFIRM;
         }
         if ($update === []) {
             return;
@@ -360,13 +386,35 @@ final class Automations
         }
     }
 
-    /** Nimmt einen Empfänger in eine Strecke auf (keine Doppelaufnahme). */
-    public static function enroll(int $automationId, int $subscriberId): int
+    /**
+     * Nimmt einen Empfänger in eine Strecke auf.
+     *
+     * @param int $cooldownDays 0 = nur einmal überhaupt (Willkommen). Größer als
+     *                          0 erlaubt eine erneute Aufnahme, sobald so viele
+     *                          Tage seit der letzten vergangen sind – so kommt
+     *                          der Geburtstagsgruß jedes Jahr, aber nicht zweimal.
+     */
+    public static function enroll(int $automationId, int $subscriberId, int $cooldownDays = 0,
+                                  ?string $asOf = null): int
     {
-        $already = (int) DB::value(
-            'SELECT COUNT(*) FROM automation_runs WHERE automation_id = ? AND subscriber_id = ?',
-            [$automationId, $subscriberId]
-        );
+        if ($cooldownDays > 0) {
+            // Läuft gerade noch einer, oder war einer innerhalb der Sperrzeit?
+            // Bezugspunkt ist der Stichtag des Laufs, nicht die Uhr – so rechnet
+            // ein Tageslauf durchgängig „zu diesem Datum".
+            $bezug   = $asOf !== null ? strtotime($asOf) : time();
+            $seit    = date('Y-m-d H:i:s', $bezug - $cooldownDays * 86400);
+            $already = (int) DB::value(
+                "SELECT COUNT(*) FROM automation_runs
+                 WHERE automation_id = ? AND subscriber_id = ?
+                   AND (status = 'pending' OR created_at >= ?)",
+                [$automationId, $subscriberId, $seit]
+            );
+        } else {
+            $already = (int) DB::value(
+                'SELECT COUNT(*) FROM automation_runs WHERE automation_id = ? AND subscriber_id = ?',
+                [$automationId, $subscriberId]
+            );
+        }
         if ($already > 0) {
             return 0;
         }
@@ -395,6 +443,95 @@ final class Automations
     {
         DB::run("UPDATE automation_runs SET status = 'cancelled' WHERE subscriber_id = ? AND status = 'pending'",
             [$subscriberId]);
+    }
+
+    /* -------------------------------------------------- Tägliche Auslöser */
+
+    /**
+     * Nimmt Empfänger in zeit- und merkmalsbasierte Strecken auf: Geburtstag
+     * und längere Inaktivität. Wird einmal täglich vom Wartungs-Cron gerufen.
+     *
+     * Der ereignisbasierte Auslöser (bestätigte Anmeldung) läuft weiter über
+     * onConfirm(); hier geht es nur um die, die man erst durch Nachsehen findet.
+     *
+     * @return array{birthday:int,inactive:int} Anzahl neu aufgenommener Empfänger
+     */
+    public static function runDailyTriggers(?string $heute = null): array
+    {
+        $heute  = $heute ?? Util::now();
+        $tag    = substr($heute, 5, 5);            // MM-TT von heute
+        $gezaehlt = ['birthday' => 0, 'inactive' => 0];
+
+        $strecken = DB::all("SELECT * FROM automations WHERE status = 'active'
+            AND trigger_type IN (?, ?)", [self::TRIGGER_BIRTHDAY, self::TRIGGER_INACTIVE]);
+
+        foreach ($strecken as $strecke) {
+            $autoId = (int) $strecke['id'];
+            $listId = $strecke['list_id'] !== null ? (int) $strecke['list_id'] : 0;
+
+            if ($strecke['trigger_type'] === self::TRIGGER_BIRTHDAY) {
+                foreach (self::geburtstagsKinder($tag, $listId) as $subId) {
+                    // Einmal im Jahr – die Sperrzeit verhindert einen zweiten Gruß.
+                    $gezaehlt['birthday'] += self::enroll($autoId, $subId, 330, $heute);
+                }
+            } else {
+                $tage = max(1, (int) ($strecke['trigger_days'] ?? self::INACTIVE_DAYS));
+                foreach (self::inaktive($tage, $listId, $heute) as $subId) {
+                    // Nicht öfter als einmal je Inaktivitätsfenster ansprechen.
+                    $gezaehlt['inactive'] += self::enroll($autoId, $subId, $tage, $heute);
+                }
+            }
+        }
+
+        if ($gezaehlt['birthday'] + $gezaehlt['inactive'] > 0) {
+            Log::info('automation', sprintf('Tägliche Auslöser: %d Geburtstag(e), %d inaktive(r) aufgenommen.',
+                $gezaehlt['birthday'], $gezaehlt['inactive']));
+        }
+        return $gezaehlt;
+    }
+
+    /**
+     * Aktive Empfänger, die heute Geburtstag haben (Tag und Monat).
+     *
+     * @return int[] Empfänger-IDs
+     */
+    private static function geburtstagsKinder(string $tag, int $listId): array
+    {
+        // birthday liegt als JJJJ-MM-TT vor; verglichen werden nur MM-TT.
+        $sql = "SELECT s.id FROM subscribers s
+                WHERE s.status = 'active' AND s.birthday <> '' AND substr(s.birthday, 6, 5) = ?";
+        $args = [$tag];
+        if ($listId > 0) {
+            $sql .= ' AND EXISTS (SELECT 1 FROM subscriber_lists sl
+                                  WHERE sl.subscriber_id = s.id AND sl.list_id = ?)';
+            $args[] = $listId;
+        }
+        return array_map('intval', DB::column($sql, $args));
+    }
+
+    /**
+     * Aktive Empfänger, die seit mindestens $tage Tagen nichts geöffnet haben.
+     * Wer noch nie geöffnet hat, zählt ab seiner Bestätigung (bzw. Anmeldung).
+     *
+     * @return int[] Empfänger-IDs
+     */
+    private static function inaktive(int $tage, int $listId, string $heute): array
+    {
+        $grenze = date('Y-m-d H:i:s', strtotime($heute) - $tage * 86400);
+        $sql = "SELECT s.id FROM subscribers s
+                WHERE s.status = 'active'
+                  AND COALESCE(
+                        (SELECT MAX(e.created_at) FROM events e
+                         WHERE e.subscriber_id = s.id AND e.type = 'open'),
+                        s.confirmed_at, s.created_at
+                      ) < ?";
+        $args = [$grenze];
+        if ($listId > 0) {
+            $sql .= ' AND EXISTS (SELECT 1 FROM subscriber_lists sl
+                                  WHERE sl.subscriber_id = s.id AND sl.list_id = ?)';
+            $args[] = $listId;
+        }
+        return array_map('intval', DB::column($sql, $args));
     }
 
     /* ------------------------------------------------------------ Cron-Teil */

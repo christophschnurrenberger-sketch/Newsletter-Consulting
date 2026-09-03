@@ -27,6 +27,10 @@ $purged   = Subscribers::purgeExpiredPending();
 $logs     = Log::prune(90);
 $released = Queue::releaseStaleLocks();
 
+// Zeit- und merkmalsbasierte Strecken: Geburtstag und längere Inaktivität.
+// Der eigentliche Versand läuft danach wie immer über den Sende-Cron.
+$ausloeser = Automations::runDailyTriggers();
+
 // Abgelaufene Rate-Limit-Einträge entfernen
 $rates = DB::delete('rate_limits', 'created_at < ?', [date('Y-m-d H:i:s', time() - 86400)]);
 
@@ -36,7 +40,8 @@ Log::info('wartung', sprintf(
 ));
 
 printf(
-    "Unbestätigte gelöscht: %d · Protokollzeilen entfernt: %d · Sendungen freigegeben: %d · Rate-Limits: %d\n",
-    $purged, $logs, $released, $rates
+    "Unbestätigte gelöscht: %d · Protokollzeilen entfernt: %d · Sendungen freigegeben: %d · Rate-Limits: %d\n"
+    . "Automations-Auslöser: %d Geburtstag(e), %d inaktive(r)\n",
+    $purged, $logs, $released, $rates, $ausloeser['birthday'], $ausloeser['inactive']
 );
 exit(0);

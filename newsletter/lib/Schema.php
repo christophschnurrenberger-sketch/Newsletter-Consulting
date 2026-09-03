@@ -17,7 +17,7 @@
 final class Schema
 {
     /** Version des Schemas – wird in settings gespeichert. */
-    public const VERSION = 9;
+    public const VERSION = 10;
 
     public static function migrate(): void
     {
@@ -82,6 +82,9 @@ final class Schema
         self::ensureColumn('users', 'totp_recovery', '%TEXT%');
         self::ensureColumn('users', 'sessions_valid_from', '%DT%');
         // Redaktionspool kam mit Fassung 9 hinzu (siehe tables()).
+        // Geburtstag der Empfänger und die Schwelle für Inaktivitäts-Strecken
+        self::ensureColumn('subscribers', 'birthday', "%STR(10)% NOT NULL DEFAULT ''");
+        self::ensureColumn('automations', 'trigger_days', '%INT% NULL');
 
         Settings::set('schema_version', (string) self::VERSION);
     }
@@ -200,6 +203,7 @@ final class Schema
                 signup_ip       %STR(64)%  NOT NULL DEFAULT \'\',
                 confirm_ip      %STR(64)%  NOT NULL DEFAULT \'\',
                 bounce_count    %INT% NOT NULL DEFAULT 0,
+                birthday        %STR(10)% NOT NULL DEFAULT \'\',
                 created_at      %DT%,
                 confirmed_at    %DT%,
                 unsubscribed_at %DT%,
@@ -290,6 +294,7 @@ final class Schema
                 id           %PK%,
                 name         %STR(190)% NOT NULL,
                 trigger_type %STR(40)% NOT NULL DEFAULT \'confirm\',
+                trigger_days %INT% NULL,
                 list_id      %INT%,
                 flow_json    %TEXT%,
                 status       %STR(20)% NOT NULL DEFAULT \'paused\',

@@ -443,6 +443,7 @@ final class Subscribers
                 'last_name'  => self::clean($row['last_name'] ?? '', 120),
                 'company'    => self::clean($row['company'] ?? '', 190),
                 'salutation' => self::clean($row['salutation'] ?? '', 20),
+                'birthday'   => self::cleanDate((string) ($row['birthday'] ?? '')),
             ];
 
             if ($existing === null) {
@@ -531,6 +532,8 @@ final class Subscribers
             'nachname' => 'last_name', 'name' => 'last_name', 'last_name' => 'last_name', 'lastname' => 'last_name',
             'firma' => 'company', 'unternehmen' => 'company', 'company' => 'company',
             'anrede' => 'salutation', 'salutation' => 'salutation',
+            'geburtstag' => 'birthday', 'geburtsdatum' => 'birthday', 'birthday' => 'birthday',
+            'geb' => 'birthday', 'geburt' => 'birthday',
         ];
         return $map[$h] ?? '';
     }
@@ -575,6 +578,35 @@ final class Subscribers
         $value = is_string($value) ? trim($value) : '';
         $value = str_replace(["\r", "\n", "\t"], ' ', $value);
         return mb_substr($value, 0, $max);
+    }
+
+    /**
+     * Ein Geburtsdatum säubern. Akzeptiert die gängigen Schreibweisen
+     * (2004-05-13, 13.05.2004, 13.5.) und gibt immer JJJJ-MM-TT zurück –
+     * bei einem Datum ohne Jahr mit dem Platzhalterjahr 1900.
+     */
+    public static function cleanDate(string $roh): string
+    {
+        $roh = trim($roh);
+        if ($roh === '') {
+            return '';
+        }
+        // JJJJ-MM-TT
+        if (preg_match('/^(\d{4})-(\d{1,2})-(\d{1,2})$/', $roh, $t)) {
+            [$j, $m, $tag] = [(int) $t[1], (int) $t[2], (int) $t[3]];
+        // TT.MM.JJJJ
+        } elseif (preg_match('/^(\d{1,2})\.(\d{1,2})\.(\d{4})$/', $roh, $t)) {
+            [$j, $m, $tag] = [(int) $t[3], (int) $t[2], (int) $t[1]];
+        // TT.MM. (ohne Jahr)
+        } elseif (preg_match('/^(\d{1,2})\.(\d{1,2})\.?$/', $roh, $t)) {
+            [$j, $m, $tag] = [1900, (int) $t[2], (int) $t[1]];
+        } else {
+            return '';
+        }
+        if (!checkdate($m, $tag, $j)) {
+            return '';
+        }
+        return sprintf('%04d-%02d-%02d', $j, $m, $tag);
     }
 
     private static function encodeCustom($custom): string

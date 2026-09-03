@@ -99,18 +99,29 @@ if (Util::isPost()) {
     }
 
     if ($action === 'anlegen') {
-        $newId = Automations::create(Util::post('name') ?: 'Willkommensstrecke', Util::postInt('list_id') ?: null);
+        $trigger = Util::post('trigger_type');
+        $newId = Automations::create(
+            Util::post('name') ?: 'Neue Strecke',
+            Util::postInt('list_id') ?: null,
+            null,
+            $trigger,
+            Util::postInt('trigger_days') ?: null
+        );
         Automations::saveFlow($newId, (string) json_encode(Flow::starter()));
         Util::flash('Strecke angelegt. Ziehen Sie jetzt die Schritte in den Ablauf.');
         Util::redirect('automationen.php?id=' . $newId);
     }
 
     if ($action === 'speichern' && $id > 0) {
+        $trigger = Util::post('trigger_type');
         Automations::save($id, [
-            'name'        => Util::post('name'),
-            'list_id'     => Util::postInt('list_id') ?: null,
-            'template_id' => Util::postInt('template_id') ?: null,
-            'status'      => Util::post('status') === Automations::ACTIVE ? Automations::ACTIVE : Automations::PAUSED,
+            'name'         => Util::post('name'),
+            'list_id'      => Util::postInt('list_id') ?: null,
+            'template_id'  => Util::postInt('template_id') ?: null,
+            'status'       => Util::post('status') === Automations::ACTIVE ? Automations::ACTIVE : Automations::PAUSED,
+            'trigger_type' => $trigger,
+            'trigger_days' => $trigger === Automations::TRIGGER_INACTIVE
+                ? max(1, Util::postInt('trigger_days') ?: Automations::INACTIVE_DAYS) : null,
         ]);
         Automations::saveFlow($id, Util::postRaw('flow_json'));
 
@@ -293,7 +304,7 @@ if ($current !== null) {
 <div class="ad-page-head">
     <div>
         <h1>Automationen</h1>
-        <p class="ad-sub">Mailstrecken, die nach der Anmeldung von selbst laufen</p>
+        <p class="ad-sub">Mailstrecken, die von selbst laufen – nach der Anmeldung, am Geburtstag oder bei längerer Inaktivität</p>
     </div>
     <?php if ($current !== null): ?>
         <?php /* Speichern gehört dorthin, wo man es sucht: oben, immer sichtbar. */ ?>
@@ -323,24 +334,39 @@ if ($current !== null) {
 <?php if ($neu): ?>
     <div class="ad-card" id="neue-strecke">
         <h2>Neue Strecke anlegen</h2>
-        <p class="ad-hint" style="margin-bottom:14px;">Eine Strecke startet, sobald jemand seine Anmeldung
-            bestätigt hat. Die Schritte legen Sie gleich danach fest.</p>
-        <form method="post">
+        <p class="ad-hint" style="margin-bottom:14px;">Wählen Sie zuerst, <strong>wann</strong> die Strecke
+            startet. Die einzelnen Schritte (warten, Mail, Bedingung) legen Sie gleich danach fest.</p>
+        <form method="post" data-strecke-form>
             <?= Util::csrfField() ?>
             <input type="hidden" name="aktion" value="anlegen">
-            <div class="ad-row" style="align-items:flex-end;">
+            <div class="ad-row">
                 <div class="ad-field">
                     <label for="name">Name</label>
-                    <input type="text" id="name" name="name" placeholder="Willkommensstrecke" autofocus>
+                    <input type="text" id="name" name="name" placeholder="z. B. Geburtstagsgruß" autofocus>
                 </div>
                 <div class="ad-field">
-                    <label for="list_id">Nur für Anmeldungen dieser Liste</label>
+                    <label for="trigger_type">Auslöser</label>
+                    <select id="trigger_type" name="trigger_type" data-trigger-wahl>
+                        <?php foreach (Automations::TRIGGERS as $wert => $label): ?>
+                            <option value="<?= Util::e($wert) ?>"><?= Util::e($label) ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+            </div>
+            <div class="ad-row" style="align-items:flex-end;">
+                <div class="ad-field">
+                    <label for="list_id">Nur für diese Liste</label>
                     <select id="list_id" name="list_id">
                         <option value="0">Alle Listen</option>
                         <?php foreach (Lists::all() as $list): ?>
                             <option value="<?= (int) $list['id'] ?>"><?= Util::e((string) $list['name']) ?></option>
                         <?php endforeach; ?>
                     </select>
+                </div>
+                <div class="ad-field" data-nur-inaktiv hidden>
+                    <label for="trigger_days">Inaktiv seit … Tagen</label>
+                    <input type="number" id="trigger_days" name="trigger_days" min="1" max="3650"
+                           value="<?= Automations::INACTIVE_DAYS ?>">
                 </div>
                 <div class="ad-field" style="flex:0;">
                     <label>&nbsp;</label>
@@ -352,6 +378,7 @@ if ($current !== null) {
                     </div>
                 </div>
             </div>
+            <p class="ad-hint" data-trigger-hinweis style="margin:2px 0 0;"></p>
         </form>
     </div>
 <?php endif; ?>
@@ -400,9 +427,24 @@ if ($current !== null) {
                     <input type="text" id="a_name" name="name" value="<?= Util::e((string) $current['name']) ?>">
                 </div>
                 <div class="ad-field">
-                    <label for="a_list">Auslöser: bestätigte Anmeldung in</label>
+                    <label for="a_trigger">Auslöser</label>
+                    <select id="a_trigger" name="trigger_type" data-trigger-wahl>
+                        <?php foreach (Automations::TRIGGERS as $wert => $label): ?>
+                            <option value="<?= Util::e($wert) ?>"
+                                <?= (string) $current['trigger_type'] === $wert ? 'selected' : '' ?>>
+                                <?= Util::e($label) ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+                <div class="ad-field" data-nur-inaktiv <?= $current['trigger_type'] === Automations::TRIGGER_INACTIVE ? '' : 'hidden' ?>>
+                    <label for="a_days">Inaktiv seit … Tagen</label>
+                    <input type="number" id="a_days" name="trigger_days" min="1" max="3650"
+                           value="<?= (int) ($current['trigger_days'] ?: Automations::INACTIVE_DAYS) ?>">
+                </div>
+                <div class="ad-field">
+                    <label for="a_list">Nur für diese Liste</label>
                     <select id="a_list" name="list_id">
-                        <option value="0">jeder Liste</option>
+                        <option value="0">alle Listen</option>
                         <?php foreach (Lists::all() as $list): ?>
                             <option value="<?= (int) $list['id'] ?>"
                                 <?= (int) $current['list_id'] === (int) $list['id'] ? 'selected' : '' ?>>
@@ -485,8 +527,19 @@ if ($current !== null) {
                 <div class="fl-stage">
                     <div class="fl-trigger">
                         <strong>Auslöser</strong>
-                        Anmeldung bestätigt<?= (int) $current['list_id'] > 0
-                            ? ' – Liste „' . Util::e(Lists::name((int) $current['list_id'])) . '“' : '' ?>
+                        <?php
+                        $tt = (string) $current['trigger_type'];
+                        if ($tt === Automations::TRIGGER_BIRTHDAY) {
+                            echo 'Am Geburtstag';
+                        } elseif ($tt === Automations::TRIGGER_INACTIVE) {
+                            echo 'Inaktiv seit ' . (int) ($current['trigger_days'] ?: Automations::INACTIVE_DAYS) . ' Tagen';
+                        } else {
+                            echo 'Anmeldung bestätigt';
+                        }
+                        echo (int) $current['list_id'] > 0
+                            ? ' – Liste „' . Util::e(Lists::name((int) $current['list_id'])) . '“'
+                            : ' – alle Listen';
+                        ?>
                     </div>
                     <div class="fl-canvas" data-canvas></div>
                 </div>
@@ -672,5 +725,28 @@ if ($current !== null) {
         </div>
     <?php endif; ?>
 <?php endif; ?>
+
+<script>
+/* Auslöserwahl: das Feld „Inaktiv seit … Tagen" nur zeigen, wenn es passt –
+   und im Anlegen-Formular einen kurzen Hinweis einblenden. */
+(function () {
+    var texte = {
+        confirm:  'Startet, sobald jemand seine Anmeldung bestätigt – ideal für eine Willkommensserie.',
+        birthday: 'Prüft täglich, wer Geburtstag hat, und schickt automatisch den Gruß. Dafür braucht das Mitglied ein Geburtsdatum.',
+        inactive: 'Prüft täglich, wer lange nichts mehr geöffnet hat, und startet die Rückhol-Strecke.'
+    };
+    document.querySelectorAll('[data-trigger-wahl]').forEach(function (wahl) {
+        var form = wahl.closest('form') || document;
+        function auffrischen() {
+            var inaktiv = form.querySelector('[data-nur-inaktiv]');
+            if (inaktiv) { inaktiv.hidden = (wahl.value !== 'inactive'); }
+            var hinweis = form.querySelector('[data-trigger-hinweis]');
+            if (hinweis) { hinweis.textContent = texte[wahl.value] || ''; }
+        }
+        wahl.addEventListener('change', auffrischen);
+        auffrischen();
+    });
+})();
+</script>
 
 <?php require __DIR__ . '/partials/footer.php';

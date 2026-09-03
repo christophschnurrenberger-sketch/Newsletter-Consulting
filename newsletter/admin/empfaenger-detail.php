@@ -27,6 +27,7 @@ if (Util::isPost()) {
             'last_name'  => mb_substr(Util::post('last_name'), 0, 120),
             'company'    => mb_substr(Util::post('company'), 0, 190),
             'salutation' => in_array(Util::post('salutation'), ['Herr', 'Frau'], true) ? Util::post('salutation') : '',
+            'birthday'   => Subscribers::cleanDate(Util::post('birthday')),
             'note'       => mb_substr(Util::postRaw('note'), 0, 2000),
         ], 'id = ?', [$id]);
         Subscribers::setLists($id, array_map('intval', (array) ($_POST['lists'] ?? [])));
@@ -126,9 +127,24 @@ $blocked  = Subscribers::isSuppressed((string) $sub['email']);
                     </div>
                 </div>
 
-                <div class="ad-field">
-                    <label for="company">Unternehmen</label>
-                    <input type="text" id="company" name="company" value="<?= Util::e((string) $sub['company']) ?>">
+                <div class="ad-row">
+                    <div class="ad-field">
+                        <label for="company">Unternehmen</label>
+                        <input type="text" id="company" name="company" value="<?= Util::e((string) $sub['company']) ?>">
+                    </div>
+                    <div class="ad-field" style="flex:0 1 220px;">
+                        <label for="birthday">Geburtstag</label>
+                        <?php
+                        // Ein Datum ohne Jahr (Platzhalter 1900) im Feld nicht mit „1900" zeigen.
+                        $gebWert = (string) ($sub['birthday'] ?? '');
+                        $gebFeld = str_starts_with($gebWert, '1900-') ? '' : $gebWert;
+                        ?>
+                        <input type="date" id="birthday" name="birthday" value="<?= Util::e($gebFeld) ?>">
+                        <?php if ($gebFeld === '' && $gebWert !== ''): ?>
+                            <span class="ad-hint">hinterlegt: <?= Util::e(substr($gebWert, 8, 2) . '.' . substr($gebWert, 5, 2) . '.') ?> (ohne Jahr)</span>
+                        <?php endif; ?>
+                        <span class="ad-hint">Für den automatischen Geburtstagsgruß.</span>
+                    </div>
                 </div>
 
                 <div class="ad-field">

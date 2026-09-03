@@ -151,12 +151,18 @@ $mitglieder = [
     ['lena.mayr@example.test',        'Lena',      'Mayr',        'Sekretariat'],
     ['martin.nolte@example.test',     'Martin',    'Nolte',       ''],
 ];
+// Geburtstage streuen – einer hat HEUTE, damit der Geburtsgruß beim Vorführen
+// sofort greift; die übrigen über das Jahr verteilt.
+$heuteMMDD = date('m-d');
+$gebtage = [$heuteMMDD, '03-14', '06-22', '09-08', '11-30', '01-19', '07-04', '12-24',
+            '02-11', '05-27', '08-16', '10-03'];
 $zeilen = [];
-foreach ($mitglieder as $m) {
-    $zeilen[] = ['email' => $m[0], 'first_name' => $m[1], 'last_name' => $m[2], 'company' => $m[3]];
+foreach ($mitglieder as $i => $m) {
+    $zeilen[] = ['email' => $m[0], 'first_name' => $m[1], 'last_name' => $m[2], 'company' => $m[3],
+                 'birthday' => '1978-' . ($gebtage[$i] ?? '06-15')];
 }
 $import = Subscribers::import($zeilen, [$clubListe, $turniere], Subscribers::STATUS_ACTIVE, 'demo');
-echo "  " . (int) $import['imported'] . " Mitglieder in Clubnachrichten und Turniere\n";
+echo "  " . (int) $import['imported'] . " Mitglieder in Clubnachrichten und Turniere (mit Geburtstagen)\n";
 
 /* Ein paar Gäste, davon einer noch unbestätigt – so ist auch dieser Fall zu sehen. */
 Subscribers::import([
@@ -253,6 +259,48 @@ if ($schritte !== []) {
 }
 Automations::save($strecke, ['status' => Automations::ACTIVE]);
 echo "  Willkommen im Club (aktiv, 1 Stunde warten → Begrüßungsmail)\n";
+
+// Kleiner Helfer: eine einstufige Strecke mit einer Mail bauen.
+$meta = Blocks::parse((string) (Templates::byId($vorlageId)['blocks_json'] ?? ''))['meta'];
+$eineMail = static function (int $autoId, string $betreff, array $bloecke) use ($meta): void {
+    Automations::saveFlow($autoId, (string) json_encode(['nodes' => [
+        Flow::node('mail'),
+    ]], JSON_UNESCAPED_UNICODE));
+    $s = Automations::steps($autoId);
+    if ($s !== []) {
+        Automations::saveStep((int) $s[0]['id'], [
+            'subject'     => $betreff,
+            'editor_mode' => 'blocks',
+            'blocks_json' => (string) json_encode(['meta' => $meta, 'blocks' => $bloecke],
+                JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES),
+        ]);
+        Automations::compileStep((int) $s[0]['id']);
+    }
+    Automations::save($autoId, ['status' => Automations::ACTIVE]);
+};
+
+// Geburtstagsgruß – startet am Geburtstag, verschickt sofort.
+$geb = Automations::create('Geburtstagsgruß', $clubListe, $vorlageId, Automations::TRIGGER_BIRTHDAY);
+$eineMail($geb, 'Alles Gute zum Geburtstag! ⛳', [
+    Blocks::block('heading', ['text' => 'Herzlichen Glückwunsch, {{vorname}}!', 'size' => 24, 'color' => '#123726']),
+    Blocks::block('text', ['html' => '<p>Der ganze ' . $markeArg . ' wünscht Ihnen alles Gute zum '
+        . 'Geburtstag – Gesundheit, schöne Stunden und natürlich viele gute Runden auf dem Platz.</p>'
+        . '<p>Als kleines Geschenk: ein Freigetränk im Clubhaus, gegen Vorzeigen dieser Mail.</p>']),
+    Blocks::block('text', ['html' => '<p>Herzliche Grüße<br><strong>Ihr Team von {{marke}}</strong></p>']),
+]);
+echo "  Geburtstagsgruß (aktiv, Auslöser: am Geburtstag)\n";
+
+// Rückholung inaktiver Mitglieder – wirtschaftlich der spannendste Auslöser.
+$rueck = Automations::create('Wir vermissen dich', $clubListe, $vorlageId, Automations::TRIGGER_INACTIVE, 180);
+$eineMail($rueck, 'Wir vermissen dich auf dem Platz', [
+    Blocks::block('heading', ['text' => 'Lange nichts gehört, {{vorname}}', 'size' => 24, 'color' => '#123726']),
+    Blocks::block('text', ['html' => '<p>Wir haben Sie eine Weile nicht mehr auf dem Platz gesehen – '
+        . 'das wollen wir ändern. Kommen Sie vorbei: Der Platz ist in Topform, und im Clubhaus wartet '
+        . 'ein Kaffee auf Sie.</p>']),
+    Blocks::block('button', ['label' => 'Startzeit buchen', 'href' => 'https://www.golfclub-ottobeuren.de/startzeiten',
+        'bg' => '#123726']),
+]);
+echo "  Wir vermissen dich (aktiv, Auslöser: inaktiv seit 180 Tagen)\n";
 
 echo "== Bausteine ==\n";
 Snippets::save('Grußformel', (string) json_encode([

@@ -17,7 +17,7 @@ if (!defined('NL_ROOT')) {
  * Systemcheck – so lässt sich sofort erkennen, welcher Stand auf dem
  * Server liegt.
  */
-define('NL_VERSION', '1.25.1 (Eigenes Bestätigungsfenster statt Browser-Dialog)');
+define('NL_VERSION', '1.25.2 (Zeilenmenüs klemmen nicht mehr im Tabellenrahmen)');
 
 mb_internal_encoding('UTF-8');
 date_default_timezone_set('Europe/Berlin');

@@ -1,10 +1,10 @@
 # Prüfsummen des Newslettersystems – erzeugt von cron/pruefsummen.php
-# Fassung: 1.25.1 (Eigenes Bestätigungsfenster statt Browser-Dialog)
+# Fassung: 1.25.2 (Zeilenmenüs klemmen nicht mehr im Tabellenrahmen)
 # systemcheck.php vergleicht damit die Dateien auf dem Server.
 5bacf6f6b40f57318e29f5313b82551143f0162d3b806e3760bad347b7652e34  README.md
 6605e2f4278b7312a797aa6d5cd964f3b10233ff8f0098d9358bdfba310cea06  abmelden.php
-6144d8758569df6bf4c43d0d8505135d8d01f24edaf42423ae2ce763e6690ad0  admin/assets/admin.css
-bffe24d7557fc2f64659075d28615b79f4495c6110e6baefb13d68dddd061ab6  admin/assets/admin.js
+c91b503b6c6aa420545adbe45219f5effd8be52fd57511ace257553cac0c0971  admin/assets/admin.css
+98983d1a856fc40cbcb55d9dcc7c1f727031dbfc2140a2cc0bcd0f95fd1672f3  admin/assets/admin.js
 d5cb6fb6aa70d9a6fb2319c1e6578f0294913e4dcb8834dff47e5fe4a684aeea  admin/assets/builder.css
 84be9860f913aeb071a642056bc2d0d5437ee64b583bd379146e4d2e9761c937  admin/assets/builder.js
 c5e7955dff5cb473d55c68d7dce537c4d1cbb37a914bf1bb427e814441c614f5  admin/assets/flow.css
@@ -75,7 +75,7 @@ c7dbade60530cbda090f6683038ed02bf704bd5cfcc27a29881d23734c542edd  lib/Totp.php
 f16866caf47cafebdefeaafbb5569c51d8a403f81add5aaddb9ae9e1befeda43  lib/Urls.php
 cacded811b160d3fbf0a1dae7863c0fcaa0b9a5965c0d41107fbb84b84c8df8d  lib/Util.php
 e8fb191d65e9d0bd1c2ea1c5a42055e15e30d9c1100afdab455070c8645ed2f2  lib/Wochennews.php
-4c5189b033e16103ed83d0eb8a9801ad16cfb876c868f6785f58ad5a59b4d988  lib/bootstrap.php
+d31fdf79a584e5aeda9fd770beb5bb35eed75ea5219434ce4f2a2b05d3ec87d0  lib/bootstrap.php
 688d9bd5dbea09f88e9cae351240c9864749e377f49e43f6af41ba6162cbd963  partials/page.php
 c214133fade3769703e0ff5af9122697eb7ed41e6ce70765807db7582f8eea3e  status.php
 ce1a83de309fad556bf61efbe3e8d5cc1fe6cecf6f99990d7685278995e49839  subscribe.php

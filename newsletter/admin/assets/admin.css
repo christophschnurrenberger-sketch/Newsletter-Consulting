@@ -158,6 +158,8 @@ h3 { font-size: 15px; color: var(--ad-navy); margin: 20px 0 8px; }
 .ad-table tbody tr:hover { background-color: #FAFBFD; }
 .ad-table td.ad-num, .ad-table th.ad-num { text-align: right; font-variant-numeric: tabular-nums; }
 .ad-table-wrap { overflow-x: auto; border: 1px solid var(--ad-border); border-radius: 10px; margin-bottom: 22px; background: #fff; }
+/* Offenes Zeilenmenü: Rahmen kurz nicht clippen, damit es nicht einklemmt. */
+.ad-table-wrap.hat-menue-offen { overflow: visible; }
 .ad-table-wrap .ad-table { border: none; }
 
 .ad-empty { padding: 28px; text-align: center; color: var(--ad-muted); background: #fff; border: 1px dashed var(--ad-border); border-radius: 10px; }

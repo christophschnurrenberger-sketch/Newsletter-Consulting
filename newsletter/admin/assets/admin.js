@@ -232,21 +232,38 @@
      * oder Escape schließt wieder. Ohne das bleiben aufgeklappte Menüs
      * über der Tabelle stehen.
      */
+    /*
+     * Solange ein Zeilenmenü offen ist, darf sein Tabellenrahmen nicht
+     * clippen – sonst klemmt das Aufklappmenü im scrollenden Rahmen ein und
+     * ein Scrollbalken erscheint. Die Klasse hebt das Clipping nur für die
+     * kurze Zeit auf, in der das Menü offen ist.
+     */
+    function tabellenRahmenAnpassen() {
+        document.querySelectorAll('.ad-table-wrap').forEach(function (wrap) {
+            wrap.classList.toggle('hat-menue-offen', !!wrap.querySelector('details.ad-menue[open]'));
+        });
+    }
+
     document.addEventListener('click', function (event) {
         document.querySelectorAll('details.ad-menue[open]').forEach(function (menue) {
             if (!menue.contains(event.target)) { menue.open = false; }
         });
+        tabellenRahmenAnpassen();
     });
     document.addEventListener('keydown', function (event) {
         if (event.key !== 'Escape') { return; }
         document.querySelectorAll('details.ad-menue[open]').forEach(function (menue) { menue.open = false; });
+        tabellenRahmenAnpassen();
     });
     document.addEventListener('toggle', function (event) {
         var menue = event.target;
-        if (!menue.matches || !menue.matches('details.ad-menue') || !menue.open) { return; }
-        document.querySelectorAll('details.ad-menue[open]').forEach(function (andere) {
-            if (andere !== menue) { andere.open = false; }
-        });
+        if (!menue.matches || !menue.matches('details.ad-menue')) { return; }
+        if (menue.open) {
+            document.querySelectorAll('details.ad-menue[open]').forEach(function (andere) {
+                if (andere !== menue) { andere.open = false; }
+            });
+        }
+        tabellenRahmenAnpassen();
     }, true);
 
     /* Fortschritt eines laufenden Versands automatisch aktualisieren */

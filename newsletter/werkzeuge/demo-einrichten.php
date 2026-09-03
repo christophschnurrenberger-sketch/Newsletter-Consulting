@@ -264,6 +264,39 @@ Snippets::save('Platzregel-Hinweis', (string) json_encode([
 ], JSON_UNESCAPED_UNICODE), 'demo');
 echo "  Grußformel, Platzregel-Hinweis\n";
 
+echo "== Wochennews (Redaktionspool) ==\n";
+Settings::setMany([
+    'wochen_platz'      => 'Sommergrüns, alle 18 Bahnen offen. Trolley erlaubt.',
+    'wochen_oeffnung'   => "Sekretariat: Mo–Fr 9–17 Uhr\nPlatz: täglich ab 7 Uhr\nGastronomie: Mi–So ab 11 Uhr",
+    'wochen_gruss'      => 'Sonnige Grüße und bis bald auf der Runde,' . "\n" . 'Ihr Team vom ' . $markeArg,
+    // Wetter absichtlich leer: läuft nur, wenn der Kunde eigene Koordinaten
+    // einträgt und sein Server ausgehende Verbindungen erlaubt.
+]);
+// Ein paar Themen über die kommenden Wochen – so zeigt „Generieren" sofort etwas.
+$heute = new DateTimeImmutable('monday this week');
+$tag   = static fn(int $plus): string => $heute->modify('+' . $plus . ' days')->format('Y-m-d');
+Wochennews::add(['category' => 'turniere', 'title' => 'Captains Cup – 18-Loch-Zählspiel',
+    'body' => "Das gesellige Highlight des Monats. Kanonenstart um 9 Uhr, danach Siegerehrung "
+        . "mit Grillbuffet.\nStartgeld 25 €, für Mitglieder frei.",
+    'item_date' => $tag(5), 'link_label' => 'Zur Startliste', 'link_url' => 'https://www.golfclub-ottobeuren.de/turniere',
+    'created_by' => 'demo']);
+Wochennews::add(['category' => 'veranstaltungen', 'title' => 'Weinabend im Clubhaus',
+    'body' => 'Sechs Weine aus der Region, dazu passende Kleinigkeiten aus der Küche. Um Anmeldung wird gebeten.',
+    'item_date' => $tag(3), 'created_by' => 'demo']);
+Wochennews::add(['category' => 'training', 'title' => 'Kurzplatz-Training mit dem Pro',
+    'body' => 'Chippen und Putten mit unserem PGA-Professional. Kleine Gruppe, große Wirkung.',
+    'item_date' => $tag(1), 'date_until' => $tag(1), 'link_label' => 'Platz sichern',
+    'link_url' => 'https://www.golfclub-ottobeuren.de/training', 'created_by' => 'demo']);
+Wochennews::add(['category' => 'proshop', 'title' => '20 % auf alle Handschuhe',
+    'body' => 'Nur diese Woche im Pro-Shop – solange der Vorrat reicht.', 'created_by' => 'demo']);
+Wochennews::add(['category' => 'gastronomie', 'title' => 'Wochenkarte',
+    'body' => "Diese Woche u. a.:\nKaiserschmarrn mit Apfelmus\nAllgäuer Kässpatzen\nWildragout mit Spätzle",
+    'evergreen' => 1, 'created_by' => 'demo']);
+Wochennews::add(['category' => 'news', 'title' => 'Neue Trolley-Garage eröffnet',
+    'body' => 'Ab sofort stehen 40 zusätzliche, abschließbare Trolley-Plätze bereit. '
+        . 'Anmeldung im Sekretariat.', 'item_date' => $tag(0), 'created_by' => 'demo']);
+echo "  6 Themen im Pool, Dauerinfos gesetzt (Öffnungszeiten, Platzstatus)\n";
+
 echo "\nFertig. Fassung " . NL_VERSION . "\n";
 echo "Anmeldung: " . rtrim(Config::get('base_url', ''), '/') . "/admin/login.php\n";
 echo "cron_token für die Instanzen-Übersicht: " . Config::get('cron_token', '') . "\n";

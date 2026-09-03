@@ -17,7 +17,7 @@
 final class Schema
 {
     /** Version des Schemas – wird in settings gespeichert. */
-    public const VERSION = 8;
+    public const VERSION = 9;
 
     public static function migrate(): void
     {
@@ -81,6 +81,7 @@ final class Schema
         self::ensureColumn('users', 'totp_confirmed_at', '%DT%');
         self::ensureColumn('users', 'totp_recovery', '%TEXT%');
         self::ensureColumn('users', 'sessions_valid_from', '%DT%');
+        // Redaktionspool kam mit Fassung 9 hinzu (siehe tables()).
 
         Settings::set('schema_version', (string) self::VERSION);
     }
@@ -410,6 +411,27 @@ final class Schema
                 action     %STR(40)% NOT NULL,
                 ref        %STR(190)% NOT NULL,
                 created_at %DT%
+            )%ENGINE%',
+
+            // Redaktionspool für den Wochennewsletter: einmal mit Datum
+            // eingetragen, sammelt der Generator daraus automatisch die
+            // Einträge der jeweiligen Woche.
+            'CREATE TABLE IF NOT EXISTS content_items (
+                id          %PK%,
+                category    %STR(30)% NOT NULL DEFAULT \'news\',
+                title       %STR(190)% NOT NULL,
+                body        %TEXT%,
+                item_date   %STR(10)%,
+                date_until  %STR(10)%,
+                link_url    %STR(500)%,
+                link_label  %STR(120)%,
+                image_url   %STR(500)%,
+                evergreen   %INT% NOT NULL DEFAULT 0,
+                sort        %INT% NOT NULL DEFAULT 0,
+                active      %INT% NOT NULL DEFAULT 1,
+                created_by  %STR(190)%,
+                created_at  %DT%,
+                updated_at  %DT%
             )%ENGINE%',
         ];
     }

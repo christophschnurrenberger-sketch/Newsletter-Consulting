@@ -80,6 +80,16 @@ final class Settings
         /* --- Weitere Installationen (Instanzen-Übersicht) -------------- */
         'instanzen_json'    => '',           // [{name,url,token}] – siehe lib/Instanzen.php
 
+        /* --- Wochennews (Redaktionspool + Dauerinfos) ----------------- */
+        'wochen_intro'       => '',          // eigener Einleitungstext (leer = automatisch)
+        'wochen_oeffnung'    => '',          // Öffnungszeiten (Dauerinfo)
+        'wochen_platz'       => '',          // Platzstatus (Dauerinfo, z. B. „Sommergrüns, alle 18 Bahnen offen")
+        'wochen_gruss'       => '',          // Grußformel am Ende (leer = automatisch)
+        'wochen_wetter_ort'  => '',          // Ortsname für die Wetterzeile (leer = kein Wetter)
+        'wochen_wetter_lat'  => '',          // Breitengrad (open-meteo, ohne Schlüssel)
+        'wochen_wetter_lon'  => '',          // Längengrad
+        'wochen_ki_intro'    => '0',         // 1 = Einleitung vom Textassistenten schreiben lassen
+
         /* --- Sonstiges ------------------------------------------------ */
         'schema_version'    => '0',
         'installed_at'      => '',

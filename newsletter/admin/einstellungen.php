@@ -27,7 +27,7 @@ if (Util::isPost()) {
             'notify_on_signup' => Util::post('notify_on_signup') === '1' ? '1' : '0',
         ]);
         Util::flash('Absenderangaben gespeichert.');
-        Util::redirect('einstellungen.php');
+        Util::redirect('einstellungen.php#absender');
     }
 
     if ($action === 'versandweg') {
@@ -51,7 +51,7 @@ if (Util::isPost()) {
         Util::flash($error === ''
             ? 'Versandweg gespeichert und erfolgreich geprüft.'
             : 'Gespeichert, aber die Prüfung schlug fehl: ' . Util::e($error), $error === '' ? 'success' : 'warning');
-        Util::redirect('einstellungen.php');
+        Util::redirect('einstellungen.php#versand');
     }
 
     if ($action === 'tempo') {
@@ -67,7 +67,7 @@ if (Util::isPost()) {
             'anonymize_ip'  => Util::post('anonymize_ip') === '1' ? '1' : '0',
         ]);
         Util::flash('Versandtempo und Messung gespeichert.');
-        Util::redirect('einstellungen.php');
+        Util::redirect('einstellungen.php#versand');
     }
 
     if ($action === 'texte') {
@@ -82,7 +82,7 @@ if (Util::isPost()) {
             'goodbye_subject' => Util::post('goodbye_subject'),
         ]);
         Util::flash('Texte gespeichert.');
-        Util::redirect('einstellungen.php');
+        Util::redirect('einstellungen.php#systemmails');
     }
 
     if ($action === 'bounce') {
@@ -101,7 +101,7 @@ if (Util::isPost()) {
         }
         Settings::setMany($values);
         Util::flash('Einstellungen für Rückläufer gespeichert.');
-        Util::redirect('einstellungen.php#bounce');
+        Util::redirect('einstellungen.php#rueck');
     }
 
     if ($action === 'ki') {
@@ -136,7 +136,7 @@ if (Util::isPost()) {
                 : 'Gespeichert. Es fehlt noch der Schlüssel des Anbieters.',
                 $values['ai_provider'] === '' ? 'success' : 'warning');
         }
-        Util::redirect('einstellungen.php#ki');
+        Util::redirect('einstellungen.php#textassistent');
     }
 
 }
@@ -152,7 +152,23 @@ $cronUrl   = Config::url('cron/send.php') . '?token=' . $cronToken;
     </div>
 </div>
 
+<?php /*
+ * Die Einstellungen sind in Bereiche geteilt. Ohne JavaScript stehen sie
+ * als eine Seite untereinander (jede Karte behält ihre eigene Speichern-
+ * Aktion); mit JavaScript werden daraus Reiter – siehe admin.js.
+ */ ?>
+<div class="ad-settings" data-einstellungen>
+    <nav class="ad-tabs" aria-label="Einstellungsbereiche">
+        <button type="button" class="ad-tab" data-ziel="absender">Absender</button>
+        <button type="button" class="ad-tab" data-ziel="versand">Versand</button>
+        <button type="button" class="ad-tab" data-ziel="systemmails">Systemmails</button>
+        <button type="button" class="ad-tab" data-ziel="rueck">Rückläufer</button>
+        <button type="button" class="ad-tab" data-ziel="textassistent">Textassistent</button>
+        <button type="button" class="ad-tab" data-ziel="technik">Technik</button>
+    </nav>
+
 <!-- ------------------------------------------------------------ Absender -->
+<section class="ad-tab-panel" id="absender">
 <div class="ad-card">
     <h2>Absender &amp; Pflichtangaben</h2>
     <?php /* Dieselben Felder gibt es je Marke. Ohne diesen Hinweis sah es aus,
@@ -234,7 +250,10 @@ $cronUrl   = Config::url('cron/send.php') . '?token=' . $cronToken;
     </form>
 </div>
 
+</section>
+
 <!-- ---------------------------------------------------------- Versandweg -->
+<section class="ad-tab-panel" id="versand">
 <div class="ad-card">
     <h2>Versandweg</h2>
     <form method="post">
@@ -355,7 +374,10 @@ $cronUrl   = Config::url('cron/send.php') . '?token=' . $cronToken;
     </form>
 </div>
 
+</section>
+
 <!-- --------------------------------------------------------------- Texte -->
+<section class="ad-tab-panel" id="systemmails">
 <div class="ad-card">
     <h2>Texte der Systemmails</h2>
     <p class="ad-hint" style="margin-bottom:14px;">Das sind die allgemeinen Vorgaben. Wie die drei Mails
@@ -409,7 +431,10 @@ $cronUrl   = Config::url('cron/send.php') . '?token=' . $cronToken;
     </form>
 </div>
 
+</section>
+
 <!-- ------------------------------------------------------------- Bounces -->
+<section class="ad-tab-panel" id="rueck">
 <div class="ad-card" id="bounce">
     <h2>Rückläufer automatisch auswerten</h2>
     <p class="ad-hint" style="margin-top:-4px;">Optional: Das System holt Fehlermails per POP3 aus einem
@@ -465,7 +490,10 @@ $cronUrl   = Config::url('cron/send.php') . '?token=' . $cronToken;
     </form>
 </div>
 
+</section>
+
 <!-- --------------------------------------------------------- Textassistent -->
+<section class="ad-tab-panel" id="textassistent">
 <div class="ad-card" id="ki">
     <h2>Textassistent</h2>
     <p class="ad-hint" style="margin-top:-4px;">Optional: Im Baukasten erscheint neben jedem Textfeld ein
@@ -528,7 +556,10 @@ $cronUrl   = Config::url('cron/send.php') . '?token=' . $cronToken;
     </form>
 </div>
 
+</section>
+
 <!-- ----------------------------------------------------------- Cron & Co -->
+<section class="ad-tab-panel" id="technik">
 <div class="ad-card">
     <h2>Cron-Job</h2>
     <p>Der Versand läuft im Hintergrund. Richten Sie im Hosting-Menü einen Aufruf <strong>alle 5 Minuten</strong> ein:</p>
@@ -565,5 +596,7 @@ $cronUrl   = Config::url('cron/send.php') . '?token=' . $cronToken;
         <a class="ad-btn <?= $andere === [] ? 'ad-btn-secondary' : '' ?>" href="instanzen.php">Zur Instanzen-Übersicht</a>
     </div>
 </div>
+</section>
+</div><!-- .ad-settings -->
 
 <?php require __DIR__ . '/partials/footer.php';

@@ -266,6 +266,84 @@
         tabellenRahmenAnpassen();
     }, true);
 
+    /*
+     * Mobile Navigation: der Menü-Knopf öffnet die Schublade; Overlay,
+     * Escape und ein Klick auf einen Navigationspunkt schließen sie wieder.
+     */
+    (function () {
+        var knopf = document.querySelector('.ad-nav-toggle');
+        if (!knopf) { return; }
+        var overlay = document.querySelector('.ad-nav-overlay');
+        var nav = document.getElementById('ad-hauptnav');
+        function setzen(auf) {
+            document.body.classList.toggle('nav-auf', auf);
+            knopf.setAttribute('aria-expanded', auf ? 'true' : 'false');
+            knopf.setAttribute('aria-label', auf ? 'Menü schließen' : 'Menü öffnen');
+        }
+        knopf.addEventListener('click', function () {
+            setzen(!document.body.classList.contains('nav-auf'));
+        });
+        if (overlay) { overlay.addEventListener('click', function () { setzen(false); }); }
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape' && document.body.classList.contains('nav-auf')) { setzen(false); }
+        });
+        if (nav) {
+            nav.addEventListener('click', function (e) { if (e.target.closest('a')) { setzen(false); } });
+        }
+        window.addEventListener('resize', function () {
+            if (window.innerWidth > 860) { setzen(false); }
+        });
+    })();
+
+    /*
+     * Einstellungen: aus den Bereichen Reiter machen – aber nur, wenn
+     * JavaScript läuft. Ohne bleibt die Seite als eine lange Liste bedienbar.
+     */
+    (function () {
+        var box = document.querySelector('[data-einstellungen]');
+        if (!box) { return; }
+        var tabs = Array.prototype.slice.call(box.querySelectorAll('.ad-tab'));
+        var panels = Array.prototype.slice.call(box.querySelectorAll('.ad-tab-panel'));
+        if (tabs.length === 0 || panels.length === 0) { return; }
+        box.classList.add('hat-reiter');
+
+        function zeige(ziel) {
+            var gefunden = false;
+            tabs.forEach(function (t) {
+                var an = t.getAttribute('data-ziel') === ziel;
+                t.classList.toggle('aktiv', an);
+                t.setAttribute('aria-selected', an ? 'true' : 'false');
+                if (an) { gefunden = true; }
+            });
+            panels.forEach(function (p) { p.classList.toggle('aktiv', p.id === ziel); });
+            return gefunden;
+        }
+        function ausHash() {
+            var h = (location.hash || '').replace('#', '');
+            if (!h) { return ''; }
+            var el = document.getElementById(h);
+            var panel = el ? el.closest('.ad-tab-panel') : null;
+            return panel ? panel.id : '';
+        }
+        tabs.forEach(function (t) {
+            t.setAttribute('role', 'tab');
+            t.addEventListener('click', function () {
+                var ziel = t.getAttribute('data-ziel');
+                if (zeige(ziel) && window.history && history.replaceState) {
+                    history.replaceState(null, '', '#' + ziel);
+                }
+                window.scrollTo(0, 0);
+            });
+        });
+        // Ändert sich der Anker (etwa ein Link auf #rueck), gleich den passenden
+        // Reiter öffnen – nicht nur beim ersten Laden.
+        window.addEventListener('hashchange', function () {
+            var z = ausHash();
+            if (z) { zeige(z); }
+        });
+        zeige(ausHash() || (panels[0] && panels[0].id));
+    })();
+
     /* Fortschritt eines laufenden Versands automatisch aktualisieren */
     var progress = document.querySelector('[data-autorefresh]');
     if (progress) {

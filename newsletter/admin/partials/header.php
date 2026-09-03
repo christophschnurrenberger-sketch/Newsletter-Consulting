@@ -91,6 +91,7 @@ function subscriber_status_pill(string $status): string
         <?= admin_nav('wochennews.php', 'Wochennews') ?>
         <?= admin_nav('kampagnen.php', 'Newsletter') ?>
         <?= admin_nav('automationen.php', 'Automationen') ?>
+        <?= admin_nav('turniere.php', 'Turniere') ?>
         <?= admin_nav('versand.php', 'Versand', $pendingMail > 0 ? (string) $pendingMail : '') ?>
 
         <span class="ad-nav-gruppe">Empfänger</span>

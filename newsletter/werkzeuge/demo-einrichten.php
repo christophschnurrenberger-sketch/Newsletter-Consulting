@@ -345,6 +345,24 @@ Wochennews::add(['category' => 'news', 'title' => 'Neue Trolley-Garage eröffnet
         . 'Anmeldung im Sekretariat.', 'item_date' => $tag(0), 'created_by' => 'demo']);
 echo "  6 Themen im Pool, Dauerinfos gesetzt (Öffnungszeiten, Platzstatus)\n";
 
+echo "== Turnier-Kommunikation ==\n";
+// Zwei weitere Turniere weiter in der Zukunft, damit die Terminvorschau der
+// Serie gleich mehrere kommende Touchpoints zeigt.
+Wochennews::add(['category' => 'turniere', 'title' => 'Clubmeisterschaft 2026',
+    'body' => 'Das Saison-Highlight über zwei Runden. Anmeldung im Sekretariat.',
+    'item_date' => $tag(18), 'link_label' => 'Zur Ausschreibung',
+    'link_url' => 'https://www.golfclub-ottobeuren.de/clubmeisterschaft', 'created_by' => 'demo']);
+Wochennews::add(['category' => 'turniere', 'title' => 'Herbst-Scramble',
+    'body' => 'Lockeres Vierer-Scramble zum Saisonausklang, danach gemütliches Beisammensein.',
+    'item_date' => $tag(32), 'link_label' => 'Anmelden',
+    'link_url' => 'https://www.golfclub-ottobeuren.de/turniere', 'created_by' => 'demo']);
+// Eine Serie im Entwurf-Modus (in einer Vorführung soll nichts von selbst
+// hinausgehen) – aktiv, damit die Vorschau sofort etwas zeigt.
+$turnierSerie = Turniere::createSeries('Turnier-Kommunikation', $clubListe, Turniere::MODE_DRAFT);
+Turniere::saveSeries($turnierSerie, ['status' => Turniere::ACTIVE, 'template_id' => $vorlageId]);
+echo "  Serie „Turnier-Kommunikation“ (aktiv, Entwurf zum Prüfen, 4 Touchpoints)\n";
+echo "  3 Turniere mit Datum – die Serie bereitet daraus die Mails vor\n";
+
 echo "\nFertig. Fassung " . NL_VERSION . "\n";
 echo "Anmeldung: " . rtrim(Config::get('base_url', ''), '/') . "/admin/login.php\n";
 echo "cron_token für die Instanzen-Übersicht: " . Config::get('cron_token', '') . "\n";

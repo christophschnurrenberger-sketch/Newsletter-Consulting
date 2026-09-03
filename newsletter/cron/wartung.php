@@ -31,6 +31,9 @@ $released = Queue::releaseStaleLocks();
 // Der eigentliche Versand läuft danach wie immer über den Sende-Cron.
 $ausloeser = Automations::runDailyTriggers();
 
+// Turnier-Kommunikation: fällige Touchpoints je Turnier vorbereiten bzw. senden.
+$turniere = Turniere::runDaily();
+
 // Abgelaufene Rate-Limit-Einträge entfernen
 $rates = DB::delete('rate_limits', 'created_at < ?', [date('Y-m-d H:i:s', time() - 86400)]);
 
@@ -41,7 +44,9 @@ Log::info('wartung', sprintf(
 
 printf(
     "Unbestätigte gelöscht: %d · Protokollzeilen entfernt: %d · Sendungen freigegeben: %d · Rate-Limits: %d\n"
-    . "Automations-Auslöser: %d Geburtstag(e), %d inaktive(r)\n",
-    $purged, $logs, $released, $rates, $ausloeser['birthday'], $ausloeser['inactive']
+    . "Automations-Auslöser: %d Geburtstag(e), %d inaktive(r)\n"
+    . "Turnier-Kommunikation: %d Entwurf/Entwürfe, %d sofort versendet\n",
+    $purged, $logs, $released, $rates, $ausloeser['birthday'], $ausloeser['inactive'],
+    $turniere['prepared'], $turniere['sent']
 );
 exit(0);

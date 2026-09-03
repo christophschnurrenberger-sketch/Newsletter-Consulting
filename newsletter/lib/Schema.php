@@ -17,7 +17,7 @@
 final class Schema
 {
     /** Version des Schemas – wird in settings gespeichert. */
-    public const VERSION = 10;
+    public const VERSION = 11;
 
     public static function migrate(): void
     {
@@ -438,6 +438,49 @@ final class Schema
                 created_at  %DT%,
                 updated_at  %DT%
             )%ENGINE%',
+
+            // Turnier-Kommunikation: eine Serie hängt an einer Rubrik des
+            // Redaktionspools (Vorgabe „turniere"). Für jedes Turnier mit
+            // Datum verschickt sie ihre Touchpoints – je nach Betriebsart
+            // vollautomatisch oder als Entwurf zum Prüfen.
+            'CREATE TABLE IF NOT EXISTS event_series (
+                id          %PK%,
+                name        %STR(190)% NOT NULL,
+                category    %STR(30)% NOT NULL DEFAULT \'turniere\',
+                list_id     %INT%,
+                template_id %INT%,
+                mode        %STR(10)% NOT NULL DEFAULT \'draft\',
+                status      %STR(20)% NOT NULL DEFAULT \'paused\',
+                created_at  %DT%,
+                updated_at  %DT%
+            )%ENGINE%',
+
+            // Die einzelnen Touchpoints einer Serie: der Abstand zum
+            // Turniertermin (negativ = davor, positiv = danach) und der Text.
+            'CREATE TABLE IF NOT EXISTS event_touchpoints (
+                id          %PK%,
+                series_id   %INT% NOT NULL,
+                offset_days %INT% NOT NULL DEFAULT 0,
+                subject     %STR(190)% NOT NULL DEFAULT \'\',
+                intro       %TEXT%,
+                active      %INT% NOT NULL DEFAULT 1,
+                sort        %INT% NOT NULL DEFAULT 0,
+                created_at  %DT%,
+                updated_at  %DT%
+            )%ENGINE%',
+
+            // Was wurde für welches Turnier schon vorbereitet/versendet?
+            // Verhindert, dass derselbe Touchpoint doppelt hinausgeht.
+            'CREATE TABLE IF NOT EXISTS event_mailings (
+                id            %PK%,
+                series_id     %INT% NOT NULL,
+                touchpoint_id %INT% NOT NULL,
+                item_id       %INT% NOT NULL,
+                campaign_id   %INT%,
+                mode          %STR(10)% NOT NULL DEFAULT \'draft\',
+                planned_for   %STR(10)% NOT NULL DEFAULT \'\',
+                created_at    %DT%
+            )%ENGINE%',
         ];
     }
 
@@ -461,6 +504,8 @@ final class Schema
             'CREATE INDEX IF NOT EXISTS idx_rate ON rate_limits (action, ref, created_at)',
             'CREATE INDEX IF NOT EXISTS idx_logs_created ON logs (created_at)',
             'CREATE INDEX IF NOT EXISTS idx_bounces_email ON bounces (email)',
+            'CREATE INDEX IF NOT EXISTS idx_touchpoints_series ON event_touchpoints (series_id, sort)',
+            'CREATE INDEX IF NOT EXISTS idx_mailings_dedup ON event_mailings (series_id, touchpoint_id, item_id)',
         ];
     }
 }

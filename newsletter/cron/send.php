@@ -46,6 +46,14 @@ if (!flock($lock, LOCK_EX | LOCK_NB)) {
 /* ------------------------------------------------------------- Versand */
 
 try {
+    // Fällige Kanäle der Mehrkanal-Meldungen ausspielen (E-Mail legt dabei
+    // eine Kampagne an, die im selben Lauf gleich mitversendet wird).
+    $meldungen = Announcements::runDue();
+    if (array_sum($meldungen) > 0) {
+        printf("Meldungen: %d gesendet, %d übersprungen, %d fehlgeschlagen\n",
+            $meldungen['sent'], $meldungen['skipped'], $meldungen['failed']);
+    }
+
     $result = Queue::process([
         'limit'   => Settings::int('batch_size', 50),
         'seconds' => Settings::int('max_runtime', 50),

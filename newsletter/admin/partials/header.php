@@ -24,6 +24,7 @@ function admin_nav_icon(string $file): string
         'kampagnen.php'    => '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3.5 6.5 8.5 6 8.5-6"/>',
         'automationen.php' => '<path d="M13 2 4.5 13H11l-1 9 8.5-11H12l1-9Z"/>',
         'turniere.php'     => '<path d="M6 21V3l11 2.5L6 8"/><path d="M6 21h5"/>',
+        'meldungen.php'    => '<path d="m3 11 18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/>',
         'versand.php'      => '<path d="M21 3 10.5 13.5M21 3l-6.5 18-4-8-8-4L21 3Z"/>',
         'empfaenger.php'   => '<circle cx="9" cy="8" r="3.2"/><path d="M3.5 20a5.5 5.5 0 0 1 11 0"/><path d="M16 6.2a3 3 0 0 1 0 5.6M20.5 20a5 5 0 0 0-4-4.9"/>',
         'listen.php'       => '<path d="M8 6h13M8 12h13M8 18h13"/><path d="M3.5 6h.01M3.5 12h.01M3.5 18h.01"/>',
@@ -170,6 +171,7 @@ function subscriber_status_pill(string $status): string
         <?= admin_nav('kampagnen.php', 'Newsletter') ?>
         <?= admin_nav('automationen.php', 'Automationen') ?>
         <?= admin_nav('turniere.php', 'Turniere') ?>
+        <?= admin_nav('meldungen.php', 'Meldungen') ?>
         <?= admin_nav('versand.php', 'Versand', $pendingMail > 0 ? (string) $pendingMail : '') ?>
 
         <span class="ad-nav-gruppe">Empfänger</span>

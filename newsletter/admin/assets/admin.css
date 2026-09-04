@@ -985,3 +985,6 @@ body.hilfe-offen { overflow: hidden; }
 .ad-heat-legende { display: flex; align-items: center; gap: 6px; margin-top: 8px; color: var(--ad-muted); font-size: 12px; }
 .ad-heat-legende i { width: 15px; height: 15px; border-radius: 3px; display: inline-block; }
 .ad-heat-wrap { overflow-x: auto; }
+
+/* -------------------------------------------------- Mehrkanal-Meldungen */
+.ad-kanal-status { display: flex; flex-wrap: wrap; gap: 8px; }

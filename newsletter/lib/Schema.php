@@ -17,7 +17,7 @@
 final class Schema
 {
     /** Version des Schemas – wird in settings gespeichert. */
-    public const VERSION = 12;
+    public const VERSION = 13;
 
     public static function migrate(): void
     {
@@ -496,6 +496,43 @@ final class Schema
                 created_at   %DT%,
                 last_used_at %DT%
             )%ENGINE%',
+
+            // Mehrkanal-Meldungen: ein Ereignis (z. B. „Platz gesperrt") mit
+            // einem Text, das über mehrere Kanäle zu verschiedenen Zeiten
+            // ausgespielt wird. Der Text ist die gemeinsame Grundlage aller
+            // Kanäle; category steuert die Optik auf der öffentlichen Seite.
+            'CREATE TABLE IF NOT EXISTS announcements (
+                id          %PK%,
+                title       %STR(190)% NOT NULL,
+                body        %TEXT%,
+                category    %STR(30)% NOT NULL DEFAULT \'info\',
+                link_url    %STR(500)%,
+                link_label  %STR(120)%,
+                list_id     %INT%,
+                expires_at  %DT%,
+                status      %STR(20)% NOT NULL DEFAULT \'draft\',
+                created_by  %STR(190)%,
+                created_at  %DT%,
+                updated_at  %DT%
+            )%ENGINE%',
+
+            // Die Kanäle einer Meldung: je Kanal ein geplanter Zeitpunkt und
+            // was daraus geworden ist. „ref_id" hält z. B. die Kampagne des
+            // E-Mail-Kanals. „result" beschreibt Ergebnis oder Grund fürs
+            // Ausbleiben (etwa „Anbieter noch nicht eingerichtet").
+            'CREATE TABLE IF NOT EXISTS announcement_channels (
+                id              %PK%,
+                announcement_id %INT% NOT NULL,
+                channel         %STR(20)% NOT NULL,
+                scheduled_at    %DT%,
+                status          %STR(20)% NOT NULL DEFAULT \'pending\',
+                result          %TEXT%,
+                ref_id          %INT%,
+                sort            %INT% NOT NULL DEFAULT 0,
+                sent_at         %DT%,
+                created_at      %DT%,
+                updated_at      %DT%
+            )%ENGINE%',
         ];
     }
 
@@ -522,6 +559,8 @@ final class Schema
             'CREATE INDEX IF NOT EXISTS idx_touchpoints_series ON event_touchpoints (series_id, sort)',
             'CREATE INDEX IF NOT EXISTS idx_mailings_dedup ON event_mailings (series_id, touchpoint_id, item_id)',
             'CREATE INDEX IF NOT EXISTS idx_apikeys_hash ON api_keys (key_hash)',
+            'CREATE INDEX IF NOT EXISTS idx_annch_due ON announcement_channels (status, scheduled_at)',
+            'CREATE INDEX IF NOT EXISTS idx_annch_ann ON announcement_channels (announcement_id, sort)',
         ];
     }
 }

@@ -137,20 +137,34 @@ body.nav-fest .ad-nav-pin .ad-nav-ico { color: var(--ad-red); }
 
 /* ------------------------------------------- Ein-/ausklappbare Navigation */
 /* Nur am Desktop. Am Handy (weiter unten) bleibt es die Schublade.
-   Standard ist die schmale Leiste (nur Symbole). Über die Nadel klappt sie
-   dauerhaft auf und der Inhalt rückt daneben. Bewusst KEIN Aufklappen beim
-   bloßen Überfahren: eine überlagernde Leiste würde sonst die ersten Spalten
-   der Tabellen (z. B. die Auswahlkästchen) verdecken und Klicks abfangen. */
+   Standard ist die schmale Leiste (nur zentrierte Symbole). Beim Überfahren
+   fährt die ganze Leiste als Überlagerung heraus (der Inhalt bleibt stehen),
+   die Nadel oben hält sie dauerhaft offen. */
 @media (min-width: 861px) {
     .ad-main { margin-left: 210px; transition: margin-left .16s ease; }
-    .ad-nav { white-space: nowrap; transition: width .16s ease; }
+    .ad-nav { white-space: nowrap; transition: width .16s ease, box-shadow .16s ease; }
+    .ad-nav-link { position: relative; }
 
-    /* Eingeklappt (Standard): schmale Leiste, nur Icons – die Beschriftung
-       wird vom schmalen Rand verdeckt (kein Umschalten, damit nichts springt).
-       Der Name steht im Tooltip (title) jedes Punktes. */
+    /* --- Eingeklappt (Standard): schmal, nur Symbole, mittig. --- */
     body.nav-schmal .ad-main { margin-left: 60px; }
     body.nav-schmal .ad-nav { width: 60px; }
-    body.nav-schmal .ad-nav .ad-nav-gruppe { visibility: hidden; }
+    /* Solange die Leiste NICHT überfahren wird: Text und Gruppen weg,
+       Symbole zentriert – so wirkt die Leiste ruhig und aufgeräumt. */
+    body.nav-schmal .ad-nav:not(:hover) .ad-nav-link { justify-content: center; padding-left: 0; padding-right: 0; }
+    body.nav-schmal .ad-nav:not(:hover) .ad-nav-text { display: none; }
+    body.nav-schmal .ad-nav:not(:hover) .ad-nav-gruppe { display: none; }
+    /* Ein Zähler (z. B. offene Sendungen) schrumpft zum kleinen Punkt am Symbol. */
+    body.nav-schmal .ad-nav:not(:hover) .ad-nav-link .ad-badge {
+        position: absolute; top: 4px; left: 32px; margin: 0;
+        width: 9px; height: 9px; min-width: 0; padding: 0; font-size: 0;
+        border: 2px solid #fff; box-sizing: content-box;
+    }
+
+    /* --- Überfahren: die ganze Leiste fährt heraus (Überlagerung). --- */
+    body.nav-schmal .ad-nav:hover {
+        width: 214px;
+        box-shadow: 10px 0 40px -14px rgba(20, 36, 58, .34);
+    }
 }
 
 @media (max-width: 860px) {

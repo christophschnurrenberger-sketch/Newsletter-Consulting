@@ -1,12 +1,12 @@
 # Prüfsummen des Newslettersystems – erzeugt von cron/pruefsummen.php
-# Fassung: 1.32.0 (Hilfe & Handbuch: „?"-Popups mit Screenshots auf jeder Seite)
+# Fassung: 1.33.0 (Seitenmenü: standardmäßig eingeklappt (nur Symbole), per Nadel dauerhaft aufklappen/anheften)
 # systemcheck.php vergleicht damit die Dateien auf dem Server.
 6994121a687a3bf70a9a7cb4ccc6276f985078bf39683a1b3949cf19d30104d4  API.md
 5bacf6f6b40f57318e29f5313b82551143f0162d3b806e3760bad347b7652e34  README.md
 6605e2f4278b7312a797aa6d5cd964f3b10233ff8f0098d9358bdfba310cea06  abmelden.php
 9b33b9d02727f2cd9d69bea9d5c05726781a95b90661cea9741623ab1b1c7db9  admin/api.php
-063608968bf4f2598420cd0574f219d4f3cffeb13bee76ec1a9a7e46edc366f2  admin/assets/admin.css
-92e64b608bc28a544bf201a3bbaba936d72d5d7f254245b8b7ee94818b5dd59e  admin/assets/admin.js
+fa4cfc7b4197794f89aa2851e1f5b9c3742a1447d00b9b1d563b2caec3ee163d  admin/assets/admin.css
+11553c2f5b0b30ebee752c5b9f8299a3af62210ae4b99bafcce2cc399c1f1591  admin/assets/admin.js
 d5cb6fb6aa70d9a6fb2319c1e6578f0294913e4dcb8834dff47e5fe4a684aeea  admin/assets/builder.css
 84be9860f913aeb071a642056bc2d0d5437ee64b583bd379146e4d2e9761c937  admin/assets/builder.js
 c5e7955dff5cb473d55c68d7dce537c4d1cbb37a914bf1bb427e814441c614f5  admin/assets/flow.css
@@ -31,7 +31,7 @@ d96c9b6f6da88eb96750ec2c5fe8eeb848a8bf2077aaf2f86990349ab9e4afb9  admin/marken.p
 d69b2d9de0a3f0adcd2e9935f5e2b477473f917f14585c5caad2d6bc87f92680  admin/neu.php
 6757f83f5243b324420b941ea4d77c92722550572ff040911cfa16abd5b09720  admin/partials/builder.php
 6eeb873cff2ede33c19e1afd2a78824346f6d5a7375dd8d2b51d51e7d1f00b42  admin/partials/footer.php
-f126e5e6a5ebee8ff6da419d84e3b8c649f904c8933477f5991496fc5915256a  admin/partials/header.php
+0694a902174e8e2af2c8dcaa782af0116b4a42b9a44774470e4eb8ac0a3d698e  admin/partials/header.php
 01c53eb701e5f579a07fb691c2b4e2c8890d0179f77a54c4025d57c1f2010fd0  admin/protokoll.php
 e0e9b61cd370e4d942d04937ab8e8eaa32f4e1f0d05fb31a5676a8b1c2e98530  admin/statistik.php
 444706ac9a840f2a6b9ec2034891af05324f05c6aa49343edaf3318545b9990a  admin/systemmails.php
@@ -83,7 +83,7 @@ c7dbade60530cbda090f6683038ed02bf704bd5cfcc27a29881d23734c542edd  lib/Totp.php
 f16866caf47cafebdefeaafbb5569c51d8a403f81add5aaddb9ae9e1befeda43  lib/Urls.php
 cacded811b160d3fbf0a1dae7863c0fcaa0b9a5965c0d41107fbb84b84c8df8d  lib/Util.php
 e8fb191d65e9d0bd1c2ea1c5a42055e15e30d9c1100afdab455070c8645ed2f2  lib/Wochennews.php
-422f892fd2dfd68825b61e8d9362f80addc46a1ad82d688453d0152544152298  lib/bootstrap.php
+3755a0ce02cc52193e36ed856ce2af24061f22caf8f4bf40200ca016e59fcc2a  lib/bootstrap.php
 688d9bd5dbea09f88e9cae351240c9864749e377f49e43f6af41ba6162cbd963  partials/page.php
 c214133fade3769703e0ff5af9122697eb7ed41e6ce70765807db7582f8eea3e  status.php
 ce1a83de309fad556bf61efbe3e8d5cc1fe6cecf6f99990d7685278995e49839  subscribe.php

@@ -17,7 +17,7 @@ if (!defined('NL_ROOT')) {
  * Systemcheck – so lässt sich sofort erkennen, welcher Stand auf dem
  * Server liegt.
  */
-define('NL_VERSION', '1.32.0 (Hilfe & Handbuch: „?"-Popups mit Screenshots auf jeder Seite)');
+define('NL_VERSION', '1.33.0 (Seitenmenü: standardmäßig eingeklappt (nur Symbole), per Nadel dauerhaft aufklappen/anheften)');
 
 mb_internal_encoding('UTF-8');
 date_default_timezone_set('Europe/Berlin');

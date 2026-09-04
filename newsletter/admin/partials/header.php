@@ -46,7 +46,10 @@ function admin_nav_icon(string $file): string
 function admin_nav(string $file, string $label, string $badge = ''): string
 {
     $current = basename((string) ($_SERVER['SCRIPT_NAME'] ?? '')) === $file;
+    // title = Name als Tooltip, damit die Punkte auch in der schmalen
+    // (eingeklappten) Leiste ohne Beschriftung erkennbar bleiben.
     return '<a href="' . Util::e($file) . '" class="ad-nav-link' . ($current ? ' is-current' : '') . '"'
+        . ' title="' . Util::e($label) . '"'
         . ($current ? ' aria-current="page"' : '') . '>'
         . admin_nav_icon($file)
         . '<span class="ad-nav-text">' . Util::e($label) . '</span>'
@@ -126,6 +129,8 @@ function subscriber_status_pill(string $status): string
 <?php endforeach; ?>
 </head>
 <body data-hilfe-seite="<?= Util::e(Hilfe::forPage($currentFile)) ?>">
+<?php /* Zustand der Navigation sofort setzen, damit sie nicht kurz aufklappt. */ ?>
+<script>try{document.body.classList.add(localStorage.getItem('ad-nav')==='fest'?'nav-fest':'nav-schmal');}catch(e){document.body.classList.add('nav-schmal');}</script>
 <header class="ad-topbar">
     <button type="button" class="ad-nav-toggle" aria-label="Menü öffnen" aria-expanded="false" aria-controls="ad-hauptnav">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
@@ -151,6 +156,12 @@ function subscriber_status_pill(string $status): string
      * Schublade über den Menü-Knopf herein.
      */ ?>
     <nav class="ad-nav" id="ad-hauptnav" aria-label="Hauptnavigation">
+        <?php /* Nadel: hält die Navigation dauerhaft offen. Am Handy verborgen –
+                 dort öffnet der Menü-Knopf die Schublade. */ ?>
+        <button type="button" class="ad-nav-link ad-nav-pin" aria-pressed="false" title="Menü angeheftet halten">
+            <svg class="ad-nav-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 17v5"/><path d="M9 10.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24V16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V7a1 1 0 0 1 1-1 2 2 0 0 0 0-4H8a2 2 0 0 0 0 4 1 1 0 0 1 1 1z"/></svg>
+            <span class="ad-nav-text">Anheften</span>
+        </button>
         <?= admin_nav('index.php', 'Übersicht') ?>
         <?= admin_nav('hilfe.php', 'Hilfe') ?>
 

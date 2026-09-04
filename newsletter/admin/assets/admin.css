@@ -64,15 +64,26 @@ a:hover { color: var(--ad-red-dark); }
 
 /* ------------------------------------------------------------- Layout */
 
-.ad-layout { display: flex; align-items: flex-start; gap: 0; min-height: calc(100vh - 108px); }
+.ad-layout { position: relative; min-height: calc(100vh - 108px); }
 
 .ad-nav {
-    flex: 0 0 210px;
+    position: absolute; top: 0; left: 0; bottom: 0; z-index: 40;
+    width: 210px;
     background-color: #fff;
     border-right: 1px solid var(--ad-border);
-    padding: 18px 0;
-    min-height: calc(100vh - 108px);
+    padding: 12px 0;
+    overflow-x: hidden; overflow-y: auto;
 }
+
+/* Anheften-Knopf ganz oben in der Navigation. */
+.ad-nav-pin {
+    width: 100%; background: transparent; border: 0; cursor: pointer; font: inherit;
+    text-align: left; color: var(--ad-muted); margin-bottom: 6px;
+    border-bottom: 1px solid var(--ad-border); border-radius: 0; padding-top: 4px; padding-bottom: 12px;
+}
+.ad-nav-pin .ad-nav-ico { transition: transform .15s; }
+body.nav-fest .ad-nav-pin { color: var(--ad-navy); }
+body.nav-fest .ad-nav-pin .ad-nav-ico { color: var(--ad-red); }
 
 .ad-nav-link {
     display: flex;
@@ -122,9 +133,29 @@ a:hover { color: var(--ad-red-dark); }
     color: var(--ad-muted);
 }
 
-.ad-main { flex: 1; padding: 26px 30px 60px; min-width: 0; }
+.ad-main { padding: 26px 30px 60px; min-width: 0; }
+
+/* ------------------------------------------- Ein-/ausklappbare Navigation */
+/* Nur am Desktop. Am Handy (weiter unten) bleibt es die Schublade.
+   Standard ist die schmale Leiste (nur Symbole). Über die Nadel klappt sie
+   dauerhaft auf und der Inhalt rückt daneben. Bewusst KEIN Aufklappen beim
+   bloßen Überfahren: eine überlagernde Leiste würde sonst die ersten Spalten
+   der Tabellen (z. B. die Auswahlkästchen) verdecken und Klicks abfangen. */
+@media (min-width: 861px) {
+    .ad-main { margin-left: 210px; transition: margin-left .16s ease; }
+    .ad-nav { white-space: nowrap; transition: width .16s ease; }
+
+    /* Eingeklappt (Standard): schmale Leiste, nur Icons – die Beschriftung
+       wird vom schmalen Rand verdeckt (kein Umschalten, damit nichts springt).
+       Der Name steht im Tooltip (title) jedes Punktes. */
+    body.nav-schmal .ad-main { margin-left: 60px; }
+    body.nav-schmal .ad-nav { width: 60px; }
+    body.nav-schmal .ad-nav .ad-nav-gruppe { visibility: hidden; }
+}
 
 @media (max-width: 860px) {
+    .ad-nav-pin { display: none; }
+    .ad-main { margin-left: 0; }
     .ad-nav-toggle { display: inline-flex; align-items: center; }
     .ad-layout { flex-direction: column; }
     /* Die Navigation fährt als Schublade von links herein statt als

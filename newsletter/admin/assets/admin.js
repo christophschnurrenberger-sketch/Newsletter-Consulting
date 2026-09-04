@@ -296,6 +296,33 @@
     })();
 
     /*
+     * Seitenmenü anheften: am Desktop steht die Navigation normal als schmale
+     * Leiste (nur Symbole) und fährt beim Überfahren auf. Mit der Nadel bleibt
+     * sie dauerhaft offen; der Zustand wird im Browser gemerkt, damit er nach
+     * dem Neuladen erhalten bleibt (siehe kleines Skript im Seitenkopf).
+     */
+    (function () {
+        var pin = document.querySelector('.ad-nav-pin');
+        if (!pin) { return; }
+        var text = pin.querySelector('.ad-nav-text');
+        function anzeigen(fest) {
+            pin.setAttribute('aria-pressed', fest ? 'true' : 'false');
+            pin.title = fest ? 'Menü wieder einklappen' : 'Menü angeheftet halten';
+            if (text) { text.textContent = fest ? 'Angeheftet' : 'Anheften'; }
+        }
+        function setzen(fest) {
+            document.body.classList.toggle('nav-fest', fest);
+            document.body.classList.toggle('nav-schmal', !fest);
+            try { localStorage.setItem('ad-nav', fest ? 'fest' : 'schmal'); } catch (e) {}
+            anzeigen(fest);
+        }
+        pin.addEventListener('click', function () {
+            setzen(!document.body.classList.contains('nav-fest'));
+        });
+        anzeigen(document.body.classList.contains('nav-fest'));
+    })();
+
+    /*
      * Einstellungen: aus den Bereichen Reiter machen – aber nur, wenn
      * JavaScript läuft. Ohne bleibt die Seite als eine lange Liste bedienbar.
      */

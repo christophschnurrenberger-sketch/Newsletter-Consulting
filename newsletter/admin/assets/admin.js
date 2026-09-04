@@ -344,6 +344,79 @@
         zeige(ausHash() || (panels[0] && panels[0].id));
     })();
 
+    /*
+     * Kontexthilfe: ein „?" neben der Seitenüberschrift und ein Popup, das den
+     * passenden Hilfetext von hilfe.php nachlädt. Die Inhalte stehen zentral in
+     * lib/Hilfe.php – hier ist nur die Anzeige.
+     */
+    var hilfeTimer = [];
+    function hilfeAnimationen(wurzel) {
+        (wurzel || document).querySelectorAll('.hilfe-anim').forEach(function (fig) {
+            var bilder = fig.querySelectorAll('img');
+            if (bilder.length < 2) { if (bilder[0]) { bilder[0].classList.add('aktiv'); } return; }
+            var i = 0;
+            bilder.forEach(function (b, k) { b.classList.toggle('aktiv', k === 0); });
+            hilfeTimer.push(window.setInterval(function () {
+                bilder[i].classList.remove('aktiv');
+                i = (i + 1) % bilder.length;
+                bilder[i].classList.add('aktiv');
+            }, 2200));
+        });
+    }
+    (function () {
+        var thema = (document.body.getAttribute('data-hilfe-seite') || '').trim();
+        if (thema) {
+            var kopf = document.querySelector('.ad-page-head h1');
+            if (kopf) {
+                var b = document.createElement('button');
+                b.type = 'button'; b.className = 'ad-hilfe-knopf'; b.textContent = '?';
+                b.setAttribute('data-hilfe', thema);
+                b.setAttribute('aria-label', 'Hilfe zu dieser Seite');
+                b.title = 'Hilfe zu dieser Seite';
+                kopf.appendChild(b);
+            }
+        }
+        // Auf der Handbuch-Seite die Animationen sofort starten.
+        hilfeAnimationen(document);
+
+        var hinter = null, vorher = null;
+        function schliessen() {
+            if (!hinter) { return; }
+            hilfeTimer.forEach(function (t) { window.clearInterval(t); }); hilfeTimer = [];
+            hinter.remove(); hinter = null;
+            document.body.classList.remove('hilfe-offen');
+            if (vorher && vorher.focus) { vorher.focus(); }
+        }
+        function oeffnen(id, quelle) {
+            vorher = quelle || document.activeElement;
+            hinter = document.createElement('div'); hinter.className = 'ad-hilfe-hinter';
+            hinter.innerHTML = '<div class="ad-hilfe" role="dialog" aria-modal="true" aria-label="Hilfe">'
+                + '<button type="button" class="ad-hilfe-zu" aria-label="Schließen">×</button>'
+                + '<div class="ad-hilfe-koerper"><p class="ad-hilfe-laedt">Hilfe wird geladen …</p></div></div>';
+            document.body.appendChild(hinter);
+            document.body.classList.add('hilfe-offen');
+            var koerper = hinter.querySelector('.ad-hilfe-koerper');
+            hinter.querySelector('.ad-hilfe-zu').addEventListener('click', schliessen);
+            hinter.addEventListener('click', function (e) { if (e.target === hinter) { schliessen(); } });
+            hinter.querySelector('.ad-hilfe-zu').focus();
+            fetch('hilfe.php?teil=1&thema=' + encodeURIComponent(id), { credentials: 'same-origin' })
+                .then(function (r) { return r.text(); })
+                .then(function (html) { koerper.innerHTML = html; koerper.scrollTop = 0; hilfeAnimationen(koerper); })
+                .catch(function () {
+                    koerper.innerHTML = '<div class="hilfe-inhalt"><p>Die Hilfe konnte nicht geladen werden. '
+                        + '<a href="hilfe.php" target="_blank" rel="noopener">Zum Handbuch →</a></p></div>';
+                });
+        }
+        document.addEventListener('click', function (e) {
+            var el = e.target.closest('[data-hilfe]');
+            if (!el || !(el.getAttribute('data-hilfe') || '').trim()) { return; }
+            if (el.tagName === 'A') { return; }   // der Navigationslink bleibt ein Link
+            e.preventDefault();
+            oeffnen(el.getAttribute('data-hilfe').trim(), el);
+        });
+        document.addEventListener('keydown', function (e) { if (e.key === 'Escape') { schliessen(); } });
+    })();
+
     /* „Kopieren"-Knöpfe (data-kopiere="#ziel") – etwa für API-Schlüssel. */
     document.addEventListener('click', function (event) {
         var knopf = event.target.closest('[data-kopiere]');

@@ -17,7 +17,7 @@ if (!defined('NL_ROOT')) {
  * Systemcheck – so lässt sich sofort erkennen, welcher Stand auf dem
  * Server liegt.
  */
-define('NL_VERSION', '1.31.0 (Schnittstelle: REST-API zum Einspielen und Abrufen von Daten)');
+define('NL_VERSION', '1.32.0 (Hilfe & Handbuch: „?"-Popups mit Screenshots auf jeder Seite)');
 
 mb_internal_encoding('UTF-8');
 date_default_timezone_set('Europe/Berlin');
@@ -40,7 +40,7 @@ foreach ([
     'Config', 'Util', 'DB', 'Schema', 'Settings', 'Log', 'Mailer', 'Urls',
     'Lists', 'Events', 'Subscribers', 'Templates', 'Blocks', 'Renderer', 'Campaigns',
     'Queue', 'Flow', 'Automations', 'SystemMails', 'Totp', 'Qr', 'Auth', 'Tracking', 'Bounces', 'Ai', 'Snippets', 'Wochennews',
-    'Turniere', 'ApiKeys', 'Instanzen',
+    'Turniere', 'ApiKeys', 'Hilfe', 'Instanzen',
 ] as $class) {
     require_once NL_ROOT . '/lib/' . $class . '.php';
 }

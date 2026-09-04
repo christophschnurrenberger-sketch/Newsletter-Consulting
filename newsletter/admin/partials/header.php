@@ -34,6 +34,7 @@ function admin_nav_icon(string $file): string
         'einstellungen.php'=> '<circle cx="12" cy="12" r="3.2"/><path d="M19.4 15a1.6 1.6 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.6 1.6 0 0 0-2.7 1.1V21a2 2 0 0 1-4 0v-.1A1.6 1.6 0 0 0 7 19.4a1.6 1.6 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.6 1.6 0 0 0-1.1-2.7H1a2 2 0 0 1 0-4h.1A1.6 1.6 0 0 0 4.6 7a1.6 1.6 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1A1.6 1.6 0 0 0 9 2.6h.1A2 2 0 0 1 13 2.6a1.6 1.6 0 0 0 2.7-1.1h.1a2 2 0 0 1 2.8 2.8l-.1.1A1.6 1.6 0 0 0 21.4 9v.1a2 2 0 0 1 0 4Z"/>',
         'instanzen.php'    => '<rect x="3" y="3" width="7.5" height="7.5" rx="1.5"/><rect x="13.5" y="3" width="7.5" height="7.5" rx="1.5"/><rect x="3" y="13.5" width="7.5" height="7.5" rx="1.5"/><rect x="13.5" y="13.5" width="7.5" height="7.5" rx="1.5"/>',
         'api.php'          => '<path d="m8 6-6 6 6 6"/><path d="m16 6 6 6-6 6"/>',
+        'hilfe.php'        => '<circle cx="12" cy="12" r="9"/><path d="M9.2 9.3a2.8 2.8 0 0 1 5.5.8c0 1.9-2.8 2.4-2.8 2.4"/><path d="M12 17h.01"/>',
         'benutzer.php'     => '<circle cx="12" cy="8" r="3.4"/><path d="M5.5 20a6.5 6.5 0 0 1 13 0"/>',
     ];
     $d = $p[$file] ?? '<circle cx="12" cy="12" r="9"/>';
@@ -124,7 +125,7 @@ function subscriber_status_pill(string $status): string
 <link rel="stylesheet" href="<?= Util::e(Util::asset($css, __DIR__ . '/..')) ?>">
 <?php endforeach; ?>
 </head>
-<body>
+<body data-hilfe-seite="<?= Util::e(Hilfe::forPage($currentFile)) ?>">
 <header class="ad-topbar">
     <button type="button" class="ad-nav-toggle" aria-label="Menü öffnen" aria-expanded="false" aria-controls="ad-hauptnav">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
@@ -151,6 +152,7 @@ function subscriber_status_pill(string $status): string
      */ ?>
     <nav class="ad-nav" id="ad-hauptnav" aria-label="Hauptnavigation">
         <?= admin_nav('index.php', 'Übersicht') ?>
+        <?= admin_nav('hilfe.php', 'Hilfe') ?>
 
         <span class="ad-nav-gruppe">Versenden</span>
         <?= admin_nav('wochennews.php', 'Wochennews') ?>

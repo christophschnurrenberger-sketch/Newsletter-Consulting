@@ -226,6 +226,85 @@ h3 { font-size: 15px; color: var(--ad-navy); margin: 20px 0 8px; }
     font-size: 13px; word-break: break-all; flex: 1; color: var(--ad-navy); }
 .ad-copybox .ad-btn { flex: none; }
 
+/* ------------------------------------------------------------- Hilfe */
+/* Das „?" neben der Seitenüberschrift. */
+.ad-hilfe-knopf {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 24px; height: 24px; margin-left: 10px; vertical-align: middle;
+    border-radius: 50%; border: 1px solid var(--ad-border); background: #fff;
+    color: var(--ad-red); font-weight: 700; font-size: 14px; line-height: 1; cursor: pointer;
+    font-family: inherit; padding: 0; transition: background .12s, color .12s;
+}
+.ad-hilfe-knopf:hover { background: var(--ad-red); color: #fff; border-color: var(--ad-red); }
+.ad-hilfe-knopf:focus-visible { outline: 2px solid var(--ad-navy); outline-offset: 2px; }
+h1 .ad-hilfe-knopf { width: 26px; height: 26px; }
+
+/* Das Popup. */
+.ad-hilfe-hinter {
+    position: fixed; inset: 0; z-index: 90; background: rgba(20, 36, 58, .5);
+    display: flex; align-items: flex-start; justify-content: center;
+    padding: 5vh 16px; overflow-y: auto;
+}
+.ad-hilfe {
+    position: relative; background: #fff; border-radius: 16px; width: 100%; max-width: 760px;
+    box-shadow: 0 24px 70px -20px rgba(20, 36, 58, .5); margin: auto;
+}
+.ad-hilfe-zu {
+    position: absolute; top: 10px; right: 12px; width: 34px; height: 34px; border: 0;
+    background: transparent; color: var(--ad-muted); font-size: 26px; line-height: 1; cursor: pointer;
+    border-radius: 8px;
+}
+.ad-hilfe-zu:hover { background: var(--ad-bg); color: var(--ad-navy); }
+.ad-hilfe-koerper { padding: 26px 28px 28px; max-height: 85vh; overflow-y: auto; }
+.ad-hilfe-laedt { color: var(--ad-muted); }
+body.hilfe-offen { overflow: hidden; }
+
+/* Der Hilfetext selbst – gleich im Popup und im Handbuch. */
+.hilfe-inhalt { color: var(--ad-text); line-height: 1.62; }
+.hilfe-inhalt h2 { color: var(--ad-navy); font-size: 20px; margin: 0 40px 6px 0; }
+.hilfe-inhalt p { margin: 0 0 12px; }
+.hilfe-kurz { color: var(--ad-muted); font-size: 14.5px; margin: 0 0 16px; }
+.hilfe-schritte { margin: 0 0 16px; padding-left: 22px; display: grid; gap: 8px; }
+.hilfe-schritte li { padding-left: 4px; }
+.hilfe-inhalt code { background: var(--ad-bg); border: 1px solid var(--ad-border); border-radius: 5px;
+    padding: 1px 5px; font-size: 12.5px; font-family: ui-monospace, Menlo, Consolas, monospace; }
+.hilfe-etikett { display: inline-block; font-size: 11px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: .5px; margin-right: 8px; padding: 1px 7px; border-radius: 5px; vertical-align: middle; }
+.hilfe-beispiel, .hilfe-tipp { border-radius: 10px; padding: 12px 14px; margin: 0 0 14px; font-size: 14.5px; }
+.hilfe-beispiel { background: #F0F5FF; border: 1px solid #D6E4FB; }
+.hilfe-beispiel .hilfe-etikett { background: #2C6BB3; color: #fff; }
+.hilfe-tipp { background: #FFF7E9; border: 1px solid #F3E1BC; }
+.hilfe-tipp .hilfe-etikett { background: var(--ad-amber); color: #fff; }
+.hilfe-bild { margin: 0 0 16px; }
+.hilfe-bild img { display: block; width: 100%; border: 1px solid var(--ad-border); border-radius: 10px; }
+.hilfe-bild figcaption { color: var(--ad-muted); font-size: 12.5px; margin-top: 6px; }
+.hilfe-mehr { margin-top: 4px; font-size: 14px; }
+
+/* Kleine „Animation": mehrere Screenshots, per JS durchgeblendet. */
+.hilfe-anim img { display: none; }
+.hilfe-anim img.aktiv { display: block; animation: hilfeEin .5s ease; }
+.hilfe-anim-hin { color: var(--ad-muted); }
+@keyframes hilfeEin { from { opacity: .3; } to { opacity: 1; } }
+
+/* Handbuch-Seite: links Themen, rechts Inhalt. */
+.hilfe-layout { display: grid; grid-template-columns: 220px 1fr; gap: 26px; align-items: start; }
+.hilfe-nav { position: sticky; top: 20px; display: flex; flex-direction: column; gap: 2px;
+    background: #fff; border: 1px solid var(--ad-border); border-radius: 12px; padding: 12px; }
+.hilfe-nav-gruppe { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .5px;
+    color: var(--ad-muted); padding: 12px 8px 4px; }
+.hilfe-nav a { color: var(--ad-text); text-decoration: none; padding: 6px 8px; border-radius: 7px; font-size: 14px; }
+.hilfe-nav a:hover { background: var(--ad-bg); color: var(--ad-navy); }
+.hilfe-gruppe-titel { color: var(--ad-navy); font-size: 15px; text-transform: uppercase; letter-spacing: .5px;
+    margin: 24px 0 10px; }
+.hilfe-gruppe-titel:first-child { margin-top: 0; }
+.hilfe-thema { scroll-margin-top: 20px; }
+.hilfe-thema h3 { margin: 0 0 2px; font-size: 18px; }
+@media (max-width: 780px) {
+    .hilfe-layout { grid-template-columns: 1fr; }
+    .hilfe-nav { position: static; flex-flow: row wrap; }
+    .hilfe-nav-gruppe { width: 100%; padding-top: 4px; }
+}
+
 .ad-empty { padding: 40px 28px; text-align: center; color: var(--ad-muted); background: #fff; border: 1px dashed var(--ad-border); border-radius: 12px; margin-bottom: 22px; }
 .ad-empty-ico { width: 48px; height: 48px; margin: 0 auto 14px; border-radius: 13px;
     display: flex; align-items: center; justify-content: center; background: var(--ad-bg); color: var(--ad-navy); }

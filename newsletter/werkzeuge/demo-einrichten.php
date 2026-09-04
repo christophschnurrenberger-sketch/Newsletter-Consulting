@@ -363,6 +363,13 @@ Turniere::saveSeries($turnierSerie, ['status' => Turniere::ACTIVE, 'template_id'
 echo "  Serie „Turnier-Kommunikation“ (aktiv, Entwurf zum Prüfen, 4 Touchpoints)\n";
 echo "  3 Turniere mit Datum – die Serie bereitet daraus die Mails vor\n";
 
+echo "== Schnittstelle ==\n";
+// Ein Beispiel-Schlüssel, damit die Schnittstellen-Seite nicht leer ist.
+// (Der Klartext wird bewusst nicht ausgegeben – für echte Nutzung legt man
+//  einen eigenen an.)
+ApiKeys::create('Beispiel: Mitglieder-Sync', ApiKeys::SCOPE_WRITE, 'demo');
+echo "  Beispiel-API-Schlüssel angelegt (Lesen & Schreiben)\n";
+
 echo "\nFertig. Fassung " . NL_VERSION . "\n";
 echo "Anmeldung: " . rtrim(Config::get('base_url', ''), '/') . "/admin/login.php\n";
 echo "cron_token für die Instanzen-Übersicht: " . Config::get('cron_token', '') . "\n";

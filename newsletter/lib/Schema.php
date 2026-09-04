@@ -17,7 +17,7 @@
 final class Schema
 {
     /** Version des Schemas – wird in settings gespeichert. */
-    public const VERSION = 11;
+    public const VERSION = 12;
 
     public static function migrate(): void
     {
@@ -481,6 +481,21 @@ final class Schema
                 planned_for   %STR(10)% NOT NULL DEFAULT \'\',
                 created_at    %DT%
             )%ENGINE%',
+
+            // API-Schlüssel für die Schnittstelle. Gespeichert wird nur der
+            // Hash – der Schlüssel selbst ist nach dem Anlegen nicht mehr
+            // einsehbar. „scope" = read (nur lesen) oder write (lesen+schreiben).
+            'CREATE TABLE IF NOT EXISTS api_keys (
+                id           %PK%,
+                label        %STR(120)% NOT NULL DEFAULT \'\',
+                key_hash     %STR(64)% NOT NULL,
+                prefix       %STR(16)% NOT NULL DEFAULT \'\',
+                scope        %STR(12)% NOT NULL DEFAULT \'read\',
+                active       %INT% NOT NULL DEFAULT 1,
+                created_by   %STR(190)%,
+                created_at   %DT%,
+                last_used_at %DT%
+            )%ENGINE%',
         ];
     }
 
@@ -506,6 +521,7 @@ final class Schema
             'CREATE INDEX IF NOT EXISTS idx_bounces_email ON bounces (email)',
             'CREATE INDEX IF NOT EXISTS idx_touchpoints_series ON event_touchpoints (series_id, sort)',
             'CREATE INDEX IF NOT EXISTS idx_mailings_dedup ON event_mailings (series_id, touchpoint_id, item_id)',
+            'CREATE INDEX IF NOT EXISTS idx_apikeys_hash ON api_keys (key_hash)',
         ];
     }
 }

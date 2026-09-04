@@ -344,6 +344,29 @@
         zeige(ausHash() || (panels[0] && panels[0].id));
     })();
 
+    /* „Kopieren"-Knöpfe (data-kopiere="#ziel") – etwa für API-Schlüssel. */
+    document.addEventListener('click', function (event) {
+        var knopf = event.target.closest('[data-kopiere]');
+        if (!knopf) { return; }
+        var ziel = document.querySelector(knopf.getAttribute('data-kopiere'));
+        if (!ziel) { return; }
+        var text = ziel.textContent || '';
+        var fertig = function () {
+            var alt = knopf.textContent;
+            knopf.textContent = 'Kopiert ✓';
+            window.setTimeout(function () { knopf.textContent = alt; }, 1500);
+        };
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(text).then(fertig, function () {});
+        } else {
+            try {
+                var bereich = document.createRange(); bereich.selectNodeContents(ziel);
+                var auswahl = window.getSelection(); auswahl.removeAllRanges(); auswahl.addRange(bereich);
+                document.execCommand('copy'); auswahl.removeAllRanges(); fertig();
+            } catch (e) {}
+        }
+    });
+
     /* Fortschritt eines laufenden Versands automatisch aktualisieren */
     var progress = document.querySelector('[data-autorefresh]');
     if (progress) {

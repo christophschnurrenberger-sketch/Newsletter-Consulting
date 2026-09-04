@@ -216,6 +216,16 @@ h3 { font-size: 15px; color: var(--ad-navy); margin: 20px 0 8px; }
 .ad-settings.hat-reiter .ad-tab-panel { display: none; }
 .ad-settings.hat-reiter .ad-tab-panel.aktiv { display: block; }
 
+/* ------------------------------------------------------ Code & Kopieren */
+.ad-code { background: #14243A; color: #E7EEF6; border-radius: 10px; padding: 14px 16px;
+    overflow-x: auto; font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+    font-size: 13px; line-height: 1.6; white-space: pre; margin: 6px 0 10px; }
+.ad-copybox { display: flex; align-items: center; gap: 10px; background: var(--ad-bg);
+    border: 1px solid var(--ad-border); border-radius: 10px; padding: 10px 12px; margin: 6px 0 10px; }
+.ad-copybox code { font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+    font-size: 13px; word-break: break-all; flex: 1; color: var(--ad-navy); }
+.ad-copybox .ad-btn { flex: none; }
+
 .ad-empty { padding: 40px 28px; text-align: center; color: var(--ad-muted); background: #fff; border: 1px dashed var(--ad-border); border-radius: 12px; margin-bottom: 22px; }
 .ad-empty-ico { width: 48px; height: 48px; margin: 0 auto 14px; border-radius: 13px;
     display: flex; align-items: center; justify-content: center; background: var(--ad-bg); color: var(--ad-navy); }

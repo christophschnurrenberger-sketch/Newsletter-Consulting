@@ -625,6 +625,77 @@ final class Subscribers
     }
 
     /** @return array<string,string> */
+    /**
+     * Anlegen oder aktualisieren über die Schnittstelle (Schlüssel: E-Mail).
+     * Behandelt Sperrliste, Geburtstag, eigene Felder (custom, z. B. die
+     * Mitgliedsnummer), Listen, Einwilligungsprotokoll und – bei Status
+     * „pending" – die Bestätigungsmail.
+     *
+     * @param array<string,mixed> $row
+     * @param int[]               $listIds
+     * @return array{outcome:string,id:?int,reason:string}
+     */
+    public static function apiUpsert(array $row, array $listIds, string $status = self::STATUS_ACTIVE,
+                                     string $source = 'api'): array
+    {
+        $email = Util::normalizeEmail((string) ($row['email'] ?? ''));
+        if (!Util::isEmail($email)) {
+            return ['outcome' => 'skipped', 'id' => null, 'reason' => 'ungültige Adresse'];
+        }
+        if (self::isSuppressed($email)) {
+            return ['outcome' => 'skipped', 'id' => null, 'reason' => 'steht auf der Sperrliste'];
+        }
+        $status  = in_array($status, [self::STATUS_ACTIVE, self::STATUS_PENDING], true) ? $status : self::STATUS_ACTIVE;
+        $listIds = self::validListIds($listIds);
+        $now     = Util::now();
+
+        $fields = [
+            'first_name' => self::clean($row['first_name'] ?? '', 120),
+            'last_name'  => self::clean($row['last_name'] ?? '', 120),
+            'company'    => self::clean($row['company'] ?? '', 190),
+            'salutation' => self::clean($row['salutation'] ?? '', 20),
+            'birthday'   => self::cleanDate((string) ($row['birthday'] ?? '')),
+        ];
+        $custom = (isset($row['custom']) && is_array($row['custom'])) ? $row['custom'] : [];
+
+        $existing = self::byEmail($email);
+        if ($existing === null) {
+            $data = $fields + [
+                'email'       => $email,
+                'status'      => $status,
+                'token'       => self::freshToken(),
+                'source'      => self::clean($source, 100),
+                'custom_json' => self::encodeCustom($custom),
+                'created_at'  => $now,
+            ];
+            if ($status === self::STATUS_ACTIVE) {
+                $data['confirmed_at'] = $now;
+            }
+            $id = DB::insert('subscribers', $data);
+            self::addToLists($id, $listIds);
+            self::logConsent($id, $email, 'api', 'API (' . $source . '), Status: ' . $status);
+            if ($status === self::STATUS_PENDING) {
+                SystemMails::sendDoubleOptIn(self::byId($id));
+            }
+            return ['outcome' => 'created', 'id' => $id, 'reason' => ''];
+        }
+
+        $id     = (int) $existing['id'];
+        $update = array_filter($fields, static fn($v) => $v !== '');
+        if ($custom !== []) {
+            $merged = self::custom($existing);
+            foreach ($custom as $k => $v) {
+                if (is_scalar($v)) { $merged[(string) $k] = (string) $v; }
+            }
+            $update['custom_json'] = self::encodeCustom($merged);
+        }
+        if ($update !== []) {
+            DB::update('subscribers', $update, 'id = ?', [$id]);
+        }
+        self::addToLists($id, $listIds);
+        return ['outcome' => 'updated', 'id' => $id, 'reason' => ''];
+    }
+
     public static function custom(array $sub): array
     {
         $raw = (string) ($sub['custom_json'] ?? '');

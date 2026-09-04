@@ -5,11 +5,18 @@
 :root {
     --ad-navy: #14243A;
     --ad-navy-soft: #22405F;
-    --ad-red: #C8102E;
-    --ad-red-dark: #A20B24;
-    --ad-bg: #F2F5F8;
+    /* Ruhigeres, tieferes Rot (Bordeaux) statt Signalrot – wirkt wertiger,
+       ohne die rote Markenidentität aufzugeben. Rot für „Löschen“ bleibt
+       kräftig (eigene Töne bei .ad-btn-danger). */
+    --ad-red: #B23A4B;
+    --ad-red-dark: #93283A;
+    /* Gefahr (Löschen) bleibt bewusst ein kräftiges Signalrot – hier SOLL
+       die Farbe warnen, anders als beim ruhigen Bordeaux-Akzent. */
+    --ad-gefahr: #C8102E;
+    --ad-gefahr-dark: #A20B24;
+    --ad-bg: #F4F6F9;
     --ad-card: #FFFFFF;
-    --ad-border: #E0E6ED;
+    --ad-border: #E5E9EF;
     --ad-text: #43506A;
     --ad-muted: #8A95A5;
     --ad-green: #2E7D53;
@@ -83,7 +90,7 @@ a:hover { color: var(--ad-red-dark); }
 
 .ad-nav-link:hover { background-color: var(--ad-bg); color: var(--ad-navy); }
 .ad-nav-link:hover .ad-nav-ico { color: var(--ad-navy); }
-.ad-nav-link.is-current { border-left-color: var(--ad-red); color: var(--ad-navy); font-weight: 700; background-color: #FAFBFD; }
+.ad-nav-link.is-current { border-left-color: var(--ad-red); color: var(--ad-navy); font-weight: 700; background-color: #FBF2F4; }
 .ad-nav-link.is-current .ad-nav-ico { color: var(--ad-red); }
 
 /* Menü-Knopf – nur am Handy sichtbar (siehe Media-Query weiter unten). */
@@ -164,9 +171,10 @@ h3 { font-size: 15px; color: var(--ad-navy); margin: 20px 0 8px; }
 .ad-card {
     background-color: var(--ad-card);
     border: 1px solid var(--ad-border);
-    border-radius: 10px;
+    border-radius: 14px;
     padding: 22px 24px;
     margin-bottom: 22px;
+    box-shadow: 0 1px 2px rgba(20, 30, 50, .03), 0 14px 32px -22px rgba(20, 30, 50, .20);
 }
 
 .ad-card-tight { padding: 16px 18px; }
@@ -176,7 +184,7 @@ h3 { font-size: 15px; color: var(--ad-navy); margin: 20px 0 8px; }
 .ad-grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px; }
 
 /* Kennzahlen */
-.ad-stat { background-color: #fff; border: 1px solid var(--ad-border); border-radius: 10px; padding: 16px 18px; }
+.ad-stat { background-color: #fff; border: 1px solid var(--ad-border); border-radius: 14px; padding: 16px 18px; box-shadow: 0 1px 2px rgba(20, 30, 50, .03), 0 14px 32px -22px rgba(20, 30, 50, .20); }
 .ad-stat-label { font-size: 12.5px; color: var(--ad-muted); text-transform: uppercase; letter-spacing: .4px; }
 .ad-stat-value { font-size: 26px; font-weight: 700; color: var(--ad-navy); line-height: 1.25; }
 .ad-stat-note { font-size: 12.5px; color: var(--ad-muted); }
@@ -189,7 +197,7 @@ h3 { font-size: 15px; color: var(--ad-navy); margin: 20px 0 8px; }
 .ad-table tr:last-child td { border-bottom: none; }
 .ad-table tbody tr:hover { background-color: #FAFBFD; }
 .ad-table td.ad-num, .ad-table th.ad-num { text-align: right; font-variant-numeric: tabular-nums; }
-.ad-table-wrap { overflow-x: auto; border: 1px solid var(--ad-border); border-radius: 10px; margin-bottom: 22px; background: #fff; }
+.ad-table-wrap { overflow-x: auto; border: 1px solid var(--ad-border); border-radius: 14px; margin-bottom: 22px; background: #fff; box-shadow: 0 1px 2px rgba(20, 30, 50, .03), 0 14px 32px -22px rgba(20, 30, 50, .20); }
 /* Offenes Zeilenmenü: Rahmen kurz nicht clippen, damit es nicht einklemmt. */
 .ad-table-wrap.hat-menue-offen { overflow: visible; }
 .ad-table-wrap .ad-table { border: none; }
@@ -273,7 +281,7 @@ h3 { font-size: 15px; color: var(--ad-navy); margin: 20px 0 8px; }
     background-color: var(--ad-red);
     color: #fff;
     border: 1px solid var(--ad-red);
-    border-radius: 6px;
+    border-radius: 9px;
     padding: 9px 18px;
     font-size: 14.5px;
     font-weight: 700;
@@ -288,8 +296,8 @@ h3 { font-size: 15px; color: var(--ad-navy); margin: 20px 0 8px; }
 
 .ad-btn-secondary { background-color: #fff; color: var(--ad-navy); border-color: var(--ad-border); }
 .ad-btn-secondary:hover { background-color: var(--ad-bg); color: var(--ad-navy); border-color: #C9D2DD; }
-.ad-btn-danger { background-color: #fff; color: var(--ad-red); border-color: #F3C6CF; }
-.ad-btn-danger:hover { background-color: #FDECEF; color: var(--ad-red-dark); }
+.ad-btn-danger { background-color: #fff; color: var(--ad-gefahr); border-color: #F3C6CF; }
+.ad-btn-danger:hover { background-color: #FDECEF; color: var(--ad-gefahr-dark); }
 .ad-btn-small { padding: 5px 11px; font-size: 13px; }
 
 .ad-actions { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-top: 14px; }
@@ -694,7 +702,7 @@ h3 { font-size: 15px; color: var(--ad-navy); margin: 20px 0 8px; }
 }
 .ad-menue-liste a:hover,
 .ad-menue-liste button:hover { background: var(--ad-bg); text-decoration: none; }
-.ad-menue-liste button.ist-gefahr { color: var(--ad-red); }
+.ad-menue-liste button.ist-gefahr { color: var(--ad-gefahr); }
 .ad-menue-liste form { margin: 0; }
 
 /* Beschriftung nur für Screenreader – in der Leiste ist der Platz knapp,
@@ -789,12 +797,12 @@ h3 { font-size: 15px; color: var(--ad-navy); margin: 20px 0 8px; }
 }
 /* Der bestätigende Knopf bei gefährlichen Aktionen: voll rot. */
 .ad-btn-gefahr-voll {
-    background-color: var(--ad-red);
-    border-color: var(--ad-red);
+    background-color: var(--ad-gefahr);
+    border-color: var(--ad-gefahr);
     color: #fff;
 }
 .ad-btn-gefahr-voll:hover {
-    background-color: var(--ad-red-dark);
-    border-color: var(--ad-red-dark);
+    background-color: var(--ad-gefahr-dark);
+    border-color: var(--ad-gefahr-dark);
     color: #fff;
 }

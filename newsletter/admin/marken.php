@@ -93,7 +93,7 @@ if (!$anlegen) {
  */
 function marke_mockup(): string
 {
-    $navy = '#14243A'; $grau = '#E0E6ED'; $hell = '#F6F8FA'; $mittel = '#B9C2CE'; $rot = '#C8102E';
+    $navy = '#14243A'; $grau = '#E0E6ED'; $hell = '#F6F8FA'; $mittel = '#B9C2CE'; $rot = '#B23A4B';
 
     $punkt = static function (float $x, float $y, string $nr) use ($rot): string {
         return '<circle cx="' . $x . '" cy="' . $y . '" r="11" fill="' . $rot . '"/>'

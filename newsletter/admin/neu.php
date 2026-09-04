@@ -46,7 +46,7 @@ $arten = [
  */
 function art_mockup(string $art): string
 {
-    $navy = '#14243A'; $rot = '#C8102E'; $grau = '#E0E6ED'; $hell = '#F6F8FA'; $mittel = '#B9C2CE';
+    $navy = '#14243A'; $rot = '#B23A4B'; $grau = '#E0E6ED'; $hell = '#F6F8FA'; $mittel = '#B9C2CE';
 
     // Ein Blatt: Kopfbalken, Textzeilen, Knopf, Fußbalken
     $blatt = static function (float $x, float $y, float $b, float $h) use ($navy, $rot, $grau, $mittel): string {

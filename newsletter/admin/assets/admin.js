@@ -323,6 +323,23 @@
     })();
 
     /*
+     * „Optimalen Versand übernehmen": trägt den empfohlenen Zeitpunkt in das
+     * Datums-/Zeitfeld ein und hebt es kurz hervor.
+     */
+    document.addEventListener('click', function (event) {
+        var el = event.target.closest('[data-setze-zeit]');
+        if (!el) { return; }
+        var ziel = document.getElementById(el.getAttribute('data-setze-zeit'));
+        var wert = el.getAttribute('data-zeit') || '';
+        if (!ziel || wert === '') { return; }
+        ziel.value = wert;
+        ziel.dispatchEvent(new Event('change', { bubbles: true }));
+        ziel.classList.add('ad-eben-gesetzt');
+        setTimeout(function () { ziel.classList.remove('ad-eben-gesetzt'); }, 1200);
+        try { ziel.focus({ preventScroll: true }); } catch (e) { ziel.focus(); }
+    });
+
+    /*
      * Einstellungen: aus den Bereichen Reiter machen – aber nur, wenn
      * JavaScript läuft. Ohne bleibt die Seite als eine lange Liste bedienbar.
      */

@@ -17,7 +17,7 @@ if (!defined('NL_ROOT')) {
  * Systemcheck – so lässt sich sofort erkennen, welcher Stand auf dem
  * Server liegt.
  */
-define('NL_VERSION', '1.33.0 (Seitenmenü: nur Symbole, beim Überfahren fährt die ganze Leiste heraus, per Nadel anheftbar)');
+define('NL_VERSION', '1.34.0 (Versandzeit-Optimierung: beste Zeit je Segment aus den Öffnungen gelernt)');
 
 mb_internal_encoding('UTF-8');
 date_default_timezone_set('Europe/Berlin');
@@ -40,7 +40,7 @@ foreach ([
     'Config', 'Util', 'DB', 'Schema', 'Settings', 'Log', 'Mailer', 'Urls',
     'Lists', 'Events', 'Subscribers', 'Templates', 'Blocks', 'Renderer', 'Campaigns',
     'Queue', 'Flow', 'Automations', 'SystemMails', 'Totp', 'Qr', 'Auth', 'Tracking', 'Bounces', 'Ai', 'Snippets', 'Wochennews',
-    'Turniere', 'ApiKeys', 'Hilfe', 'Instanzen',
+    'Turniere', 'ApiKeys', 'Hilfe', 'Instanzen', 'SendTime',
 ] as $class) {
     require_once NL_ROOT . '/lib/' . $class . '.php';
 }

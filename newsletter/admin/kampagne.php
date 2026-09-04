@@ -393,6 +393,23 @@ $editable   = in_array($campaign['status'], [Campaigns::DRAFT, Campaigns::SCHEDU
 $recipient  = Campaigns::recipientCount($campaign);
 $useBuilder = Campaigns::usesBuilder($campaign);
 
+/*
+ * Beste Versandzeit lernen. Bevorzugt aus dem Segment (der Liste) dieser
+ * Ausgabe; hat das Segment selbst noch zu wenig Öffnungen, hilfsweise aus
+ * allen Empfängern. So bekommt jedes Segment mit der Zeit seine eigene Zeit.
+ */
+$zielListe        = $campaign['list_id'] !== null ? (int) $campaign['list_id'] : null;
+$bestzeit         = SendTime::optimal($zielListe);
+$bestzeitAusAllen = false;
+if ($bestzeit === null && $zielListe !== null) {
+    $bestzeit         = SendTime::optimal(null);
+    $bestzeitAusAllen = $bestzeit !== null;
+}
+$bestzeitLocal = $bestzeit !== null
+    ? date('Y-m-d\TH:i', strtotime(SendTime::nextOccurrence(
+        (int) $bestzeit['weekday'], (int) $bestzeit['hour'], (int) $bestzeit['minute'])))
+    : '';
+
 /* Welcher Schritt kommt vor und nach diesem? */
 $folge     = ['inhalt' => 'angaben', 'angaben' => 'senden', 'senden' => null];
 $zurueck   = ['inhalt' => null, 'angaben' => 'inhalt', 'senden' => 'angaben'];
@@ -777,6 +794,24 @@ $betreffKarte = (string) ob_get_clean();
                                                 data-confirm="Newsletter jetzt an <?= Util::num($recipient) ?> Empfänger senden?"
                                             <?= $problems === [] ? '' : 'disabled' ?>>Jetzt senden</button>
                                     </div>
+                                    <?php if ($bestzeit !== null): ?>
+                                    <div class="ad-bestzeit" style="margin-top:16px;">
+                                        <div class="ad-bestzeit-kopf">
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+                                            Optimaler Versand
+                                        </div>
+                                        <p class="ad-bestzeit-zeit"><?= Util::e(SendTime::label($bestzeit)) ?></p>
+                                        <p class="ad-hint" style="margin:2px 0 0;">
+                                            Gelernt aus <?= Util::num((int) $bestzeit['total']) ?> Öffnungen
+                                            <?= $bestzeitAusAllen ? 'aller Empfänger' : 'dieses Segments' ?><?php
+                                            if ($bestzeit['confidence'] === 'niedrig'): ?> · noch wenige Daten<?php endif; ?>.
+                                        </p>
+                                        <button type="button" class="ad-btn ad-btn-secondary ad-btn-small" style="margin-top:8px;"
+                                                data-setze-zeit="scheduled_at" data-zeit="<?= Util::e($bestzeitLocal) ?>">
+                                            Diesen Zeitpunkt übernehmen
+                                        </button>
+                                    </div>
+                                    <?php endif; ?>
                                     <div class="ad-field" style="margin-top:16px;">
                                         <label for="scheduled_at">…oder später senden</label>
                                         <input type="datetime-local" id="scheduled_at" name="scheduled_at"

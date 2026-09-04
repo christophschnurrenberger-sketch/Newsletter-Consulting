@@ -66,6 +66,11 @@ $failed = DB::all(
      WHERE q.status = 'failed' ORDER BY q.id DESC LIMIT 20"
 );
 $cronStale = Settings::get('last_cron_at') === '' || strtotime(Settings::get('last_cron_at')) < time() - 3600;
+
+/* Versandzeit-Optimierung: gelernte beste Zeiten je Segment + Wochen-Heatmap. */
+$zeiten   = SendTime::perList();
+$heat     = SendTime::heatmap(null);
+$heatBest = SendTime::optimal(null);
 ?>
 
 <div class="ad-page-head">
@@ -194,5 +199,77 @@ $cronStale = Settings::get('last_cron_at') === '' || strtotime(Settings::get('la
         </table>
     </div>
 <?php endif; ?>
+
+<h2>Beste Versandzeiten</h2>
+<div class="ad-card">
+    <p class="ad-hint" style="margin-top:0;">
+        Das System lernt aus den Öffnungen, wann Ihre Empfänger am ehesten lesen –
+        je Segment getrennt. Beim Planen eines Newsletters schlägt es diese Zeit
+        automatisch vor. Grundlage sind die Öffnungen der letzten zwölf Monate.
+    </p>
+
+    <div class="ad-table-wrap">
+        <table class="ad-table">
+            <thead><tr><th>Segment</th><th class="ad-num">Aktive Empfänger</th><th>Optimaler Versand</th><th>Grundlage</th></tr></thead>
+            <tbody>
+            <?php foreach ($zeiten as $z): $opt = $z['optimal']; ?>
+                <tr>
+                    <td><?= Util::e((string) $z['name']) ?></td>
+                    <td class="ad-num"><?= Util::num((int) $z['active']) ?></td>
+                    <td>
+                        <?php if ($opt !== null): ?>
+                            <strong><?= Util::e(SendTime::label($opt)) ?></strong>
+                        <?php else: ?>
+                            <span class="ad-muted">noch zu wenige Öffnungen</span>
+                        <?php endif; ?>
+                    </td>
+                    <td>
+                        <?php if ($opt !== null): ?>
+                            <?= Util::num((int) $opt['total']) ?> Öffnungen ·
+                            Verlässlichkeit <?= Util::e((string) $opt['confidence']) ?>
+                        <?php else: ?>
+                            <span class="ad-muted">—</span>
+                        <?php endif; ?>
+                    </td>
+                </tr>
+            <?php endforeach; ?>
+            </tbody>
+        </table>
+    </div>
+
+    <?php if ((int) $heat['total'] > 0): ?>
+        <h3 style="margin:22px 0 6px; font-size:15px;">Wann geöffnet wird (alle Empfänger)</h3>
+        <p class="ad-hint" style="margin-top:0;">Je dunkler, desto mehr Öffnungen. Der rote Rahmen zeigt das stärkste Fenster.</p>
+        <div class="ad-heat-wrap">
+            <table class="ad-heat">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <?php for ($h = 0; $h < 24; $h++): ?>
+                            <th><?= $h % 3 === 0 ? sprintf('%02d', $h) : '' ?></th>
+                        <?php endfor; ?>
+                    </tr>
+                </thead>
+                <tbody>
+                <?php for ($wd = 1; $wd <= 7; $wd++): ?>
+                    <tr>
+                        <th class="ad-heat-wd"><?= Util::e(SendTime::weekdayShort($wd)) ?></th>
+                        <?php for ($h = 0; $h < 24; $h++):
+                            $n = (int) ($heat['grid'][$wd][$h] ?? 0);
+                            $intensitaet = $heat['max'] > 0 ? $n / $heat['max'] : 0.0;
+                            $alpha = $n > 0 ? round(0.12 + 0.80 * $intensitaet, 3) : 0.0;
+                            $stil  = $n > 0 ? 'background: rgba(20, 36, 58, ' . $alpha . ');' : '';
+                            $best  = $heatBest !== null
+                                && (int) $heatBest['weekday'] === $wd && (int) $heatBest['hour'] === $h; ?>
+                            <td class="<?= $best ? 'ad-heat-best' : '' ?>" style="<?= $stil ?>"
+                                title="<?= Util::e(SendTime::weekdayName($wd)) ?>, <?= sprintf('%02d', $h) ?>:00–<?= sprintf('%02d', $h) ?>:59 Uhr · <?= Util::num($n) ?> Öffnungen"></td>
+                        <?php endfor; ?>
+                    </tr>
+                <?php endfor; ?>
+                </tbody>
+            </table>
+        </div>
+    <?php endif; ?>
+</div>
 
 <?php require __DIR__ . '/partials/footer.php';
